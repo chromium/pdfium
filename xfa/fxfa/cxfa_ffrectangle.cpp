@@ -16,12 +16,14 @@ CXFA_FFRectangle::~CXFA_FFRectangle() = default;
 void CXFA_FFRectangle::RenderWidget(CFGAS_GEGraphics* pGS,
                                     const CFX_Matrix& matrix,
                                     HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CXFA_Value* value = node_->GetFormValueIfExists();
-  if (!value)
+  if (!value) {
     return;
+  }
 
   CFX_RectF rect = GetRectWithoutRotate();
   CXFA_Margin* margin = node_->GetMarginIfExists();

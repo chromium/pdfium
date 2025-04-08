@@ -30,8 +30,9 @@ bool CXFA_FFImage::IsLoaded() {
 }
 
 bool CXFA_FFImage::LoadWidget() {
-  if (GetNode()->GetLayoutImage())
+  if (GetNode()->GetLayoutImage()) {
     return true;
+  }
 
   return GetNode()->LoadLayoutImage(GetDoc()) && CXFA_FFWidget::LoadWidget();
 }
@@ -39,8 +40,9 @@ bool CXFA_FFImage::LoadWidget() {
 void CXFA_FFImage::RenderWidget(CFGAS_GEGraphics* pGS,
                                 const CFX_Matrix& matrix,
                                 HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
@@ -48,8 +50,9 @@ void CXFA_FFImage::RenderWidget(CFGAS_GEGraphics* pGS,
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
 
   RetainPtr<CFX_DIBitmap> pDIBitmap = GetNode()->GetLayoutImage();
-  if (!pDIBitmap)
+  if (!pDIBitmap) {
     return;
+  }
 
   CFX_RectF rtImage = GetRectWithoutRotate();
   CXFA_Margin* margin = node_->GetMarginIfExists();
@@ -64,12 +67,14 @@ void CXFA_FFImage::RenderWidget(CFGAS_GEGraphics* pGS,
   }
 
   auto* value = node_->GetFormValueIfExists();
-  if (!value)
+  if (!value) {
     return;
+  }
 
   CXFA_Image* image = value->GetImageIfExists();
-  if (!image)
+  if (!image) {
     return;
+  }
 
   XFA_DrawImage(pGS, rtImage, mtRotate, std::move(pDIBitmap),
                 image->GetAspect(), node_->GetLayoutImageDpi(), iHorzAlign,

@@ -66,17 +66,20 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFGAS_GEGraphics* pGraphics,
                                     bool bVert,
                                     FWLTHEME_STATE eState,
                                     const CFX_Matrix& matrix) {
-  if (eState < FWLTHEME_STATE::kNormal || eState > FWLTHEME_STATE::kDisable)
+  if (eState < FWLTHEME_STATE::kNormal || eState > FWLTHEME_STATE::kDisable) {
     return;
+  }
 
   CFX_RectF rect = input_rect;
-  if (bVert)
+  if (bVert) {
     rect.Deflate(1, 0);
-  else
+  } else {
     rect.Deflate(0, 1);
+  }
 
-  if (rect.IsEmpty(0.1f))
+  if (rect.IsEmpty(0.1f)) {
     return;
+  }
 
   FillSolidRect(pGraphics,
                 theme_data_->clrBtnBK[static_cast<size_t>(eState) - 1], rect,
@@ -96,8 +99,9 @@ void CFWL_ScrollBarTP::DrawTrack(CFGAS_GEGraphics* pGraphics,
                                  FWLTHEME_STATE eState,
                                  bool bLowerTrack,
                                  const CFX_Matrix& matrix) {
-  if (eState < FWLTHEME_STATE::kNormal || eState > FWLTHEME_STATE::kDisable)
+  if (eState < FWLTHEME_STATE::kNormal || eState > FWLTHEME_STATE::kDisable) {
     return;
+  }
 
   {
     CFGAS_GEGraphics::StateRestorer restorer(pGraphics);

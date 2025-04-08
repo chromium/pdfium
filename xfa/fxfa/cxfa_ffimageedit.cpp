@@ -62,8 +62,9 @@ bool CXFA_FFImageEdit::LoadWidget() {
 void CXFA_FFImageEdit::RenderWidget(CFGAS_GEGraphics* pGS,
                                     const CFX_Matrix& matrix,
                                     HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
@@ -72,8 +73,9 @@ void CXFA_FFImageEdit::RenderWidget(CFGAS_GEGraphics* pGS,
   DrawBorder(pGS, node_->GetUIBorder(), uirect_, mtRotate);
   RenderCaption(pGS, mtRotate);
   RetainPtr<CFX_DIBitmap> pDIBitmap = node_->GetEditImage();
-  if (!pDIBitmap)
+  if (!pDIBitmap) {
     return;
+  }
 
   CFX_RectF rtImage = GetNormalWidget()->GetWidgetRect();
   XFA_AttributeValue iHorzAlign = XFA_AttributeValue::Left;
@@ -88,8 +90,9 @@ void CXFA_FFImageEdit::RenderWidget(CFGAS_GEGraphics* pGS,
   CXFA_Value* value = node_->GetFormValueIfExists();
   if (value) {
     CXFA_Image* image = value->GetImageIfExists();
-    if (image)
+    if (image) {
       iAspect = image->GetAspect();
+    }
   }
 
   XFA_DrawImage(pGS, rtImage, mtRotate, std::move(pDIBitmap), iAspect,
@@ -100,14 +103,16 @@ bool CXFA_FFImageEdit::AcceptsFocusOnButtonDown(
     Mask<XFA_FWL_KeyFlag> dwFlags,
     const CFX_PointF& point,
     CFWL_MessageMouse::MouseCommand command) {
-  if (command != CFWL_MessageMouse::MouseCommand::kLeftButtonDown)
+  if (command != CFWL_MessageMouse::MouseCommand::kLeftButtonDown) {
     return CXFA_FFField::AcceptsFocusOnButtonDown(dwFlags, point, command);
+  }
 
   if (!node_->IsOpenAccess()) {
     return false;
   }
-  if (!PtInActiveRect(point))
+  if (!PtInActiveRect(point)) {
     return false;
+  }
 
   return true;
 }
@@ -123,8 +128,9 @@ bool CXFA_FFImageEdit::OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
 }
 
 void CXFA_FFImageEdit::SetFWLRect() {
-  if (!GetNormalWidget())
+  if (!GetNormalWidget()) {
     return;
+  }
 
   CFX_RectF rtUIMargin = node_->GetUIMargin();
   CFX_RectF rtImage(uirect_);

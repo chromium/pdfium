@@ -1066,8 +1066,9 @@ const uint8_t k_ruRU_Locale[] = {
 
 CXFA_XMLLocale* GetLocaleFromBuffer(cppgc::Heap* heap,
                                     pdfium::span<const uint8_t> src_span) {
-  if (src_span.empty())
+  if (src_span.empty()) {
     return nullptr;
+  }
 
   DataAndBytesConsumed result =
       FlateModule::FlateOrLZWDecode(false, src_span, true, 0, 0, 0, 0, 0);
@@ -1079,8 +1080,9 @@ CXFA_XMLLocale* GetLocaleFromBuffer(cppgc::Heap* heap,
 }
 
 CXFA_LocaleMgr::LangID GetLanguageID(WideString wsLanguage) {
-  if (wsLanguage.GetLength() < 2)
+  if (wsLanguage.GetLength() < 2) {
     return CXFA_LocaleMgr::LangID::k_en_US;
+  }
 
   wsLanguage.MakeLower();
   uint32_t dwIDFirst = wsLanguage[0] << 8 | wsLanguage[1];
@@ -1088,12 +1090,15 @@ CXFA_LocaleMgr::LangID GetLanguageID(WideString wsLanguage) {
       wsLanguage.GetLength() >= 5 ? wsLanguage[3] << 8 | wsLanguage[4] : 0;
   switch (dwIDFirst) {
     case FXBSTR_ID(0, 0, 'z', 'h'):
-      if (dwIDSecond == FXBSTR_ID(0, 0, 'c', 'n'))
+      if (dwIDSecond == FXBSTR_ID(0, 0, 'c', 'n')) {
         return CXFA_LocaleMgr::LangID::k_zh_CN;
-      if (dwIDSecond == FXBSTR_ID(0, 0, 't', 'w'))
+      }
+      if (dwIDSecond == FXBSTR_ID(0, 0, 't', 'w')) {
         return CXFA_LocaleMgr::LangID::k_zh_TW;
-      if (dwIDSecond == FXBSTR_ID(0, 0, 'h', 'k'))
+      }
+      if (dwIDSecond == FXBSTR_ID(0, 0, 'h', 'k')) {
         return CXFA_LocaleMgr::LangID::k_zh_HK;
+      }
       break;
     case FXBSTR_ID(0, 0, 'j', 'a'):
       return CXFA_LocaleMgr::LangID::k_ja_JP;
@@ -1131,8 +1136,9 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(cppgc::Heap* pHeap,
     : heap_(pHeap),
       def_locale_(GetLocaleByName(wsDeflcid)),
       deflcid_(GetLanguageID(wsDeflcid)) {
-  if (!pLocaleSet)
+  if (!pLocaleSet) {
     return;
+  }
 
   for (CXFA_Node* pNodeLocale = pLocaleSet->GetFirstChild(); pNodeLocale;
        pNodeLocale = pNodeLocale->GetNextSibling()) {
@@ -1163,8 +1169,9 @@ GCedLocaleIface* CXFA_LocaleMgr::GetDefLocale() {
   }
 
   CXFA_XMLLocale* pLocale = GetLocale(deflcid_);
-  if (pLocale)
+  if (pLocale) {
     xmllocale_array_.push_back(pLocale);
+  }
 
   def_locale_ = pLocale;
   return def_locale_;
@@ -1209,21 +1216,25 @@ GCedLocaleIface* CXFA_LocaleMgr::GetLocaleByName(
     const WideString& wsLocaleName) {
   for (size_t i = 0; i < locale_array_.size(); i++) {
     GCedLocaleIface* pLocale = locale_array_[i];
-    if (pLocale->GetName() == wsLocaleName)
+    if (pLocale->GetName() == wsLocaleName) {
       return pLocale;
+    }
   }
-  if (wsLocaleName.GetLength() < 2)
+  if (wsLocaleName.GetLength() < 2) {
     return nullptr;
+  }
 
   for (size_t i = 0; i < xmllocale_array_.size(); i++) {
     GCedLocaleIface* pLocale = xmllocale_array_[i];
-    if (pLocale->GetName() == wsLocaleName)
+    if (pLocale->GetName() == wsLocaleName) {
       return pLocale;
+    }
   }
 
   CXFA_XMLLocale* pLocale = GetLocale(GetLanguageID(wsLocaleName));
-  if (!pLocale)
+  if (!pLocale) {
     return nullptr;
+  }
 
   xmllocale_array_.push_back(pLocale);
   return pLocale;
@@ -1241,32 +1252,37 @@ std::optional<WideString> CXFA_LocaleMgr::GetConfigLocaleName(
 
   DCHECK(!config_locale_.has_value());
   config_locale_cached_ = true;
-  if (!pConfig)
+  if (!pConfig) {
     return config_locale_;
+  }
 
   CXFA_Node* pChildConfig =
       pConfig->GetFirstChildByClass<CXFA_Acrobat>(XFA_Element::Acrobat);
   if (!pChildConfig) {
     pChildConfig =
         pConfig->GetFirstChildByClass<CXFA_Present>(XFA_Element::Present);
-    if (!pChildConfig)
+    if (!pChildConfig) {
       return config_locale_;
+    }
   }
 
   CXFA_Common* pCommon =
       pChildConfig->GetFirstChildByClass<CXFA_Common>(XFA_Element::Common);
-  if (!pCommon)
+  if (!pCommon) {
     return config_locale_;
+  }
 
   CXFA_Locale* pLocale =
       pCommon->GetFirstChildByClass<CXFA_Locale>(XFA_Element::Locale);
-  if (!pLocale)
+  if (!pLocale) {
     return config_locale_;
+  }
 
   std::optional<WideString> wsMaybeLocale =
       pLocale->JSObject()->TryCData(XFA_Attribute::Value, false);
-  if (!wsMaybeLocale.has_value() || wsMaybeLocale.value().IsEmpty())
+  if (!wsMaybeLocale.has_value() || wsMaybeLocale.value().IsEmpty()) {
     return config_locale_;
+  }
 
   config_locale_ = wsMaybeLocale;
   return config_locale_;

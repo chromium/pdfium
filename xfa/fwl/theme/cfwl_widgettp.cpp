@@ -86,8 +86,9 @@ void CFWL_WidgetTP::EnsureTTOInitialized(IFWL_ThemeProvider* pProvider) {
 void CFWL_WidgetTP::DrawBorder(CFGAS_GEGraphics* pGraphics,
                                const CFX_RectF& rect,
                                const CFX_Matrix& matrix) {
-  if (!pGraphics)
+  if (!pGraphics) {
     return;
+  }
 
   CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
@@ -109,8 +110,9 @@ void CFWL_WidgetTP::FillSolidRect(CFGAS_GEGraphics* pGraphics,
                                   FX_ARGB fillColor,
                                   const CFX_RectF& rect,
                                   const CFX_Matrix& matrix) {
-  if (!pGraphics)
+  if (!pGraphics) {
     return;
+  }
 
   CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
@@ -123,8 +125,9 @@ void CFWL_WidgetTP::FillSolidRect(CFGAS_GEGraphics* pGraphics,
 void CFWL_WidgetTP::DrawFocus(CFGAS_GEGraphics* pGraphics,
                               const CFX_RectF& rect,
                               const CFX_Matrix& matrix) {
-  if (!pGraphics)
+  if (!pGraphics) {
     return;
+  }
 
   CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);

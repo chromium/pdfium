@@ -96,8 +96,9 @@ bool CXFA_FFDoc::BuildDoc(CFX_XMLDocument* pXML) {
   DCHECK(pXML);
 
   CXFA_DocumentBuilder builder(document_);
-  if (!builder.BuildDocument(pXML, XFA_PacketType::Xdp))
+  if (!builder.BuildDocument(pXML, XFA_PacketType::Xdp)) {
     return false;
+  }
 
   document_->SetRoot(builder.GetRootNode());
   return true;
@@ -233,36 +234,42 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
 }
 
 bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
-  if (!BuildDoc(pXML))
+  if (!BuildDoc(pXML)) {
     return false;
+  }
 
   // At this point we've got an XFA document and we want to always return
   // true to signify the load succeeded.
   pdffont_mgr_ = std::make_unique<CFGAS_PDFFontMgr>(GetPDFDoc());
   form_type_ = FormType::kXFAForeground;
   CXFA_Node* pConfig = ToNode(document_->GetXFAObject(XFA_HASHCODE_Config));
-  if (!pConfig)
+  if (!pConfig) {
     return true;
+  }
 
   CXFA_Acrobat* pAcrobat =
       pConfig->GetFirstChildByClass<CXFA_Acrobat>(XFA_Element::Acrobat);
-  if (!pAcrobat)
+  if (!pAcrobat) {
     return true;
+  }
 
   CXFA_Acrobat7* pAcrobat7 =
       pAcrobat->GetFirstChildByClass<CXFA_Acrobat7>(XFA_Element::Acrobat7);
-  if (!pAcrobat7)
+  if (!pAcrobat7) {
     return true;
+  }
 
   CXFA_DynamicRender* pDynamicRender =
       pAcrobat7->GetFirstChildByClass<CXFA_DynamicRender>(
           XFA_Element::DynamicRender);
-  if (!pDynamicRender)
+  if (!pDynamicRender) {
     return true;
+  }
 
   WideString wsType = pDynamicRender->JSObject()->GetContent(false);
-  if (wsType.EqualsASCII("required"))
+  if (wsType.EqualsASCII("required")) {
     form_type_ = FormType::kXFAFull;
+  }
 
   return true;
 }
@@ -290,8 +297,9 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
 
   auto name_tree = CPDF_NameTree::Create(pdfdoc_, "XFAImages");
   size_t count = name_tree ? name_tree->GetCount() : 0;
-  if (count == 0)
+  if (count == 0) {
     return nullptr;
+  }
 
   RetainPtr<const CPDF_Object> pObject =
       name_tree->LookupValue(WideString(wsName));
@@ -308,8 +316,9 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
   }
 
   RetainPtr<const CPDF_Stream> pStream = ToStream(pObject);
-  if (!pStream)
+  if (!pStream) {
     return nullptr;
+  }
 
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
   pAcc->LoadAllDataFiltered();

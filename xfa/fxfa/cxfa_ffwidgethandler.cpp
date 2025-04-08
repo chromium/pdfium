@@ -129,23 +129,26 @@ WideString CXFA_FFWidgetHandler::GetText(CXFA_FFWidget* widget) {
 }
 
 WideString CXFA_FFWidgetHandler::GetSelectedText(CXFA_FFWidget* widget) {
-  if (!widget->CanCopy())
+  if (!widget->CanCopy()) {
     return WideString();
+  }
 
   return widget->Copy().value_or(WideString());
 }
 
 void CXFA_FFWidgetHandler::PasteText(CXFA_FFWidget* widget,
                                      const WideString& text) {
-  if (!widget->CanPaste())
+  if (!widget->CanPaste()) {
     return;
+  }
 
   widget->Paste(text);
 }
 
 bool CXFA_FFWidgetHandler::SelectAllText(CXFA_FFWidget* widget) {
-  if (!widget->CanSelectAll())
+  if (!widget->CanSelectAll()) {
     return false;
+  }
 
   widget->SelectAll();
   return true;
@@ -169,8 +172,9 @@ bool CXFA_FFWidgetHandler::Redo(CXFA_FFWidget* widget) {
 
 FWL_WidgetHit CXFA_FFWidgetHandler::HitTest(CXFA_FFWidget* pWidget,
                                             const CFX_PointF& point) {
-  if (!pWidget->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kVisible))
+  if (!pWidget->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kVisible)) {
     return FWL_WidgetHit::Unknown;
+  }
   return pWidget->HitTest(pWidget->Rotate2Normal(point));
 }
 
@@ -185,10 +189,12 @@ void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
 
 bool CXFA_FFWidgetHandler::HasEvent(CXFA_Node* pNode,
                                     XFA_EVENTTYPE eEventType) {
-  if (eEventType == XFA_EVENT_Unknown)
+  if (eEventType == XFA_EVENT_Unknown) {
     return false;
-  if (!pNode || pNode->GetElementType() == XFA_Element::Draw)
+  }
+  if (!pNode || pNode->GetElementType() == XFA_Element::Draw) {
     return false;
+  }
 
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
@@ -211,8 +217,9 @@ XFA_EventError CXFA_FFWidgetHandler::ProcessEvent(CXFA_Node* pNode,
   if (!pParam || pParam->type_ == XFA_EVENT_Unknown) {
     return XFA_EventError::kNotExist;
   }
-  if (!pNode || pNode->GetElementType() == XFA_Element::Draw)
+  if (!pNode || pNode->GetElementType() == XFA_Element::Draw) {
     return XFA_EventError::kNotExist;
+  }
 
   switch (pParam->type_) {
     case XFA_EVENT_Calculate:
@@ -224,10 +231,12 @@ XFA_EventError CXFA_FFWidgetHandler::ProcessEvent(CXFA_Node* pNode,
       return XFA_EventError::kDisabled;
     case XFA_EVENT_InitCalculate: {
       CXFA_Calculate* calc = pNode->GetCalculateIfExists();
-      if (!calc)
+      if (!calc) {
         return XFA_EventError::kNotExist;
-      if (pNode->IsUserInteractive())
+      }
+      if (pNode->IsUserInteractive()) {
         return XFA_EventError::kDisabled;
+      }
       return pNode->ExecuteScript(doc_view_.Get(), calc->GetScriptIfExists(),
                                   pParam);
     }

@@ -108,8 +108,9 @@ CFX_RectF CFWL_MonthCalendar::GetAutosizedWidgetRect() {
 }
 
 void CFWL_MonthCalendar::Update() {
-  if (IsLocked())
+  if (IsLocked()) {
     return;
+  }
 
   if (!initialized_) {
     InitDate();
@@ -122,11 +123,13 @@ void CFWL_MonthCalendar::Update() {
 
 void CFWL_MonthCalendar::DrawWidget(CFGAS_GEGraphics* pGraphics,
                                     const CFX_Matrix& matrix) {
-  if (!pGraphics)
+  if (!pGraphics) {
     return;
+  }
 
-  if (HasBorder())
+  if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
+  }
 
   DrawBackground(pGraphics, matrix);
   DrawHeadBK(pGraphics, matrix);
@@ -306,8 +309,9 @@ void CFWL_MonthCalendar::DrawDatesInCircle(CFGAS_GEGraphics* pGraphics,
   }
 
   DATEINFO* pDate = date_array_[day_ - 1].get();
-  if (!pDate)
+  if (!pDate) {
     return;
+  }
 
   CFWL_ThemeBackground params(CFWL_ThemePart::Part::kDateInCircle, this,
                               pGraphics);
@@ -435,8 +439,9 @@ void CFWL_MonthCalendar::CalDateItem() {
         fTop + iWeekOfMonth * (cell_size_.height + (kMonthCalVMargin * 2)),
         cell_size_.width + (kMonthCalHMargin * 2),
         cell_size_.height + (kMonthCalVMargin * 2));
-    if (pDateInfo->iDayOfWeek >= 6)
+    if (pDateInfo->iDayOfWeek >= 6) {
       bNewWeek = true;
+    }
   }
 }
 
@@ -464,8 +469,9 @@ void CFWL_MonthCalendar::ResetDateItem() {
   int32_t iDayOfWeek =
       CFX_DateTime(cur_year_, cur_month_, 1, 0, 0, 0, 0).GetDayOfWeek();
   for (int32_t i = 0; i < iDays; ++i, ++iDayOfWeek) {
-    if (iDayOfWeek >= 7)
+    if (iDayOfWeek >= 7) {
       iDayOfWeek = 0;
+    }
 
     const bool bFlagged =
         year_ == cur_year_ && month_ == cur_month_ && day_ == i + 1;
@@ -527,8 +533,9 @@ void CFWL_MonthCalendar::ChangeToMonth(int32_t iYear, int32_t iMonth) {
 void CFWL_MonthCalendar::RemoveSelDay() {
   int32_t iDatesCount = fxcrt::CollectionSize<int32_t>(date_array_);
   for (int32_t iSelDay : sel_day_array_) {
-    if (iSelDay <= iDatesCount)
+    if (iSelDay <= iDatesCount) {
       date_array_[iSelDay - 1]->bSelected = false;
+    }
   }
   sel_day_array_.clear();
 }
@@ -577,8 +584,9 @@ WideString CFWL_MonthCalendar::GetTodayText(int32_t iYear,
 int32_t CFWL_MonthCalendar::GetDayAtPoint(const CFX_PointF& point) const {
   int i = 1;  // one-based day values.
   for (const auto& pDateInfo : date_array_) {
-    if (pDateInfo->rect.Contains(point))
+    if (pDateInfo->rect.Contains(point)) {
       return i;
+    }
     ++i;
   }
   return -1;
@@ -625,8 +633,9 @@ void CFWL_MonthCalendar::OnProcessMessage(CFWL_Message* pMessage) {
       break;
   }
   // Dst target could be |this|, continue only if not destroyed by above.
-  if (pMessage->GetDstTarget())
+  if (pMessage->GetDstTarget()) {
     CFWL_Widget::OnProcessMessage(pMessage);
+  }
 }
 
 void CFWL_MonthCalendar::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
@@ -697,22 +706,25 @@ void CFWL_MonthCalendar::OnMouseMove(CFWL_MessageMouse* pMsg) {
       }
       if (iHover > 0) {
         CFX_RectF rtDay = GetDayRect(iHover);
-        if (rtInvalidate.IsEmpty())
+        if (rtInvalidate.IsEmpty()) {
           rtInvalidate = rtDay;
-        else
+        } else {
           rtInvalidate.Union(rtDay);
+        }
       }
     }
     hovered_ = iHover;
   } else {
     bRepaint = hovered_ > 0;
-    if (bRepaint)
+    if (bRepaint) {
       rtInvalidate = GetDayRect(hovered_);
+    }
 
     hovered_ = -1;
   }
-  if (bRepaint && !rtInvalidate.IsEmpty())
+  if (bRepaint && !rtInvalidate.IsEmpty()) {
     RepaintRect(rtInvalidate);
+  }
 }
 
 void CFWL_MonthCalendar::OnMouseLeave(CFWL_MessageMouse* pMsg) {
@@ -722,8 +734,9 @@ void CFWL_MonthCalendar::OnMouseLeave(CFWL_MessageMouse* pMsg) {
 
   CFX_RectF rtInvalidate = GetDayRect(hovered_);
   hovered_ = -1;
-  if (!rtInvalidate.IsEmpty())
+  if (!rtInvalidate.IsEmpty()) {
     RepaintRect(rtInvalidate);
+  }
 }
 
 CFWL_MonthCalendar::DATEINFO::DATEINFO(int32_t day,
@@ -741,10 +754,12 @@ CFWL_MonthCalendar::DATEINFO::~DATEINFO() = default;
 
 Mask<CFWL_PartState> CFWL_MonthCalendar::DATEINFO::AsPartStateMask() const {
   Mask<CFWL_PartState> dwStates = CFWL_PartState::kNormal;
-  if (bFlagged)
+  if (bFlagged) {
     dwStates |= CFWL_PartState::kFlagged;
-  if (bSelected)
+  }
+  if (bSelected) {
     dwStates |= CFWL_PartState::kSelected;
+  }
   return dwStates;
 }
 

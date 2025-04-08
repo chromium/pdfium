@@ -37,8 +37,9 @@ void CFWL_PushButton::SetStates(uint32_t dwStates) {
 }
 
 void CFWL_PushButton::Update() {
-  if (IsLocked())
+  if (IsLocked()) {
     return;
+  }
 
   client_rect_ = GetClientRect();
   caption_rect_ = client_rect_;
@@ -46,11 +47,13 @@ void CFWL_PushButton::Update() {
 
 void CFWL_PushButton::DrawWidget(CFGAS_GEGraphics* pGraphics,
                                  const CFX_Matrix& matrix) {
-  if (!pGraphics)
+  if (!pGraphics) {
     return;
+  }
 
-  if (HasBorder())
+  if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
+  }
 
   DrawBkground(pGraphics, matrix);
 }
@@ -84,8 +87,9 @@ Mask<CFWL_PartState> CFWL_PushButton::GetPartStates() {
 }
 
 void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!IsEnabled())
+  if (!IsEnabled()) {
     return;
+  }
 
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus:
@@ -125,8 +129,9 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
       break;
   }
   // Dst target could be |this|, continue only if not destroyed by above.
-  if (pMessage->GetDstTarget())
+  if (pMessage->GetDstTarget()) {
     CFWL_Widget::OnProcessMessage(pMessage);
+  }
 }
 
 void CFWL_PushButton::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
@@ -198,8 +203,9 @@ void CFWL_PushButton::OnMouseMove(CFWL_MessageMouse* pMsg) {
       bRepaint = true;
     }
   }
-  if (bRepaint)
+  if (bRepaint) {
     RepaintRect(client_rect_);
+  }
 }
 
 void CFWL_PushButton::OnMouseLeave(CFWL_MessageMouse* pMsg) {
@@ -217,8 +223,9 @@ void CFWL_PushButton::OnKeyDown(CFWL_MessageKey* pMsg) {
   CFWL_EventMouse wmMouse(this, nullptr,
                           CFWL_MessageMouse::MouseCommand::kLeftButtonUp);
   DispatchEvent(&wmMouse);
-  if (!wmMouse.GetSrcTarget())
+  if (!wmMouse.GetSrcTarget()) {
     return;
+  }
 
   CFWL_Event wmClick(CFWL_Event::Type::Click, this);
   DispatchEvent(&wmClick);

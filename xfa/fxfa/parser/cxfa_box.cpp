@@ -30,18 +30,21 @@ namespace {
 
 std::pair<XFA_AttributeValue, CXFA_Stroke*> Style3D(
     const std::vector<CXFA_Stroke*>& strokes) {
-  if (strokes.empty())
+  if (strokes.empty()) {
     return {XFA_AttributeValue::Unknown, nullptr};
+  }
 
   CXFA_Stroke* stroke = strokes[0];
   for (size_t i = 1; i < strokes.size(); i++) {
     CXFA_Stroke* find = strokes[i];
-    if (!find)
+    if (!find) {
       continue;
-    if (!stroke)
+    }
+    if (!stroke) {
       stroke = find;
-    else if (stroke->GetStrokeType() != find->GetStrokeType())
+    } else if (stroke->GetStrokeType() != find->GetStrokeType()) {
       stroke = find;
+    }
     break;
   }
 
@@ -155,28 +158,31 @@ std::vector<CXFA_Stroke*> CXFA_Box::GetStrokesInternal(bool bNull) {
     if (corner || i == 0) {
       strokes[j] = corner;
     } else if (!bNull) {
-      if (i == 1 || i == 2)
+      if (i == 1 || i == 2) {
         strokes[j] = strokes[0];
-      else
+      } else {
         strokes[j] = strokes[2];
+      }
     }
     j++;
 
     CXFA_Edge* edge;
-    if (i == 0)
+    if (i == 0) {
       edge = JSObject()->GetOrCreateProperty<CXFA_Edge>(i, XFA_Element::Edge);
-    else
+    } else {
       edge = JSObject()->GetProperty<CXFA_Edge>(i, XFA_Element::Edge);
+    }
 
     // TODO(dsinclair): If i == 0 and GetOrCreateProperty failed, we can end up
     // with a null edge in the first position.
     if (edge || i == 0) {
       strokes[j] = edge;
     } else if (!bNull) {
-      if (i == 1 || i == 2)
+      if (i == 1 || i == 2) {
         strokes[j] = strokes[1];
-      else
+      } else {
         strokes[j] = strokes[3];
+      }
     }
     j++;
   }
@@ -187,8 +193,9 @@ void CXFA_Box::Draw(CFGAS_GEGraphics* pGS,
                     const CFX_RectF& rtWidget,
                     const CFX_Matrix& matrix,
                     bool forceRound) {
-  if (GetPresence() != XFA_AttributeValue::Visible)
+  if (GetPresence() != XFA_AttributeValue::Visible) {
     return;
+  }
 
   XFA_Element eType = GetElementType();
   if (eType != XFA_Element::Arc && eType != XFA_Element::Border &&
@@ -196,8 +203,9 @@ void CXFA_Box::Draw(CFGAS_GEGraphics* pGS,
     return;
   }
   std::vector<CXFA_Stroke*> strokes;
-  if (!forceRound && eType != XFA_Element::Arc)
+  if (!forceRound && eType != XFA_Element::Arc) {
     strokes = GetStrokes();
+  }
 
   DrawFill(strokes, pGS, rtWidget, matrix, forceRound);
   XFA_Element type = GetElementType();
@@ -216,8 +224,9 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
                         const CFX_Matrix& matrix,
                         bool forceRound) {
   CXFA_Fill* fill = JSObject()->GetProperty<CXFA_Fill>(0, XFA_Element::Fill);
-  if (!fill || !fill->IsVisible())
+  if (!fill || !fill->IsVisible()) {
     return;
+  }
 
   CFGAS_GEPath fillPath;
   XFA_Element type = GetElementType();
@@ -227,10 +236,11 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
     float fThickness = fmax(0.0, edge ? edge->GetThickness() : 0);
     float fHalf = fThickness / 2;
     XFA_AttributeValue iHand = GetHand();
-    if (iHand == XFA_AttributeValue::Left)
+    if (iHand == XFA_AttributeValue::Left) {
       rtWidget.Inflate(fHalf, fHalf);
-    else if (iHand == XFA_AttributeValue::Right)
+    } else if (iHand == XFA_AttributeValue::Right) {
       rtWidget.Deflate(fHalf, fHalf);
+    }
 
     GetPathArcOrRounded(rtWidget, forceRound, &fillPath);
   } else if (type == XFA_Element::Rectangle || type == XFA_Element::Border) {
@@ -247,8 +257,9 @@ void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
                                    CFGAS_GEPath* fillPath) {
   float a = rtDraw.width / 2.0f;
   float b = rtDraw.height / 2.0f;
-  if (IsCircular() || forceRound)
+  if (IsCircular() || forceRound) {
     a = b = std::min(a, b);
+  }
 
   CFX_PointF center = rtDraw.Center();
   rtDraw.left = center.x - a;
@@ -272,14 +283,16 @@ void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
                                   const CFX_Matrix& matrix,
                                   bool forceRound) {
   CXFA_Edge* edge = GetEdgeIfExists(0);
-  if (!edge || !edge->IsVisible())
+  if (!edge || !edge->IsVisible()) {
     return;
+  }
 
   auto [i3DType, bVisible, fThickness] = Get3DStyle();
   bool lowered3d = false;
   if (i3DType != XFA_AttributeValue::Unknown) {
-    if (bVisible && fThickness >= 0.001f)
+    if (bVisible && fThickness >= 0.001f) {
       lowered3d = true;
+    }
   }
 
   float fHalf = edge->GetThickness() / 2;
@@ -294,13 +307,15 @@ void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
     rtWidget.Deflate(fHalf, fHalf);
   }
   if (!forceRound || !lowered3d) {
-    if (fHalf < 0.001f)
+    if (fHalf < 0.001f) {
       return;
+    }
 
     CFGAS_GEPath arcPath;
     GetPathArcOrRounded(rtWidget, forceRound, &arcPath);
-    if (edge)
+    if (edge) {
       edge->Stroke(pGS, arcPath, matrix);
+    }
     return;
   }
   CFGAS_GEGraphics::StateRestorer restorer(pGS);

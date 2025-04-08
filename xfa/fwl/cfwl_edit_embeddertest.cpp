@@ -62,8 +62,9 @@ TEST_F(CFWLEditEmbedderTest, LeftClickMouseSelection) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
-  for (size_t i = 0; i < 10; ++i)
+  for (size_t i = 0; i < 10; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
+  }
 
   // Mouse selection
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 128, 58);
@@ -88,8 +89,9 @@ TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
-  for (size_t i = 0; i < 10; ++i)
+  for (size_t i = 0; i < 10; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
+  }
 
   // Mouse selection
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 128, 58);
@@ -128,8 +130,9 @@ TEST_F(CFWLEditEmbedderTest, SimpleFill) {
   }
 
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
-  for (size_t i = 0; i < 10; ++i)
+  for (size_t i = 0; i < 10; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
+  }
 
   {
     ScopedFPDFBitmap page_bitmap =
@@ -147,11 +150,13 @@ TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithoutMultiline) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
-  for (size_t i = 0; i < 5; ++i)
+  for (size_t i = 0; i < 5; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
+  }
   FORM_OnChar(form_handle(), page.get(), '\r', 0);
-  for (size_t i = 5; i < 10; ++i)
+  for (size_t i = 5; i < 10; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
+  }
 
   {
     ScopedFPDFBitmap page_bitmap =
@@ -166,11 +171,13 @@ TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
 
-  for (size_t i = 0; i < 5; ++i)
+  for (size_t i = 0; i < 5; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
+  }
   FORM_OnChar(form_handle(), page.get(), '\r', 0);
-  for (size_t i = 5; i < 10; ++i)
+  for (size_t i = 5; i < 10; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
+  }
 
   // Should look like:
   // abcde
@@ -186,8 +193,9 @@ TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
     CompareBitmap(page_bitmap.get(), 612, 792, kFilledMultilineMD5);
   }
 
-  for (size_t i = 0; i < 4; ++i)
+  for (size_t i = 0; i < 4; ++i) {
     FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Left, 0);
+  }
 
   // Should look like:
   // abcde
@@ -195,8 +203,9 @@ TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
 
   // Two backspaces is a workaround because left arrow does not behave well
   // in the first character of a line. It skips back to the previous line.
-  for (size_t i = 0; i < 2; ++i)
+  for (size_t i = 0; i < 2; ++i) {
     FORM_OnChar(form_handle(), page.get(), '\b', 0);
+  }
 
   // Should look like:
   // abcde|ghij

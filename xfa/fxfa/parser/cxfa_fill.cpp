@@ -64,8 +64,9 @@ bool CXFA_Fill::IsVisible() {
 void CXFA_Fill::SetColor(FX_ARGB color) {
   CXFA_Color* pColor =
       JSObject()->GetOrCreateProperty<CXFA_Color>(0, XFA_Element::Color);
-  if (!pColor)
+  if (!pColor) {
     return;
+  }
 
   pColor->SetValue(color);
 }
@@ -84,8 +85,9 @@ XFA_Element CXFA_Fill::GetType() const {
   CXFA_Node* pChild = GetFirstChild();
   while (pChild) {
     XFA_Element eType = pChild->GetElementType();
-    if (eType != XFA_Element::Color && eType != XFA_Element::Extras)
+    if (eType != XFA_Element::Color && eType != XFA_Element::Extras) {
       return eType;
+    }
 
     pChild = pChild->GetNextSibling();
   }
@@ -124,8 +126,9 @@ void CXFA_Fill::DrawStipple(CFGAS_GEGraphics* pGS,
                             const CFX_Matrix& matrix) {
   CXFA_Stipple* stipple =
       JSObject()->GetOrCreateProperty<CXFA_Stipple>(0, XFA_Element::Stipple);
-  if (stipple)
+  if (stipple) {
     stipple->Draw(pGS, fillPath, rtWidget, matrix);
+  }
 }
 
 void CXFA_Fill::DrawRadial(CFGAS_GEGraphics* pGS,
@@ -134,8 +137,9 @@ void CXFA_Fill::DrawRadial(CFGAS_GEGraphics* pGS,
                            const CFX_Matrix& matrix) {
   CXFA_Radial* radial =
       JSObject()->GetOrCreateProperty<CXFA_Radial>(0, XFA_Element::Radial);
-  if (radial)
+  if (radial) {
     radial->Draw(pGS, fillPath, GetFillColor(), rtWidget, matrix);
+  }
 }
 
 void CXFA_Fill::DrawLinear(CFGAS_GEGraphics* pGS,
@@ -144,8 +148,9 @@ void CXFA_Fill::DrawLinear(CFGAS_GEGraphics* pGS,
                            const CFX_Matrix& matrix) {
   CXFA_Linear* linear =
       JSObject()->GetOrCreateProperty<CXFA_Linear>(0, XFA_Element::Linear);
-  if (linear)
+  if (linear) {
     linear->Draw(pGS, fillPath, GetFillColor(), rtWidget, matrix);
+  }
 }
 
 void CXFA_Fill::DrawPattern(CFGAS_GEGraphics* pGS,
@@ -154,6 +159,7 @@ void CXFA_Fill::DrawPattern(CFGAS_GEGraphics* pGS,
                             const CFX_Matrix& matrix) {
   CXFA_Pattern* pattern =
       JSObject()->GetOrCreateProperty<CXFA_Pattern>(0, XFA_Element::Pattern);
-  if (pattern)
+  if (pattern) {
     pattern->Draw(pGS, fillPath, GetFillColor(), rtWidget, matrix);
+  }
 }

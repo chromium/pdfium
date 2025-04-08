@@ -59,34 +59,39 @@ bool PsNameMatchDRFontName(ByteStringView bsPsName,
   bsDRName.Remove('-');
   size_t iPsLen = bsPsName.GetLength();
   auto nIndex = bsDRName.Find(bsPsName);
-  if (nIndex.has_value() && !bStrictMatch)
+  if (nIndex.has_value() && !bStrictMatch) {
     return true;
+  }
 
-  if (!nIndex.has_value() || nIndex.value() != 0)
+  if (!nIndex.has_value() || nIndex.value() != 0) {
     return false;
+  }
 
   size_t iDifferLength = bsDRName.GetLength() - iPsLen;
   if (iDifferLength > 1 || (bBold || bItalic)) {
     auto iBoldIndex = bsDRName.Find("Bold");
-    if (bBold != iBoldIndex.has_value())
+    if (bBold != iBoldIndex.has_value()) {
       return false;
+    }
 
     if (iBoldIndex.has_value()) {
       iDifferLength = std::min(iDifferLength - 4,
                                bsDRName.GetLength() - iBoldIndex.value() - 4);
     }
     bool bItalicFont = true;
-    if (bsDRName.Contains("Italic"))
+    if (bsDRName.Contains("Italic")) {
       iDifferLength -= 6;
-    else if (bsDRName.Contains("It"))
+    } else if (bsDRName.Contains("It")) {
       iDifferLength -= 2;
-    else if (bsDRName.Contains("Oblique"))
+    } else if (bsDRName.Contains("Oblique")) {
       iDifferLength -= 7;
-    else
+    } else {
       bItalicFont = false;
+    }
 
-    if (bItalic != bItalicFont)
+    if (bItalic != bItalicFont) {
       return false;
+    }
 
     if (iDifferLength > 1) {
       ByteString bsDRTailer = bsDRName.Last(iDifferLength);
@@ -94,24 +99,28 @@ bool PsNameMatchDRFontName(ByteStringView bsPsName,
           bsDRTailer == "Regular" || bsDRTailer == "Reg") {
         return true;
       }
-      if (iBoldIndex.has_value() || bItalicFont)
+      if (iBoldIndex.has_value() || bItalicFont) {
         return false;
+      }
 
       bool bMatch = false;
       switch (bsPsName[iPsLen - 1]) {
         case 'L':
-          if (bsDRName.Last(5) == "Light")
+          if (bsDRName.Last(5) == "Light") {
             bMatch = true;
+          }
 
           break;
         case 'R':
-          if (bsDRName.Last(7) == "Regular" || bsDRName.Last(3) == "Reg")
+          if (bsDRName.Last(7) == "Regular" || bsDRName.Last(3) == "Reg") {
             bMatch = true;
+          }
 
           break;
         case 'M':
-          if (bsDRName.Last(5) == "Medium")
+          if (bsDRName.Last(5) == "Medium") {
             bMatch = true;
+          }
           break;
         default:
           break;

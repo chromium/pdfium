@@ -74,8 +74,9 @@ void CFWL_ListBoxTP::DrawListBoxItem(CFGAS_GEGraphics* pGraphics,
     pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding,
                         matrix);
   }
-  if ((dwStates & CFWL_PartState::kFocused) && pData)
+  if ((dwStates & CFWL_PartState::kFocused) && pData) {
     DrawFocus(pGraphics, *pData, matrix);
+  }
 }
 
 }  // namespace pdfium

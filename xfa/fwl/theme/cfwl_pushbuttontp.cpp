@@ -114,15 +114,18 @@ void CFWL_PushButtonTP::SetThemeData() {
 
 int32_t CFWL_PushButtonTP::GetColorID(Mask<CFWL_PartState> dwStates) const {
   int32_t color = 0;
-  if (dwStates & CFWL_PartState::kDisabled)
+  if (dwStates & CFWL_PartState::kDisabled) {
     color += 4;
+  }
   if (dwStates & CFWL_PartState::kDefault) {
     color += 3;
   } else {
-    if (dwStates & CFWL_PartState::kHovered)
+    if (dwStates & CFWL_PartState::kHovered) {
       color += 2;
-    if (dwStates & CFWL_PartState::kPressed)
+    }
+    if (dwStates & CFWL_PartState::kPressed) {
       color += 1;
+    }
   }
   return color;
 }

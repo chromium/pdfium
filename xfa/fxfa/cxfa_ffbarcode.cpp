@@ -114,16 +114,18 @@ std::optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
 
 // static
 BC_TYPE CXFA_FFBarcode::GetBarcodeTypeByName(const WideString& wsName) {
-  if (wsName.IsEmpty())
+  if (wsName.IsEmpty()) {
     return BC_TYPE::kUnknown;
+  }
 
   auto* it = std::lower_bound(
       std::begin(kBarCodeData), std::end(kBarCodeData),
       FX_HashCode_GetLoweredW(wsName.AsStringView()),
       [](const BarCodeInfo& arg, uint32_t hash) { return arg.uHash < hash; });
 
-  if (it != std::end(kBarCodeData) && wsName.EqualsASCII(it->pName))
+  if (it != std::end(kBarCodeData) && wsName.EqualsASCII(it->pName)) {
     return it->eBCType;
+  }
 
   return BC_TYPE::kUnknown;
 }
@@ -163,8 +165,9 @@ bool CXFA_FFBarcode::LoadWidget() {
 void CXFA_FFBarcode::RenderWidget(CFGAS_GEGraphics* pGS,
                                   const CFX_Matrix& matrix,
                                   HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
@@ -183,57 +186,68 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_FFTextEdit::UpdateWidgetProperty();
 
   BC_TYPE bc_type = GetBarcodeTypeByName(barcode_->GetBarcodeType());
-  if (bc_type == BC_TYPE::kUnknown)
+  if (bc_type == BC_TYPE::kUnknown) {
     return;
+  }
 
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(GetNormalWidget());
   pBarCodeWidget->SetType(bc_type);
 
   std::optional<bool> calcChecksum = barcode_->GetChecksum();
-  if (calcChecksum.has_value())
+  if (calcChecksum.has_value()) {
     pBarCodeWidget->SetCalChecksum(calcChecksum.value());
+  }
 
   std::optional<int32_t> dataLen = barcode_->GetDataLength();
-  if (dataLen.has_value())
+  if (dataLen.has_value()) {
     pBarCodeWidget->SetDataLength(dataLen.value());
+  }
 
   std::optional<char> startChar = barcode_->GetStartChar();
-  if (startChar.has_value())
+  if (startChar.has_value()) {
     pBarCodeWidget->SetStartChar(startChar.value());
+  }
 
   std::optional<char> endChar = barcode_->GetEndChar();
-  if (endChar.has_value())
+  if (endChar.has_value()) {
     pBarCodeWidget->SetEndChar(endChar.value());
+  }
 
   std::optional<int32_t> ecLevel = barcode_->GetECLevel();
-  if (ecLevel.has_value())
+  if (ecLevel.has_value()) {
     pBarCodeWidget->SetErrorCorrectionLevel(ecLevel.value());
+  }
 
   std::optional<int32_t> width = barcode_->GetModuleWidth();
-  if (width.has_value())
+  if (width.has_value()) {
     pBarCodeWidget->SetModuleWidth(width.value());
+  }
 
   std::optional<int32_t> height = barcode_->GetModuleHeight();
-  if (height.has_value())
+  if (height.has_value()) {
     pBarCodeWidget->SetModuleHeight(height.value());
+  }
 
   std::optional<bool> printCheck = barcode_->GetPrintChecksum();
-  if (printCheck.has_value())
+  if (printCheck.has_value()) {
     pBarCodeWidget->SetPrintChecksum(printCheck.value());
+  }
 
   std::optional<XFA_AttributeValue> text_attr = barcode_->GetTextLocation();
   if (text_attr.has_value()) {
     std::optional<BC_TEXT_LOC> textLoc =
         TextLocFromAttribute(text_attr.value());
-    if (textLoc.has_value())
+    if (textLoc.has_value()) {
       pBarCodeWidget->SetTextLocation(textLoc.value());
+    }
   }
 
   // Truncated is currently not a supported flag.
 
   std::optional<int8_t> ratio = barcode_->GetWideNarrowRatio();
-  if (ratio.has_value())
+  if (ratio.has_value()) {
     pBarCodeWidget->SetWideNarrowRatio(ratio.value());
+  }
 
   if (bc_type == BC_TYPE::kCode39 || bc_type == BC_TYPE::kEAN8 ||
       bc_type == BC_TYPE::kEAN13 || bc_type == BC_TYPE::kUPCA) {
@@ -246,8 +260,9 @@ bool CXFA_FFBarcode::AcceptsFocusOnButtonDown(
     const CFX_PointF& point,
     CFWL_MessageMouse::MouseCommand command) {
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(GetNormalWidget());
-  if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType())
+  if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType()) {
     return false;
+  }
   if (command == CFWL_MessageMouse::MouseCommand::kLeftButtonDown &&
       !node_->IsOpenAccess()) {
     return false;

@@ -73,8 +73,9 @@ bool CXFA_FFTextEdit::LoadWidget() {
 
 void CXFA_FFTextEdit::UpdateWidgetProperty() {
   CFWL_Edit* pWidget = ToEdit(GetNormalWidget());
-  if (!pWidget)
+  if (!pWidget) {
     return;
+  }
 
   uint32_t dwStyle = 0;
   uint32_t dwExtendedStyle =
@@ -95,8 +96,9 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   }
 
   auto [eType, iMaxChars] = node_->GetMaxChars();
-  if (eType == XFA_Element::ExData)
+  if (eType == XFA_Element::ExData) {
     iMaxChars = 0;
+  }
 
   std::optional<int32_t> numCells = node_->GetNumberOfCells();
   if (!numCells.has_value()) {
@@ -122,8 +124,9 @@ bool CXFA_FFTextEdit::AcceptsFocusOnButtonDown(
       !node_->IsOpenAccess()) {
     return false;
   }
-  if (!PtInActiveRect(point))
+  if (!PtInActiveRect(point)) {
     return false;
+  }
 
   return true;
 }
@@ -160,8 +163,9 @@ bool CXFA_FFTextEdit::OnRButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
 
 bool CXFA_FFTextEdit::OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                                   const CFX_PointF& point) {
-  if (!CXFA_FFField::OnRButtonUp(dwFlags, point))
+  if (!CXFA_FFField::OnRButtonUp(dwFlags, point)) {
     return false;
+  }
 
   GetDoc()->PopupMenu(this, point);
   return true;
@@ -174,8 +178,9 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
     UpdateFWLData();
     InvalidateRect();
   }
-  if (!CXFA_FFWidget::OnSetFocus(pOldWidget))
+  if (!CXFA_FFWidget::OnSetFocus(pOldWidget)) {
     return false;
+  }
 
   CFWL_MessageSetFocus msg(GetNormalWidget());
   SendMessageToFWLWidget(&msg);
@@ -192,8 +197,9 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   UpdateFWLData();
   InvalidateRect();
 
-  if (!CXFA_FFWidget::OnKillFocus(pNewWidget))
+  if (!CXFA_FFWidget::OnKillFocus(pNewWidget)) {
     return false;
+  }
 
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus::kTextEditValueChanged);
   return true;
@@ -210,12 +216,14 @@ bool CXFA_FFTextEdit::CommitData() {
 }
 
 void CXFA_FFTextEdit::ValidateNumberField(const WideString& wsText) {
-  if (GetNode()->GetFFWidgetType() != XFA_FFWidgetType::kNumericEdit)
+  if (GetNode()->GetFFWidgetType() != XFA_FFWidgetType::kNumericEdit) {
     return;
+  }
 
   CXFA_FFApp::CallbackIface* pAppProvider = GetAppProvider();
-  if (!pAppProvider)
+  if (!pAppProvider) {
     return;
+  }
 
   WideString wsSomField = GetNode()->GetSOMExpression();
   pAppProvider->MsgBox(
@@ -231,8 +239,9 @@ bool CXFA_FFTextEdit::IsDataChanged() {
 
 uint32_t CXFA_FFTextEdit::GetAlignment() {
   CXFA_Para* para = node_->GetParaIfExists();
-  if (!para)
+  if (!para) {
     return 0;
+  }
 
   uint32_t dwExtendedStyle = 0;
   switch (para->GetHorizontalAlign()) {
@@ -269,19 +278,22 @@ uint32_t CXFA_FFTextEdit::GetAlignment() {
 
 void CXFA_FFTextEdit::UpdateFWLData() {
   CFWL_Edit* pEdit = ToEdit(GetNormalWidget());
-  if (!pEdit)
+  if (!pEdit) {
     return;
+  }
 
   XFA_ValuePicture eType = XFA_ValuePicture::kDisplay;
-  if (IsFocused())
+  if (IsFocused()) {
     eType = XFA_ValuePicture::kEdit;
+  }
 
   bool bUpdate = false;
   if (node_->GetFFWidgetType() == XFA_FFWidgetType::kTextEdit &&
       !node_->GetNumberOfCells().has_value()) {
     auto [elementType, iMaxChars] = node_->GetMaxChars();
-    if (elementType == XFA_Element::ExData)
+    if (elementType == XFA_Element::ExData) {
       iMaxChars = eType == XFA_ValuePicture::kEdit ? iMaxChars : 0;
+    }
     if (pEdit->GetLimit() != iMaxChars) {
       pEdit->SetLimit(iMaxChars);
       bUpdate = true;
@@ -370,8 +382,9 @@ bool CXFA_FFTextEdit::CanCopy() {
 }
 
 bool CXFA_FFTextEdit::CanCut() {
-  if (ToEdit(GetNormalWidget())->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly)
+  if (ToEdit(GetNormalWidget())->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly) {
     return false;
+  }
   return ToEdit(GetNormalWidget())->HasSelection();
 }
 

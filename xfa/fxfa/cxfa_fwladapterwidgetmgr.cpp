@@ -17,12 +17,14 @@ CXFA_FWLAdapterWidgetMgr::~CXFA_FWLAdapterWidgetMgr() = default;
 void CXFA_FWLAdapterWidgetMgr::Trace(cppgc::Visitor* visitor) const {}
 
 void CXFA_FWLAdapterWidgetMgr::RepaintWidget(CFWL_Widget* pWidget) {
-  if (!pWidget)
+  if (!pWidget) {
     return;
+  }
 
   auto* pFFWidget = static_cast<CXFA_FFWidget*>(pWidget->GetAdapterIface());
-  if (!pFFWidget)
+  if (!pFFWidget) {
     return;
+  }
 
   pFFWidget->InvalidateRect();
 }

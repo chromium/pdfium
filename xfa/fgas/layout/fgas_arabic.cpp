@@ -142,8 +142,9 @@ constexpr uint16_t kLastShaddaTableEntry =
     kFirstShaddaTableEntry + std::size(kShaddaTable) - 1;
 
 const FX_ARBFORMTABLE* GetArabicFormTable(wchar_t unicode) {
-  if (unicode < kFirstFormTableEntry || unicode > kLastFormTableEntry)
+  if (unicode < kFirstFormTableEntry || unicode > kLastFormTableEntry) {
     return nullptr;
+  }
 
   return &kFormTable[unicode - kFirstFormTableEntry];
 }
@@ -160,16 +161,18 @@ const FX_ARBFORMTABLE* ParseChar(const CFGAS_Char* pTC,
   *eType = pTC->GetCharType();
   *wChar = static_cast<wchar_t>(pTC->char_code());
   const FX_ARBFORMTABLE* pFT = GetArabicFormTable(*wChar);
-  if (!pFT || *eType >= FX_CHARTYPE::kArabicNormal)
+  if (!pFT || *eType >= FX_CHARTYPE::kArabicNormal) {
     *eType = FX_CHARTYPE::kUnknown;
+  }
 
   return pFT;
 }
 
 wchar_t GetArabicFromAlefTable(wchar_t alef) {
   for (const FX_ARAALEF& v : kAlefTable) {
-    if (v.wAlef == alef)
+    if (v.wAlef == alef) {
       return v.wIsolated;
+    }
   }
   return alef;
 }
@@ -191,22 +194,25 @@ wchar_t GetArabicFormChar(const CFGAS_Char* cur,
   FX_CHARTYPE eCur;
   wchar_t wCur;
   const FX_ARBFORMTABLE* ft = ParseChar(cur, &wCur, &eCur);
-  if (eCur < FX_CHARTYPE::kArabicAlef || eCur >= FX_CHARTYPE::kArabicNormal)
+  if (eCur < FX_CHARTYPE::kArabicAlef || eCur >= FX_CHARTYPE::kArabicNormal) {
     return wCur;
+  }
 
   FX_CHARTYPE ePrev;
   wchar_t wPrev;
   ParseChar(prev, &wPrev, &ePrev);
-  if (wPrev == kArabicLetterLam && eCur == FX_CHARTYPE::kArabicAlef)
+  if (wPrev == kArabicLetterLam && eCur == FX_CHARTYPE::kArabicAlef) {
     return pdfium::unicode::kZeroWidthNoBreakSpace;
+  }
 
   FX_CHARTYPE eNext;
   wchar_t wNext;
   ParseChar(next, &wNext, &eNext);
   bool bAlef = (eNext == FX_CHARTYPE::kArabicAlef && wCur == kArabicLetterLam);
   if (ePrev < FX_CHARTYPE::kArabicAlef) {
-    if (bAlef)
+    if (bAlef) {
       return GetArabicFromAlefTable(wNext);
+    }
     return (eNext < FX_CHARTYPE::kArabicAlef) ? ft->wIsolated : ft->wInitial;
   }
 
@@ -215,14 +221,17 @@ wchar_t GetArabicFormChar(const CFGAS_Char* cur,
     return (ePrev != FX_CHARTYPE::kArabicDistortion) ? wCur : ++wCur;
   }
 
-  if (ePrev == FX_CHARTYPE::kArabicAlef || ePrev == FX_CHARTYPE::kArabicSpecial)
+  if (ePrev == FX_CHARTYPE::kArabicAlef ||
+      ePrev == FX_CHARTYPE::kArabicSpecial) {
     return (eNext < FX_CHARTYPE::kArabicAlef) ? ft->wIsolated : ft->wInitial;
+  }
   return (eNext < FX_CHARTYPE::kArabicAlef) ? ft->wFinal : ft->wMedial;
 }
 
 std::optional<wchar_t> GetArabicFromShaddaTable(wchar_t shadda) {
-  if (shadda < kFirstShaddaTableEntry || shadda > kLastShaddaTableEntry)
+  if (shadda < kFirstShaddaTableEntry || shadda > kLastShaddaTableEntry) {
     return std::nullopt;
+  }
 
   return kShaddaTable[shadda - kFirstShaddaTableEntry];
 }

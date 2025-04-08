@@ -53,8 +53,9 @@ class CXFA_NodeIteratorTemplate {
       return static_cast<NodeType*>(current_);
     }
     NodeType* pParent = ParentWithinSubtree(static_cast<NodeType*>(current_));
-    if (pParent)
+    if (pParent) {
       current_ = pParent;
+    }
     return pParent;
   }
 
@@ -105,8 +106,9 @@ class CXFA_NodeIteratorTemplate {
 
   NodeType* PreviousSiblingWithinSubtree(NodeType* pNode) {
     NodeType* pParent = ParentWithinSubtree(pNode);
-    if (!pParent)
+    if (!pParent) {
       return nullptr;
+    }
     NodeType* pCurrent = TraverseStrategy::GetFirstChild(pParent);
     NodeType* pPrevious = nullptr;
     while (pCurrent != pNode) {

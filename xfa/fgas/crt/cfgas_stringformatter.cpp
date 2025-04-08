@@ -93,8 +93,9 @@ constexpr wchar_t kNullStr[] = L"null";
 
 size_t ParseTimeZone(pdfium::span<const wchar_t> spStr, int* tz) {
   *tz = 0;
-  if (spStr.empty())
+  if (spStr.empty()) {
     return 0;
+  }
 
   // Keep index by 0 close to empty() check above for optimizer's sake.
   const bool bNegative = (spStr[0] == '-');
@@ -102,27 +103,32 @@ size_t ParseTimeZone(pdfium::span<const wchar_t> spStr, int* tz) {
   size_t iStart = 1;
   size_t iEnd = iStart + 2;
   int tz_hour = 0;
-  while (iStart < spStr.size() && iStart < iEnd)
+  while (iStart < spStr.size() && iStart < iEnd) {
     tz_hour = tz_hour * 10 + FXSYS_DecimalCharToInt(spStr[iStart++]);
+  }
 
-  if (iStart < spStr.size() && spStr[iStart] == ':')
+  if (iStart < spStr.size() && spStr[iStart] == ':') {
     iStart++;
+  }
 
   iEnd = iStart + 2;
   int tz_minute = 0;
-  while (iStart < spStr.size() && iStart < iEnd)
+  while (iStart < spStr.size() && iStart < iEnd) {
     tz_minute = tz_minute * 10 + FXSYS_DecimalCharToInt(spStr[iStart++]);
+  }
 
   *tz = tz_hour * 60 + tz_minute;
-  if (bNegative)
+  if (bNegative) {
     *tz *= -1;
+  }
 
   return iStart;
 }
 
 int32_t ConvertHex(int32_t iKeyValue, wchar_t ch) {
-  if (FXSYS_IsHexDigit(ch))
+  if (FXSYS_IsHexDigit(ch)) {
     return iKeyValue * 16 + FXSYS_HexCharToInt(ch);
+  }
   return iKeyValue;
 }
 
@@ -132,8 +138,9 @@ int32_t ConvertHex(int32_t iKeyValue, wchar_t ch) {
 WideString GetLiteralText(pdfium::span<const wchar_t> spStrPattern,
                           size_t* iPattern) {
   WideString wsOutput;
-  if (*iPattern >= spStrPattern.size() || spStrPattern[*iPattern] != '\'')
+  if (*iPattern >= spStrPattern.size() || spStrPattern[*iPattern] != '\'') {
     return wsOutput;
+  }
 
   (*iPattern)++;
   int32_t iQuote = 1;
@@ -155,8 +162,9 @@ WideString GetLiteralText(pdfium::span<const wchar_t> spStrPattern,
         wchar_t ch = spStrPattern[(*iPattern)++];
         iKeyValue = ConvertHex(iKeyValue, ch);
       }
-      if (iKeyValue != 0)
+      if (iKeyValue != 0) {
         wsOutput += static_cast<wchar_t>(iKeyValue & 0x0000FFFF);
+      }
 
       continue;
     }
@@ -168,8 +176,9 @@ WideString GetLiteralText(pdfium::span<const wchar_t> spStrPattern,
 WideString GetLiteralTextReverse(pdfium::span<const wchar_t> spStrPattern,
                                  size_t* iPattern) {
   WideString wsOutput;
-  if (*iPattern >= spStrPattern.size() || spStrPattern[*iPattern] != '\'')
+  if (*iPattern >= spStrPattern.size() || spStrPattern[*iPattern] != '\'') {
     return wsOutput;
+  }
 
   (*iPattern)--;
   int32_t iQuote = 1;
@@ -234,8 +243,9 @@ bool ExtractCountDigits(pdfium::span<const wchar_t> spStr,
                         size_t* cc,
                         uint32_t* value) {
   for (size_t i = 0; i < count; ++i) {
-    if (*cc >= spStr.size() || !FXSYS_IsDecimalDigit(spStr[*cc]))
+    if (*cc >= spStr.size() || !FXSYS_IsDecimalDigit(spStr[*cc])) {
       return false;
+    }
     *value = *value * 10 + FXSYS_DecimalCharToInt(spStr[(*cc)++]);
   }
   return true;
@@ -245,8 +255,9 @@ bool ExtractCountDigitsWithOptional(pdfium::span<const wchar_t> spStr,
                                     int count,
                                     size_t* cc,
                                     uint32_t* value) {
-  if (!ExtractCountDigits(spStr, count, cc, value))
+  if (!ExtractCountDigits(spStr, count, cc, value)) {
     return false;
+  }
   ExtractCountDigits(spStr, 1, cc, value);
   return true;
 }
@@ -275,8 +286,9 @@ bool ParseLocaleDate(const WideString& wsDate,
       continue;
     }
     if (!pdfium::Contains(kDateSymbols, spDatePattern[ccf])) {
-      if (spDatePattern[ccf] != spDate[*cc])
+      if (spDatePattern[ccf] != spDate[*cc]) {
         return false;
+      }
       (*cc)++;
       ccf++;
       continue;
@@ -290,21 +302,24 @@ bool ParseLocaleDate(const WideString& wsDate,
     }
     if (symbol.EqualsASCII("D") || symbol.EqualsASCII("DD")) {
       day = 0;
-      if (!ExtractCountDigitsWithOptional(spDate, 1, cc, &day))
+      if (!ExtractCountDigitsWithOptional(spDate, 1, cc, &day)) {
         return false;
+      }
     } else if (symbol.EqualsASCII("J")) {
       uint32_t val = 0;
       ExtractCountDigits(spDate, 3, cc, &val);
     } else if (symbol.EqualsASCII("M") || symbol.EqualsASCII("MM")) {
       month = 0;
-      if (!ExtractCountDigitsWithOptional(spDate, 1, cc, &month))
+      if (!ExtractCountDigitsWithOptional(spDate, 1, cc, &month)) {
         return false;
+      }
     } else if (symbol.EqualsASCII("MMM") || symbol.EqualsASCII("MMMM")) {
       for (uint16_t i = 0; i < 12; i++) {
         WideString wsMonthName =
             pLocale->GetMonthName(i, symbol.EqualsASCII("MMM"));
-        if (wsMonthName.IsEmpty())
+        if (wsMonthName.IsEmpty()) {
           continue;
+        }
         if (UNSAFE_TODO(wcsncmp(wsMonthName.c_str(), spDate.data() + *cc,
                                 wsMonthName.GetLength())) == 0) {
           *cc += wsMonthName.GetLength();
@@ -316,8 +331,9 @@ bool ParseLocaleDate(const WideString& wsDate,
       for (uint16_t i = 0; i < 7; i++) {
         WideString wsDayName =
             pLocale->GetDayName(i, symbol.EqualsASCII("EEE"));
-        if (wsDayName.IsEmpty())
+        if (wsDayName.IsEmpty()) {
           continue;
+        }
         if (UNSAFE_TODO(wcsncmp(wsDayName.c_str(), spDate.data() + *cc,
                                 wsDayName.GetLength())) == 0) {
           *cc += wsDayName.GetLength();
@@ -325,17 +341,20 @@ bool ParseLocaleDate(const WideString& wsDate,
         }
       }
     } else if (symbol.EqualsASCII("YY") || symbol.EqualsASCII("YYYY")) {
-      if (*cc + symbol.GetLength() > spDate.size())
+      if (*cc + symbol.GetLength() > spDate.size()) {
         return false;
+      }
 
       year = 0;
-      if (!ExtractCountDigits(spDate, symbol.GetLength(), cc, &year))
+      if (!ExtractCountDigits(spDate, symbol.GetLength(), cc, &year)) {
         return false;
+      }
       if (symbol.EqualsASCII("YY")) {
-        if (year <= 29)
+        if (year <= 29) {
           year += 2000;
-        else
+        } else {
           year += 1900;
+        }
       }
     } else if (symbol.EqualsASCII("G")) {
       *cc += 2;
@@ -344,8 +363,9 @@ bool ParseLocaleDate(const WideString& wsDate,
       *cc += symbol.GetLength();
     }
   }
-  if (*cc < spDate.size())
+  if (*cc < spDate.size()) {
     return false;
+  }
 
   datetime->SetDate(year, month, day);
   return !!(*cc);
@@ -360,8 +380,9 @@ void ResolveZone(int tz_diff_minutes,
   iMinuteDiff -= tz_diff_minutes;
 
   iMinuteDiff %= 1440;
-  if (iMinuteDiff < 0)
+  if (iMinuteDiff < 0) {
     iMinuteDiff += 1440;
+  }
 
   *wHour = iMinuteDiff / 60;
   *wMinute = iMinuteDiff % 60;
@@ -394,8 +415,9 @@ bool ParseLocaleTime(const WideString& wsTime,
       continue;
     }
     if (!pdfium::Contains(kTimeSymbols, spTimePattern[ccf])) {
-      if (spTimePattern[ccf] != spTime[*cc])
+      if (spTimePattern[ccf] != spTime[*cc]) {
         return false;
+      }
       (*cc)++;
       ccf++;
       continue;
@@ -404,42 +426,52 @@ bool ParseLocaleTime(const WideString& wsTime,
     WideString symbol;
     symbol.Reserve(4);
     symbol += spTimePattern[ccf++];
-    while (ccf < spTimePattern.size() && spTimePattern[ccf] == symbol[0])
+    while (ccf < spTimePattern.size() && spTimePattern[ccf] == symbol[0]) {
       symbol += spTimePattern[ccf++];
+    }
 
     if (symbol.EqualsASCIINoCase("k") || symbol.EqualsASCIINoCase("h")) {
       hour = 0;
-      if (!ExtractCountDigitsWithOptional(spTime, 1, cc, &hour))
+      if (!ExtractCountDigitsWithOptional(spTime, 1, cc, &hour)) {
         return false;
-      if (symbol.EqualsASCII("K") && hour == 24)
+      }
+      if (symbol.EqualsASCII("K") && hour == 24) {
         hour = 0;
+      }
     } else if (symbol.EqualsASCIINoCase("kk") ||
                symbol.EqualsASCIINoCase("hh")) {
       hour = 0;
-      if (!ExtractCountDigits(spTime, 2, cc, &hour))
+      if (!ExtractCountDigits(spTime, 2, cc, &hour)) {
         return false;
-      if (symbol.EqualsASCII("KK") && hour == 24)
+      }
+      if (symbol.EqualsASCII("KK") && hour == 24) {
         hour = 0;
+      }
     } else if (symbol.EqualsASCII("M")) {
       minute = 0;
-      if (!ExtractCountDigitsWithOptional(spTime, 1, cc, &minute))
+      if (!ExtractCountDigitsWithOptional(spTime, 1, cc, &minute)) {
         return false;
+      }
     } else if (symbol.EqualsASCII("MM")) {
       minute = 0;
-      if (!ExtractCountDigits(spTime, 2, cc, &minute))
+      if (!ExtractCountDigits(spTime, 2, cc, &minute)) {
         return false;
+      }
     } else if (symbol.EqualsASCII("S")) {
       second = 0;
-      if (!ExtractCountDigitsWithOptional(spTime, 1, cc, &second))
+      if (!ExtractCountDigitsWithOptional(spTime, 1, cc, &second)) {
         return false;
+      }
     } else if (symbol.EqualsASCII("SS")) {
       second = 0;
-      if (!ExtractCountDigits(spTime, 2, cc, &second))
+      if (!ExtractCountDigits(spTime, 2, cc, &second)) {
         return false;
+      }
     } else if (symbol.EqualsASCII("FFF")) {
       millisecond = 0;
-      if (!ExtractCountDigits(spTime, 3, cc, &millisecond))
+      if (!ExtractCountDigits(spTime, 3, cc, &millisecond)) {
         return false;
+      }
     } else if (symbol.EqualsASCII("A")) {
       WideString wsAM = pLocale->GetMeridiemName(true);
       WideString wsPM = pLocale->GetMeridiemName(false);
@@ -455,23 +487,26 @@ bool ParseLocaleTime(const WideString& wsTime,
         bPM = true;
       }
     } else if (symbol.EqualsASCII("Z")) {
-      if (*cc + 3 > spTime.size())
+      if (*cc + 3 > spTime.size()) {
         continue;
+      }
 
       WideString tz(spTime[(*cc)++]);
       tz += spTime[(*cc)++];
       tz += spTime[(*cc)++];
       if (tz.EqualsASCII("GMT")) {
         int tz_diff_minutes = 0;
-        if (*cc < spTime.size() && (spTime[*cc] == '-' || spTime[*cc] == '+'))
+        if (*cc < spTime.size() && (spTime[*cc] == '-' || spTime[*cc] == '+')) {
           *cc += ParseTimeZone(spTime.subspan(*cc), &tz_diff_minutes);
+        }
         ResolveZone(tz_diff_minutes, pLocale, &hour, &minute);
       } else {
         // Search the timezone list. There are only 8 of them, so linear scan.
         for (size_t i = 0; i < std::size(kFXLocaleTimeZoneData); ++i) {
           const FX_LOCALETIMEZONEINFO& info = kFXLocaleTimeZoneData[i];
-          if (tz != info.name)
+          if (tz != info.name) {
             continue;
+          }
 
           hour += info.iHour;
           minute += info.iHour > 0 ? info.iMinute : -info.iMinute;
@@ -491,11 +526,13 @@ bool ParseLocaleTime(const WideString& wsTime,
   if (bHasA) {
     if (bPM) {
       hour += 12;
-      if (hour == 24)
+      if (hour == 24) {
         hour = 12;
+      }
     } else {
-      if (hour == 12)
+      if (hour == 12) {
         hour = 0;
+      }
     }
   }
   datetime->SetTime(hour, minute, second, millisecond);
@@ -531,8 +568,9 @@ bool MonthHas31Days(uint32_t month) {
 
 // |month| is 1-based. e.g. 1 means January.
 uint16_t GetSolarMonthDays(uint16_t year, uint16_t month) {
-  if (month == 2)
+  if (month == 2) {
     return FX_IsLeapYear(year) ? 29 : 28;
+  }
 
   return MonthHas30Days(month) ? 30 : 31;
 }
@@ -543,8 +581,9 @@ uint16_t GetWeekDay(uint16_t year, uint16_t month, uint16_t day) {
   uint16_t nDays =
       (year - 1) % 7 + (year - 1) / 4 - (year - 1) / 100 + (year - 1) / 400;
   nDays += kMonthDay[month - 1] + day;
-  if (FX_IsLeapYear(year) && month > 2)
+  if (FX_IsLeapYear(year) && month > 2) {
     nDays++;
+  }
   return nDays % 7;
 }
 
@@ -553,29 +592,34 @@ uint16_t GetWeekOfMonth(uint16_t year, uint16_t month, uint16_t day) {
   uint16_t week_index = 0;
   week_index += day / 7;
   day = day % 7;
-  if (week_day + day > 7)
+  if (week_day + day > 7) {
     week_index++;
+  }
   return week_index;
 }
 
 uint16_t GetWeekOfYear(uint16_t year, uint16_t month, uint16_t day) {
   uint16_t nDays = 0;
-  for (uint16_t i = 1; i < month; i++)
+  for (uint16_t i = 1; i < month; i++) {
     nDays += GetSolarMonthDays(year, i);
+  }
 
   nDays += day;
   uint16_t week_day = GetWeekDay(year, 1, 1);
   uint16_t week_index = 1;
   week_index += nDays / 7;
   nDays = nDays % 7;
-  if (week_day + nDays > 7)
+  if (week_day + nDays > 7) {
     week_index++;
+  }
   return week_index;
 }
 
 WideString NumToString(size_t fmt_size, int32_t value) {
-  return WideString::Format(
-      fmt_size == 1 ? L"%d" : fmt_size == 2 ? L"%02d" : L"%03d", value);
+  return WideString::Format(fmt_size == 1   ? L"%d"
+                            : fmt_size == 2 ? L"%02d"
+                                            : L"%03d",
+                            value);
 }
 
 WideString DateFormat(const WideString& wsDatePattern,
@@ -599,15 +643,17 @@ WideString DateFormat(const WideString& wsDatePattern,
     WideString symbol;
     symbol.Reserve(4);
     symbol += spDatePattern[ccf++];
-    while (ccf < spDatePattern.size() && spDatePattern[ccf] == symbol[0])
+    while (ccf < spDatePattern.size() && spDatePattern[ccf] == symbol[0]) {
       symbol += spDatePattern[ccf++];
+    }
 
     if (symbol.EqualsASCII("D") || symbol.EqualsASCII("DD")) {
       wsResult += NumToString(symbol.GetLength(), day);
     } else if (symbol.EqualsASCII("J") || symbol.EqualsASCII("JJJ")) {
       uint16_t nDays = 0;
-      for (int i = 1; i < month; i++)
+      for (int i = 1; i < month; i++) {
         nDays += GetSolarMonthDays(year, i);
+      }
       nDays += day;
       wsResult += NumToString(symbol.GetLength(), nDays);
     } else if (symbol.EqualsASCII("M") || symbol.EqualsASCII("MM")) {
@@ -650,8 +696,9 @@ WideString TimeFormat(const WideString& wsTimePattern,
   uint16_t wHour = hour;
   bool bPM = false;
   if (wsTimePattern.Contains('A')) {
-    if (wHour >= 12)
+    if (wHour >= 12) {
       bPM = true;
+    }
   }
 
   while (ccf < spTimePattern.size()) {
@@ -667,18 +714,21 @@ WideString TimeFormat(const WideString& wsTimePattern,
     WideString symbol;
     symbol.Reserve(4);
     symbol += spTimePattern[ccf++];
-    while (ccf < spTimePattern.size() && spTimePattern[ccf] == symbol[0])
+    while (ccf < spTimePattern.size() && spTimePattern[ccf] == symbol[0]) {
       symbol += spTimePattern[ccf++];
+    }
 
     if (symbol.EqualsASCII("h") || symbol.EqualsASCII("hh")) {
-      if (wHour > 12)
+      if (wHour > 12) {
         wHour -= 12;
+      }
       wsResult += NumToString(symbol.GetLength(), wHour == 0 ? 12 : wHour);
     } else if (symbol.EqualsASCII("K") || symbol.EqualsASCII("KK")) {
       wsResult += NumToString(symbol.GetLength(), wHour == 0 ? 24 : wHour);
     } else if (symbol.EqualsASCII("k") || symbol.EqualsASCII("kk")) {
-      if (wHour > 12)
+      if (wHour > 12) {
         wHour -= 12;
+      }
       wsResult += NumToString(symbol.GetLength(), wHour);
     } else if (symbol.EqualsASCII("H") || symbol.EqualsASCII("HH")) {
       wsResult += NumToString(symbol.GetLength(), wHour);
@@ -691,8 +741,9 @@ WideString TimeFormat(const WideString& wsTimePattern,
     } else if (symbol.EqualsASCII("A")) {
       wsResult += pLocale->GetMeridiemName(!bPM);
     } else if (symbol.EqualsASCIINoCase("z")) {
-      if (symbol.EqualsASCII("Z"))
+      if (symbol.EqualsASCII("Z")) {
         wsResult += L"GMT";
+      }
       int tz_minutes = pLocale->GetTimeZoneInMinutes();
       if (tz_minutes != 0) {
         wsResult += tz_minutes < 0 ? L"-" : L"+";
@@ -711,12 +762,14 @@ WideString FormatDateTimeInternal(const CFX_DateTime& dt,
                                   bool bDateFirst,
                                   LocaleIface* pLocale) {
   WideString wsDateOut;
-  if (!wsDatePattern.IsEmpty())
+  if (!wsDatePattern.IsEmpty()) {
     wsDateOut = DateFormat(wsDatePattern, pLocale, dt);
+  }
 
   WideString wsTimeOut;
-  if (!wsTimePattern.IsEmpty())
+  if (!wsTimePattern.IsEmpty()) {
     wsTimeOut = TimeFormat(wsTimePattern, pLocale, dt);
+  }
 
   return bDateFirst ? wsDateOut + wsTimeOut : wsTimeOut + wsDateOut;
 }
@@ -761,46 +814,55 @@ CFGAS_StringFormatter::DateTimeType AddTimeToTimelessType(
 
 bool FX_DateFromCanonical(pdfium::span<const wchar_t> spDate,
                           CFX_DateTime* datetime) {
-  if (spDate.size() > 10)
+  if (spDate.size() > 10) {
     return false;
+  }
 
   size_t cc = 0;
   uint32_t year = 0;
-  if (!ExtractCountDigits(spDate, 4, &cc, &year))
+  if (!ExtractCountDigits(spDate, 4, &cc, &year)) {
     return false;
-  if (year < 1900)
+  }
+  if (year < 1900) {
     return false;
+  }
   if (cc >= spDate.size()) {
     datetime->SetDate(year, 1, 1);
     return true;
   }
 
-  if (spDate[cc] == '-')
+  if (spDate[cc] == '-') {
     cc++;
+  }
 
   uint32_t month = 0;
-  if (!ExtractCountDigits(spDate, 2, &cc, &month) || month < 1 || month > 12)
+  if (!ExtractCountDigits(spDate, 2, &cc, &month) || month < 1 || month > 12) {
     return false;
+  }
 
   if (cc >= spDate.size()) {
     datetime->SetDate(year, month, 1);
     return true;
   }
 
-  if (spDate[cc] == '-')
+  if (spDate[cc] == '-') {
     cc++;
+  }
 
   uint32_t day = 0;
-  if (!ExtractCountDigits(spDate, 2, &cc, &day))
+  if (!ExtractCountDigits(spDate, 2, &cc, &day)) {
     return false;
-  if (day < 1)
+  }
+  if (day < 1) {
     return false;
+  }
   if ((MonthHas31Days(month) && day > 31) ||
       (MonthHas30Days(month) && day > 30)) {
     return false;
   }
-  if (month == 2 && day > (IsLeapYear(year) ? 29U : 28U))
+  if (month == 2 && day > (IsLeapYear(year) ? 29U : 28U)) {
     return false;
+  }
 
   datetime->SetDate(year, month, day);
   return true;
@@ -809,58 +871,67 @@ bool FX_DateFromCanonical(pdfium::span<const wchar_t> spDate,
 bool FX_TimeFromCanonical(const LocaleIface* pLocale,
                           pdfium::span<const wchar_t> spTime,
                           CFX_DateTime* datetime) {
-  if (spTime.empty())
+  if (spTime.empty()) {
     return false;
+  }
 
   size_t cc = 0;
   uint32_t hour = 0;
-  if (!ExtractCountDigits(spTime, 2, &cc, &hour) || hour >= 24)
+  if (!ExtractCountDigits(spTime, 2, &cc, &hour) || hour >= 24) {
     return false;
+  }
 
   if (cc >= spTime.size()) {
     datetime->SetTime(hour, 0, 0, 0);
     return true;
   }
 
-  if (spTime[cc] == ':')
+  if (spTime[cc] == ':') {
     cc++;
+  }
 
   uint32_t minute = 0;
-  if (!ExtractCountDigits(spTime, 2, &cc, &minute) || minute >= 60)
+  if (!ExtractCountDigits(spTime, 2, &cc, &minute) || minute >= 60) {
     return false;
+  }
 
   if (cc >= spTime.size()) {
     datetime->SetTime(hour, minute, 0, 0);
     return true;
   }
 
-  if (spTime[cc] == ':')
+  if (spTime[cc] == ':') {
     cc++;
+  }
 
   uint32_t second = 0;
   uint32_t millisecond = 0;
   if (cc < spTime.size() && spTime[cc] != 'Z') {
-    if (!ExtractCountDigits(spTime, 2, &cc, &second) || second >= 60)
+    if (!ExtractCountDigits(spTime, 2, &cc, &second) || second >= 60) {
       return false;
+    }
 
     if (cc < spTime.size() && spTime[cc] == '.') {
       cc++;
-      if (!ExtractCountDigits(spTime, 3, &cc, &millisecond))
+      if (!ExtractCountDigits(spTime, 3, &cc, &millisecond)) {
         return false;
+      }
     }
   }
 
   // Skip until we find a + or - for the time zone.
   while (cc < spTime.size()) {
-    if (spTime[cc] == '+' || spTime[cc] == '-')
+    if (spTime[cc] == '+' || spTime[cc] == '-') {
       break;
+    }
     ++cc;
   }
 
   if (cc < spTime.size()) {
     int tz_diff_minutes = 0;
-    if (spTime[cc] != 'Z')
+    if (spTime[cc] != 'Z') {
       cc += ParseTimeZone(spTime.subspan(cc), &tz_diff_minutes);
+    }
     ResolveZone(tz_diff_minutes, pLocale, &hour, &minute);
   }
 
@@ -921,23 +992,30 @@ CFGAS_StringFormatter::Category CFGAS_StringFormatter::GetCategory() const {
         wsCategory += pattern_span_[ccf];
         ccf++;
       }
-      if (wsCategory == kDateTimeStr)
+      if (wsCategory == kDateTimeStr) {
         return Category::kDateTime;
-      if (wsCategory == kTextStr)
+      }
+      if (wsCategory == kTextStr) {
         return Category::kText;
-      if (wsCategory == kNumStr)
+      }
+      if (wsCategory == kNumStr) {
         return Category::kNum;
-      if (wsCategory == kZeroStr)
+      }
+      if (wsCategory == kZeroStr) {
         return Category::kZero;
-      if (wsCategory == kNullStr)
+      }
+      if (wsCategory == kNullStr) {
         return Category::kNull;
+      }
       if (wsCategory == kDateStr) {
-        if (eCategory == Category::kTime)
+        if (eCategory == Category::kTime) {
           return Category::kDateTime;
+        }
         eCategory = Category::kDate;
       } else if (wsCategory == kTimeStr) {
-        if (eCategory == Category::kDate)
+        if (eCategory == Category::kDate) {
           return Category::kDateTime;
+        }
         eCategory = Category::kTime;
       }
     } else if (pattern_span_[ccf] == '}') {
@@ -969,8 +1047,9 @@ WideString CFGAS_StringFormatter::GetTextFormat(
         wsSearchCategory += pattern_span_[ccf];
         ccf++;
       }
-      if (wsSearchCategory != wsCategory)
+      if (wsSearchCategory != wsCategory) {
         continue;
+      }
 
       while (ccf < pattern_span_.size()) {
         if (pattern_span_[ccf] == '(') {
@@ -990,8 +1069,9 @@ WideString CFGAS_StringFormatter::GetTextFormat(
     }
     ccf++;
   }
-  if (!bBrackOpen)
+  if (!bBrackOpen) {
     wsPurgePattern = pattern_;
+  }
 
   return wsPurgePattern;
 }
@@ -1056,20 +1136,23 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
               break;
             }
           }
-          if (!pLocale)
+          if (!pLocale) {
             pLocale = pLocaleMgr->GetDefLocale();
+          }
 
           wsSubCategory = pLocale->GetNumPattern(eSubCategory);
           auto result = wsSubCategory.Find('.');
           if (result.has_value() && result.value() != 0) {
-            if (!bFindDot)
+            if (!bFindDot) {
               *iDotIndex = wsPurgePattern->GetLength() + result.value();
+            }
             bFindDot = true;
             *dwStyle |= FX_NUMSTYLE_DotVorv;
           }
           *wsPurgePattern += wsSubCategory;
-          if (eSubCategory == LocaleIface::NumSubcategory::kPercent)
+          if (eSubCategory == LocaleIface::NumSubcategory::kPercent) {
             *dwStyle |= FX_NUMSTYLE_Percent;
+          }
           continue;
         }
         ccf++;
@@ -1092,10 +1175,12 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
     }
     ccf++;
   }
-  if (!bFindDot)
+  if (!bFindDot) {
     *iDotIndex = wsPurgePattern->GetLength();
-  if (!pLocale)
+  }
+  if (!pLocale) {
     pLocale = pLocaleMgr->GetDefLocale();
+  }
   return pLocale;
 }
 
@@ -1107,8 +1192,9 @@ bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
   }
 
   WideString wsTextFormat = GetTextFormat(L"text");
-  if (wsTextFormat.IsEmpty())
+  if (wsTextFormat.IsEmpty()) {
     return false;
+  }
 
   pdfium::span<const wchar_t> spSrcText = wsSrcText.span();
   pdfium::span<const wchar_t> spTextFormat = wsTextFormat.span();
@@ -1183,8 +1269,9 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
   WideString wsNumFormat;
   LocaleIface* pLocale =
       GetNumericFormat(pLocaleMgr, &dot_index_f, &dwFormatStyle, &wsNumFormat);
-  if (!pLocale || wsNumFormat.IsEmpty())
+  if (!pLocale || wsNumFormat.IsEmpty()) {
     return false;
+  }
 
   int32_t iExponent = 0;
   WideString wsDotSymbol = pLocale->GetDecimalSymbol();
@@ -1204,8 +1291,9 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
   // If we're looking for a '.', 'V' or 'v' and the input string does not
   // have a dot index for one of those, then we disable parsing the decimal.
   if (!GetNumericDotIndex(wsSrcNum, wsDotSymbol, &dot_index) &&
-      (dwFormatStyle & FX_NUMSTYLE_DotVorv))
+      (dwFormatStyle & FX_NUMSTYLE_DotVorv)) {
     bReverseParse = true;
+  }
 
   // This parse is broken into two parts based on the '.' in the number
   // (or 'V' or 'v'). |dot_index_f| is the location of the dot in the format and
@@ -1233,8 +1321,9 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
         break;
       }
       case '9':
-        if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
+        if (!FXSYS_IsDecimalDigit(spSrcNum[cc])) {
           return false;
+        }
 
         wsValue->InsertAtFront(spSrcNum[cc]);
         cc--;
@@ -1273,11 +1362,13 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
         iExponent = 0;
         bool bExpSign = false;
         while (cc < spSrcNum.size()) {
-          if (spSrcNum[cc] == 'E' || spSrcNum[cc] == 'e')
+          if (spSrcNum[cc] == 'E' || spSrcNum[cc] == 'e') {
             break;
+          }
           if (FXSYS_IsDecimalDigit(spSrcNum[cc])) {
-            if (iExponent > std::numeric_limits<int>::max() / 10)
+            if (iExponent > std::numeric_limits<int>::max() / 10) {
               return false;
+            }
             iExponent = iExponent + FXSYS_DecimalCharToInt(spSrcNum[cc]) * 10;
             cc--;
             continue;
@@ -1383,17 +1474,19 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
       }
       case '(':
       case ')':
-        if (spSrcNum[cc] == spNumFormat[ccf])
+        if (spSrcNum[cc] == spNumFormat[ccf]) {
           bNeg = true;
-        else if (spSrcNum[cc] != L' ')
+        } else if (spSrcNum[cc] != L' ') {
           return false;
+        }
 
         cc--;
         ccf--;
         break;
       default:
-        if (spNumFormat[ccf] != spSrcNum[cc])
+        if (spNumFormat[ccf] != spSrcNum[cc]) {
           return false;
+        }
 
         cc--;
         ccf--;
@@ -1404,11 +1497,13 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
       bNeg = true;
       cc--;
     }
-    if (cc < spSrcNum.size())
+    if (cc < spSrcNum.size()) {
       return false;
+    }
   }
-  if ((dwFormatStyle & FX_NUMSTYLE_DotVorv) && dot_index < spSrcNum.size())
+  if ((dwFormatStyle & FX_NUMSTYLE_DotVorv) && dot_index < spSrcNum.size()) {
     *wsValue += '.';
+  }
 
   if (!bReverseParse) {
     cc = (dot_index == spSrcNum.size()) ? spSrcNum.size() : dot_index + 1;
@@ -1427,8 +1522,9 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
           continue;
         }
         case '9':
-          if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
+          if (!FXSYS_IsDecimalDigit(spSrcNum[cc])) {
             return false;
+          }
 
           *wsValue += spSrcNum[cc];
           cc++;
@@ -1476,11 +1572,13 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
             }
           }
           while (cc < spSrcNum.size()) {
-            if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
+            if (!FXSYS_IsDecimalDigit(spSrcNum[cc])) {
               break;
+            }
             int digit = FXSYS_DecimalCharToInt(spSrcNum[cc]);
-            if (iExponent > (std::numeric_limits<int>::max() - digit) / 10)
+            if (iExponent > (std::numeric_limits<int>::max() - digit) / 10) {
               return false;
+            }
             iExponent = iExponent * 10 + digit;
             cc++;
           }
@@ -1543,8 +1641,9 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
           bHavePercentSymbol = true;
         } break;
         case '8': {
-          while (ccf + 1 < spNumFormat.size() && spNumFormat[ccf + 1] == '8')
+          while (ccf + 1 < spNumFormat.size() && spNumFormat[ccf + 1] == '8') {
             ccf++;
+          }
 
           while (cc < spSrcNum.size() && FXSYS_IsDecimalDigit(spSrcNum[cc])) {
             *wsValue += spSrcNum[cc];
@@ -1561,34 +1660,40 @@ bool CFGAS_StringFormatter::ParseNum(LocaleMgrIface* pLocaleMgr,
         }
         case '(':
         case ')':
-          if (spSrcNum[cc] == spNumFormat[ccf])
+          if (spSrcNum[cc] == spNumFormat[ccf]) {
             bNeg = true;
-          else if (spSrcNum[cc] != L' ')
+          } else if (spSrcNum[cc] != L' ') {
             return false;
+          }
 
           cc++;
           break;
         default:
-          if (spNumFormat[ccf] != spSrcNum[cc])
+          if (spNumFormat[ccf] != spSrcNum[cc]) {
             return false;
+          }
 
           cc++;
       }
       ++ccf;
     }
-    if (cc != spSrcNum.size())
+    if (cc != spSrcNum.size()) {
       return false;
+    }
   }
   if (iExponent || bHavePercentSymbol) {
     CFGAS_Decimal decimal = CFGAS_Decimal(wsValue->AsStringView());
-    if (iExponent)
+    if (iExponent) {
       decimal = decimal * CFGAS_Decimal(powf(10, iExponent), 3);
-    if (bHavePercentSymbol)
+    }
+    if (bHavePercentSymbol) {
       decimal = decimal / CFGAS_Decimal(100);
+    }
     *wsValue = decimal.ToWideString();
   }
-  if (bNeg)
+  if (bNeg) {
     wsValue->InsertAtFront(L'-');
+  }
 
   return true;
 }
@@ -1622,8 +1727,9 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
           *wsDatePattern = pattern_.First(ccf);
           *wsTimePattern = pattern_.Last(pattern_.GetLength() - ccf);
           wsTimePattern->SetAt(0, ' ');
-          if (!*pLocale)
+          if (!*pLocale) {
             *pLocale = pLocaleMgr->GetDefLocale();
+          }
           return DateTimeType::kDateTime;
         }
         wsCategory += pattern_span_[ccf];
@@ -1671,8 +1777,9 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
               break;
             }
           }
-          if (!*pLocale)
+          if (!*pLocale) {
             *pLocale = pLocaleMgr->GetDefLocale();
+          }
 
           switch (eCategory) {
             case Category::kDate:
@@ -1699,12 +1806,13 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
     } else if (pattern_span_[ccf] == '}') {
       bBraceOpen = false;
       if (!wsTempPattern.IsEmpty()) {
-        if (eCategory == Category::kTime)
+        if (eCategory == Category::kTime) {
           *wsTimePattern = std::move(wsTempPattern);
-        else if (eCategory == Category::kDate)
+        } else if (eCategory == Category::kDate) {
           *wsDatePattern = std::move(wsTempPattern);
-        else
+        } else {
           wsTempPattern.clear();
+        }
       }
     } else {
       wsTempPattern += pattern_span_[ccf];
@@ -1713,13 +1821,15 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
   }
 
   if (!wsTempPattern.IsEmpty()) {
-    if (eCategory == Category::kDate)
+    if (eCategory == Category::kDate) {
       *wsDatePattern += wsTempPattern;
-    else
+    } else {
       *wsTimePattern += wsTempPattern;
+    }
   }
-  if (!*pLocale)
+  if (!*pLocale) {
     *pLocale = pLocaleMgr->GetDefLocale();
+  }
   if (eDateTimeType == DateTimeType::kUnknown) {
     wsTimePattern->clear();
     *wsDatePattern = pattern_;
@@ -1741,11 +1851,13 @@ bool CFGAS_StringFormatter::ParseDateTime(LocaleMgrIface* pLocaleMgr,
   WideString wsTimePattern;
   DateTimeType eCategory =
       GetDateTimeFormat(pLocaleMgr, &pLocale, &wsDatePattern, &wsTimePattern);
-  if (!pLocale)
+  if (!pLocale) {
     return false;
+  }
 
-  if (eCategory == DateTimeType::kUnknown)
+  if (eCategory == DateTimeType::kUnknown) {
     eCategory = eDateTimeType;
+  }
 
   size_t iStart = 0;
   switch (eCategory) {
@@ -1845,15 +1957,17 @@ bool CFGAS_StringFormatter::FormatText(const WideString& wsSrcText,
         break;
       }
       case 'A':
-        if (iText >= spSrcText.size() || !FXSYS_iswalpha(spSrcText[iText]))
+        if (iText >= spSrcText.size() || !FXSYS_iswalpha(spSrcText[iText])) {
           return false;
+        }
 
         *wsOutput += spSrcText[iText++];
         iPattern++;
         break;
       case 'X':
-        if (iText >= spSrcText.size())
+        if (iText >= spSrcText.size()) {
           return false;
+        }
 
         *wsOutput += spSrcText[iText++];
         iPattern++;
@@ -1870,8 +1984,9 @@ bool CFGAS_StringFormatter::FormatText(const WideString& wsSrcText,
         break;
       case '9':
         if (iText >= spSrcText.size() ||
-            !FXSYS_IsDecimalDigit(spSrcText[iText]))
+            !FXSYS_IsDecimalDigit(spSrcText[iText])) {
           return false;
+        }
 
         *wsOutput += spSrcText[iText++];
         iPattern++;
@@ -1896,14 +2011,16 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
   WideString wsNumFormat;
   LocaleIface* pLocale =
       GetNumericFormat(pLocaleMgr, &dot_index_f, &dwNumStyle, &wsNumFormat);
-  if (!pLocale || wsNumFormat.IsEmpty())
+  if (!pLocale || wsNumFormat.IsEmpty()) {
     return false;
+  }
 
   pdfium::span<const wchar_t> spNumFormat = wsNumFormat.span();
   WideString wsSrcNum = wsInputNum;
   wsSrcNum.TrimFront('0');
-  if (wsSrcNum.IsEmpty() || wsSrcNum[0] == '.')
+  if (wsSrcNum.IsEmpty() || wsSrcNum[0] == '.') {
     wsSrcNum.InsertAtFront('0');
+  }
 
   CFGAS_Decimal decimal = CFGAS_Decimal(wsSrcNum.AsStringView());
   if (dwNumStyle & FX_NUMSTYLE_Percent) {
@@ -1934,8 +2051,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
       threshold *= 10;
       fixed_count--;
     }
-    if (!threshold.IsValid())
+    if (!threshold.IsValid()) {
       return false;
+    }
 
     bool bAdjusted = false;
     while (decimal.IsNotZero() &&
@@ -1946,8 +2064,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
     }
     if (!bAdjusted) {
       threshold *= 10;
-      if (!threshold.IsValid())
+      if (!threshold.IsValid()) {
         return false;
+      }
 
       while (decimal.IsNotZero() &&
              fabs(decimal.ToDouble()) > threshold.ValueOrDie()) {
@@ -1980,16 +2099,18 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
   bool bAddNeg = false;
   pdfium::span<const wchar_t> spSrcNum = wsSrcNum.span();
   auto dot_index = wsSrcNum.Find('.');
-  if (!dot_index.has_value())
+  if (!dot_index.has_value()) {
     dot_index = spSrcNum.size();
+  }
 
   size_t cc = dot_index.value() - 1;
   for (size_t ccf = dot_index_f - 1; ccf < spNumFormat.size(); --ccf) {
     switch (spNumFormat[ccf]) {
       case '9':
         if (cc < spSrcNum.size()) {
-          if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
+          if (!FXSYS_IsDecimalDigit(spSrcNum[cc])) {
             return false;
+          }
           wsOutput->InsertAtFront(spSrcNum[cc]);
           cc--;
         } else {
@@ -1998,17 +2119,20 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
         break;
       case 'z':
         if (cc < spSrcNum.size()) {
-          if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
+          if (!FXSYS_IsDecimalDigit(spSrcNum[cc])) {
             return false;
-          if (spSrcNum[0] != '0')
+          }
+          if (spSrcNum[0] != '0') {
             wsOutput->InsertAtFront(spSrcNum[cc]);
+          }
           cc--;
         }
         break;
       case 'Z':
         if (cc < spSrcNum.size()) {
-          if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
+          if (!FXSYS_IsDecimalDigit(spSrcNum[cc])) {
             return false;
+          }
           wsOutput->InsertAtFront(spSrcNum[0] == '0' ? L' ' : spSrcNum[cc]);
           cc--;
         } else {
@@ -2037,8 +2161,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
         break;
       case 'r':
         if (ccf - 1 < spNumFormat.size() && spNumFormat[ccf - 1] == 'c') {
-          if (bNeg)
+          if (bNeg) {
             *wsOutput = L"CR" + *wsOutput;
+          }
           ccf--;
           bAddNeg = true;
         } else {
@@ -2056,8 +2181,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
         break;
       case 'b':
         if (ccf - 1 < spNumFormat.size() && spNumFormat[ccf - 1] == 'd') {
-          if (bNeg)
+          if (bNeg) {
             *wsOutput = L"db" + *wsOutput;
+          }
           ccf--;
           bAddNeg = true;
         } else {
@@ -2077,8 +2203,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
         *wsOutput = pLocale->GetPercentSymbol() + *wsOutput;
         break;
       case ',':
-        if (cc < spSrcNum.size())
+        if (cc < spSrcNum.size()) {
           *wsOutput = wsGroupSymbol + *wsOutput;
+        }
         break;
       case '(':
         wsOutput->InsertAtFront(bNeg ? L'(' : L' ');
@@ -2100,21 +2227,24 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
     size_t nPos = dot_index.value() % 3;
     wsOutput->clear();
     for (size_t i = 0; i < dot_index.value(); i++) {
-      if (i % 3 == nPos && i != 0)
+      if (i % 3 == nPos && i != 0) {
         *wsOutput += wsGroupSymbol;
+      }
       *wsOutput += wsSrcNum[i];
     }
     if (dot_index.value() < spSrcNum.size()) {
       *wsOutput += pLocale->GetDecimalSymbol();
       *wsOutput += wsSrcNum.Last(spSrcNum.size() - dot_index.value() - 1);
     }
-    if (bNeg)
+    if (bNeg) {
       *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
+    }
     return true;
   }
   if (dot_index_f == wsNumFormat.GetLength()) {
-    if (!bAddNeg && bNeg)
+    if (!bAddNeg && bNeg) {
       *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
+    }
     return true;
   }
 
@@ -2140,8 +2270,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
         continue;
       case '9':
         if (cc < spSrcNum.size()) {
-          if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
+          if (!FXSYS_IsDecimalDigit(spSrcNum[cc])) {
             return false;
+          }
           *wsOutput += spSrcNum[cc];
           cc++;
         } else {
@@ -2150,16 +2281,18 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
         break;
       case 'z':
         if (cc < spSrcNum.size()) {
-          if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
+          if (!FXSYS_IsDecimalDigit(spSrcNum[cc])) {
             return false;
+          }
           *wsOutput += spSrcNum[cc];
           cc++;
         }
         break;
       case 'Z':
         if (cc < spSrcNum.size()) {
-          if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
+          if (!FXSYS_IsDecimalDigit(spSrcNum[cc])) {
             return false;
+          }
           *wsOutput += spSrcNum[cc];
           cc++;
         } else {
@@ -2175,8 +2308,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
         break;
       case 'c':
         if (ccf + 1 < spNumFormat.size() && spNumFormat[ccf + 1] == 'r') {
-          if (bNeg)
+          if (bNeg) {
             *wsOutput += L"CR";
+          }
           ccf++;
           bAddNeg = true;
         }
@@ -2190,8 +2324,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
         break;
       case 'd':
         if (ccf + 1 < spNumFormat.size() && spNumFormat[ccf + 1] == 'b') {
-          if (bNeg)
+          if (bNeg) {
             *wsOutput += L"db";
+          }
           ccf++;
           bAddNeg = true;
         }
@@ -2207,8 +2342,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
         *wsOutput += pLocale->GetPercentSymbol();
         break;
       case '8':
-        while (ccf + 1 < spNumFormat.size() && spNumFormat[ccf + 1] == '8')
+        while (ccf + 1 < spNumFormat.size() && spNumFormat[ccf + 1] == '8') {
           ccf++;
+        }
         while (cc < spSrcNum.size() && FXSYS_IsDecimalDigit(spSrcNum[cc])) {
           *wsOutput += spSrcNum[cc];
           cc++;
@@ -2229,8 +2365,9 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
     }
     ++ccf;
   }
-  if (!bAddNeg && bNeg)
+  if (!bAddNeg && bNeg) {
     *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
+  }
 
   return true;
 }
@@ -2248,8 +2385,9 @@ bool CFGAS_StringFormatter::FormatDateTime(LocaleMgrIface* pLocaleMgr,
   LocaleIface* pLocale = nullptr;
   DateTimeType eCategory =
       GetDateTimeFormat(pLocaleMgr, &pLocale, &wsDatePattern, &wsTimePattern);
-  if (!pLocale)
+  if (!pLocale) {
     return false;
+  }
 
   if (eCategory == DateTimeType::kUnknown) {
     if (eDateTimeType == DateTimeType::kTime) {
@@ -2257,8 +2395,9 @@ bool CFGAS_StringFormatter::FormatDateTime(LocaleMgrIface* pLocaleMgr,
       wsDatePattern = WideString();
     }
     eCategory = eDateTimeType;
-    if (eCategory == DateTimeType::kUnknown)
+    if (eCategory == DateTimeType::kUnknown) {
       return false;
+    }
   }
 
   CFX_DateTime dt;
@@ -2281,8 +2420,9 @@ bool CFGAS_StringFormatter::FormatDateTime(LocaleMgrIface* pLocaleMgr,
         wsSrcDateTime.span().first(iT.value());
     pdfium::span<const wchar_t> wsSrcTime =
         wsSrcDateTime.span().subspan(iT.value() + 1);
-    if (wsSrcDate.empty() || wsSrcTime.empty())
+    if (wsSrcDate.empty() || wsSrcTime.empty()) {
       return false;
+    }
 
     if (FX_DateFromCanonical(wsSrcDate, &dt) &&
         FX_TimeFromCanonical(pLocale, wsSrcTime, &dt)) {

@@ -63,8 +63,9 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       pParams.GetGraphics()->SetStrokeColor(CFGAS_GEColor(cr));
       pParams.GetGraphics()->SetLineWidth(fWidth);
       const CFGAS_GEPath* pParamsPath = pParams.GetPath();
-      if (pParamsPath)
+      if (pParamsPath) {
         pParams.GetGraphics()->StrokePath(*pParamsPath, pParams.matrix_);
+      }
       break;
     }
     default:

@@ -43,25 +43,31 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
         : iYear(year), iMonth(month), iDay(day) {}
 
     bool operator<(const DATE& right) {
-      if (iYear < right.iYear)
+      if (iYear < right.iYear) {
         return true;
+      }
       if (iYear == right.iYear) {
-        if (iMonth < right.iMonth)
+        if (iMonth < right.iMonth) {
           return true;
-        if (iMonth == right.iMonth)
+        }
+        if (iMonth == right.iMonth) {
           return iDay < right.iDay;
+        }
       }
       return false;
     }
 
     bool operator>(const DATE& right) {
-      if (iYear > right.iYear)
+      if (iYear > right.iYear) {
         return true;
+      }
       if (iYear == right.iYear) {
-        if (iMonth > right.iMonth)
+        if (iMonth > right.iMonth) {
           return true;
-        if (iMonth == right.iMonth)
+        }
+        if (iMonth == right.iMonth) {
           return iDay > right.iDay;
+        }
       }
       return false;
     }

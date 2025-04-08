@@ -33,8 +33,9 @@ void CFWL_WidgetMgr::Trace(cppgc::Visitor* visitor) const {
 
 CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(const CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem)
+  if (!pItem) {
     return nullptr;
+  }
 
   Item* pParent = pItem->GetParent();
   return pParent ? pParent->pWidget : nullptr;
@@ -42,8 +43,9 @@ CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(const CFWL_Widget* pWidget) const {
 
 CFWL_Widget* CFWL_WidgetMgr::GetPriorSiblingWidget(CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem)
+  if (!pItem) {
     return nullptr;
+  }
 
   Item* pSibling = pItem->GetPrevSibling();
   return pSibling ? pSibling->pWidget : nullptr;
@@ -51,8 +53,9 @@ CFWL_Widget* CFWL_WidgetMgr::GetPriorSiblingWidget(CFWL_Widget* pWidget) const {
 
 CFWL_Widget* CFWL_WidgetMgr::GetNextSiblingWidget(CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem)
+  if (!pItem) {
     return nullptr;
+  }
 
   Item* pSibling = pItem->GetNextSibling();
   return pSibling ? pSibling->pWidget : nullptr;
@@ -60,8 +63,9 @@ CFWL_Widget* CFWL_WidgetMgr::GetNextSiblingWidget(CFWL_Widget* pWidget) const {
 
 CFWL_Widget* CFWL_WidgetMgr::GetFirstChildWidget(CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem)
+  if (!pItem) {
     return nullptr;
+  }
 
   Item* pChild = pItem->GetFirstChild();
   return pChild ? pChild->pWidget : nullptr;
@@ -69,8 +73,9 @@ CFWL_Widget* CFWL_WidgetMgr::GetFirstChildWidget(CFWL_Widget* pWidget) const {
 
 CFWL_Widget* CFWL_WidgetMgr::GetLastChildWidget(CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem)
+  if (!pItem) {
     return nullptr;
+  }
 
   Item* pChild = pItem->GetLastChild();
   return pChild ? pChild->pWidget : nullptr;
@@ -98,19 +103,22 @@ void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild) {
     GetWidgetMgrRootItem()->AppendLastChild(pParentItem);
   }
   Item* pChildItem = GetWidgetMgrItem(pChild);
-  if (!pChildItem)
+  if (!pChildItem) {
     pChildItem = CreateWidgetMgrItem(pChild);
+  }
   pParentItem->AppendLastChild(pChildItem);
 }
 
 void CFWL_WidgetMgr::RemoveWidget(CFWL_Widget* pWidget) {
   DCHECK(pWidget);
   Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem)
+  if (!pItem) {
     return;
+  }
 
-  while (pItem->GetFirstChild())
+  while (pItem->GetFirstChild()) {
     RemoveWidget(pItem->GetFirstChild()->pWidget);
+  }
 
   pItem->RemoveSelfIfParented();
   map_widget_item_.erase(pWidget);
@@ -118,8 +126,9 @@ void CFWL_WidgetMgr::RemoveWidget(CFWL_Widget* pWidget) {
 
 CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
                                               const CFX_PointF& point) const {
-  if (!parent)
+  if (!parent) {
     return nullptr;
+  }
 
   CFWL_Widget* child = GetLastChildWidget(parent);
   while (child) {
@@ -148,8 +157,9 @@ CFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(CFWL_Widget* pParent) const {
         (child->GetStates() & FWL_STATE_PSB_Default)) {
       return child;
     }
-    if (CFWL_Widget* find = GetDefaultButton(child))
+    if (CFWL_Widget* find = GetDefaultButton(child)) {
       return find;
+    }
 
     child = GetNextSiblingWidget(child);
   }
@@ -184,8 +194,9 @@ void CFWL_WidgetMgr::GetAdapterPopupPos(CFWL_Widget* pWidget,
 
 void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
   CFWL_Widget* pDstWidget = pMessage->GetDstTarget();
-  if (!pDstWidget)
+  if (!pDstWidget) {
     return;
+  }
 
   CFWL_NoteDriver* pNoteDriver = pDstWidget->GetFWLApp()->GetNoteDriver();
   pNoteDriver->ProcessMessage(pMessage);
@@ -194,41 +205,47 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
 void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
                                   CFGAS_GEGraphics* pGraphics,
                                   const CFX_Matrix& matrix) {
-  if (!pWidget || !pGraphics)
+  if (!pWidget || !pGraphics) {
     return;
+  }
 
   pWidget->GetDelegate()->OnDrawWidget(pGraphics, matrix);
 
   CFX_RectF clipBounds = pGraphics->GetClipRect();
-  if (!clipBounds.IsEmpty())
+  if (!clipBounds.IsEmpty()) {
     DrawChildren(pWidget, clipBounds, pGraphics, matrix);
+  }
 }
 
 void CFWL_WidgetMgr::DrawChildren(CFWL_Widget* parent,
                                   const CFX_RectF& rtClip,
                                   CFGAS_GEGraphics* pGraphics,
                                   const CFX_Matrix& mtMatrix) {
-  if (!parent)
+  if (!parent) {
     return;
+  }
 
   CFWL_Widget* pNextChild = GetFirstChildWidget(parent);
   while (pNextChild) {
     CFWL_Widget* child = pNextChild;
     pNextChild = GetNextSiblingWidget(child);
-    if (!child->IsVisible())
+    if (!child->IsVisible()) {
       continue;
+    }
 
     CFX_RectF rtWidget = child->GetWidgetRect();
-    if (rtWidget.IsEmpty())
+    if (rtWidget.IsEmpty()) {
       continue;
+    }
 
     CFX_Matrix widgetMatrix;
     CFX_RectF clipBounds(rtWidget);
     widgetMatrix.Concat(mtMatrix);
     widgetMatrix.TranslatePrepend(rtWidget.left, rtWidget.top);
 
-    if (IFWL_WidgetDelegate* pDelegate = child->GetDelegate())
+    if (IFWL_WidgetDelegate* pDelegate = child->GetDelegate()) {
       pDelegate->OnDrawWidget(pGraphics, widgetMatrix);
+    }
 
     DrawChildren(child, clipBounds, pGraphics, widgetMatrix);
   }

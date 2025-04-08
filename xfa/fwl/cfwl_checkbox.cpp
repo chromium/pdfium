@@ -45,8 +45,9 @@ void CFWL_CheckBox::SetBoxSize(float fHeight) {
 }
 
 void CFWL_CheckBox::Update() {
-  if (IsLocked())
+  if (IsLocked()) {
     return;
+  }
 
   UpdateTextOutStyles();
   Layout();
@@ -54,11 +55,13 @@ void CFWL_CheckBox::Update() {
 
 void CFWL_CheckBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
                                const CFX_Matrix& matrix) {
-  if (!pGraphics)
+  if (!pGraphics) {
     return;
+  }
 
-  if (HasBorder())
+  if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
+  }
 
   Mask<CFWL_PartState> dwStates = GetPartStates();
   IFWL_ThemeProvider* pTheme = GetThemeProvider();
@@ -234,8 +237,9 @@ void CFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
       break;
   }
   // Dst target could be |this|, continue only if not destroyed by above.
-  if (pMessage->GetDstTarget())
+  if (pMessage->GetDstTarget()) {
     CFWL_Widget::OnProcessMessage(pMessage);
+  }
 }
 
 void CFWL_CheckBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
@@ -313,8 +317,9 @@ void CFWL_CheckBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
       }
     }
   }
-  if (bRepaint)
+  if (bRepaint) {
     RepaintRect(box_rect_);
+  }
 }
 
 void CFWL_CheckBox::OnMouseLeave() {

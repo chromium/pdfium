@@ -34,8 +34,9 @@ namespace {
 CFX_XMLNode* GetDocumentNode(CFX_XMLNode* pRootNode) {
   for (CFX_XMLNode* pXMLNode = pRootNode->GetFirstChild(); pXMLNode;
        pXMLNode = pXMLNode->GetNextSibling()) {
-    if (pXMLNode->GetType() == CFX_XMLNode::Type::kElement)
+    if (pXMLNode->GetType() == CFX_XMLNode::Type::kElement) {
       return pXMLNode;
+    }
   }
   return nullptr;
 }
@@ -45,14 +46,17 @@ bool MatchNodeName(CFX_XMLNode* pNode,
                    ByteStringView bsNamespaceURIPrefix,
                    XFA_PacketMatch eMatch) {
   CFX_XMLElement* pElement = ToXMLElement(pNode);
-  if (!pElement)
+  if (!pElement) {
     return false;
+  }
 
-  if (!pElement->GetLocalTagName().EqualsASCII(bsLocalTagName))
+  if (!pElement->GetLocalTagName().EqualsASCII(bsLocalTagName)) {
     return false;
+  }
 
-  if (eMatch == XFA_PacketMatch::kNoMatch)
+  if (eMatch == XFA_PacketMatch::kNoMatch) {
     return true;
+  }
 
   WideString wsNodeStr = pElement->GetNamespaceURI();
   if (eMatch == XFA_PacketMatch::kPrefixMatch) {
@@ -105,8 +109,9 @@ std::optional<WideString> FindAttributeWithNS(
     auto pos = it.first.Find(L':', 0);
     WideString wsNSPrefix;
     if (!pos.has_value()) {
-      if (wsLocalAttributeName != it.first)
+      if (wsLocalAttributeName != it.first) {
         continue;
+      }
     } else {
       if (wsLocalAttributeName !=
           it.first.Last(it.first.GetLength() - pos.value() - 1)) {
@@ -164,8 +169,9 @@ void ConvertXMLToPlainText(CFX_XMLElement* pRootXMLNode, WideString& wsOutput) {
       case CFX_XMLNode::Type::kText:
       case CFX_XMLNode::Type::kCharData: {
         WideString wsText = ToXMLText(pXMLChild)->GetText();
-        if (IsStringAllWhitespace(wsText))
+        if (IsStringAllWhitespace(wsText)) {
           continue;
+        }
         wsOutput = std::move(wsText);
         break;
       }
@@ -176,8 +182,9 @@ void ConvertXMLToPlainText(CFX_XMLElement* pRootXMLNode, WideString& wsOutput) {
 }
 
 WideString GetPlainTextFromRichText(CFX_XMLNode* pXMLNode) {
-  if (!pXMLNode)
+  if (!pXMLNode) {
     return WideString();
+  }
 
   WideString wsPlainText;
   switch (pXMLNode->GetType()) {
@@ -232,16 +239,18 @@ bool CXFA_DocumentBuilder::BuildDocument(CFX_XMLDocument* pXML,
   DCHECK(pXML);
 
   CFX_XMLNode* root = Build(pXML);
-  if (!root)
+  if (!root) {
     return false;
+  }
 
   root_node_ = ParseAsXDPPacket(root, ePacketID);
   return !!root_node_;
 }
 
 CFX_XMLNode* CXFA_DocumentBuilder::Build(CFX_XMLDocument* pXML) {
-  if (!pXML)
+  if (!pXML) {
     return nullptr;
+  }
 
   xml_doc_ = pXML;
   xml_doc_->GetRoot()->InsertChildNode(
@@ -258,21 +267,24 @@ void CXFA_DocumentBuilder::ConstructXFANode(CXFA_Node* pXFANode,
       for (CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild(); pXMLChild;
            pXMLChild = pXMLChild->GetNextSibling()) {
         CFX_XMLNode::Type eNodeType = pXMLChild->GetType();
-        if (eNodeType == CFX_XMLNode::Type::kInstruction)
+        if (eNodeType == CFX_XMLNode::Type::kInstruction) {
           continue;
+        }
 
         if (eNodeType == CFX_XMLNode::Type::kElement) {
           CXFA_Node* pXFAChild = node_factory_->CreateNode(
               XFA_PacketType::Datasets, XFA_Element::DataValue);
-          if (!pXFAChild)
+          if (!pXFAChild) {
             return;
+          }
 
           CFX_XMLElement* child = static_cast<CFX_XMLElement*>(pXMLChild);
           WideString wsNodeStr = child->GetLocalTagName();
           pXFAChild->JSObject()->SetCData(XFA_Attribute::Name, wsNodeStr);
           WideString wsChildValue = GetPlainTextFromRichText(child);
-          if (!wsChildValue.IsEmpty())
+          if (!wsChildValue.IsEmpty()) {
             pXFAChild->JSObject()->SetCData(XFA_Attribute::Value, wsChildValue);
+          }
 
           pXFANode->InsertChildAndNotify(pXFAChild, nullptr);
           pXFAChild->SetXMLMappingNode(pXMLChild);
@@ -329,22 +341,25 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Xdp);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match)) {
     return nullptr;
+  }
 
   CXFA_Node* pXFARootNode =
       node_factory_->CreateNode(XFA_PacketType::Xdp, XFA_Element::Xfa);
-  if (!pXFARootNode)
+  if (!pXFARootNode) {
     return nullptr;
+  }
 
   root_node_ = pXFARootNode;
   pXFARootNode->JSObject()->SetCData(XFA_Attribute::Name, L"xfa");
 
   for (auto it : ToXMLElement(pXMLDocumentNode)->GetAttributes()) {
-    if (it.first.EqualsASCII("uuid"))
+    if (it.first.EqualsASCII("uuid")) {
       pXFARootNode->JSObject()->SetCData(XFA_Attribute::Uuid, it.second);
-    else if (it.first.EqualsASCII("timeStamp"))
+    } else if (it.first.EqualsASCII("timeStamp")) {
       pXFARootNode->JSObject()->SetCData(XFA_Attribute::TimeStamp, it.second);
+    }
   }
 
   CFX_XMLNode* pXMLConfigDOMRoot = nullptr;
@@ -358,13 +373,15 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
     }
     // TODO(tsepez): make GetFirstChildByName() take a name.
     uint32_t hash = FX_HashCode_GetAsIfW(config_packet.name);
-    if (pXFARootNode->GetFirstChildByName(hash))
+    if (pXFARootNode->GetFirstChildByName(hash)) {
       return nullptr;
+    }
 
     pXMLConfigDOMRoot = pChildItem;
     pXFAConfigDOMRoot = ParseAsXDPPacket_Config(pXMLConfigDOMRoot);
-    if (pXFAConfigDOMRoot)
+    if (pXFAConfigDOMRoot) {
       pXFARootNode->InsertChildAndNotify(pXFAConfigDOMRoot, nullptr);
+    }
   }
 
   CFX_XMLNode* pXMLDatasetsDOMRoot = nullptr;
@@ -373,8 +390,9 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
   for (CFX_XMLNode* pChildItem = pXMLDocumentNode->GetFirstChild(); pChildItem;
        pChildItem = pChildItem->GetNextSibling()) {
     CFX_XMLElement* pElement = ToXMLElement(pChildItem);
-    if (!pElement || pElement == pXMLConfigDOMRoot)
+    if (!pElement || pElement == pXMLConfigDOMRoot) {
       continue;
+    }
 
     WideString wsPacketName = pElement->GetLocalTagName();
     std::optional<XFA_PACKETINFO> packet_info =
@@ -385,24 +403,29 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
       packet_info = {};
     }
     XFA_PacketType ePacket = XFA_PacketType::User;
-    if (packet_info.has_value())
+    if (packet_info.has_value()) {
       ePacket = packet_info.value().packet_type;
-    if (ePacket == XFA_PacketType::Xdp)
+    }
+    if (ePacket == XFA_PacketType::Xdp) {
       continue;
+    }
     if (ePacket == XFA_PacketType::Datasets) {
-      if (pXMLDatasetsDOMRoot)
+      if (pXMLDatasetsDOMRoot) {
         return nullptr;
+      }
 
       pXMLDatasetsDOMRoot = pElement;
     } else if (ePacket == XFA_PacketType::Form) {
-      if (pXMLFormDOMRoot)
+      if (pXMLFormDOMRoot) {
         return nullptr;
+      }
 
       pXMLFormDOMRoot = pElement;
     } else if (ePacket == XFA_PacketType::Template) {
       // Found a duplicate template packet.
-      if (pXMLTemplateDOMRoot)
+      if (pXMLTemplateDOMRoot) {
         return nullptr;
+      }
 
       CXFA_Node* pPacketNode = ParseAsXDPPacket_Template(pElement);
       if (pPacketNode) {
@@ -424,20 +447,23 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
   }
 
   // No template is found.
-  if (!pXMLTemplateDOMRoot)
+  if (!pXMLTemplateDOMRoot) {
     return nullptr;
+  }
 
   if (pXMLDatasetsDOMRoot) {
     CXFA_Node* pPacketNode =
         ParseAsXDPPacket(pXMLDatasetsDOMRoot, XFA_PacketType::Datasets);
-    if (pPacketNode)
+    if (pPacketNode) {
       pXFARootNode->InsertChildAndNotify(pPacketNode, nullptr);
+    }
   }
   if (pXMLFormDOMRoot) {
     CXFA_Node* pPacketNode =
         ParseAsXDPPacket(pXMLFormDOMRoot, XFA_PacketType::Form);
-    if (pPacketNode)
+    if (pPacketNode) {
       pXFARootNode->InsertChildAndNotify(pPacketNode, nullptr);
+    }
   }
 
   pXFARootNode->SetXMLMappingNode(pXMLDocumentNode);
@@ -447,18 +473,21 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Config(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Config);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match)) {
     return nullptr;
+  }
 
   CXFA_Node* pNode =
       node_factory_->CreateNode(XFA_PacketType::Config, XFA_Element::Config);
-  if (!pNode)
+  if (!pNode) {
     return nullptr;
+  }
 
   pNode->JSObject()->SetCData(XFA_Attribute::Name,
                               WideString::FromASCII(packet.name));
-  if (!NormalLoader(pNode, pXMLDocumentNode, XFA_PacketType::Config, true))
+  if (!NormalLoader(pNode, pXMLDocumentNode, XFA_PacketType::Config, true)) {
     return nullptr;
+  }
 
   pNode->SetXMLMappingNode(pXMLDocumentNode);
   return pNode;
@@ -467,26 +496,30 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Config(
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Template(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Template);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match)) {
     return nullptr;
+  }
 
   CXFA_Node* pNode = node_factory_->CreateNode(XFA_PacketType::Template,
                                                XFA_Element::Template);
-  if (!pNode)
+  if (!pNode) {
     return nullptr;
+  }
 
   pNode->JSObject()->SetCData(XFA_Attribute::Name,
                               WideString::FromASCII(packet.name));
 
   CFX_XMLElement* pXMLDocumentElement = ToXMLElement(pXMLDocumentNode);
   WideString wsNamespaceURI = pXMLDocumentElement->GetNamespaceURI();
-  if (wsNamespaceURI.IsEmpty())
+  if (wsNamespaceURI.IsEmpty()) {
     wsNamespaceURI = pXMLDocumentElement->GetAttribute(L"xmlns:xfa");
+  }
 
   pNode->GetDocument()->RecognizeXFAVersionNumber(wsNamespaceURI);
 
-  if (!NormalLoader(pNode, pXMLDocumentNode, XFA_PacketType::Template, true))
+  if (!NormalLoader(pNode, pXMLDocumentNode, XFA_PacketType::Template, true)) {
     return nullptr;
+  }
 
   pNode->SetXMLMappingNode(pXMLDocumentNode);
   return pNode;
@@ -495,13 +528,15 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Template(
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Form(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Form);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match)) {
     return nullptr;
+  }
 
   CXFA_Node* pNode =
       node_factory_->CreateNode(XFA_PacketType::Form, XFA_Element::Form);
-  if (!pNode)
+  if (!pNode) {
     return nullptr;
+  }
 
   pNode->JSObject()->SetCData(XFA_Attribute::Name,
                               WideString::FromASCII(packet.name));
@@ -518,8 +553,9 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Form(
     bUseAttribute = false;
   }
   if (!NormalLoader(pNode, pXMLDocumentNode, XFA_PacketType::Form,
-                    bUseAttribute))
+                    bUseAttribute)) {
     return nullptr;
+  }
 
   pNode->SetXMLMappingNode(pXMLDocumentNode);
   return pNode;
@@ -532,13 +568,15 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Data(
   if (pDatasetsXMLNode) {
     CXFA_Node* pNode = node_factory_->CreateNode(XFA_PacketType::Datasets,
                                                  XFA_Element::DataModel);
-    if (!pNode)
+    if (!pNode) {
       return nullptr;
+    }
 
     pNode->JSObject()->SetCData(XFA_Attribute::Name,
                                 WideString::FromASCII(packet.name));
-    if (!DataLoader(pNode, pDatasetsXMLNode))
+    if (!DataLoader(pNode, pDatasetsXMLNode)) {
       return nullptr;
+    }
 
     pNode->SetXMLMappingNode(pDatasetsXMLNode);
     return pNode;
@@ -560,18 +598,21 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Data(
     pDataElement->AppendLastChild(pXMLDocumentNode);
     pDataXMLNode = pDataElement;
   }
-  if (!pDataXMLNode)
+  if (!pDataXMLNode) {
     return nullptr;
+  }
 
   CXFA_Node* pNode = node_factory_->CreateNode(XFA_PacketType::Datasets,
                                                XFA_Element::DataGroup);
-  if (!pNode)
+  if (!pNode) {
     return nullptr;
+  }
 
   WideString wsLocalName = ToXMLElement(pDataXMLNode)->GetLocalTagName();
   pNode->JSObject()->SetCData(XFA_Attribute::Name, wsLocalName);
-  if (!DataLoader(pNode, pDataXMLNode))
+  if (!DataLoader(pNode, pDataXMLNode)) {
     return nullptr;
+  }
 
   pNode->SetXMLMappingNode(pDataXMLNode);
   return pNode;
@@ -582,17 +623,20 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_LocaleConnectionSourceSet(
     XFA_PacketType packet_type,
     XFA_Element element) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(packet_type);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match)) {
     return nullptr;
+  }
 
   CXFA_Node* pNode = node_factory_->CreateNode(packet_type, element);
-  if (!pNode)
+  if (!pNode) {
     return nullptr;
+  }
 
   pNode->JSObject()->SetCData(XFA_Attribute::Name,
                               WideString::FromASCII(packet.name));
-  if (!NormalLoader(pNode, pXMLDocumentNode, packet_type, true))
+  if (!NormalLoader(pNode, pXMLDocumentNode, packet_type, true)) {
     return nullptr;
+  }
 
   pNode->SetXMLMappingNode(pXMLDocumentNode);
   return pNode;
@@ -601,13 +645,15 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_LocaleConnectionSourceSet(
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Xdc(
     CFX_XMLNode* pXMLDocumentNode) {
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Xdc);
-  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match))
+  if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.match)) {
     return nullptr;
+  }
 
   CXFA_Node* pNode =
       node_factory_->CreateNode(XFA_PacketType::Xdc, XFA_Element::Xdc);
-  if (!pNode)
+  if (!pNode) {
     return nullptr;
+  }
 
   pNode->JSObject()->SetCData(XFA_Attribute::Name,
                               WideString::FromASCII(packet.name));
@@ -619,8 +665,9 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_User(
     CFX_XMLNode* pXMLDocumentNode) {
   CXFA_Node* pNode =
       node_factory_->CreateNode(XFA_PacketType::Xdp, XFA_Element::Packet);
-  if (!pNode)
+  if (!pNode) {
     return nullptr;
+  }
 
   WideString wsName = ToXMLElement(pXMLDocumentNode)->GetLocalTagName();
   pNode->JSObject()->SetCData(XFA_Attribute::Name, wsName);
@@ -639,8 +686,9 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
                                               XFA_PacketType ePacketID,
                                               bool bUseAttribute) {
   static constexpr size_t kMaxExecuteRecursion = 1000;
-  if (execute_recursion_depth_ > kMaxExecuteRecursion)
+  if (execute_recursion_depth_ > kMaxExecuteRecursion) {
     return nullptr;
+  }
   AutoRestorer<size_t> restorer(&execute_recursion_depth_);
   ++execute_recursion_depth_;
 
@@ -652,19 +700,22 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
         CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLChild);
         WideString wsTagName = pXMLElement->GetLocalTagName();
         XFA_Element eType = XFA_GetElementByName(wsTagName.AsStringView());
-        if (eType == XFA_Element::Unknown)
+        if (eType == XFA_Element::Unknown) {
           continue;
+        }
 
         if (pXFANode->HasPropertyFlag(eType, XFA_PropertyFlag::kOneOf) ||
             pXFANode->HasPropertyFlag(eType, XFA_PropertyFlag::kDefaultOneOf)) {
-          if (bOneOfPropertyFound)
+          if (bOneOfPropertyFound) {
             break;
+          }
           bOneOfPropertyFound = true;
         }
 
         CXFA_Node* pXFAChild = node_factory_->CreateNode(ePacketID, eType);
-        if (!pXFAChild)
+        if (!pXFAChild) {
           return nullptr;
+        }
         if (ePacketID == XFA_PacketType::Config) {
           pXFAChild->JSObject()->SetAttributeByEnum(XFA_Attribute::Name,
                                                     wsTagName, false);
@@ -674,13 +725,15 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
         for (auto it : pXMLElement->GetAttributes()) {
           WideString wsAttrName;
           GetAttributeLocalName(it.first.AsStringView(), wsAttrName);
-          if (wsAttrName.EqualsASCII("nil") && it.second.EqualsASCII("true"))
+          if (wsAttrName.EqualsASCII("nil") && it.second.EqualsASCII("true")) {
             IsNeedValue = false;
+          }
 
           std::optional<XFA_ATTRIBUTEINFO> attr =
               XFA_GetAttributeByName(wsAttrName.AsStringView());
-          if (!attr.has_value())
+          if (!attr.has_value()) {
             continue;
+          }
 
           if (!bUseAttribute && attr.value().attribute != XFA_Attribute::Name &&
               attr.value().attribute != XFA_Attribute::Save) {
@@ -691,10 +744,11 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
         }
         pXFANode->InsertChildAndNotify(pXFAChild, nullptr);
         if (eType == XFA_Element::Validate || eType == XFA_Element::Locale) {
-          if (ePacketID == XFA_PacketType::Config)
+          if (ePacketID == XFA_PacketType::Config) {
             ParseContentNode(pXFAChild, pXMLElement, ePacketID);
-          else
+          } else {
             NormalLoader(pXFAChild, pXMLElement, ePacketID, bUseAttribute);
+          }
 
           break;
         }
@@ -703,8 +757,9 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
           case XFA_ObjectType::TextNode:
           case XFA_ObjectType::NodeC:
           case XFA_ObjectType::NodeV:
-            if (IsNeedValue)
+            if (IsNeedValue) {
               ParseContentNode(pXFAChild, pXMLElement, ePacketID);
+            }
             break;
           default:
             NormalLoader(pXFAChild, pXMLElement, ePacketID, bUseAttribute);
@@ -728,37 +783,45 @@ void CXFA_DocumentBuilder::ParseContentNode(CXFA_Node* pXFANode,
   if (pXFANode->GetElementType() == XFA_Element::ExData) {
     WideString wsContentType =
         pXFANode->JSObject()->GetCData(XFA_Attribute::ContentType);
-    if (wsContentType.EqualsASCII("text/html"))
+    if (wsContentType.EqualsASCII("text/html")) {
       element = XFA_Element::SharpxHTML;
-    else if (wsContentType.EqualsASCII("text/xml"))
+    } else if (wsContentType.EqualsASCII("text/xml")) {
       element = XFA_Element::Sharpxml;
+    }
   }
-  if (element == XFA_Element::SharpxHTML)
+  if (element == XFA_Element::SharpxHTML) {
     pXFANode->SetXMLMappingNode(pXMLNode);
+  }
 
   WideString wsValue;
   for (CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild(); pXMLChild;
        pXMLChild = pXMLChild->GetNextSibling()) {
     CFX_XMLNode::Type eNodeType = pXMLChild->GetType();
-    if (eNodeType == CFX_XMLNode::Type::kInstruction)
+    if (eNodeType == CFX_XMLNode::Type::kInstruction) {
       continue;
+    }
 
     CFX_XMLElement* pElement = ToXMLElement(pXMLChild);
     if (element == XFA_Element::SharpxHTML) {
-      if (!pElement)
+      if (!pElement) {
         break;
-      if (XFA_RecognizeRichText(pElement))
+      }
+      if (XFA_RecognizeRichText(pElement)) {
         wsValue += GetPlainTextFromRichText(pElement);
+      }
     } else if (element == XFA_Element::Sharpxml) {
-      if (!pElement)
+      if (!pElement) {
         break;
+      }
       ConvertXMLToPlainText(pElement, wsValue);
     } else {
-      if (pElement)
+      if (pElement) {
         break;
+      }
       CFX_XMLText* pText = ToXMLText(pXMLChild);
-      if (pText)
+      if (pText) {
         wsValue = pText->GetText();
+      }
     }
     break;
   }
@@ -799,18 +862,20 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
               FindAttributeWithNS(pXMLElement, L"dataNode",
                                   L"http://www.xfa.org/schema/xfa-data/1.0/");
           if (wsDataNodeAttr.has_value()) {
-            if (wsDataNodeAttr.value().EqualsASCII("dataGroup"))
+            if (wsDataNodeAttr.value().EqualsASCII("dataGroup")) {
               eNodeType = XFA_Element::DataGroup;
-            else if (wsDataNodeAttr.value().EqualsASCII("dataValue"))
+            } else if (wsDataNodeAttr.value().EqualsASCII("dataValue")) {
               eNodeType = XFA_Element::DataValue;
+            }
           }
         }
         if (eNodeType == XFA_Element::DataModel) {
           std::optional<WideString> wsContentType =
               FindAttributeWithNS(pXMLElement, L"contentType",
                                   L"http://www.xfa.org/schema/xfa-data/1.0/");
-          if (wsContentType.has_value() && !wsContentType.value().IsEmpty())
+          if (wsContentType.has_value() && !wsContentType.value().IsEmpty()) {
             eNodeType = XFA_Element::DataValue;
+          }
         }
         if (eNodeType == XFA_Element::DataModel) {
           for (CFX_XMLNode* pXMLDataChild = pXMLElement->GetFirstChild();
@@ -822,13 +887,15 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
             }
           }
         }
-        if (eNodeType == XFA_Element::DataModel)
+        if (eNodeType == XFA_Element::DataModel) {
           eNodeType = XFA_Element::DataValue;
+        }
 
         CXFA_Node* pXFAChild =
             node_factory_->CreateNode(XFA_PacketType::Datasets, eNodeType);
-        if (!pXFAChild)
+        if (!pXFAChild) {
           return;
+        }
 
         pXFAChild->JSObject()->SetCData(XFA_Attribute::Name,
                                         pXMLElement->GetLocalTagName());
@@ -852,8 +919,9 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
           }
           CXFA_Node* pXFAMetaData = node_factory_->CreateNode(
               XFA_PacketType::Datasets, XFA_Element::DataValue);
-          if (!pXFAMetaData)
+          if (!pXFAMetaData) {
             return;
+          }
 
           pXFAMetaData->JSObject()->SetCData(XFA_Attribute::Name, wsName);
           pXFAMetaData->JSObject()->SetCData(XFA_Attribute::QualifiedName,
@@ -866,14 +934,16 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
           pXFAMetaData->SetFlag(XFA_NodeFlag::kInitialized);
         }
 
-        if (!bNeedValue)
+        if (!bNeedValue) {
           pXMLElement->RemoveAttribute(L"xsi:nil");
+        }
 
         pXFANode->InsertChildAndNotify(pXFAChild, nullptr);
-        if (eNodeType == XFA_Element::DataGroup)
+        if (eNodeType == XFA_Element::DataGroup) {
           ParseDataGroup(pXFAChild, pXMLElement, ePacketID);
-        else if (bNeedValue)
+        } else if (bNeedValue) {
           ParseDataValue(pXFAChild, pXMLChild, XFA_PacketType::Datasets);
+        }
 
         pXFAChild->SetXMLMappingNode(pXMLElement);
         pXFAChild->SetFlag(XFA_NodeFlag::kInitialized);
@@ -883,13 +953,15 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
       case CFX_XMLNode::Type::kText: {
         CFX_XMLText* pXMLText = ToXMLText(pXMLChild);
         WideString wsText = pXMLText->GetText();
-        if (IsStringAllWhitespace(wsText))
+        if (IsStringAllWhitespace(wsText)) {
           continue;
+        }
 
         CXFA_Node* pXFAChild = node_factory_->CreateNode(
             XFA_PacketType::Datasets, XFA_Element::DataValue);
-        if (!pXFAChild)
+        if (!pXFAChild) {
           return;
+        }
 
         pXFAChild->JSObject()->SetCData(XFA_Attribute::Value, wsText);
         pXFANode->InsertChildAndNotify(pXFAChild, nullptr);
@@ -913,21 +985,24 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
   for (CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild(); pXMLChild;
        pXMLChild = pXMLChild->GetNextSibling()) {
     CFX_XMLNode::Type eNodeType = pXMLChild->GetType();
-    if (eNodeType == CFX_XMLNode::Type::kInstruction)
+    if (eNodeType == CFX_XMLNode::Type::kInstruction) {
       continue;
+    }
 
     CFX_XMLText* pText = ToXMLText(pXMLChild);
     if (pText) {
       WideString wsText = pText->GetText();
-      if (!pXMLCurValueNode)
+      if (!pXMLCurValueNode) {
         pXMLCurValueNode = pXMLChild;
+      }
       wsCurValue += wsText;
       continue;
     }
     if (XFA_RecognizeRichText(ToXMLElement(pXMLChild))) {
       WideString wsText = GetPlainTextFromRichText(ToXMLElement(pXMLChild));
-      if (!pXMLCurValueNode)
+      if (!pXMLCurValueNode) {
         pXMLCurValueNode = pXMLChild;
+      }
       wsCurValue += wsText;
       continue;
     }
@@ -936,8 +1011,9 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
       if (!wsCurValue.IsEmpty()) {
         CXFA_Node* pXFAChild =
             node_factory_->CreateNode(ePacketID, XFA_Element::DataValue);
-        if (!pXFAChild)
+        if (!pXFAChild) {
           return;
+        }
 
         pXFAChild->JSObject()->SetCData(XFA_Attribute::Name, WideString());
         pXFAChild->JSObject()->SetCData(XFA_Attribute::Value, wsCurValue);
@@ -951,8 +1027,9 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
     }
     CXFA_Node* pXFAChild =
         node_factory_->CreateNode(ePacketID, XFA_Element::DataValue);
-    if (!pXFAChild)
+    if (!pXFAChild) {
       return;
+    }
 
     WideString wsNodeStr = ToXMLElement(pXMLChild)->GetLocalTagName();
     pXFAChild->JSObject()->SetCData(XFA_Attribute::Name, wsNodeStr);
@@ -968,8 +1045,9 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
       if (bMarkAsCompound) {
         CXFA_Node* pXFAChild =
             node_factory_->CreateNode(ePacketID, XFA_Element::DataValue);
-        if (!pXFAChild)
+        if (!pXFAChild) {
           return;
+        }
 
         pXFAChild->JSObject()->SetCData(XFA_Attribute::Name, WideString());
         pXFAChild->JSObject()->SetCData(XFA_Attribute::Value, wsCurValue);

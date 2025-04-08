@@ -23,8 +23,9 @@ CXFA_FFText::~CXFA_FFText() = default;
 void CXFA_FFText::RenderWidget(CFGAS_GEGraphics* pGS,
                                const CFX_Matrix& matrix,
                                HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
@@ -32,8 +33,9 @@ void CXFA_FFText::RenderWidget(CFGAS_GEGraphics* pGS,
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
 
   CXFA_TextLayout* pTextLayout = node_->GetTextLayout();
-  if (!pTextLayout)
+  if (!pTextLayout) {
     return;
+  }
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtText = GetRectWithoutRotate();
@@ -45,10 +47,11 @@ void CXFA_FFText::RenderWidget(CFGAS_GEGraphics* pGS,
     } else {
       float fTopInset = 0;
       float fBottomInset = 0;
-      if (!pItem->GetPrev())
+      if (!pItem->GetPrev()) {
         fTopInset = margin->GetTopInset();
-      else if (!pItem->GetNext())
+      } else if (!pItem->GetNext()) {
         fBottomInset = margin->GetBottomInset();
+      }
 
       rtText.Deflate(margin->GetLeftInset(), fTopInset, margin->GetRightInset(),
                      fBottomInset);
@@ -83,10 +86,11 @@ void CXFA_FFText::PerformLayout() {
     CFX_RectF rtText = pItem->GetAbsoluteRect();
     CXFA_Margin* margin = node_->GetMarginIfExists();
     if (margin) {
-      if (!pItem->GetPrev())
+      if (!pItem->GetPrev()) {
         rtText.height -= margin->GetTopInset();
-      else if (!pItem->GetNext())
+      } else if (!pItem->GetNext()) {
         rtText.height -= margin->GetBottomInset();
+      }
     }
     pTextLayout->ItemBlocks(rtText, pItem->GetIndex());
     pItem = pItem->GetNext();
@@ -117,13 +121,15 @@ bool CXFA_FFText::OnMouseMove(Mask<XFA_FWL_KeyFlag> dwFlags,
 
 bool CXFA_FFText::OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                               const CFX_PointF& point) {
-  if (!IsButtonDown())
+  if (!IsButtonDown()) {
     return false;
+  }
 
   SetButtonDown(false);
   WideString wsURLContent = GetLinkURLAtPoint(point);
-  if (wsURLContent.IsEmpty())
+  if (wsURLContent.IsEmpty()) {
     return false;
+  }
 
   GetDoc()->GotoURL(wsURLContent);
   return true;
@@ -139,8 +145,9 @@ FWL_WidgetHit CXFA_FFText::HitTest(const CFX_PointF& point) {
 
 WideString CXFA_FFText::GetLinkURLAtPoint(const CFX_PointF& point) {
   CXFA_TextLayout* pTextLayout = node_->GetTextLayout();
-  if (!pTextLayout)
+  if (!pTextLayout) {
     return WideString();
+  }
 
   CFX_RectF rect = GetRectWithoutRotate();
   return pTextLayout->GetLinkURLAtPoint(point - rect.TopLeft());

@@ -184,8 +184,9 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
  private:
   void LockUpdate() { lock_++; }
   void UnlockUpdate() {
-    if (IsLocked())
+    if (IsLocked()) {
       lock_--;
+    }
   }
 
   CFWL_Widget* GetParent() const { return widget_mgr_->GetParentWidget(this); }

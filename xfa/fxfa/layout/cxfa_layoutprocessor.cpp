@@ -49,13 +49,15 @@ int32_t CXFA_LayoutProcessor::RestartLayout() {
   progress_counter_ = 0;
   CXFA_Node* pFormPacketNode =
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form));
-  if (!pFormPacketNode)
+  if (!pFormPacketNode) {
     return -1;
+  }
 
   CXFA_Subform* pFormRoot =
       pFormPacketNode->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
-  if (!pFormRoot)
+  if (!pFormRoot) {
     return -1;
+  }
 
   if (!view_layout_processor_) {
     view_layout_processor_ =
@@ -93,13 +95,15 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
     float fAvailHeight = view_layout_processor_->GetAvailHeight();
     eStatus =
         content_layout_processor_->DoLayout(true, fAvailHeight, fAvailHeight);
-    if (eStatus != CXFA_ContentLayoutProcessor::Result::kDone)
+    if (eStatus != CXFA_ContentLayoutProcessor::Result::kDone) {
       progress_counter_++;
+    }
 
     CXFA_ContentLayoutItem* pLayoutItem =
         content_layout_processor_->ExtractLayoutItem();
-    if (pLayoutItem)
+    if (pLayoutItem) {
       pLayoutItem->s_pos_ = CFX_PointF(fPosX, fPosY);
+    }
 
     view_layout_processor_->SubmitContentItem(pLayoutItem, eStatus);
   } while (eStatus != CXFA_ContentLayoutProcessor::Result::kDone);

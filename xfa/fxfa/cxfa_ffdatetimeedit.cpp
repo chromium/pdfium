@@ -30,8 +30,9 @@ CFWL_DateTimePicker* CXFA_FFDateTimeEdit::GetPickerWidget() {
 }
 
 CFX_RectF CXFA_FFDateTimeEdit::GetBBox(FocusOption focus) {
-  if (focus == kDrawFocus)
+  if (focus == kDrawFocus) {
     return CFX_RectF();
+  }
   return CXFA_FFWidget::GetBBox(kDoNotDrawFocus);
 }
 
@@ -66,9 +67,10 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
           if (!wsText.IsEmpty()) {
             CXFA_LocaleValue lcValue = XFA_GetLocaleValue(node_.Get());
             CFX_DateTime date = lcValue.GetDate();
-            if (date.IsSet())
+            if (date.IsSet()) {
               pWidget->SetCurSel(date.GetYear(), date.GetMonth(),
                                  date.GetDay());
+            }
           }
         } break;
         default:
@@ -83,8 +85,9 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
 
 void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   CFWL_DateTimePicker* pPicker = GetPickerWidget();
-  if (!pPicker)
+  if (!pPicker) {
     return;
+  }
 
   uint32_t dwExtendedStyle = FWL_STYLEEXT_DTP_ShortDateFormat;
   dwExtendedStyle |= UpdateUIProperty();
@@ -109,8 +112,9 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
 
 uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
   CXFA_Para* para = node_->GetParaIfExists();
-  if (!para)
+  if (!para) {
     return 0;
+  }
 
   uint32_t dwExtendedStyle = 0;
   switch (para->GetHorizontalAlign()) {
@@ -156,12 +160,14 @@ bool CXFA_FFDateTimeEdit::CommitData() {
 }
 
 void CXFA_FFDateTimeEdit::UpdateFWLData() {
-  if (!GetNormalWidget())
+  if (!GetNormalWidget()) {
     return;
+  }
 
   XFA_ValuePicture eType = XFA_ValuePicture::kDisplay;
-  if (IsFocused())
+  if (IsFocused()) {
     eType = XFA_ValuePicture::kEdit;
+  }
 
   WideString wsText = node_->GetValue(eType);
   CFWL_DateTimePicker* pPicker = GetPickerWidget();
@@ -170,16 +176,19 @@ void CXFA_FFDateTimeEdit::UpdateFWLData() {
     CXFA_LocaleValue lcValue = XFA_GetLocaleValue(node_.Get());
     CFX_DateTime date = lcValue.GetDate();
     if (lcValue.IsValid()) {
-      if (date.IsSet())
+      if (date.IsSet()) {
         pPicker->SetCurSel(date.GetYear(), date.GetMonth(), date.GetDay());
+      }
     }
   }
   GetNormalWidget()->Update();
 }
 
 bool CXFA_FFDateTimeEdit::IsDataChanged() {
-  if (GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kTextEditValueChanged))
+  if (GetLayoutItem()->TestStatusBits(
+          XFA_WidgetStatus::kTextEditValueChanged)) {
     return true;
+  }
 
   WideString wsText = GetPickerWidget()->GetEditText();
   return node_->GetValue(XFA_ValuePicture::kEdit) != wsText;
@@ -232,8 +241,9 @@ bool CXFA_FFDateTimeEdit::CanCopy() {
 }
 
 bool CXFA_FFDateTimeEdit::CanCut() {
-  if (GetPickerWidget()->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly)
+  if (GetPickerWidget()->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly) {
     return false;
+  }
   return GetPickerWidget()->HasSelection();
 }
 

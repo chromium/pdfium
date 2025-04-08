@@ -64,11 +64,13 @@ bool CXFA_FFListBox::LoadWidget() {
     CFWL_Widget::ScopedUpdateLock update_lock(pListBox);
     std::vector<WideString> displayables = node_->GetChoiceListItems(false);
     std::vector<WideString> settables = node_->GetChoiceListItems(true);
-    if (displayables.size() > settables.size())
+    if (displayables.size() > settables.size()) {
       displayables.resize(settables.size());
+    }
 
-    for (const auto& label : displayables)
+    for (const auto& label : displayables) {
       pListBox->AddString(label);
+    }
 
     uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
     if (node_->IsChoiceListMultiSelect()) {
@@ -86,8 +88,9 @@ bool CXFA_FFListBox::LoadWidget() {
 }
 
 bool CXFA_FFListBox::OnKillFocus(CXFA_FFWidget* pNewFocus) {
-  if (!ProcessCommittedData())
+  if (!ProcessCommittedData()) {
     UpdateFWLData();
+  }
 
   return pNewFocus && CXFA_FFField::OnKillFocus(pNewFocus);
 }
@@ -96,8 +99,9 @@ bool CXFA_FFListBox::CommitData() {
   auto* pListBox = ToListBox(GetNormalWidget());
   std::vector<int32_t> iSelArray;
   int32_t iSels = pListBox->CountSelItems();
-  for (int32_t i = 0; i < iSels; ++i)
+  for (int32_t i = 0; i < iSels; ++i) {
     iSelArray.push_back(pListBox->GetSelIndex(i));
+  }
 
   node_->SetSelectedItems(iSelArray, true, false, true);
   return true;
@@ -108,21 +112,24 @@ bool CXFA_FFListBox::IsDataChanged() {
   int32_t iOldSels = fxcrt::CollectionSize<int32_t>(iSelArray);
   auto* pListBox = ToListBox(GetNormalWidget());
   int32_t iSels = pListBox->CountSelItems();
-  if (iOldSels != iSels)
+  if (iOldSels != iSels) {
     return true;
+  }
 
   for (int32_t i = 0; i < iSels; ++i) {
     CFWL_ListBox::Item* hlistItem = pListBox->GetItem(nullptr, iSelArray[i]);
-    if (!hlistItem->IsSelected())
+    if (!hlistItem->IsSelected()) {
       return true;
+    }
   }
   return false;
 }
 
 uint32_t CXFA_FFListBox::GetAlignment() {
   CXFA_Para* para = node_->GetParaIfExists();
-  if (!para)
+  if (!para) {
     return 0;
+  }
 
   uint32_t dwExtendedStyle = 0;
   switch (para->GetHorizontalAlign()) {
@@ -147,8 +154,9 @@ uint32_t CXFA_FFListBox::GetAlignment() {
 
 void CXFA_FFListBox::UpdateFWLData() {
   auto* pListBox = ToListBox(GetNormalWidget());
-  if (!pListBox)
+  if (!pListBox) {
     return;
+  }
 
   std::vector<int32_t> iSelArray = node_->GetSelectedItems();
   std::vector<CFWL_ListBox::Item*> selItemArray(iSelArray.size());
@@ -156,8 +164,9 @@ void CXFA_FFListBox::UpdateFWLData() {
                  [pListBox](int32_t val) { return pListBox->GetSelItem(val); });
 
   pListBox->SetSelItem(pListBox->GetSelItem(-1), false);
-  for (CFWL_ListBox::Item* pItem : selItemArray)
+  for (CFWL_ListBox::Item* pItem : selItemArray) {
     pListBox->SetSelItem(pItem, true);
+  }
 
   GetNormalWidget()->Update();
 }
@@ -183,10 +192,11 @@ void CXFA_FFListBox::InsertItem(const WideString& wsLabel, int32_t nIndex) {
 
 void CXFA_FFListBox::DeleteItem(int32_t nIndex) {
   auto* pListBox = ToListBox(GetNormalWidget());
-  if (nIndex < 0)
+  if (nIndex < 0) {
     pListBox->DeleteAll();
-  else
+  } else {
     pListBox->DeleteString(pListBox->GetItem(nullptr, nIndex));
+  }
 
   pListBox->Update();
   InvalidateRect();

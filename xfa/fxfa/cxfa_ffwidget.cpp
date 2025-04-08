@@ -43,8 +43,9 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
                    const CFX_Size& dpi,
                    XFA_AttributeValue iHorzAlign,
                    XFA_AttributeValue iVertAlign) {
-  if (rtImage.IsEmpty())
+  if (rtImage.IsEmpty()) {
     return;
+  }
 
   CHECK(bitmap);
   if (bitmap->GetBuffer().empty()) {
@@ -84,15 +85,17 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
       break;
   }
 
-  if (iHorzAlign == XFA_AttributeValue::Center)
+  if (iHorzAlign == XFA_AttributeValue::Center) {
     rtFit.left += (rtImage.width - rtFit.width) / 2;
-  else if (iHorzAlign == XFA_AttributeValue::Right)
+  } else if (iHorzAlign == XFA_AttributeValue::Right) {
     rtFit.left = rtImage.right() - rtFit.width;
+  }
 
-  if (iVertAlign == XFA_AttributeValue::Middle)
+  if (iVertAlign == XFA_AttributeValue::Middle) {
     rtFit.top += (rtImage.height - rtFit.height) / 2;
-  else if (iVertAlign == XFA_AttributeValue::Bottom)
+  } else if (iVertAlign == XFA_AttributeValue::Bottom) {
     rtFit.top = rtImage.bottom() - rtImage.height;
+  }
 
   CFX_RenderDevice* device = pGS->GetRenderDevice();
   CFX_RenderDevice::StateRestorer restorer(device);
@@ -177,8 +180,9 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
 }
 
 void XFA_RectWithoutMargin(CFX_RectF* rt, const CXFA_Margin* margin) {
-  if (!margin)
+  if (!margin) {
     return;
+  }
 
   rt->Deflate(margin->GetLeftInset(), margin->GetTopInset(),
               margin->GetRightInset(), margin->GetBottomInset());
@@ -186,8 +190,9 @@ void XFA_RectWithoutMargin(CFX_RectF* rt, const CXFA_Margin* margin) {
 
 // static
 CXFA_FFWidget* CXFA_FFWidget::FromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
-  if (!pLayoutItem->GetFormNode()->HasCreatedUIWidget())
+  if (!pLayoutItem->GetFormNode()->HasCreatedUIWidget()) {
     return nullptr;
+  }
 
   return GetFFWidget(ToContentLayoutItem(pLayoutItem));
 }
@@ -212,8 +217,9 @@ CXFA_FFWidget* CXFA_FFWidget::GetNextFFWidget() const {
 }
 
 const CFX_RectF& CXFA_FFWidget::GetWidgetRect() const {
-  if (!GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kRectCached))
+  if (!GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kRectCached)) {
     RecacheWidgetRect();
+  }
   return widget_rect_;
 }
 
@@ -267,12 +273,14 @@ CFX_RectF CXFA_FFWidget::GetBBox(FocusOption focus) {
 void CXFA_FFWidget::RenderWidget(CFGAS_GEGraphics* pGS,
                                  const CFX_Matrix& matrix,
                                  HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CXFA_Border* border = node_->GetBorderIfExists();
-  if (!border)
+  if (!border) {
     return;
+  }
 
   CFX_RectF rtBorder = GetRectWithoutRotate();
   CXFA_Margin* margin = border->GetMarginIfExists();
@@ -307,8 +315,9 @@ bool CXFA_FFWidget::HasEventUnderHandler(XFA_EVENTTYPE eEventType,
 bool CXFA_FFWidget::ProcessEventUnderHandler(CXFA_EventParam* params,
                                              CXFA_FFWidgetHandler* pHandler) {
   CXFA_Node* pNode = GetNode();
-  if (!pNode->IsWidgetReady())
+  if (!pNode->IsWidgetReady()) {
     return false;
+  }
 
   return pHandler->ProcessEvent(pNode, params) == XFA_EventError::kSuccess;
 }
@@ -317,8 +326,9 @@ void CXFA_FFWidget::DrawBorder(CFGAS_GEGraphics* pGS,
                                CXFA_Box* box,
                                const CFX_RectF& rtBorder,
                                const CFX_Matrix& matrix) {
-  if (box)
+  if (box) {
     box->Draw(pGS, rtBorder, matrix, false);
+  }
 }
 
 void CXFA_FFWidget::DrawBorderWithFlag(CFGAS_GEGraphics* pGS,
@@ -326,8 +336,9 @@ void CXFA_FFWidget::DrawBorderWithFlag(CFGAS_GEGraphics* pGS,
                                        const CFX_RectF& rtBorder,
                                        const CFX_Matrix& matrix,
                                        bool forceRound) {
-  if (box)
+  if (box) {
     box->Draw(pGS, rtBorder, matrix, forceRound);
+  }
 }
 
 void CXFA_FFWidget::InvalidateRect() {
@@ -395,8 +406,9 @@ bool CXFA_FFWidget::OnRButtonDblClk(Mask<XFA_FWL_KeyFlag> dwFlags,
 bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   CXFA_FFWidget* pParent = GetFFWidget(ToContentLayoutItem(GetParent()));
   if (pParent && !pParent->IsAncestorOf(pOldWidget)) {
-    if (!pParent->OnSetFocus(pOldWidget))
+    if (!pParent->OnSetFocus(pOldWidget)) {
       return false;
+    }
   }
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kFocused);
 
@@ -408,13 +420,15 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 bool CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus::kFocused);
   EventKillFocus();
-  if (!pNewWidget)
+  if (!pNewWidget) {
     return true;
+  }
 
   CXFA_FFWidget* pParent = GetFFWidget(ToContentLayoutItem(GetParent()));
   if (pParent && !pParent->IsAncestorOf(pNewWidget)) {
-    if (!pParent->OnKillFocus(pNewWidget))
+    if (!pParent->OnKillFocus(pNewWidget)) {
       return false;
+    }
   }
   return true;
 }
@@ -500,16 +514,18 @@ FormFieldType CXFA_FFWidget::GetFormFieldType() {
 
 CFX_PointF CXFA_FFWidget::Rotate2Normal(const CFX_PointF& point) {
   CFX_Matrix mt = GetRotateMatrix();
-  if (mt.IsIdentity())
+  if (mt.IsIdentity()) {
     return point;
+  }
 
   return mt.GetInverse().Transform(point);
 }
 
 CFX_Matrix CXFA_FFWidget::GetRotateMatrix() {
   int32_t iRotate = node_->GetRotate();
-  if (!iRotate)
+  if (!iRotate) {
     return CFX_Matrix();
+  }
 
   CFX_RectF rcWidget = GetRectWithoutRotate();
   CFX_Matrix mt;
@@ -549,12 +565,14 @@ void CXFA_FFWidget::DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) {
 void CXFA_FFWidget::GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) {
   DCHECK(GetNode()->IsWidgetReady());
   CXFA_Border* borderUI = GetNode()->GetUIBorder();
-  if (!borderUI)
+  if (!borderUI) {
     return;
+  }
 
   CXFA_Edge* edge = borderUI->GetEdgeIfExists(0);
-  if (!edge)
+  if (!edge) {
     return;
+  }
 
   *cr = edge->GetColor();
   *fWidth = edge->GetThickness();
@@ -567,16 +585,18 @@ bool CXFA_FFWidget::IsLayoutRectEmpty() {
 
 CXFA_LayoutItem* CXFA_FFWidget::GetParent() {
   CXFA_Node* pParentNode = node_->GetParent();
-  if (!pParentNode)
+  if (!pParentNode) {
     return nullptr;
+  }
 
   CXFA_LayoutProcessor* layout = GetDocView()->GetLayoutProcessor();
   return layout->GetLayoutItem(pParentNode);
 }
 
 bool CXFA_FFWidget::IsAncestorOf(CXFA_FFWidget* pWidget) {
-  if (!pWidget)
+  if (!pWidget) {
     return false;
+  }
 
   CXFA_Node* pChildNode = pWidget->GetNode();
   while (pChildNode) {
@@ -625,8 +645,9 @@ bool CXFA_FFWidget::IsButtonDown() {
 
 void CXFA_FFWidget::SetButtonDown(bool bSet) {
   CXFA_ContentLayoutItem* pItem = GetLayoutItem();
-  if (bSet)
+  if (bSet) {
     pItem->SetStatusBits(XFA_WidgetStatus::kButtonDown);
-  else
+  } else {
     pItem->ClearStatusBits(XFA_WidgetStatus::kButtonDown);
+  }
 }

@@ -71,17 +71,19 @@ void CFWL_ComboBox::ModifyStyleExts(uint32_t dwStyleExtsAdded,
   bool bDelDropDown = !!(dwStyleExtsRemoved & FWL_STYLEEXT_CMB_DropDown);
   dwStyleExtsRemoved &= ~FWL_STYLEEXT_CMB_DropDown;
   properties_.style_exts_ |= FWL_STYLEEXT_CMB_DropDown;
-  if (bAddDropDown)
+  if (bAddDropDown) {
     edit_->ModifyStyleExts(0, FWL_STYLEEXT_EDT_ReadOnly);
-  else if (bDelDropDown)
+  } else if (bDelDropDown) {
     edit_->ModifyStyleExts(FWL_STYLEEXT_EDT_ReadOnly, 0);
+  }
 
   CFWL_Widget::ModifyStyleExts(dwStyleExtsAdded, dwStyleExtsRemoved);
 }
 
 void CFWL_ComboBox::Update() {
-  if (IsLocked())
+  if (IsLocked()) {
     return;
+  }
 
   if (edit_) {
     ResetEditAlignment();
@@ -92,15 +94,17 @@ void CFWL_ComboBox::Update() {
 FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
   CFX_RectF rect(0, 0, widget_rect_.width - btn_rect_.width,
                  widget_rect_.height);
-  if (rect.Contains(point))
+  if (rect.Contains(point)) {
     return FWL_WidgetHit::Edit;
+  }
   if (btn_rect_.Contains(point)) {
     return FWL_WidgetHit::Client;
   }
   if (IsDropListVisible()) {
     rect = list_box_->GetWidgetRect();
-    if (rect.Contains(point))
+    if (rect.Contains(point)) {
       return FWL_WidgetHit::Client;
+    }
   }
   return FWL_WidgetHit::Unknown;
 }
@@ -211,18 +215,21 @@ void CFWL_ComboBox::EditModifyStyleExts(uint32_t dwStyleExtsAdded,
 }
 
 void CFWL_ComboBox::ShowDropDownList() {
-  if (IsDropListVisible())
+  if (IsDropListVisible()) {
     return;
+  }
 
   CFWL_Event preEvent(CFWL_Event::Type::PreDropDown, this);
   DispatchEvent(&preEvent);
-  if (!preEvent.GetSrcTarget())
+  if (!preEvent.GetSrcTarget()) {
     return;
+  }
 
   CFWL_ComboList* pComboList = list_box_;
   int32_t iItems = pComboList->CountItems(nullptr);
-  if (iItems < 1)
+  if (iItems < 1) {
     return;
+  }
 
   ResetListItemAlignment();
   pComboList->ChangeSelected(cur_sel_);
@@ -230,8 +237,9 @@ void CFWL_ComboBox::ShowDropDownList() {
   float fItemHeight = pComboList->CalcItemHeight();
   float fBorder = GetCXBorderSize();
   float fPopupMin = 0.0f;
-  if (iItems > 3)
+  if (iItems > 3) {
     fPopupMin = fItemHeight * 3 + fBorder * 2;
+  }
 
   float fPopupMax = fItemHeight * iItems + fBorder * 2;
   CFX_RectF rtList(client_rect_.left, 0, widget_rect_.width, 0);
@@ -246,8 +254,9 @@ void CFWL_ComboBox::ShowDropDownList() {
 }
 
 void CFWL_ComboBox::HideDropDownList() {
-  if (!IsDropListVisible())
+  if (!IsDropListVisible()) {
     return;
+  }
 
   list_box_->SetStates(FWL_STATE_WGT_Invisible);
   RepaintInflatedListBoxRect();
@@ -264,8 +273,9 @@ void CFWL_ComboBox::MatchEditText() {
   int32_t iMatch = list_box_->MatchItem(wsText.AsStringView());
   if (iMatch != cur_sel_) {
     list_box_->ChangeSelected(iMatch);
-    if (iMatch >= 0)
+    if (iMatch >= 0) {
       SyncEditText(iMatch);
+    }
   } else if (iMatch >= 0) {
     edit_->SetSelected();
   }
@@ -378,8 +388,9 @@ void CFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
     return;
   }
   CFWL_ListBox::Item* hItem = list_box_->GetItem(this, cur_sel_);
-  if (!hItem)
+  if (!hItem) {
     return;
+  }
 
   if (edit_) {
     edit_->SetText(hItem->GetText());
@@ -439,8 +450,9 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
       break;
   }
   // Dst target could be |this|, continue only if not destroyed by above.
-  if (backDefault && pMessage->GetDstTarget())
+  if (backDefault && pMessage->GetDstTarget()) {
     CFWL_Widget::OnProcessMessage(pMessage);
+  }
 }
 
 void CFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
@@ -510,8 +522,9 @@ void CFWL_ComboBox::OnKey(CFWL_MessageKey* pMsg) {
   if (bUp || bDown) {
     CFWL_ComboList* pComboList = list_box_;
     int32_t iCount = pComboList->CountItems(nullptr);
-    if (iCount < 1)
+    if (iCount < 1) {
       return;
+    }
 
     bool bMatchEqual = false;
     int32_t iCurSel = cur_sel_;
@@ -526,12 +539,14 @@ void CFWL_ComboBox::OnKey(CFWL_MessageKey* pMsg) {
     if (iCurSel < 0) {
       iCurSel = 0;
     } else if (bMatchEqual) {
-      if ((bUp && iCurSel == 0) || (bDown && iCurSel == iCount - 1))
+      if ((bUp && iCurSel == 0) || (bDown && iCurSel == iCount - 1)) {
         return;
-      if (bUp)
+      }
+      if (bUp) {
         iCurSel--;
-      else
+      } else {
         iCurSel++;
+      }
     }
     cur_sel_ = iCurSel;
     SyncEditText(cur_sel_);

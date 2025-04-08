@@ -33,14 +33,16 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* pDoc,
   WideString wsEnglishName = FGAS_FontNameToEnglishName(wsFontFamily);
   RetainPtr<CFGAS_GEFont> pFont =
       pDoc->GetPDFFont(wsEnglishName, dwFontStyles, true);
-  if (pFont)
+  if (pFont) {
     return pFont;
+  }
 
   pFont = CFGAS_DefaultFontManager::GetFont(wsFontFamily, dwFontStyles);
   if (!pFont) {
     pFont = pDoc->GetPDFFont(wsEnglishName, dwFontStyles, false);
-    if (pFont)
+    if (pFont) {
       return pFont;
+    }
   }
   if (!pFont) {
     pFont = CFGAS_DefaultFontManager::GetDefaultFont(dwFontStyles);
@@ -49,8 +51,9 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* pDoc,
     pFont = CFGAS_GEFont::LoadStockFont(
         pDoc->GetPDFDoc(), ByteString::Format("%ls", wsFontFamily.c_str()));
   }
-  if (!pFont)
+  if (!pFont) {
     return nullptr;
+  }
 
   font_map_[key] = pFont;
   return pFont;

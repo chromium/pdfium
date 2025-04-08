@@ -187,8 +187,9 @@ std::optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
   auto* elem = std::lower_bound(
       std::begin(kPacketTable), std::end(kPacketTable), hash,
       [](const PacketTableRecord& a, uint32_t hash) { return a.hash < hash; });
-  if (elem != std::end(kPacketTable) && wsName.EqualsASCII(elem->info.name))
+  if (elem != std::end(kPacketTable) && wsName.EqualsASCII(elem->info.name)) {
     return elem->info;
+  }
   return std::nullopt;
 }
 
@@ -201,8 +202,9 @@ XFA_Element XFA_GetElementByName(WideStringView name) {
   auto* elem = std::lower_bound(
       std::begin(kElementRecords), std::end(kElementRecords), hash,
       [](const ElementRecord& a, uint32_t hash) { return a.hash < hash; });
-  if (elem == std::end(kElementRecords))
+  if (elem == std::end(kElementRecords)) {
     return XFA_Element::Unknown;
+  }
 
   size_t index = std::distance(std::begin(kElementRecords), elem);
   return name.EqualsASCII(kElementNameSpan[index]) ? elem->element
@@ -243,8 +245,9 @@ std::optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
                        [](const AttributeValueRecord& arg, uint32_t hash) {
                          return arg.uHash < hash;
                        });
-  if (it == std::end(kAttributeValueRecords))
+  if (it == std::end(kAttributeValueRecords)) {
     return std::nullopt;
+  }
 
   size_t index = std::distance(std::begin(kAttributeValueRecords), it);
   if (!name.EqualsASCII(kAttributeValueNameSpan[index])) {
@@ -259,8 +262,9 @@ std::optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     WideStringView attribute_name) {
   std::optional<XFA_ATTRIBUTEINFO> attr =
       XFA_GetAttributeByName(attribute_name);
-  if (!attr.has_value())
+  if (!attr.has_value()) {
     return std::nullopt;
+  }
 
   while (element != XFA_Element::Unknown) {
     auto compound_key = std::make_pair(element, attr.value().attribute);

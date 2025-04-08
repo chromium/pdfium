@@ -18,19 +18,22 @@ FWL_Type CFWL_PictureBox::GetClassID() const {
 }
 
 void CFWL_PictureBox::Update() {
-  if (IsLocked())
+  if (IsLocked()) {
     return;
+  }
 
   client_rect_ = GetClientRect();
 }
 
 void CFWL_PictureBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
                                  const CFX_Matrix& matrix) {
-  if (!pGraphics)
+  if (!pGraphics) {
     return;
+  }
 
-  if (HasBorder())
+  if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
+  }
 }
 
 void CFWL_PictureBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,

@@ -44,8 +44,9 @@ CFX_SizeF CXFA_ViewLayoutItem::GetPageSize() const {
   CFX_SizeF size;
   CXFA_Medium* pMedium =
       GetFormNode()->GetFirstChildByClass<CXFA_Medium>(XFA_Element::Medium);
-  if (!pMedium)
+  if (!pMedium) {
     return size;
+  }
 
   size = CFX_SizeF(
       pMedium->JSObject()->GetMeasureInUnit(XFA_Attribute::Short, XFA_Unit::Pt),

@@ -78,8 +78,9 @@ CFX_RectF CFWL_Widget::GetWidgetRect() {
 }
 
 void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
-  if (!HasBorder())
+  if (!HasBorder()) {
     return;
+  }
 
   float fBorder = GetCXBorderSize();
   rect.Inflate(fBorder, fBorder);
@@ -118,8 +119,9 @@ static void NotifyHideChildWidget(CFWL_WidgetMgr* widgetMgr,
 
 void CFWL_Widget::SetStates(uint32_t dwStates) {
   properties_.states_ |= dwStates;
-  if (IsVisible())
+  if (IsVisible()) {
     return;
+  }
 
   CFWL_NoteDriver* noteDriver = GetFWLApp()->GetNoteDriver();
   noteDriver->NotifyTargetHide(this);
@@ -138,10 +140,12 @@ void CFWL_Widget::RemoveStates(uint32_t dwStates) {
 }
 
 FWL_WidgetHit CFWL_Widget::HitTest(const CFX_PointF& point) {
-  if (GetClientRect().Contains(point))
+  if (GetClientRect().Contains(point)) {
     return FWL_WidgetHit::Client;
-  if (HasBorder() && GetRelativeRect().Contains(point))
+  }
+  if (HasBorder() && GetRelativeRect().Contains(point)) {
     return FWL_WidgetHit::Border;
+  }
   return FWL_WidgetHit::Unknown;
 }
 
@@ -205,15 +209,17 @@ bool CFWL_Widget::IsChild() const {
 
 CFWL_Widget* CFWL_Widget::GetOutmost() const {
   CFWL_Widget* pOuter = const_cast<CFWL_Widget*>(this);
-  while (pOuter->GetOuter())
+  while (pOuter->GetOuter()) {
     pOuter = pOuter->GetOuter();
+  }
   return pOuter;
 }
 
 CFX_RectF CFWL_Widget::GetEdgeRect() const {
   CFX_RectF rtEdge(0, 0, widget_rect_.width, widget_rect_.height);
-  if (HasBorder())
+  if (HasBorder()) {
     rtEdge.Deflate(GetCXBorderSize(), GetCYBorderSize());
+  }
   return rtEdge;
 }
 
@@ -232,10 +238,11 @@ CFX_RectF CFWL_Widget::GetRelativeRect() const {
 CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText, bool bMultiLine) {
   CFWL_ThemeText calPart(CFWL_ThemePart::Part::kNone, this, nullptr);
   calPart.text_ = wsText;
-  if (bMultiLine)
+  if (bMultiLine) {
     calPart.tto_styles_.line_wrap_ = true;
-  else
+  } else {
     calPart.tto_styles_.single_line_ = true;
+  }
 
   calPart.tto_align_ = FDE_TextAlignment::kTopLeft;
   float fWidth = bMultiLine ? kCalcMultiLineDefWidth : kCalcWidth;
@@ -302,8 +309,9 @@ void CFWL_Widget::NotifyDriver() {
 }
 
 CFX_SizeF CFWL_Widget::GetOffsetFromParent(CFWL_Widget* pParent) {
-  if (pParent == this)
+  if (pParent == this) {
     return CFX_SizeF();
+  }
 
   CFX_SizeF szRet(widget_rect_.left, widget_rect_.top);
   CFWL_WidgetMgr* pWidgetMgr = GetFWLApp()->GetWidgetMgr();
@@ -319,8 +327,9 @@ CFX_SizeF CFWL_Widget::GetOffsetFromParent(CFWL_Widget* pParent) {
 bool CFWL_Widget::IsParent(CFWL_Widget* pParent) {
   CFWL_Widget* pUpWidget = GetParent();
   while (pUpWidget) {
-    if (pUpWidget == pParent)
+    if (pUpWidget == pParent) {
       return true;
+    }
     pUpWidget = pUpWidget->GetParent();
   }
   return false;
@@ -328,8 +337,9 @@ bool CFWL_Widget::IsParent(CFWL_Widget* pParent) {
 
 void CFWL_Widget::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_Widget* pWidget = pMessage->GetDstTarget();
-  if (!pWidget)
+  if (!pWidget) {
     return;
+  }
 
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kMouse: {

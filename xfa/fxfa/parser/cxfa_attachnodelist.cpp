@@ -31,8 +31,9 @@ bool CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
   }
 
   CXFA_Node* pParent = pNode->GetParent();
-  if (pParent)
+  if (pParent) {
     pParent->RemoveChildAndNotify(pNode, true);
+  }
 
   attach_node_->InsertChildAndNotify(pNode, nullptr);
   return true;
@@ -48,8 +49,9 @@ bool CXFA_AttachNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
   }
 
   CXFA_Node* pParent = pNewNode->GetParent();
-  if (pParent)
+  if (pParent) {
     pParent->RemoveChildAndNotify(pNewNode, true);
+  }
 
   attach_node_->InsertChildAndNotify(pNewNode, pBeforeNode);
   return true;

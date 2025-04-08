@@ -255,8 +255,9 @@ inline void decimal_helper_truncate(uint64_t& phi,
                                     uint8_t minscale = 0) {
   while (scale > minscale) {
     uint64_t thi = phi, tmid = pmid, tlo = plo;
-    if (decimal_helper_div10(thi, tmid, tlo) != 0)
+    if (decimal_helper_div10(thi, tmid, tlo) != 0) {
       break;
+    }
 
     phi = thi;
     pmid = tmid;
@@ -365,8 +366,9 @@ WideString CFGAS_Decimal::ToWideString() const {
   uint64_t phi = hi_;
   uint64_t pmid = mid_;
   uint64_t plo = lo_;
-  while (phi || pmid || plo)
+  while (phi || pmid || plo) {
     tmpbuf += decimal_helper_div10(phi, pmid, plo) + '0';
+  }
 
   uint8_t outputlen = (uint8_t)tmpbuf.GetLength();
   uint8_t scale = u_scale_;
@@ -379,8 +381,9 @@ WideString CFGAS_Decimal::ToWideString() const {
   }
 
   for (uint8_t idx = 0; idx < outputlen; idx++) {
-    if (idx == (outputlen - scale) && scale != 0)
+    if (idx == (outputlen - scale) && scale != 0) {
       retString += '.';
+    }
     retString += tmpbuf[outputlen - 1 - idx];
   }
   return retString;
@@ -399,15 +402,17 @@ double CFGAS_Decimal::ToDouble() const {
 
 void CFGAS_Decimal::SetScale(uint8_t newscale) {
   uint8_t oldscale = u_scale_;
-  if (oldscale == newscale)
+  if (oldscale == newscale) {
     return;
+  }
 
   uint64_t phi = hi_;
   uint64_t pmid = mid_;
   uint64_t plo = lo_;
   if (newscale > oldscale) {
-    for (uint8_t iter = 0; iter < newscale - oldscale; iter++)
+    for (uint8_t iter = 0; iter < newscale - oldscale; iter++) {
       decimal_helper_mul10(phi, pmid, plo);
+    }
 
     hi_ = static_cast<uint32_t>(phi);
     mid_ = static_cast<uint32_t>(pmid);
@@ -418,15 +423,17 @@ void CFGAS_Decimal::SetScale(uint8_t newscale) {
     uint64_t point5_hi = 0;
     uint64_t point5_mid = 0;
     uint64_t point5_lo = 5;
-    for (uint8_t iter = 0; iter < oldscale - newscale - 1; iter++)
+    for (uint8_t iter = 0; iter < oldscale - newscale - 1; iter++) {
       decimal_helper_mul10(point5_hi, point5_mid, point5_lo);
+    }
 
     phi += point5_hi;
     pmid += point5_mid;
     plo += point5_lo;
     decimal_helper_normalize(phi, pmid, plo);
-    for (uint8_t iter = 0; iter < oldscale - newscale; iter++)
+    for (uint8_t iter = 0; iter < oldscale - newscale; iter++) {
       decimal_helper_div10(phi, pmid, plo);
+    }
   }
   hi_ = static_cast<uint32_t>(phi);
   mid_ = static_cast<uint32_t>(pmid);
@@ -436,8 +443,9 @@ void CFGAS_Decimal::SetScale(uint8_t newscale) {
 }
 
 void CFGAS_Decimal::SetNegate() {
-  if (IsNotZero())
+  if (IsNotZero()) {
     neg_ = !neg_;
+  }
 }
 
 CFGAS_Decimal CFGAS_Decimal::operator*(const CFGAS_Decimal& val) const {
@@ -452,8 +460,9 @@ CFGAS_Decimal CFGAS_Decimal::operator*(const CFGAS_Decimal& val) const {
 }
 
 CFGAS_Decimal CFGAS_Decimal::operator/(const CFGAS_Decimal& val) const {
-  if (!val.IsNotZero())
+  if (!val.IsNotZero()) {
     return CFGAS_Decimal();
+  }
 
   bool neg = neg_ ^ val.neg_;
   uint64_t a[7] = {lo_, mid_, hi_}, b[3] = {val.lo_, val.mid_, val.hi_},
@@ -468,8 +477,9 @@ CFGAS_Decimal CFGAS_Decimal::operator/(const CFGAS_Decimal& val) const {
   }
 
   uint8_t minscale = scale;
-  if (!IsNotZero())
+  if (!IsNotZero()) {
     return CFGAS_Decimal(0, 0, 0, false, minscale);
+  }
 
   while (!a[6]) {
     decimal_helper_mul10_any(a, 7);

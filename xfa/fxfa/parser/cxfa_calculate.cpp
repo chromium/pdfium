@@ -56,8 +56,9 @@ CXFA_Script* CXFA_Calculate::GetScriptIfExists() {
 
 WideString CXFA_Calculate::GetMessageText() const {
   const auto* pNode = GetChild<CXFA_Message>(0, XFA_Element::Message, false);
-  if (!pNode)
+  if (!pNode) {
     return WideString();
+  }
 
   const auto* text = pNode->GetChild<CXFA_Text>(0, XFA_Element::Text, false);
   return text ? text->GetContent() : WideString();

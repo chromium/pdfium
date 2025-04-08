@@ -46,8 +46,9 @@ void CFGAS_Break::SetHorizontalScale(int32_t iScale) {
 }
 
 void CFGAS_Break::SetVerticalScale(int32_t iScale) {
-  if (iScale < 0)
+  if (iScale < 0) {
     iScale = 0;
+  }
   if (vertical_scale_ == iScale) {
     return;
   }
@@ -103,8 +104,9 @@ void CFGAS_Break::SetTabWidth(float fTabWidth) {
 }
 
 void CFGAS_Break::SetParagraphBreakChar(wchar_t wch) {
-  if (wch != L'\r' && wch != L'\n')
+  if (wch != L'\r' && wch != L'\n') {
     return;
+  }
   w_paragraph_break_char_ = wch;
 }
 
@@ -117,8 +119,9 @@ void CFGAS_Break::SetCharSpace(float fCharSpace) {
 }
 
 void CFGAS_Break::SetLineBoundary(float fLineStart, float fLineEnd) {
-  if (fLineStart > fLineEnd)
+  if (fLineStart > fLineEnd) {
     return;
+  }
 
   line_start_ = FXSYS_roundf(fLineStart * kConversionFactor);
   line_width_ = FXSYS_roundf(fLineEnd * kConversionFactor);
@@ -130,8 +133,9 @@ CFGAS_Char* CFGAS_Break::GetLastChar(int32_t index,
                                      bool bOmitChar,
                                      bool bRichText) const {
   std::vector<CFGAS_Char>& tca = cur_line_->line_chars_;
-  if (!fxcrt::IndexInBounds(tca, index))
+  if (!fxcrt::IndexInBounds(tca, index)) {
     return nullptr;
+  }
 
   int32_t iStart = fxcrt::CollectionSize<int32_t>(tca) - 1;
   while (iStart > -1) {
@@ -140,8 +144,9 @@ CFGAS_Char* CFGAS_Break::GetLastChar(int32_t index,
         pTC->GetCharType() == FX_CHARTYPE::kCombination) {
       continue;
     }
-    if (--index < 0)
+    if (--index < 0) {
       return pTC;
+    }
   }
   return nullptr;
 }
@@ -154,8 +159,9 @@ int32_t CFGAS_Break::CountBreakPieces() const {
 
 const CFGAS_BreakPiece* CFGAS_Break::GetBreakPieceUnstable(
     int32_t index) const {
-  if (!HasLine())
+  if (!HasLine()) {
     return nullptr;
+  }
   if (!fxcrt::IndexInBounds(lines_[ready_line_index_].line_pieces_, index)) {
     return nullptr;
   }
@@ -163,7 +169,8 @@ const CFGAS_BreakPiece* CFGAS_Break::GetBreakPieceUnstable(
 }
 
 void CFGAS_Break::ClearBreakPieces() {
-  if (HasLine())
+  if (HasLine()) {
     lines_[ready_line_index_].Clear();
+  }
   ready_line_index_ = -1;
 }

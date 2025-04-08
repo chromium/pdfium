@@ -63,8 +63,9 @@ bool CXFA_FFCheckButton::LoadWidget() {
 
 void CXFA_FFCheckButton::UpdateWidgetProperty() {
   auto* pCheckBox = static_cast<CFWL_CheckBox*>(GetNormalWidget());
-  if (!pCheckBox)
+  if (!pCheckBox) {
     return;
+  }
 
   pCheckBox->SetBoxSize(node_->GetCheckButtonSize());
   uint32_t dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCross;
@@ -87,12 +88,14 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeStar;
       break;
     default: {
-      if (button_->IsRound())
+      if (button_->IsRound()) {
         dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCircle;
+      }
     } break;
   }
-  if (button_->IsAllowNeutral())
+  if (button_->IsAllowNeutral()) {
     dwStyleEx |= FWL_STYLEEXT_CKB_3State;
+  }
 
   pCheckBox->ModifyStyleExts(
       dwStyleEx, FWL_STYLEEXT_CKB_SignShapeMask | FWL_STYLEEXT_CKB_3State);
@@ -169,15 +172,17 @@ void CXFA_FFCheckButton::PerformLayout() {
       break;
   }
 
-  if (iHorzAlign == XFA_AttributeValue::Center)
+  if (iHorzAlign == XFA_AttributeValue::Center) {
     uirect_.left += (uirect_.width - fCheckSize) / 2;
-  else if (iHorzAlign == XFA_AttributeValue::Right)
+  } else if (iHorzAlign == XFA_AttributeValue::Right) {
     uirect_.left = uirect_.right() - fCheckSize;
+  }
 
-  if (iVertAlign == XFA_AttributeValue::Middle)
+  if (iVertAlign == XFA_AttributeValue::Middle) {
     uirect_.top += (uirect_.height - fCheckSize) / 2;
-  else if (iVertAlign == XFA_AttributeValue::Bottom)
+  } else if (iVertAlign == XFA_AttributeValue::Bottom) {
     uirect_.top = uirect_.bottom() - fCheckSize;
+  }
 
   uirect_.width = fCheckSize;
   uirect_.height = fCheckSize;
@@ -192,8 +197,9 @@ void CXFA_FFCheckButton::PerformLayout() {
   uirect_.Normalize();
   LayoutCaption();
   SetFWLRect();
-  if (GetNormalWidget())
+  if (GetNormalWidget()) {
     GetNormalWidget()->Update();
+  }
 }
 
 void CXFA_FFCheckButton::CapLeftRightPlacement(
@@ -224,8 +230,9 @@ void CXFA_FFCheckButton::AddUIMargin(XFA_AttributeValue iCapPlacement) {
     uirect_.width += 2 * (fLeftAddRight - uirect_.width);
   }
   if (uirect_.height < fTopAddBottom) {
-    if (iCapPlacement == XFA_AttributeValue::Right)
+    if (iCapPlacement == XFA_AttributeValue::Right) {
       uirect_.left -= fTopAddBottom - uirect_.height;
+    }
 
     uirect_.top -= fTopAddBottom - uirect_.height;
     uirect_.height += 2 * (fTopAddBottom - uirect_.height);
@@ -235,8 +242,9 @@ void CXFA_FFCheckButton::AddUIMargin(XFA_AttributeValue iCapPlacement) {
 void CXFA_FFCheckButton::RenderWidget(CFGAS_GEGraphics* pGS,
                                       const CFX_Matrix& matrix,
                                       HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
@@ -254,8 +262,9 @@ void CXFA_FFCheckButton::RenderWidget(CFGAS_GEGraphics* pGS,
 
 bool CXFA_FFCheckButton::OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                                      const CFX_PointF& point) {
-  if (!GetNormalWidget() || !IsButtonDown())
+  if (!GetNormalWidget() || !IsButtonDown()) {
     return false;
+  }
 
   SetButtonDown(false);
   CFWL_MessageMouse msg(GetNormalWidget(),
@@ -267,10 +276,12 @@ bool CXFA_FFCheckButton::OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
 
 XFA_CheckState CXFA_FFCheckButton::FWLState2XFAState() {
   uint32_t dwState = GetNormalWidget()->GetStates();
-  if (dwState & FWL_STATE_CKB_Checked)
+  if (dwState & FWL_STATE_CKB_Checked) {
     return XFA_CheckState::kOn;
-  if (dwState & FWL_STATE_CKB_Neutral)
+  }
+  if (dwState & FWL_STATE_CKB_Neutral) {
     return XFA_CheckState::kNeutral;
+  }
   return XFA_CheckState::kOff;
 }
 
@@ -285,12 +296,13 @@ bool CXFA_FFCheckButton::IsDataChanged() {
 }
 
 void CXFA_FFCheckButton::SetFWLCheckState(XFA_CheckState eCheckState) {
-  if (eCheckState == XFA_CheckState::kNeutral)
+  if (eCheckState == XFA_CheckState::kNeutral) {
     GetNormalWidget()->SetStates(FWL_STATE_CKB_Neutral);
-  else if (eCheckState == XFA_CheckState::kOn)
+  } else if (eCheckState == XFA_CheckState::kOn) {
     GetNormalWidget()->SetStates(FWL_STATE_CKB_Checked);
-  else
+  } else {
     GetNormalWidget()->RemoveStates(FWL_STATE_CKB_Checked);
+  }
 }
 
 void CXFA_FFCheckButton::UpdateFWLData() {

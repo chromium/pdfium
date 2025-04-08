@@ -78,10 +78,12 @@ bool PageWidgetFilter(CXFA_FFWidget* pWidget,
   }
 
   CXFA_ContentLayoutItem* pItem = pWidget->GetLayoutItem();
-  if (bTraversal && pItem->TestStatusBits(XFA_WidgetStatus::kDisabled))
+  if (bTraversal && pItem->TestStatusBits(XFA_WidgetStatus::kDisabled)) {
     return false;
-  if (bIgnoreRelevant)
+  }
+  if (bIgnoreRelevant) {
     return pItem->TestStatusBits(XFA_WidgetStatus::kVisible);
+  }
 
   dwFilter &= Mask<XFA_WidgetStatus>{XFA_WidgetStatus::kVisible,
                                      XFA_WidgetStatus::kViewable,
@@ -114,16 +116,18 @@ bool IsDocVersionBelow205(const CXFA_Document* doc) {
 bool EnsureWidgetLoadedIfVisible(CXFA_FFWidget* pWidget) {
   if (!pWidget->IsLoaded() &&
       pWidget->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus::kVisible)) {
-    if (!pWidget->LoadWidget())
+    if (!pWidget->LoadWidget()) {
       return false;
+    }
   }
   return true;
 }
 
 CXFA_FFWidget* LoadedWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   CXFA_FFWidget* pWidget = CXFA_FFWidget::FromLayoutItem(pLayoutItem);
-  if (!pWidget)
+  if (!pWidget) {
     return nullptr;
+  }
 
   EnsureWidgetLoadedIfVisible(pWidget);
   return pWidget;
@@ -134,14 +138,17 @@ CXFA_FFWidget* FilteredLoadedWidgetFromLayoutItem(
     Mask<XFA_WidgetStatus> dwFilter,
     bool bIgnoreRelevant) {
   CXFA_FFWidget* pWidget = CXFA_FFWidget::FromLayoutItem(pLayoutItem);
-  if (!pWidget)
+  if (!pWidget) {
     return nullptr;
+  }
 
-  if (!PageWidgetFilter(pWidget, dwFilter, false, bIgnoreRelevant))
+  if (!PageWidgetFilter(pWidget, dwFilter, false, bIgnoreRelevant)) {
     return nullptr;
+  }
 
-  if (!EnsureWidgetLoadedIfVisible(pWidget))
+  if (!EnsureWidgetLoadedIfVisible(pWidget)) {
     return nullptr;
+  }
 
   return pWidget;
 }
@@ -219,12 +226,14 @@ void OrderContainer(CXFA_LayoutItemIterator* sIterator,
             [](const CXFA_TabParam& arg1, const CXFA_TabParam& arg2) {
               const CFX_RectF& rt1 = arg1.GetWidget()->GetWidgetRect();
               const CFX_RectF& rt2 = arg2.GetWidget()->GetWidgetRect();
-              if (rt1.top - rt2.top >= kXFAWidgetPrecision)
+              if (rt1.top - rt2.top >= kXFAWidgetPrecision) {
                 return rt1.top < rt2.top;
+              }
               return rt1.left < rt2.left;
             });
-  for (const auto& param : tabParams)
+  for (const auto& param : tabParams) {
     pContainer->AppendTabParam(&param);
+  }
 }
 
 }  // namespace
@@ -246,8 +255,9 @@ CXFA_FFDocView* CXFA_FFPageView::GetDocView() const {
 
 CFX_RectF CXFA_FFPageView::GetPageViewRect() const {
   auto* pItem = GetLayoutItem();
-  if (!pItem)
+  if (!pItem) {
     return CFX_RectF();
+  }
 
   return CFX_RectF(0, 0, pItem->GetPageSize());
 }
@@ -255,8 +265,9 @@ CFX_RectF CXFA_FFPageView::GetPageViewRect() const {
 CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
                                              int32_t iRotate) const {
   auto* pItem = GetLayoutItem();
-  if (!pItem)
+  if (!pItem) {
     return CFX_Matrix();
+  }
 
   return GetPageMatrix(CFX_RectF(0, 0, pItem->GetPageSize()), rtDisp, iRotate);
 }
@@ -283,8 +294,9 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToFirst() {
        pLayoutItem = s_iterator_.MoveToNext()) {
     CXFA_FFWidget* hWidget = FilteredLoadedWidgetFromLayoutItem(
         pLayoutItem, filter_, ignore_relevant_);
-    if (hWidget)
+    if (hWidget) {
       return hWidget;
+    }
   }
   return nullptr;
 }
@@ -299,8 +311,9 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToNext() {
        pLayoutItem = s_iterator_.MoveToNext()) {
     CXFA_FFWidget* hWidget = FilteredLoadedWidgetFromLayoutItem(
         pLayoutItem, filter_, ignore_relevant_);
-    if (hWidget)
+    if (hWidget) {
       return hWidget;
+    }
   }
   return nullptr;
 }
@@ -310,8 +323,9 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToPrevious() {
        pLayoutItem = s_iterator_.MoveToPrev()) {
     CXFA_FFWidget* hWidget = FilteredLoadedWidgetFromLayoutItem(
         pLayoutItem, filter_, ignore_relevant_);
-    if (hWidget)
+    if (hWidget) {
       return hWidget;
+    }
   }
   return nullptr;
 }
@@ -419,8 +433,9 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
     if (pTraverse) {
       std::optional<WideString> traverseWidgetName =
           pTraverse->JSObject()->TryAttribute(XFA_Attribute::Ref, true);
-      if (traverseWidgetName.has_value())
+      if (traverseWidgetName.has_value()) {
         return FindWidgetByName(traverseWidgetName.value(), pWidget);
+      }
     }
   }
   return nullptr;
@@ -436,8 +451,9 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
 
   const std::vector<CXFA_ContentLayoutItem*> items =
       CreateSpaceOrderLayoutItems();
-  if (items.empty())
+  if (items.empty()) {
     return;
+  }
 
   CXFA_ContentLayoutItem* item = items[0];
   while (tab_order_widget_array_.size() < items.size()) {
@@ -449,8 +465,9 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
         size_t index = it != items.end() ? it - items.begin() + 1 : 0;
         while (true) {
           CXFA_FFWidget* radio = items[index % items.size()]->GetFFWidget();
-          if (radio->GetNode()->GetExclGroupIfExists() != node)
+          if (radio->GetNode()->GetExclGroupIfExists() != node) {
             break;
+          }
           if (!pdfium::Contains(tab_order_widget_array_, item)) {
             tab_order_widget_array_.emplace_back(radio->GetLayoutItem());
           }
@@ -479,8 +496,9 @@ CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderLayoutItems() {
   OrderContainer(&sIterator, nullptr, &tabparam, &bCurrentItem, &bContentArea,
                  false);
   items.reserve(tabparam.GetChildren().size());
-  for (const auto& layout_item : tabparam.GetChildren())
+  for (const auto& layout_item : tabparam.GetChildren()) {
     items.push_back(layout_item);
+  }
 
   sIterator.Reset();
   bCurrentItem = false;
@@ -488,8 +506,9 @@ CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderLayoutItems() {
   tabparam.ClearChildren();
   OrderContainer(&sIterator, nullptr, &tabparam, &bCurrentItem, &bContentArea,
                  true);
-  for (const auto& layout_item : tabparam.GetChildren())
+  for (const auto& layout_item : tabparam.GetChildren()) {
     items.push_back(layout_item);
+  }
 
   return items;
 }

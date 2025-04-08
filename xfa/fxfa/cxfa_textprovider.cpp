@@ -48,8 +48,9 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
   if (type_ == Type::kText) {
     CXFA_Value* pValueNode =
         node_->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
-    if (!pValueNode)
+    if (!pValueNode) {
       return nullptr;
+    }
 
     CXFA_Node* pChildNode = pValueNode->GetFirstChild();
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
@@ -67,13 +68,15 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
   if (type_ == Type::kCaption) {
     CXFA_Caption* pCaptionNode =
         node_->GetChild<CXFA_Caption>(0, XFA_Element::Caption, false);
-    if (!pCaptionNode)
+    if (!pCaptionNode) {
       return nullptr;
+    }
 
     CXFA_Value* pValueNode =
         pCaptionNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
-    if (!pValueNode)
+    if (!pValueNode) {
       return nullptr;
+    }
 
     CXFA_Node* pChildNode = pValueNode->GetFirstChild();
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
@@ -90,8 +93,9 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
 
   CXFA_Items* pItemNode =
       node_->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
-  if (!pItemNode)
+  if (!pItemNode) {
     return nullptr;
+  }
 
   CXFA_Node* pNode = pItemNode->GetFirstChild();
   while (pNode) {
@@ -145,16 +149,18 @@ std::optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
   CXFA_Node* pParent = node_->GetParent();
   CXFA_Document* pDocument = node_->GetDocument();
   CXFA_Node* pIDNode = nullptr;
-  if (pParent)
+  if (pParent) {
     pIDNode = pDocument->GetNodeByID(pParent, wsAttr.AsStringView());
+  }
 
   if (!pIDNode) {
     pIDNode = pDocument->GetNodeByID(
         ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Form)),
         wsAttr.AsStringView());
   }
-  if (!pIDNode || !pIDNode->IsWidgetReady())
+  if (!pIDNode || !pIDNode->IsWidgetReady()) {
     return std::nullopt;
+  }
 
   return pIDNode->GetValue(XFA_ValuePicture::kDisplay);
 }

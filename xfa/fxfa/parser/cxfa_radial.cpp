@@ -63,8 +63,9 @@ void CXFA_Radial::Draw(CFGAS_GEGraphics* pGS,
                        const CFX_Matrix& matrix) {
   CXFA_Color* pColor = GetColorIfExists();
   FX_ARGB crEnd = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
-  if (!IsToEdge())
+  if (!IsToEdge()) {
     std::swap(crStart, crEnd);
+  }
 
   float end_radius = hypotf(rtFill.Width(), rtFill.Height()) / 2;
   CFGAS_GEShading shading(rtFill.Center(), rtFill.Center(), 0, end_radius, true,

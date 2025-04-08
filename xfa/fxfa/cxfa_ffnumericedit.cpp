@@ -45,8 +45,9 @@ bool CXFA_FFNumericEdit::LoadWidget() {
 
 void CXFA_FFNumericEdit::UpdateWidgetProperty() {
   CFWL_Edit* pWidget = static_cast<CFWL_Edit*>(GetNormalWidget());
-  if (!pWidget)
+  if (!pWidget) {
     return;
+  }
 
   uint32_t dwExtendedStyle =
       FWL_STYLEEXT_EDT_ShowScrollbarFocus | FWL_STYLEEXT_EDT_OuterScrollbar |
@@ -81,8 +82,9 @@ void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
 bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget,
                                     const WideString& wsText) {
   WideString wsPattern = node_->GetPictureContent(XFA_ValuePicture::kEdit);
-  if (!wsPattern.IsEmpty())
+  if (!wsPattern.IsEmpty()) {
     return true;
+  }
 
   WideString wsFormat;
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(node_.Get());

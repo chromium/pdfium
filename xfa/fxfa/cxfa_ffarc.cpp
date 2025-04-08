@@ -16,12 +16,14 @@ CXFA_FFArc::~CXFA_FFArc() = default;
 void CXFA_FFArc::RenderWidget(CFGAS_GEGraphics* pGS,
                               const CFX_Matrix& matrix,
                               HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CXFA_Value* value = node_->GetFormValueIfExists();
-  if (!value)
+  if (!value) {
     return;
+  }
 
   CFX_RectF rtArc = GetRectWithoutRotate();
   CXFA_Margin* margin = node_->GetMarginIfExists();

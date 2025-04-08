@@ -2442,8 +2442,9 @@ const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t unicode) {
         return iter.wEndUnicode > unicode;
       });
   if (result != std::end(kFXGdiFontUSBTable) &&
-      result->wStartUnicode <= unicode && result->wEndUnicode >= unicode)
+      result->wStartUnicode <= unicode && result->wEndUnicode >= unicode) {
     return result;
+  }
   return nullptr;
 }
 

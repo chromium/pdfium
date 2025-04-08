@@ -12,10 +12,12 @@
 bool XFA_DataMerge_NeedGenerateForm(CXFA_Node* pTemplateChild,
                                     bool bUseInstanceManager) {
   XFA_Element eType = pTemplateChild->GetElementType();
-  if (eType == XFA_Element::Variables)
+  if (eType == XFA_Element::Variables) {
     return true;
-  if (pTemplateChild->IsContainerNode())
+  }
+  if (pTemplateChild->IsContainerNode()) {
     return false;
+  }
   if (eType == XFA_Element::Proto ||
       (bUseInstanceManager && eType == XFA_Element::Occur)) {
     return false;
@@ -102,15 +104,17 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
 }
 
 CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode) {
-  if (!pParentFormNode)
+  if (!pParentFormNode) {
     return nullptr;
+  }
 
   for (CXFA_Node* pRootBoundNode = pParentFormNode;
        pRootBoundNode && pRootBoundNode->IsContainerNode();
        pRootBoundNode = pRootBoundNode->GetParent()) {
     CXFA_Node* pDataScope = pRootBoundNode->GetBindData();
-    if (pDataScope)
+    if (pDataScope) {
       return pDataScope;
+    }
   }
   return ToNode(
       pParentFormNode->GetDocument()->GetXFAObject(XFA_HASHCODE_Data));

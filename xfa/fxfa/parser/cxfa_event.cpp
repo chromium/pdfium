@@ -57,8 +57,9 @@ XFA_Element CXFA_Event::GetEventType() const {
   CXFA_Node* pChild = GetFirstChild();
   while (pChild) {
     XFA_Element eType = pChild->GetElementType();
-    if (eType != XFA_Element::Extras)
+    if (eType != XFA_Element::Extras) {
       return eType;
+    }
 
     pChild = pChild->GetNextSibling();
   }

@@ -44,8 +44,9 @@ void CXFA_LayoutItem::PreFinalize() {
   }
 
   auto* pJSObj = form_node_->JSObject();
-  if (pJSObj && pJSObj->GetLayoutItem() == this)
+  if (pJSObj && pJSObj->GetLayoutItem() == this) {
     pJSObj->SetLayoutItem(nullptr);
+  }
 }
 
 void CXFA_LayoutItem::Trace(cppgc::Visitor* visitor) const {

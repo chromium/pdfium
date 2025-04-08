@@ -35,8 +35,9 @@ CXFA_Measurement::CXFA_Measurement(float fValue, XFA_Unit eUnit) {
 }
 
 void CXFA_Measurement::SetString(WideStringView wsMeasure) {
-  if (wsMeasure.Front() == L'=')
+  if (wsMeasure.Front() == L'=') {
     wsMeasure = wsMeasure.Substr(1);
+  }
 
   if (wsMeasure.IsEmpty()) {
     Set(0, XFA_Unit::Unknown);
@@ -83,8 +84,9 @@ float CXFA_Measurement::ToUnit(XFA_Unit eUnit) const {
 bool CXFA_Measurement::ToUnitInternal(XFA_Unit eUnit, float* fValue) const {
   *fValue = GetValue();
   XFA_Unit eFrom = GetUnit();
-  if (eFrom == eUnit)
+  if (eFrom == eUnit) {
     return true;
+  }
 
   switch (eFrom) {
     case XFA_Unit::Pt:
@@ -133,21 +135,29 @@ bool CXFA_Measurement::ToUnitInternal(XFA_Unit eUnit, float* fValue) const {
 
 // static
 XFA_Unit CXFA_Measurement::GetUnitFromString(WideStringView wsUnit) {
-  if (wsUnit.EqualsASCII("mm"))
+  if (wsUnit.EqualsASCII("mm")) {
     return XFA_Unit::Mm;
-  if (wsUnit.EqualsASCII("pt"))
+  }
+  if (wsUnit.EqualsASCII("pt")) {
     return XFA_Unit::Pt;
-  if (wsUnit.EqualsASCII("in"))
+  }
+  if (wsUnit.EqualsASCII("in")) {
     return XFA_Unit::In;
-  if (wsUnit.EqualsASCII("cm"))
+  }
+  if (wsUnit.EqualsASCII("cm")) {
     return XFA_Unit::Cm;
-  if (wsUnit.EqualsASCII("pc"))
+  }
+  if (wsUnit.EqualsASCII("pc")) {
     return XFA_Unit::Pc;
-  if (wsUnit.EqualsASCII("mp"))
+  }
+  if (wsUnit.EqualsASCII("mp")) {
     return XFA_Unit::Mp;
-  if (wsUnit.EqualsASCII("em"))
+  }
+  if (wsUnit.EqualsASCII("em")) {
     return XFA_Unit::Em;
-  if (wsUnit.EqualsASCII("%"))
+  }
+  if (wsUnit.EqualsASCII("%")) {
     return XFA_Unit::Percent;
+  }
   return XFA_Unit::Unknown;
 }

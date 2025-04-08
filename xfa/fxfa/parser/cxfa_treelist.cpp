@@ -26,8 +26,9 @@ CXFA_Node* CXFA_TreeList::NamedItem(WideStringView wsName) {
   size_t count = GetLength();
   for (size_t i = 0; i < count; i++) {
     CXFA_Node* ret = Item(i);
-    if (dwHashCode == ret->GetNameHash())
+    if (dwHashCode == ret->GetNameHash()) {
       return ret;
+    }
   }
   return nullptr;
 }

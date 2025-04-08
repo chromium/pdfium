@@ -102,16 +102,20 @@ class ReplaceOperation final : public CFDE_TextEditEngine::Operation {
 
 int GetBreakFlagsFor(WordBreakProperty current, WordBreakProperty next) {
   if (current == WordBreakProperty::kMidLetter) {
-    if (next == WordBreakProperty::kALetter)
+    if (next == WordBreakProperty::kALetter) {
       return 1;
+    }
   } else if (current == WordBreakProperty::kMidNum) {
-    if (next == WordBreakProperty::kNumeric)
+    if (next == WordBreakProperty::kNumeric) {
       return 2;
+    }
   } else if (current == WordBreakProperty::kMidNumLet) {
-    if (next == WordBreakProperty::kALetter)
+    if (next == WordBreakProperty::kALetter) {
       return 1;
-    if (next == WordBreakProperty::kNumeric)
+    }
+    if (next == WordBreakProperty::kNumeric) {
       return 2;
+    }
   }
   return 0;
 }
@@ -184,8 +188,9 @@ void CFDE_TextEditEngine::AdjustGap(size_t idx, size_t length) {
 
 size_t CFDE_TextEditEngine::CountCharsExceedingSize(const WideString& text,
                                                     size_t num_to_check) {
-  if (!limit_horizontal_area_ && !limit_vertical_area_)
+  if (!limit_horizontal_area_ && !limit_vertical_area_) {
     return 0;
+  }
 
   auto text_out = std::make_unique<CFDE_TextOut>();
   text_out->SetLineSpace(line_spacing_);
@@ -212,10 +217,12 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const WideString& text,
   // TODO(dsinclair): Can this get changed to a binary search?
   for (size_t i = 0; i < num_to_check; i++) {
     text_out->CalcLogicSize(temp, &text_rect);
-    if (limit_horizontal_area_ && text_rect.width <= available_width_)
+    if (limit_horizontal_area_ && text_rect.width <= available_width_) {
       break;
-    if (limit_vertical_area_ && text_rect.height <= vertical_height)
+    }
+    if (limit_vertical_area_ && text_rect.height <= vertical_height) {
       break;
+    }
 
     ++chars_exceeding_size;
 
@@ -230,8 +237,9 @@ void CFDE_TextEditEngine::Insert(size_t idx,
                                  const WideString& request_text,
                                  RecordOperation add_operation) {
   WideString text = request_text;
-  if (text.IsEmpty())
+  if (text.IsEmpty()) {
     return;
+  }
 
   idx = std::min(idx, text_length_);
 
@@ -245,23 +253,26 @@ void CFDE_TextEditEngine::Insert(size_t idx,
   if (delegate_ && (add_operation != RecordOperation::kSkipRecord &&
                     add_operation != RecordOperation::kSkipNotify)) {
     delegate_->OnTextWillChange(&change);
-    if (change.cancelled)
+    if (change.cancelled) {
       return;
+    }
 
     text = change.text;
     idx = change.selection_start;
 
     // Delegate extended the selection, so delete it before we insert.
-    if (change.selection_end != change.selection_start)
+    if (change.selection_end != change.selection_start) {
       DeleteSelectedText(RecordOperation::kSkipRecord);
+    }
 
     // Delegate may have changed text entirely, recheck.
     idx = std::min(idx, text_length_);
   }
 
   size_t length = text.GetLength();
-  if (length == 0)
+  if (length == 0) {
     return;
+  }
 
   // If we're going to be too big we insert what we can and notify the
   // delegate we've filled the text after the insert is done.
@@ -308,8 +319,9 @@ void CFDE_TextEditEngine::Insert(size_t idx,
     if (chars_exceeding > 0) {
       // If none of the characters will fit, notify and exit.
       if (chars_exceeding == length) {
-        if (delegate_)
+        if (delegate_) {
           delegate_->NotifyTextFull();
+        }
         return;
       }
 
@@ -326,8 +338,9 @@ void CFDE_TextEditEngine::Insert(size_t idx,
   }
 
   WideString previous_text;
-  if (delegate_)
+  if (delegate_) {
     previous_text = GetText();
+  }
 
   // Copy the new text into the gap.
   fxcrt::Copy(text.span().first(length),
@@ -343,8 +356,9 @@ void CFDE_TextEditEngine::Insert(size_t idx,
   ClearSelection();
 
   if (delegate_) {
-    if (exceeded_limit)
+    if (exceeded_limit) {
       delegate_->NotifyTextFull();
+    }
 
     delegate_->OnTextChanged();
   }
@@ -383,8 +397,9 @@ void CFDE_TextEditEngine::AddOperationRecord(std::unique_ptr<Operation> op) {
   // We're now pointing at the next thing we want to Undo, so insert at the
   // next position in the queue.
   ++last_insert_position;
-  if (last_insert_position >= max_edit_operations_)
+  if (last_insert_position >= max_edit_operations_) {
     last_insert_position = 0;
+  }
 
   operation_buffer_[last_insert_position] = std::move(op);
   next_operation_index_to_insert_ =
@@ -393,23 +408,26 @@ void CFDE_TextEditEngine::AddOperationRecord(std::unique_ptr<Operation> op) {
 }
 
 void CFDE_TextEditEngine::ClearOperationRecords() {
-  for (auto& record : operation_buffer_)
+  for (auto& record : operation_buffer_) {
     record.reset();
+  }
 
   next_operation_index_to_undo_ = max_edit_operations_ - 1;
   next_operation_index_to_insert_ = 0;
 }
 
 size_t CFDE_TextEditEngine::GetIndexLeft(size_t pos) const {
-  if (pos == 0)
+  if (pos == 0) {
     return 0;
+  }
   --pos;
 
   while (pos != 0) {
     // We want to be on the location just before the \r or \n
     wchar_t ch = GetChar(pos - 1);
-    if (ch != '\r' && ch != '\n')
+    if (ch != '\r' && ch != '\n') {
       break;
+    }
 
     --pos;
   }
@@ -417,8 +435,9 @@ size_t CFDE_TextEditEngine::GetIndexLeft(size_t pos) const {
 }
 
 size_t CFDE_TextEditEngine::GetIndexRight(size_t pos) const {
-  if (pos >= text_length_)
+  if (pos >= text_length_) {
     return text_length_;
+  }
   ++pos;
 
   wchar_t ch = GetChar(pos);
@@ -433,8 +452,9 @@ size_t CFDE_TextEditEngine::GetIndexRight(size_t pos) const {
 
 size_t CFDE_TextEditEngine::GetIndexUp(size_t pos) const {
   size_t line_start = GetIndexAtStartOfLine(pos);
-  if (line_start == 0)
+  if (line_start == 0) {
     return pos;
+  }
 
   // Determine how far along the line we were.
   size_t dist = pos - line_start;
@@ -446,24 +466,27 @@ size_t CFDE_TextEditEngine::GetIndexUp(size_t pos) const {
     ch = GetChar(line_start);
   } while (line_start != 0 && (ch == '\r' || ch == '\n'));
 
-  if (line_start == 0)
+  if (line_start == 0) {
     return dist;
+  }
 
   // Get the start of the line prior to the current line.
   size_t prior_start = GetIndexAtStartOfLine(line_start);
 
   // Prior line is shorter then next line, and we're past the end of that line
   // return the end of line.
-  if (prior_start + dist > line_start)
+  if (prior_start + dist > line_start) {
     return GetIndexAtEndOfLine(line_start);
+  }
 
   return prior_start + dist;
 }
 
 size_t CFDE_TextEditEngine::GetIndexDown(size_t pos) const {
   size_t line_end = GetIndexAtEndOfLine(pos);
-  if (line_end == text_length_)
+  if (line_end == text_length_) {
     return pos;
+  }
 
   wchar_t ch;
   do {
@@ -471,8 +494,9 @@ size_t CFDE_TextEditEngine::GetIndexDown(size_t pos) const {
     ch = GetChar(line_end);
   } while (line_end < text_length_ && (ch == '\r' || ch == '\n'));
 
-  if (line_end == text_length_)
+  if (line_end == text_length_) {
     return line_end;
+  }
 
   // Determine how far along the line we are.
   size_t dist = pos - GetIndexAtStartOfLine(pos);
@@ -480,26 +504,30 @@ size_t CFDE_TextEditEngine::GetIndexDown(size_t pos) const {
   // Check if next line is shorter then current line. If so, return end
   // of next line.
   size_t next_line_end = GetIndexAtEndOfLine(line_end);
-  if (line_end + dist > next_line_end)
+  if (line_end + dist > next_line_end) {
     return next_line_end;
+  }
 
   return line_end + dist;
 }
 
 size_t CFDE_TextEditEngine::GetIndexAtStartOfLine(size_t pos) const {
-  if (pos == 0)
+  if (pos == 0) {
     return 0;
+  }
 
   wchar_t ch = GetChar(pos);
   // What to do.
-  if (ch == '\r' || ch == '\n')
+  if (ch == '\r' || ch == '\n') {
     return pos;
+  }
 
   do {
     // We want to be on the location just after the \r\n
     ch = GetChar(pos - 1);
-    if (ch == '\r' || ch == '\n')
+    if (ch == '\r' || ch == '\n') {
       break;
+    }
 
     --pos;
   } while (pos > 0);
@@ -508,13 +536,15 @@ size_t CFDE_TextEditEngine::GetIndexAtStartOfLine(size_t pos) const {
 }
 
 size_t CFDE_TextEditEngine::GetIndexAtEndOfLine(size_t pos) const {
-  if (pos >= text_length_)
+  if (pos >= text_length_) {
     return text_length_;
+  }
 
   wchar_t ch = GetChar(pos);
   // Not quite sure which way to go here?
-  if (ch == '\r' || ch == '\n')
+  if (ch == '\r' || ch == '\n') {
     return pos;
+  }
 
   // We want to be on the location of the first \r or \n.
   do {
@@ -547,8 +577,9 @@ bool CFDE_TextEditEngine::CanRedo() const {
 }
 
 bool CFDE_TextEditEngine::Redo() {
-  if (!CanRedo())
+  if (!CanRedo()) {
     return false;
+  }
 
   next_operation_index_to_undo_ =
       (next_operation_index_to_undo_ + 1) % max_edit_operations_;
@@ -557,8 +588,9 @@ bool CFDE_TextEditEngine::Redo() {
 }
 
 bool CFDE_TextEditEngine::Undo() {
-  if (!CanUndo())
+  if (!CanUndo()) {
     return false;
+  }
 
   operation_buffer_[next_operation_index_to_undo_]->Undo();
   next_operation_index_to_undo_ = next_operation_index_to_undo_ == 0
@@ -568,8 +600,9 @@ bool CFDE_TextEditEngine::Undo() {
 }
 
 void CFDE_TextEditEngine::Layout() {
-  if (!is_dirty_)
+  if (!is_dirty_) {
     return;
+  }
 
   is_dirty_ = false;
   RebuildPieces();
@@ -582,48 +615,56 @@ CFX_RectF CFDE_TextEditEngine::GetContentsBoundingBox() {
 }
 
 void CFDE_TextEditEngine::SetAvailableWidth(size_t width) {
-  if (width == available_width_)
+  if (width == available_width_) {
     return;
+  }
 
   ClearOperationRecords();
 
   available_width_ = width;
-  if (is_linewrap_enabled_)
+  if (is_linewrap_enabled_) {
     text_break_.SetLineWidth(width);
-  if (is_comb_text_)
+  }
+  if (is_comb_text_) {
     SetCombTextWidth();
+  }
 
   is_dirty_ = true;
 }
 
 void CFDE_TextEditEngine::SetHasCharacterLimit(bool limit) {
-  if (has_character_limit_ == limit)
+  if (has_character_limit_ == limit) {
     return;
+  }
 
   has_character_limit_ = limit;
   character_limit_ = std::max(character_limit_, text_length_);
-  if (is_comb_text_)
+  if (is_comb_text_) {
     SetCombTextWidth();
+  }
 
   is_dirty_ = true;
 }
 
 void CFDE_TextEditEngine::SetCharacterLimit(size_t limit) {
-  if (character_limit_ == limit)
+  if (character_limit_ == limit) {
     return;
+  }
 
   ClearOperationRecords();
 
   character_limit_ = std::max(limit, text_length_);
-  if (is_comb_text_)
+  if (is_comb_text_) {
     SetCombTextWidth();
+  }
 
   is_dirty_ = true;
 }
 
 void CFDE_TextEditEngine::SetFont(RetainPtr<CFGAS_GEFont> font) {
-  if (font_ == font)
+  if (font_ == font) {
     return;
+  }
 
   font_ = std::move(font);
   text_break_.SetFont(font_);
@@ -635,8 +676,9 @@ RetainPtr<CFGAS_GEFont> CFDE_TextEditEngine::GetFont() const {
 }
 
 void CFDE_TextEditEngine::SetFontSize(float size) {
-  if (font_size_ == size)
+  if (font_size_ == size) {
     return;
+  }
 
   font_size_ = size;
   text_break_.SetFontSize(font_size_);
@@ -646,15 +688,17 @@ void CFDE_TextEditEngine::SetFontSize(float size) {
 void CFDE_TextEditEngine::SetTabWidth(float width) {
   int32_t old_tab_width = text_break_.GetTabWidth();
   text_break_.SetTabWidth(width);
-  if (old_tab_width == text_break_.GetTabWidth())
+  if (old_tab_width == text_break_.GetTabWidth()) {
     return;
+  }
 
   is_dirty_ = true;
 }
 
 void CFDE_TextEditEngine::SetAlignment(uint32_t alignment) {
-  if (alignment == character_alignment_)
+  if (alignment == character_alignment_) {
     return;
+  }
 
   character_alignment_ = alignment;
   text_break_.SetAlignment(alignment);
@@ -662,31 +706,35 @@ void CFDE_TextEditEngine::SetAlignment(uint32_t alignment) {
 }
 
 void CFDE_TextEditEngine::SetVisibleLineCount(size_t count) {
-  if (visible_line_count_ == count)
+  if (visible_line_count_ == count) {
     return;
+  }
 
   visible_line_count_ = std::max(static_cast<size_t>(1), count);
   is_dirty_ = true;
 }
 
 void CFDE_TextEditEngine::EnableMultiLine(bool val) {
-  if (is_multiline_ == val)
+  if (is_multiline_ == val) {
     return;
+  }
 
   is_multiline_ = val;
   Mask<CFGAS_Break::LayoutStyle> style = text_break_.GetLayoutStyles();
-  if (is_multiline_)
+  if (is_multiline_) {
     style.Clear(CFGAS_Break::LayoutStyle::kSingleLine);
-  else
+  } else {
     style |= CFGAS_Break::LayoutStyle::kSingleLine;
+  }
 
   text_break_.SetLayoutStyles(style);
   is_dirty_ = true;
 }
 
 void CFDE_TextEditEngine::EnableLineWrap(bool val) {
-  if (is_linewrap_enabled_ == val)
+  if (is_linewrap_enabled_ == val) {
     return;
+  }
 
   is_linewrap_enabled_ = val;
   text_break_.SetLineWidth(is_linewrap_enabled_ ? available_width_
@@ -695,8 +743,9 @@ void CFDE_TextEditEngine::EnableLineWrap(bool val) {
 }
 
 void CFDE_TextEditEngine::SetCombText(bool enable) {
-  if (is_comb_text_ == enable)
+  if (is_comb_text_ == enable) {
     return;
+  }
 
   is_comb_text_ = enable;
 
@@ -713,15 +762,17 @@ void CFDE_TextEditEngine::SetCombText(bool enable) {
 
 void CFDE_TextEditEngine::SetCombTextWidth() {
   size_t width = available_width_;
-  if (has_character_limit_)
+  if (has_character_limit_) {
     width /= character_limit_;
+  }
 
   text_break_.SetCombWidth(width);
 }
 
 void CFDE_TextEditEngine::SelectAll() {
-  if (text_length_ == 0)
+  if (text_length_ == 0) {
     return;
+  }
 
   has_selection_ = true;
   selection_.start_idx = 0;
@@ -740,10 +791,12 @@ void CFDE_TextEditEngine::SetSelection(size_t start_idx, size_t count) {
     return;
   }
 
-  if (start_idx > text_length_)
+  if (start_idx > text_length_) {
     return;
-  if (start_idx + count > text_length_)
+  }
+  if (start_idx + count > text_length_) {
     count = text_length_ - start_idx;
+  }
 
   has_selection_ = true;
   selection_.start_idx = start_idx;
@@ -751,8 +804,9 @@ void CFDE_TextEditEngine::SetSelection(size_t start_idx, size_t count) {
 }
 
 WideString CFDE_TextEditEngine::GetSelectedText() const {
-  if (!has_selection_)
+  if (!has_selection_) {
     return WideString();
+  }
 
   WideString text;
   if (selection_.start_idx < gap_position_) {
@@ -785,8 +839,9 @@ WideString CFDE_TextEditEngine::GetSelectedText() const {
 
 WideString CFDE_TextEditEngine::DeleteSelectedText(
     RecordOperation add_operation) {
-  if (!has_selection_)
+  if (!has_selection_) {
     return WideString();
+  }
 
   return Delete(selection_.start_idx, selection_.count, add_operation);
 }
@@ -794,8 +849,9 @@ WideString CFDE_TextEditEngine::DeleteSelectedText(
 WideString CFDE_TextEditEngine::Delete(size_t start_idx,
                                        size_t length,
                                        RecordOperation add_operation) {
-  if (start_idx >= text_length_)
+  if (start_idx >= text_length_) {
     return WideString();
+  }
 
   TextChange change;
   change.text.clear();
@@ -807,16 +863,18 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
     change.selection_end = start_idx + length;
 
     delegate_->OnTextWillChange(&change);
-    if (change.cancelled)
+    if (change.cancelled) {
       return WideString();
+    }
 
     // Delegate may have changed the selection range.
     start_idx = change.selection_start;
     length = change.selection_end - change.selection_start;
 
     // Delegate may have changed text entirely, recheck.
-    if (start_idx >= text_length_)
+    if (start_idx >= text_length_) {
       return WideString();
+    }
   }
 
   length = std::min(length, text_length_ - start_idx);
@@ -839,11 +897,13 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
   ClearSelection();
 
   // The JS requested the insertion of text instead of just a deletion.
-  if (!change.text.IsEmpty())
+  if (!change.text.IsEmpty()) {
     Insert(start_idx, change.text, RecordOperation::kSkipRecord);
+  }
 
-  if (delegate_)
+  if (delegate_) {
     delegate_->OnTextChanged();
+  }
 
   return ret;
 }
@@ -860,8 +920,9 @@ void CFDE_TextEditEngine::ReplaceSelectedText(const WideString& requested_rep) {
     change.cancelled = false;
 
     delegate_->OnTextWillChange(&change);
-    if (change.cancelled)
+    if (change.cancelled) {
       return;
+    }
 
     rep = change.text;
     selection_.start_idx = change.selection_start;
@@ -893,10 +954,12 @@ size_t CFDE_TextEditEngine::GetLength() const {
 }
 
 wchar_t CFDE_TextEditEngine::GetChar(size_t idx) const {
-  if (idx >= text_length_)
+  if (idx >= text_length_) {
     return L'\0';
-  if (password_mode_)
+  }
+  if (password_mode_) {
     return password_alias_;
+  }
 
   return idx < gap_position_
              ? content_[idx]
@@ -916,39 +979,45 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
   auto start_it = text_piece_info_.begin();
   for (; start_it < text_piece_info_.end(); ++start_it) {
     if (start_it->rtPiece.top <= point.y &&
-        point.y < start_it->rtPiece.bottom())
+        point.y < start_it->rtPiece.bottom()) {
       break;
+    }
   }
   // We didn't find the point before getting to the end of the text, return
   // end of text.
-  if (start_it == text_piece_info_.end())
+  if (start_it == text_piece_info_.end()) {
     return text_length_;
+  }
 
   auto end_it = start_it;
   for (; end_it < text_piece_info_.end(); ++end_it) {
     // We've moved past where the point should be and didn't find anything.
     // Return the start of the current piece as the location.
-    if (end_it->rtPiece.bottom() <= point.y || point.y < end_it->rtPiece.top)
+    if (end_it->rtPiece.bottom() <= point.y || point.y < end_it->rtPiece.top) {
       break;
+    }
   }
   // Make sure the end iterator is pointing to our text pieces.
-  if (end_it == text_piece_info_.end())
+  if (end_it == text_piece_info_.end()) {
     --end_it;
+  }
 
   size_t start_it_idx = start_it->nStart;
   for (; start_it <= end_it; ++start_it) {
     bool piece_contains_point_vertically =
         (point.y >= start_it->rtPiece.top &&
          point.y < start_it->rtPiece.bottom());
-    if (!piece_contains_point_vertically)
+    if (!piece_contains_point_vertically) {
       continue;
+    }
 
     std::vector<CFX_RectF> rects = GetCharRects(*start_it);
     for (size_t i = 0; i < rects.size(); ++i) {
       bool character_contains_point_horizontally =
           (point.x >= rects[i].left && point.x < rects[i].right());
-      if (!character_contains_point_horizontally)
+      if (!character_contains_point_horizontally) {
         continue;
+      }
 
       // When clicking on the left half of a character, the cursor should be
       // moved before it. If the click was on the right half of that character,
@@ -957,13 +1026,15 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
           (point.x - rects[i].left < rects[i].right() - point.x);
       size_t caret_pos = closer_to_left ? i : i + 1;
       size_t pos = start_it->nStart + caret_pos;
-      if (pos >= text_length_)
+      if (pos >= text_length_) {
         return text_length_;
+      }
 
       wchar_t wch = GetChar(pos);
       if (wch == L'\n' || wch == L'\r') {
-        if (wch == L'\n' && pos > 0 && GetChar(pos - 1) == L'\r')
+        if (wch == L'\n' && pos > 0 && GetChar(pos - 1) == L'\r') {
           --pos;
+        }
         return pos;
       }
 
@@ -994,10 +1065,12 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
     return pos;
   }
 
-  if (start_it == text_piece_info_.end())
+  if (start_it == text_piece_info_.end()) {
     return start_it_idx;
-  if (start_it == end_it)
+  }
+  if (start_it == end_it) {
     return start_it->nStart;
+  }
 
   // We didn't find the point before going over all of the pieces, we want to
   // return the start of the piece after the point.
@@ -1006,8 +1079,9 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
 
 std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharRects(
     const FDE_TEXTEDITPIECE& piece) {
-  if (piece.nCount < 1)
+  if (piece.nCount < 1) {
     return std::vector<CFX_RectF>();
+  }
 
   CFGAS_TxtBreak::Run tr;
   tr.pEdtEngine = this;
@@ -1023,8 +1097,9 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharRects(
 
 std::vector<TextCharPos> CFDE_TextEditEngine::GetDisplayPos(
     const FDE_TEXTEDITPIECE& piece) {
-  if (piece.nCount < 1)
+  if (piece.nCount < 1) {
     return std::vector<TextCharPos>();
+  }
 
   CFGAS_TxtBreak::Run tr;
   tr.pEdtEngine = this;
@@ -1049,8 +1124,9 @@ void CFDE_TextEditEngine::RebuildPieces() {
   text_piece_info_.clear();
 
   // Must have a font set in order to break the text.
-  if (!CanGenerateCharacterInfo())
+  if (!CanGenerateCharacterInfo()) {
     return;
+  }
 
   bool initialized_bounding_box = false;
   contents_bounding_box_ = CFX_RectF();
@@ -1063,11 +1139,13 @@ void CFDE_TextEditEngine::RebuildPieces() {
 
     CFGAS_Char::BreakType break_status = text_break_.AppendChar(
         password_mode_ ? password_alias_ : iter.GetChar());
-    if (iter.IsEOF(false) && CFX_BreakTypeNoneOrPiece(break_status))
+    if (iter.IsEOF(false) && CFX_BreakTypeNoneOrPiece(break_status)) {
       break_status = text_break_.EndBreak(CFGAS_Char::BreakType::kParagraph);
+    }
 
-    if (CFX_BreakTypeNoneOrPiece(break_status))
+    if (CFX_BreakTypeNoneOrPiece(break_status)) {
       continue;
+    }
     int32_t piece_count = text_break_.CountBreakPieces();
     for (int32_t i = 0; i < piece_count; ++i) {
       const CFGAS_BreakPiece* piece = text_break_.GetBreakPieceUnstable(i);
@@ -1081,8 +1159,9 @@ void CFDE_TextEditEngine::RebuildPieces() {
       txtEdtPiece.nCount = piece->GetCharCount();
       txtEdtPiece.nBidiLevel = piece->GetBidiLevel();
       txtEdtPiece.dwCharStyles = piece->GetCharStyles();
-      if (FX_IsOdd(piece->GetBidiLevel()))
+      if (FX_IsOdd(piece->GetBidiLevel())) {
         txtEdtPiece.dwCharStyles |= FX_TXTCHARSTYLE_OddBidiLevel;
+      }
 
       text_piece_info_.push_back(txtEdtPiece);
 
@@ -1094,8 +1173,9 @@ void CFDE_TextEditEngine::RebuildPieces() {
       }
 
       current_piece_start += txtEdtPiece.nCount;
-      for (int32_t k = 0; k < txtEdtPiece.nCount; ++k)
+      for (int32_t k = 0; k < txtEdtPiece.nCount; ++k) {
         char_widths_.push_back(piece->GetChar(k)->char_width_);
+      }
     }
 
     current_line_start += line_spacing_;
@@ -1112,8 +1192,9 @@ void CFDE_TextEditEngine::RebuildPieces() {
 
   if (delta != 0.0) {
     float offset = delta - contents_bounding_box_.left;
-    for (auto& info : text_piece_info_)
+    for (auto& info : text_piece_info_) {
       info.rtPiece.Offset(offset, 0.0f);
+    }
     contents_bounding_box_.Offset(offset, 0.0f);
   }
 
@@ -1132,8 +1213,9 @@ std::pair<int32_t, CFX_RectF> CFDE_TextEditEngine::GetCharacterInfo(
 
   auto it = text_piece_info_.begin();
   for (; it != text_piece_info_.end(); ++it) {
-    if (it->nStart <= start_idx && start_idx < it->nStart + it->nCount)
+    if (it->nStart <= start_idx && start_idx < it->nStart + it->nCount) {
       break;
+    }
   }
   CHECK_NE(it, text_piece_info_.end());
   return {it->nBidiLevel, GetCharRects(*it)[start_idx - it->nStart]};
@@ -1147,11 +1229,13 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharacterRectsInRange(
 
   auto it = text_piece_info_.begin();
   for (; it != text_piece_info_.end(); ++it) {
-    if (it->nStart <= start_idx && start_idx < it->nStart + it->nCount)
+    if (it->nStart <= start_idx && start_idx < it->nStart + it->nCount) {
       break;
+    }
   }
-  if (it == text_piece_info_.end())
+  if (it == text_piece_info_.end()) {
     return std::vector<CFX_RectF>();
+  }
 
   int32_t end_idx = start_idx + count - 1;
   std::vector<CFX_RectF> rects;
@@ -1173,8 +1257,9 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharacterRectsInRange(
 
 std::pair<size_t, size_t> CFDE_TextEditEngine::BoundsForWordAt(
     size_t idx) const {
-  if (idx > text_length_)
+  if (idx > text_length_) {
     return {0, 0};
+  }
 
   CFDE_TextEditEngine::Iterator iter(this);
   iter.SetAt(idx);
@@ -1190,17 +1275,19 @@ CFDE_TextEditEngine::Iterator::Iterator(const CFDE_TextEditEngine* engine)
 CFDE_TextEditEngine::Iterator::~Iterator() = default;
 
 void CFDE_TextEditEngine::Iterator::Next(bool bPrev) {
-  if (bPrev && current_position_ == -1)
+  if (bPrev && current_position_ == -1) {
     return;
+  }
   if (!bPrev && current_position_ > -1 &&
       static_cast<size_t>(current_position_) == engine_->GetLength()) {
     return;
   }
 
-  if (bPrev)
+  if (bPrev) {
     --current_position_;
-  else
+  } else {
     ++current_position_;
+  }
 }
 
 wchar_t CFDE_TextEditEngine::Iterator::GetChar() const {
@@ -1220,8 +1307,9 @@ bool CFDE_TextEditEngine::Iterator::IsEOF(bool bPrev) const {
 }
 
 size_t CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
-  if (IsEOF(bPrev))
+  if (IsEOF(bPrev)) {
     return current_position_ > -1 ? current_position_ : 0;
+  }
 
   WordBreakProperty ePreType = WordBreakProperty::kNone;
   if (!IsEOF(!bPrev)) {

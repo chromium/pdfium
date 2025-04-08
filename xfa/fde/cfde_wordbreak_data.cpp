@@ -2833,8 +2833,9 @@ bool FX_CheckStateChangeForWordBreak(WordBreakProperty from,
 
 WordBreakProperty FX_GetWordBreakProperty(wchar_t wcCodePoint) {
   size_t index = static_cast<size_t>(wcCodePoint) / 2;
-  if (index >= std::size(kCodePointProperties))
+  if (index >= std::size(kCodePointProperties)) {
     return WordBreakProperty::kNone;
+  }
 
   uint8_t dwProperty = kCodePointProperties[index];
   return static_cast<WordBreakProperty>((wcCodePoint & 1) ? (dwProperty & 0x0F)

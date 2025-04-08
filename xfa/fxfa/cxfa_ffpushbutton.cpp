@@ -43,8 +43,9 @@ void CXFA_FFPushButton::Trace(cppgc::Visitor* visitor) const {
 void CXFA_FFPushButton::RenderWidget(CFGAS_GEGraphics* pGS,
                                      const CFX_Matrix& matrix,
                                      HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
@@ -138,8 +139,9 @@ FX_ARGB CXFA_FFPushButton::GetFillColor() {
 
 void CXFA_FFPushButton::LoadHighlightCaption() {
   CXFA_Caption* caption = node_->GetCaptionIfExists();
-  if (!caption || caption->IsHidden())
+  if (!caption || caption->IsHidden()) {
     return;
+  }
 
   if (node_->HasButtonRollover()) {
     if (!roll_provider_) {
@@ -176,8 +178,9 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFGAS_GEGraphics* pGS,
                                                CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = node_->GetCaptionTextLayout();
   CXFA_Caption* caption = node_->GetCaptionIfExists();
-  if (!caption || !caption->IsVisible())
+  if (!caption || !caption->IsVisible()) {
     return;
+  }
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtClip = caption_rect_;
@@ -200,8 +203,9 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFGAS_GEGraphics* pGS,
     }
   }
 
-  if (pCapTextLayout)
+  if (pCapTextLayout) {
     pCapTextLayout->DrawString(pRenderDevice, mt, rtClip, 0);
+  }
 }
 
 void CXFA_FFPushButton::OnProcessMessage(CFWL_Message* pMessage) {

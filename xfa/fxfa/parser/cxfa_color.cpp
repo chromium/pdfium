@@ -30,8 +30,9 @@ const CXFA_Node::AttributeData kColorAttributeData[] = {
 // static
 FX_ARGB CXFA_Color::StringToFXARGB(WideStringView view) {
   static constexpr FX_ARGB kDefaultValue = 0xff000000;
-  if (view.IsEmpty())
+  if (view.IsEmpty()) {
     return kDefaultValue;
+  }
 
   pdfium::span<const wchar_t> str = view.span();
   size_t cc = 0;
@@ -47,8 +48,9 @@ FX_ARGB CXFA_Color::StringToFXARGB(WideStringView view) {
   uint8_t g = 0;
   uint8_t b = 0;
   while (cc < str.size()) {
-    if (str[cc] == ',' || !FXSYS_IsDecimalDigit(str[cc]))
+    if (str[cc] == ',' || !FXSYS_IsDecimalDigit(str[cc])) {
       break;
+    }
 
     r = r * 10 + str[cc] - '0';
     cc++;
@@ -60,8 +62,9 @@ FX_ARGB CXFA_Color::StringToFXARGB(WideStringView view) {
     }
 
     while (cc < str.size()) {
-      if (str[cc] == ',' || !FXSYS_IsDecimalDigit(str[cc]))
+      if (str[cc] == ',' || !FXSYS_IsDecimalDigit(str[cc])) {
         break;
+      }
 
       g = g * 10 + str[cc] - '0';
       cc++;
@@ -73,8 +76,9 @@ FX_ARGB CXFA_Color::StringToFXARGB(WideStringView view) {
       }
 
       while (cc < str.size()) {
-        if (str[cc] == ',' || !FXSYS_IsDecimalDigit(str[cc]))
+        if (str[cc] == ',' || !FXSYS_IsDecimalDigit(str[cc])) {
           break;
+        }
 
         b = b * 10 + str[cc] - '0';
         cc++;

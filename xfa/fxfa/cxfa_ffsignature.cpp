@@ -25,8 +25,9 @@ bool CXFA_FFSignature::LoadWidget() {
 void CXFA_FFSignature::RenderWidget(CFGAS_GEGraphics* pGS,
                                     const CFX_Matrix& matrix,
                                     HighlightOption highlight) {
-  if (!HasVisibleStatus())
+  if (!HasVisibleStatus()) {
     return;
+  }
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
@@ -105,10 +106,12 @@ bool CXFA_FFSignature::OnChar(uint32_t nChar, Mask<XFA_FWL_KeyFlag> dwFlags) {
 
 FWL_WidgetHit CXFA_FFSignature::HitTest(const CFX_PointF& point) {
   auto* pNorm = GetNormalWidget();
-  if (pNorm && pNorm->HitTest(FWLToClient(point)) != FWL_WidgetHit::Unknown)
+  if (pNorm && pNorm->HitTest(FWLToClient(point)) != FWL_WidgetHit::Unknown) {
     return FWL_WidgetHit::Client;
-  if (!GetRectWithoutRotate().Contains(point))
+  }
+  if (!GetRectWithoutRotate().Contains(point)) {
     return FWL_WidgetHit::Unknown;
+  }
   if (caption_rect_.Contains(point)) {
     return FWL_WidgetHit::Titlebar;
   }

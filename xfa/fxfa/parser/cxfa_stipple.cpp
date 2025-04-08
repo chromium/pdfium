@@ -56,8 +56,9 @@ void CXFA_Stipple::Draw(CFGAS_GEGraphics* pGS,
                         const CFX_RectF& rtFill,
                         const CFX_Matrix& matrix) {
   int32_t iRate = GetRate();
-  if (iRate == 0)
+  if (iRate == 0) {
     iRate = 100;
+  }
 
   CXFA_Color* pColor = GetColorIfExists();
   FX_ARGB crColor = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;

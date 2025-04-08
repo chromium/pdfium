@@ -138,8 +138,9 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
                                           WideStringView wsName) const {
   CXFA_Node* pChild = pParent ? pParent->GetFirstChild() : nullptr;
   while (pChild) {
-    if (pChild->JSObject()->GetAttributeByEnum(XFA_Attribute::Name) == wsName)
+    if (pChild->JSObject()->GetAttributeByEnum(XFA_Attribute::Name) == wsName) {
       return pChild;
+    }
 
     pChild = pChild->GetNextSibling();
   }
@@ -161,8 +162,9 @@ WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
       node_ ? node_->GetChild<CXFA_CalendarSymbols>(
                   0, XFA_Element::CalendarSymbols, false)
             : nullptr;
-  if (!pCalendar)
+  if (!pCalendar) {
     return WideString();
+  }
 
   for (CXFA_Node* pNode = pCalendar->GetFirstChildByClass<CXFA_Node>(eElement);
        pNode; pNode = pNode->GetNextSameClassSibling<CXFA_Node>(eElement)) {

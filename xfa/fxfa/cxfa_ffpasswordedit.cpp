@@ -49,8 +49,9 @@ bool CXFA_FFPasswordEdit::LoadWidget() {
 
 void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
   CFWL_Edit* pWidget = static_cast<CFWL_Edit*>(GetNormalWidget());
-  if (!pWidget)
+  if (!pWidget) {
     return;
+  }
 
   uint32_t dwExtendedStyle = FWL_STYLEEXT_EDT_ShowScrollbarFocus |
                              FWL_STYLEEXT_EDT_OuterScrollbar |
@@ -58,8 +59,9 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
   dwExtendedStyle |= UpdateUIProperty();
 
   WideString password = password_node_->GetPasswordChar();
-  if (!password.IsEmpty())
+  if (!password.IsEmpty()) {
     pWidget->SetAliasChar(password[0]);
+  }
   if (!node_->IsHorizontalScrollPolicyOff()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
   }

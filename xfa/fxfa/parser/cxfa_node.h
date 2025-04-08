@@ -497,8 +497,9 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
                     const WideString& wsHref,
                     const WideString& wsData);
   CXFA_Node* GetBindingNode() const {
-    if (binding_nodes_.empty())
+    if (binding_nodes_.empty()) {
       return nullptr;
+    }
     return binding_nodes_[0];
   }
   bool BindsFormItems() const { return HasFlag(XFA_NodeFlag::kBindFormItems); }

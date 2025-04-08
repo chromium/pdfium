@@ -25,8 +25,9 @@ FWL_Type CFWL_Barcode::GetClassID() const {
 }
 
 void CFWL_Barcode::Update() {
-  if (IsLocked())
+  if (IsLocked()) {
     return;
+  }
 
   CFWL_Edit::Update();
   GenerateBarcodeImageCache();
@@ -34,8 +35,9 @@ void CFWL_Barcode::Update() {
 
 void CFWL_Barcode::DrawWidget(CFGAS_GEGraphics* pGraphics,
                               const CFX_Matrix& matrix) {
-  if (!pGraphics)
+  if (!pGraphics) {
     return;
+  }
 
   if ((properties_.states_ & FWL_STATE_WGT_Focused) == 0) {
     GenerateBarcodeImageCache();
@@ -150,8 +152,9 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   IFWL_ThemeProvider* pTheme = GetThemeProvider();
   CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, this);
   if (RetainPtr<CFGAS_GEFont> pFont = pTheme->GetFont(part)) {
-    if (CFX_Font* pCXFont = pFont->GetDevFont())
+    if (CFX_Font* pCXFont = pFont->GetDevFont()) {
       barcode_engine_->SetFont(pCXFont);
+    }
   }
   barcode_engine_->SetFontSize(pTheme->GetFontSize(part));
   barcode_engine_->SetFontColor(pTheme->GetTextColor(part));

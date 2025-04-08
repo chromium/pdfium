@@ -44,8 +44,9 @@ CXFA_FFComboBox* CXFA_FFComboBox::AsComboBox() {
 }
 
 CFX_RectF CXFA_FFComboBox::GetBBox(FocusOption focus) {
-  if (focus == kDrawFocus)
+  if (focus == kDrawFocus) {
     return CFX_RectF();
+  }
   return CXFA_FFWidget::GetBBox(kDoNotDrawFocus);
 }
 
@@ -74,10 +75,11 @@ bool CXFA_FFComboBox::LoadWidget() {
     }
 
     std::vector<int32_t> iSelArray = node_->GetSelectedItems();
-    if (iSelArray.empty())
+    if (iSelArray.empty()) {
       pComboBox->SetEditText(node_->GetValue(XFA_ValuePicture::kRaw));
-    else
+    } else {
       pComboBox->SetCurSel(iSelArray.front());
+    }
 
     UpdateWidgetProperty();
   }
@@ -87,8 +89,9 @@ bool CXFA_FFComboBox::LoadWidget() {
 
 void CXFA_FFComboBox::UpdateWidgetProperty() {
   auto* pComboBox = ToComboBox(GetNormalWidget());
-  if (!pComboBox)
+  if (!pComboBox) {
     return;
+  }
 
   uint32_t dwExtendedStyle = 0;
   uint32_t dwEditStyles = FWL_STYLEEXT_EDT_ReadOnly;
@@ -113,16 +116,18 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
 
 bool CXFA_FFComboBox::OnRButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                                   const CFX_PointF& point) {
-  if (!CXFA_FFField::OnRButtonUp(dwFlags, point))
+  if (!CXFA_FFField::OnRButtonUp(dwFlags, point)) {
     return false;
+  }
 
   GetDoc()->PopupMenu(this, point);
   return true;
 }
 
 bool CXFA_FFComboBox::OnKillFocus(CXFA_FFWidget* pNewWidget) {
-  if (!ProcessCommittedData())
+  if (!ProcessCommittedData()) {
     UpdateFWLData();
+  }
 
   return pNewWidget && CXFA_FFField::OnKillFocus(pNewWidget);
 }
@@ -157,16 +162,18 @@ WideString CXFA_FFComboBox::GetCurrentText() const {
   int32_t iCursel = pFWLcombobox->GetCurSel();
   if (iCursel >= 0) {
     WideString wsSel = pFWLcombobox->GetTextByIndex(iCursel);
-    if (wsSel == wsText)
+    if (wsSel == wsText) {
       wsText = node_->GetChoiceListItem(iCursel, true).value_or(L"");
+    }
   }
   return wsText;
 }
 
 uint32_t CXFA_FFComboBox::GetAlignment() {
   CXFA_Para* para = node_->GetParaIfExists();
-  if (!para)
+  if (!para) {
     return 0;
+  }
 
   uint32_t dwExtendedStyle = 0;
   switch (para->GetHorizontalAlign()) {
@@ -205,8 +212,9 @@ uint32_t CXFA_FFComboBox::GetAlignment() {
 
 void CXFA_FFComboBox::UpdateFWLData() {
   auto* pComboBox = ToComboBox(GetNormalWidget());
-  if (!pComboBox)
+  if (!pComboBox) {
     return;
+  }
 
   std::vector<int32_t> iSelArray = node_->GetSelectedItems();
   if (!iSelArray.empty()) {
@@ -305,10 +313,11 @@ void CXFA_FFComboBox::InsertItem(const WideString& wsLabel, int32_t nIndex) {
 }
 
 void CXFA_FFComboBox::DeleteItem(int32_t nIndex) {
-  if (nIndex < 0)
+  if (nIndex < 0) {
     ToComboBox(GetNormalWidget())->RemoveAll();
-  else
+  } else {
     ToComboBox(GetNormalWidget())->RemoveAt(nIndex);
+  }
 
   GetNormalWidget()->Update();
   InvalidateRect();

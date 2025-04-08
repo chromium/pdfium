@@ -25,8 +25,9 @@ namespace {
 CFGAS_StringFormatter::Category ValueCategory(
     CFGAS_StringFormatter::Category eCategory,
     CXFA_LocaleValue::ValueType eValueType) {
-  if (eCategory != CFGAS_StringFormatter::Category::kUnknown)
+  if (eCategory != CFGAS_StringFormatter::Category::kUnknown) {
     return eCategory;
+  }
 
   switch (eValueType) {
     case CXFA_LocaleValue::ValueType::kBoolean:
@@ -52,14 +53,17 @@ bool ValueSplitDateTime(const WideString& wsDateTime,
                         WideString& wsTime) {
   wsDate.clear();
   wsTime.clear();
-  if (wsDateTime.IsEmpty())
+  if (wsDateTime.IsEmpty()) {
     return false;
+  }
 
   auto nSplitIndex = wsDateTime.Find('T');
-  if (!nSplitIndex.has_value())
+  if (!nSplitIndex.has_value()) {
     nSplitIndex = wsDateTime.Find(' ');
-  if (!nSplitIndex.has_value())
+  }
+  if (!nSplitIndex.has_value()) {
     return false;
+  }
 
   wsDate = wsDateTime.First(nSplitIndex.value());
   wsTime = wsDateTime.Last(wsDateTime.GetLength() - nSplitIndex.value() - 1);
@@ -148,26 +152,30 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
     switch (ValueCategory(pFormat->GetCategory(), type_)) {
       case CFGAS_StringFormatter::Category::kNull:
         bRet = pFormat->ParseNull(wsValue);
-        if (!bRet)
+        if (!bRet) {
           bRet = wsValue.IsEmpty();
+        }
         break;
       case CFGAS_StringFormatter::Category::kZero:
         bRet = pFormat->ParseZero(wsValue);
-        if (!bRet)
+        if (!bRet) {
           bRet = wsValue.EqualsASCII("0");
+        }
         break;
       case CFGAS_StringFormatter::Category::kNum: {
         WideString fNum;
         bRet = pFormat->ParseNum(locale_mgr_, wsValue, &fNum);
-        if (!bRet)
+        if (!bRet) {
           bRet = pFormat->FormatNum(locale_mgr_, wsValue, &wsOutput);
+        }
         break;
       }
       case CFGAS_StringFormatter::Category::kText:
         bRet = pFormat->ParseText(wsValue, &wsOutput);
         wsOutput.clear();
-        if (!bRet)
+        if (!bRet) {
           bRet = pFormat->FormatText(wsValue, &wsOutput);
+        }
         break;
       case CFGAS_StringFormatter::Category::kDate: {
         CFX_DateTime dt;
@@ -213,8 +221,9 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
         break;
     }
   }
-  if (bRet && pMatchFormat)
+  if (bRet && pMatchFormat) {
     *pMatchFormat = wsPatterns[i - 1];
+  }
   return bRet;
 }
 
@@ -259,8 +268,9 @@ void CXFA_LocaleValue::SetTime(const CFX_DateTime& t) {
   type_ = CXFA_LocaleValue::ValueType::kTime;
   value_ = WideString::Format(L"%02d:%02d:%02d", t.GetHour(), t.GetMinute(),
                               t.GetSecond());
-  if (t.GetMillisecond() > 0)
+  if (t.GetMillisecond() > 0) {
     value_ += WideString::Format(L"%:03d", t.GetMillisecond());
+  }
 }
 
 void CXFA_LocaleValue::SetDateTime(const CFX_DateTime& dt) {
@@ -268,8 +278,9 @@ void CXFA_LocaleValue::SetDateTime(const CFX_DateTime& dt) {
   value_ = WideString::Format(L"%04d-%02d-%02dT%02d:%02d:%02d", dt.GetYear(),
                               dt.GetMonth(), dt.GetDay(), dt.GetHour(),
                               dt.GetMinute(), dt.GetSecond());
-  if (dt.GetMillisecond() > 0)
+  if (dt.GetMillisecond() > 0) {
     value_ += WideString::Format(L"%:03d", dt.GetMillisecond());
+  }
 }
 
 bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
@@ -278,8 +289,9 @@ bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
                                       XFA_ValuePicture eValueType) const {
   wsResult.clear();
   for (const auto& pattern : CFGAS_StringFormatter::SplitOnBars(wsFormat)) {
-    if (FormatSinglePattern(wsResult, pattern, pLocale, eValueType))
+    if (FormatSinglePattern(wsResult, pattern, pLocale, eValueType)) {
       return true;
+    }
   }
   return false;
 }
@@ -345,14 +357,16 @@ bool CXFA_LocaleValue::FormatSinglePattern(WideString& wsResult,
 
 bool CXFA_LocaleValue::ValidateCanonicalValue(const WideString& wsValue,
                                               ValueType eType) {
-  if (wsValue.IsEmpty())
+  if (wsValue.IsEmpty()) {
     return true;
+  }
 
   CFX_DateTime dt;
   switch (eType) {
     case ValueType::kDate: {
-      if (ValidateCanonicalDate(wsValue, &dt))
+      if (ValidateCanonicalDate(wsValue, &dt)) {
         return true;
+      }
 
       WideString wsDate;
       WideString wsTime;
@@ -363,8 +377,9 @@ bool CXFA_LocaleValue::ValidateCanonicalValue(const WideString& wsValue,
       return false;
     }
     case ValueType::kTime: {
-      if (ValidateCanonicalTime(wsValue))
+      if (ValidateCanonicalTime(wsValue)) {
         return true;
+      }
 
       WideString wsDate;
       WideString wsTime;
@@ -407,54 +422,64 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
   size_t nIndex = 0;
   size_t nStart = 0;
   while (nIndex < wCountY && spDate[nIndex] != '\0') {
-    if (!FXSYS_IsDecimalDigit(spDate[nIndex]))
+    if (!FXSYS_IsDecimalDigit(spDate[nIndex])) {
       return false;
+    }
 
     wYear = (spDate[nIndex] - '0') + wYear * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (nIndex >= spDate.size() || spDate[nIndex] != 0x2D)
+    if (nIndex >= spDate.size() || spDate[nIndex] != 0x2D) {
       return false;
+    }
     nIndex++;
   }
 
   nStart = nIndex;
   while (nIndex < spDate.size() && spDate[nIndex] != '\0' &&
          nIndex - nStart < wCountM) {
-    if (!FXSYS_IsDecimalDigit(spDate[nIndex]))
+    if (!FXSYS_IsDecimalDigit(spDate[nIndex])) {
       return false;
+    }
 
     wMonth = (spDate[nIndex] - '0') + wMonth * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (nIndex >= spDate.size() || spDate[nIndex] != 0x2D)
+    if (nIndex >= spDate.size() || spDate[nIndex] != 0x2D) {
       return false;
+    }
     nIndex++;
   }
 
   nStart = nIndex;
   while (nIndex < spDate.size() && spDate[nIndex] != '\0' &&
          nIndex - nStart < wCountD) {
-    if (!FXSYS_IsDecimalDigit(spDate[nIndex]))
+    if (!FXSYS_IsDecimalDigit(spDate[nIndex])) {
       return false;
+    }
 
     wDay = (spDate[nIndex] - '0') + wDay * 10;
     nIndex++;
   }
-  if (nIndex != spDate.size())
+  if (nIndex != spDate.size()) {
     return false;
-  if (wYear < 1900 || wYear > 2029)
+  }
+  if (wYear < 1900 || wYear > 2029) {
     return false;
-  if (wMonth < 1 || wMonth > 12)
+  }
+  if (wMonth < 1 || wMonth > 12) {
     return wMonth == 0 && spDate.size() == wCountY;
-  if (wDay < 1)
+  }
+  if (wDay < 1) {
     return wDay == 0 && spDate.size() == wCountY + wCountM;
+  }
   if (wMonth == 2) {
     if (wYear % 400 == 0 || (wYear % 100 != 0 && wYear % 4 == 0)) {
-      if (wDay > 29)
+      if (wDay > 29) {
         return false;
+      }
     } else if (wDay > 28) {
       return false;
     }
@@ -469,8 +494,9 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
 
 bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
   pdfium::span<const wchar_t> spTime = wsTime.span();
-  if (spTime.size() < 2)
+  if (spTime.size() < 2) {
     return false;
+  }
 
   const uint16_t wCountH = 2;
   const uint16_t wCountM = 2;
@@ -484,48 +510,55 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
   size_t nIndex = 0;
   size_t nStart = 0;
   while (nIndex - nStart < wCountH && spTime[nIndex]) {
-    if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
+    if (!FXSYS_IsDecimalDigit(spTime[nIndex])) {
       return false;
+    }
     wHour = spTime[nIndex] - '0' + wHour * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (nIndex < spTime.size() && spTime[nIndex] != ':')
+    if (nIndex < spTime.size() && spTime[nIndex] != ':') {
       return false;
+    }
     nIndex++;
   }
 
   nStart = nIndex;
   while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
          nIndex - nStart < wCountM) {
-    if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
+    if (!FXSYS_IsDecimalDigit(spTime[nIndex])) {
       return false;
+    }
     wMinute = spTime[nIndex] - '0' + wMinute * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (nIndex >= spTime.size() || spTime[nIndex] != ':')
+    if (nIndex >= spTime.size() || spTime[nIndex] != ':') {
       return false;
+    }
     nIndex++;
   }
   nStart = nIndex;
   while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
          nIndex - nStart < wCountS) {
-    if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
+    if (!FXSYS_IsDecimalDigit(spTime[nIndex])) {
       return false;
+    }
     wSecond = spTime[nIndex] - '0' + wSecond * 10;
     nIndex++;
   }
   auto pos = wsTime.Find('.');
   if (pos.has_value() && pos.value() != 0) {
-    if (nIndex >= spTime.size() || spTime[nIndex] != '.')
+    if (nIndex >= spTime.size() || spTime[nIndex] != '.') {
       return false;
+    }
     nIndex++;
     nStart = nIndex;
     while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
            nIndex - nStart < wCountF) {
-      if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
+      if (!FXSYS_IsDecimalDigit(spTime[nIndex])) {
         return false;
+      }
       wFraction = spTime[nIndex] - '0' + wFraction * 10;
       nIndex++;
     }
@@ -540,26 +573,30 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
       nStart = nIndex;
       while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
              nIndex - nStart < wCountH) {
-        if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
+        if (!FXSYS_IsDecimalDigit(spTime[nIndex])) {
           return false;
+        }
         nOffsetH = spTime[nIndex] - '0' + nOffsetH * 10;
         nIndex++;
       }
       if (bSymbol) {
-        if (nIndex >= spTime.size() || spTime[nIndex] != ':')
+        if (nIndex >= spTime.size() || spTime[nIndex] != ':') {
           return false;
+        }
         nIndex++;
       }
       nStart = nIndex;
       while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
              nIndex - nStart < wCountM) {
-        if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
+        if (!FXSYS_IsDecimalDigit(spTime[nIndex])) {
           return false;
+        }
         nOffsetM = spTime[nIndex] - '0' + nOffsetM * 10;
         nIndex++;
       }
-      if (nOffsetH > 12 || nOffsetM >= 60)
+      if (nOffsetH > 12 || nOffsetM >= 60) {
         return false;
+      }
     }
   }
   return nIndex == spTime.size() && wHour < 24 && wMinute < 60 &&
@@ -584,19 +621,22 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
     switch (ValueCategory(pFormat->GetCategory(), type_)) {
       case CFGAS_StringFormatter::Category::kNull:
         bRet = pFormat->ParseNull(wsValue);
-        if (bRet)
+        if (bRet) {
           value_.clear();
+        }
         break;
       case CFGAS_StringFormatter::Category::kZero:
         bRet = pFormat->ParseZero(wsValue);
-        if (bRet)
+        if (bRet) {
           value_ = L"0";
+        }
         break;
       case CFGAS_StringFormatter::Category::kNum: {
         WideString fNum;
         bRet = pFormat->ParseNum(locale_mgr_, wsValue, &fNum);
-        if (bRet)
+        if (bRet) {
           value_ = std::move(fNum);
+        }
         break;
       }
       case CFGAS_StringFormatter::Category::kText:
@@ -610,8 +650,9 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
               locale_mgr_, wsValue, CFGAS_StringFormatter::DateTimeType::kDate,
               &dt);
         }
-        if (bRet)
+        if (bRet) {
           SetDate(dt);
+        }
         break;
       }
       case CFGAS_StringFormatter::Category::kTime: {
@@ -619,8 +660,9 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
         bRet = pFormat->ParseDateTime(
             locale_mgr_, wsValue, CFGAS_StringFormatter::DateTimeType::kTime,
             &dt);
-        if (bRet)
+        if (bRet) {
           SetTime(dt);
+        }
         break;
       }
       case CFGAS_StringFormatter::Category::kDateTime: {
@@ -628,8 +670,9 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
         bRet = pFormat->ParseDateTime(
             locale_mgr_, wsValue,
             CFGAS_StringFormatter::DateTimeType::kDateTime, &dt);
-        if (bRet)
+        if (bRet) {
           SetDateTime(dt);
+        }
         break;
       }
       default:
@@ -638,8 +681,9 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
         break;
     }
   }
-  if (!bRet)
+  if (!bRet) {
     value_ = wsValue;
+  }
 
   return bRet;
 }
@@ -687,8 +731,9 @@ void CXFA_LocaleValue::GetNumericFormat(WideString& wsFormat,
 bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
                                            const WideString& wsFormat,
                                            GCedLocaleIface* pLocale) {
-  if (wsFormat.IsEmpty() || wsNumeric.IsEmpty())
+  if (wsFormat.IsEmpty() || wsNumeric.IsEmpty()) {
     return true;
+  }
 
   pdfium::span<const wchar_t> spNum = wsNumeric.span();
   pdfium::span<const wchar_t> spFmt = wsFormat.span();
@@ -697,8 +742,9 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   wchar_t c = spNum[n];
   wchar_t cf = spFmt[nf];
   if (cf == L's') {
-    if (c == L'-' || c == L'+')
+    if (c == L'-' || c == L'+') {
       ++n;
+    }
     ++nf;
   }
 
@@ -708,19 +754,22 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   while (n < nCount && (!bLimit || nf < nCountFmt) &&
          FXSYS_IsDecimalDigit(c = spNum[n])) {
     if (bLimit) {
-      if ((cf = spFmt[nf]) == L'*')
+      if ((cf = spFmt[nf]) == L'*') {
         bLimit = false;
-      else if (cf == L'z')
+      } else if (cf == L'z') {
         nf++;
-      else
+      } else {
         return false;
+      }
     }
     n++;
   }
-  if (n == nCount)
+  if (n == nCount) {
     return true;
-  if (nf == nCountFmt)
+  }
+  if (nf == nCountFmt) {
     return false;
+  }
 
   while (nf < nCountFmt && (cf = spFmt[nf]) != L'.') {
     DCHECK(cf == L'z' || cf == L'*');
@@ -728,15 +777,18 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   }
 
   WideString wsDecimalSymbol;
-  if (pLocale)
+  if (pLocale) {
     wsDecimalSymbol = pLocale->GetDecimalSymbol();
-  else
+  } else {
     wsDecimalSymbol = WideString(L'.');
+  }
 
-  if (spFmt[nf] != L'.')
+  if (spFmt[nf] != L'.') {
     return false;
-  if (wsDecimalSymbol != WideStringView(c) && c != L'.')
+  }
+  if (wsDecimalSymbol != WideStringView(c) && c != L'.') {
     return false;
+  }
 
   ++nf;
   ++n;
@@ -744,12 +796,13 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   while (n < nCount && (!bLimit || nf < nCountFmt) &&
          FXSYS_IsDecimalDigit(spNum[n])) {
     if (bLimit) {
-      if ((cf = spFmt[nf]) == L'*')
+      if ((cf = spFmt[nf]) == L'*') {
         bLimit = false;
-      else if (cf == L'z')
+      } else if (cf == L'z') {
         nf++;
-      else
+      } else {
         return false;
+      }
     }
     n++;
   }

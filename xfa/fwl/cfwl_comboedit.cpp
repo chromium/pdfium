@@ -53,8 +53,9 @@ void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
     default:
       break;
   }
-  if (backDefault)
+  if (backDefault) {
     CFWL_Edit::OnProcessMessage(pMessage);
+  }
 }
 
 }  // namespace pdfium

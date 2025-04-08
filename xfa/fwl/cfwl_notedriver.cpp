@@ -44,8 +44,9 @@ void CFWL_NoteDriver::Trace(cppgc::Visitor* visitor) const {
 
 void CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
   for (const auto& pair : event_targets_) {
-    if (pair.second->IsValid())
+    if (pair.second->IsValid()) {
       pair.second->ProcessEvent(pNote);
+    }
   }
 }
 
@@ -65,8 +66,9 @@ void CFWL_NoteDriver::RegisterEventTarget(CFWL_Widget* pListener,
 
 void CFWL_NoteDriver::UnregisterEventTarget(CFWL_Widget* pListener) {
   uint64_t key = pListener->GetEventKey();
-  if (key == 0)
+  if (key == 0) {
     return;
+  }
 
   auto it = event_targets_.find(key);
   if (it != event_targets_.end()) {
@@ -102,48 +104,57 @@ void CFWL_NoteDriver::NotifyTargetDestroy(CFWL_Widget* pNoteTarget) {
 
 void CFWL_NoteDriver::ProcessMessage(CFWL_Message* pMessage) {
   CFWL_Widget* pMessageForm = pMessage->GetDstTarget();
-  if (!pMessageForm)
+  if (!pMessageForm) {
     return;
+  }
 
-  if (!DispatchMessage(pMessage, pMessageForm))
+  if (!DispatchMessage(pMessage, pMessageForm)) {
     return;
+  }
 
-  if (pMessage->GetType() == CFWL_Message::Type::kMouse)
+  if (pMessage->GetType() == CFWL_Message::Type::kMouse) {
     MouseSecondary(pMessage);
+  }
 }
 
 bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
                                       CFWL_Widget* pMessageForm) {
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::kSetFocus: {
-      if (!DoSetFocus(pMessage, pMessageForm))
+      if (!DoSetFocus(pMessage, pMessageForm)) {
         return false;
+      }
       break;
     }
     case CFWL_Message::Type::kKillFocus: {
-      if (!DoKillFocus(pMessage, pMessageForm))
+      if (!DoKillFocus(pMessage, pMessageForm)) {
         return false;
+      }
       break;
     }
     case CFWL_Message::Type::kKey: {
-      if (!DoKey(pMessage, pMessageForm))
+      if (!DoKey(pMessage, pMessageForm)) {
         return false;
+      }
       break;
     }
     case CFWL_Message::Type::kMouse: {
-      if (!DoMouse(pMessage, pMessageForm))
+      if (!DoMouse(pMessage, pMessageForm)) {
         return false;
+      }
       break;
     }
     case CFWL_Message::Type::kMouseWheel: {
-      if (!DoWheel(pMessage, pMessageForm))
+      if (!DoWheel(pMessage, pMessageForm)) {
         return false;
+      }
       break;
     }
   }
   IFWL_WidgetDelegate* pDelegate = pMessage->GetDstTarget()->GetDelegate();
-  if (pDelegate)
+  if (pDelegate) {
     pDelegate->OnProcessMessage(pMessage);
+  }
 
   return true;
 }
@@ -196,10 +207,12 @@ bool CFWL_NoteDriver::DoMouse(CFWL_Message* pMessage,
       pMsg->cmd_ == CFWL_MessageMouse::MouseCommand::kEnter) {
     return !!pMsg->GetDstTarget();
   }
-  if (pMsg->GetDstTarget() != pMessageForm)
+  if (pMsg->GetDstTarget() != pMessageForm) {
     pMsg->pos_ = pMsg->GetDstTarget()->TransformTo(pMessageForm, pMsg->pos_);
-  if (!DoMouseEx(pMsg, pMessageForm))
+  }
+  if (!DoMouseEx(pMsg, pMessageForm)) {
     pMsg->SetDstTarget(pMessageForm);
+  }
   return true;
 }
 
@@ -208,8 +221,9 @@ bool CFWL_NoteDriver::DoWheel(CFWL_Message* pMessage,
   CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetFWLApp()->GetWidgetMgr();
   CFWL_MessageMouseWheel* pMsg = static_cast<CFWL_MessageMouseWheel*>(pMessage);
   CFWL_Widget* pDst = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->pos());
-  if (!pDst)
+  if (!pDst) {
     return false;
+  }
 
   pMsg->set_pos(pMessageForm->TransformTo(pDst, pMsg->pos()));
   pMsg->SetDstTarget(pDst);
@@ -225,12 +239,15 @@ bool CFWL_NoteDriver::DoMouseEx(CFWL_Message* pMessage,
   }
 
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-  if (!pTarget)
+  if (!pTarget) {
     pTarget = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->pos_);
-  if (!pTarget)
+  }
+  if (!pTarget) {
     return false;
-  if (pTarget && pMessageForm != pTarget)
+  }
+  if (pTarget && pMessageForm != pTarget) {
     pMsg->pos_ = pMessageForm->TransformTo(pTarget, pMsg->pos_);
+  }
 
   pMsg->SetDstTarget(pTarget);
   return true;
@@ -274,14 +291,16 @@ void CFWL_NoteDriver::Target::Trace(cppgc::Visitor* visitor) const {
 }
 
 void CFWL_NoteDriver::Target::SetEventSource(CFWL_Widget* pSource) {
-  if (pSource)
+  if (pSource) {
     widgets_.insert(pSource);
+  }
 }
 
 bool CFWL_NoteDriver::Target::ProcessEvent(CFWL_Event* pEvent) {
   IFWL_WidgetDelegate* pDelegate = listener_->GetDelegate();
-  if (!pDelegate)
+  if (!pDelegate) {
     return false;
+  }
   if (!widgets_.empty() && widgets_.count(pEvent->GetSrcTarget()) == 0) {
     return false;
   }

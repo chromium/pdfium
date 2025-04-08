@@ -31,16 +31,18 @@ void CXFA_ContentLayoutItem::Trace(cppgc::Visitor* visitor) const {
 
 CXFA_ContentLayoutItem* CXFA_ContentLayoutItem::GetFirst() {
   CXFA_ContentLayoutItem* pCurNode = this;
-  while (auto* pPrev = pCurNode->GetPrev())
+  while (auto* pPrev = pCurNode->GetPrev()) {
     pCurNode = pPrev;
+  }
 
   return pCurNode;
 }
 
 CXFA_ContentLayoutItem* CXFA_ContentLayoutItem::GetLast() {
   CXFA_ContentLayoutItem* pCurNode = this;
-  while (auto* pNext = pCurNode->GetNext())
+  while (auto* pNext = pCurNode->GetNext()) {
     pCurNode = pNext;
+  }
 
   return pCurNode;
 }
@@ -98,8 +100,9 @@ CFX_RectF CXFA_ContentLayoutItem::GetAbsoluteRect() const {
                          XFA_Attribute::Y, XFA_Unit::Pt));
       break;
     }
-    if (pLayoutItem->GetFormNode()->GetElementType() == XFA_Element::PageArea)
+    if (pLayoutItem->GetFormNode()->GetElementType() == XFA_Element::PageArea) {
       break;
+    }
   }
   return CFX_RectF(sPos, sSize);
 }

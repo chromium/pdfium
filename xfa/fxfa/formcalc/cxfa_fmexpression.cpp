@@ -76,8 +76,9 @@ const XFA_FMSOMMethod kFMSomMethods[] = {
 };
 
 WideString IdentifierToName(const WideString& ident) {
-  if (ident.IsEmpty() || ident[0] != L'!')
+  if (ident.IsEmpty() || ident[0] != L'!') {
     return ident;
+  }
   return L"pfm__excl__" + ident.Last(ident.GetLength() - 1);
 }
 
@@ -115,8 +116,9 @@ CXFA_FMNullExpression::~CXFA_FMNullExpression() = default;
 bool CXFA_FMNullExpression::ToJavaScript(WideTextBuffer* js,
                                          ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   *js << "null";
   return !CXFA_IsTooBig(*js);
@@ -130,8 +132,9 @@ CXFA_FMNumberExpression::~CXFA_FMNumberExpression() = default;
 bool CXFA_FMNumberExpression::ToJavaScript(WideTextBuffer* js,
                                            ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   *js << number_;
   return !CXFA_IsTooBig(*js);
@@ -145,8 +148,9 @@ CXFA_FMStringExpression::~CXFA_FMStringExpression() = default;
 bool CXFA_FMStringExpression::ToJavaScript(WideTextBuffer* js,
                                            ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   WideString tempStr(string_);
   if (tempStr.GetLength() <= 2) {
@@ -186,8 +190,9 @@ CXFA_FMIdentifierExpression::~CXFA_FMIdentifierExpression() = default;
 bool CXFA_FMIdentifierExpression::ToJavaScript(WideTextBuffer* js,
                                                ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   if (identifier_.EqualsASCII("$")) {
     *js << "this";
@@ -224,30 +229,35 @@ CXFA_FMAssignExpression::~CXFA_FMAssignExpression() = default;
 bool CXFA_FMAssignExpression::ToJavaScript(WideTextBuffer* js,
                                            ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   WideTextBuffer tempExp1;
   const CXFA_FMSimpleExpression* exp1 = GetFirstExpression();
-  if (!exp1->ToJavaScript(&tempExp1, ReturnType::kInferred))
+  if (!exp1->ToJavaScript(&tempExp1, ReturnType::kInferred)) {
     return false;
+  }
 
   *js << "if (pfm_rt.is_obj(" << tempExp1 << "))\n{\n";
-  if (type == ReturnType::kImplied)
+  if (type == ReturnType::kImplied) {
     *js << "pfm_ret = ";
+  }
 
   WideTextBuffer tempExp2;
   const CXFA_FMSimpleExpression* exp2 = GetSecondExpression();
-  if (!exp2->ToJavaScript(&tempExp2, ReturnType::kInferred))
+  if (!exp2->ToJavaScript(&tempExp2, ReturnType::kInferred)) {
     return false;
+  }
 
   *js << "pfm_rt.asgn_val_op(" << tempExp1 << ", " << tempExp2 << ");\n}\n";
 
   if (exp1->GetOperatorToken() == TOKidentifier &&
       !tempExp1.AsStringView().EqualsASCII("this")) {
     *js << "else\n{\n";
-    if (type == ReturnType::kImplied)
+    if (type == ReturnType::kImplied) {
       *js << "pfm_ret = ";
+    }
 
     *js << tempExp1 << " = pfm_rt.asgn_val_op";
     *js << "(" << tempExp1 << ", " << tempExp2 << ");\n";
@@ -267,15 +277,18 @@ CXFA_FMBinExpression::~CXFA_FMBinExpression() = default;
 bool CXFA_FMBinExpression::ToJavaScript(WideTextBuffer* js,
                                         ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   *js << "pfm_rt." << op_name_ << "(";
-  if (!GetFirstExpression()->ToJavaScript(js, ReturnType::kInferred))
+  if (!GetFirstExpression()->ToJavaScript(js, ReturnType::kInferred)) {
     return false;
+  }
   *js << ", ";
-  if (!GetSecondExpression()->ToJavaScript(js, ReturnType::kInferred))
+  if (!GetSecondExpression()->ToJavaScript(js, ReturnType::kInferred)) {
     return false;
+  }
   *js << ")";
   return !CXFA_IsTooBig(*js);
 }
@@ -382,8 +395,9 @@ void CXFA_FMUnaryExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMUnaryExpression::ToJavaScript(WideTextBuffer* js,
                                           ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   *js << "pfm_rt." << op_name_ << "(";
   if (!exp_->ToJavaScript(js, ReturnType::kInferred)) {
@@ -426,8 +440,9 @@ void CXFA_FMCallExpression::Trace(cppgc::Visitor* visitor) const {
 }
 
 bool CXFA_FMCallExpression::IsBuiltInFunc(WideTextBuffer* funcName) const {
-  if (funcName->GetLength() > kBuiltInFuncsMaxLen)
+  if (funcName->GetLength() > kBuiltInFuncsMaxLen) {
     return false;
+  }
 
   WideString str = funcName->MakeString();
   const wchar_t* const* pMatchResult =
@@ -461,8 +476,9 @@ uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
 bool CXFA_FMCallExpression::ToJavaScript(WideTextBuffer* js,
                                          ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   WideTextBuffer funcName;
   if (!exp_->ToJavaScript(&funcName, ReturnType::kInferred)) {
@@ -478,10 +494,11 @@ bool CXFA_FMCallExpression::ToJavaScript(WideTextBuffer* js,
         // the 6th. Make sure we don't overflow the shift when doing this
         // check. If we ever need more the 32 object params we can revisit.
         *js << "pfm_rt.get_";
-        if (i < 32 && (methodPara & (0x01 << i)) > 0)
+        if (i < 32 && (methodPara & (0x01 << i)) > 0) {
           *js << "jsobj";
-        else
+        } else {
           *js << "val";
+        }
 
         *js << "(";
         if (!arguments_[i]->ToJavaScript(js, ReturnType::kInferred)) {
@@ -495,8 +512,9 @@ bool CXFA_FMCallExpression::ToJavaScript(WideTextBuffer* js,
     } else {
       for (const auto& expr : arguments_) {
         *js << "pfm_rt.get_val(";
-        if (!expr->ToJavaScript(js, ReturnType::kInferred))
+        if (!expr->ToJavaScript(js, ReturnType::kInferred)) {
           return false;
+        }
         *js << ")";
         if (expr != arguments_.back()) {
           *js << ", ";
@@ -521,8 +539,9 @@ bool CXFA_FMCallExpression::ToJavaScript(WideTextBuffer* js,
     isEvalFunc = true;
     *js << "eval.call(this, pfm_rt.Translate";
   } else {
-    if (funcName.AsStringView().EqualsASCII("Exists"))
+    if (funcName.AsStringView().EqualsASCII("Exists")) {
       isExistsFunc = true;
+    }
 
     *js << "pfm_rt." << funcName;
   }
@@ -543,16 +562,18 @@ bool CXFA_FMCallExpression::ToJavaScript(WideTextBuffer* js,
     *js << "{\nreturn 0;\n}\n}\n).call(this)\n";
   } else {
     for (const auto& expr : arguments_) {
-      if (!expr->ToJavaScript(js, ReturnType::kInferred))
+      if (!expr->ToJavaScript(js, ReturnType::kInferred)) {
         return false;
+      }
       if (expr != arguments_.back()) {
         *js << ", ";
       }
     }
   }
   *js << ")";
-  if (isEvalFunc)
+  if (isEvalFunc) {
     *js << ")";
+  }
 
   return !CXFA_IsTooBig(*js);
 }
@@ -570,8 +591,9 @@ CXFA_FMDotAccessorExpression::~CXFA_FMDotAccessorExpression() = default;
 bool CXFA_FMDotAccessorExpression::ToJavaScript(WideTextBuffer* js,
                                                 ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   *js << "pfm_rt.dot_acc(";
 
@@ -581,29 +603,33 @@ bool CXFA_FMDotAccessorExpression::ToJavaScript(WideTextBuffer* js,
     // and copying temporaries here becomes expensive when there
     // is deep recursion, even though we may need to re-create the
     // same thing again below. See https://crbug.com/1274018.
-    if (!exp1->ToJavaScript(js, ReturnType::kInferred))
+    if (!exp1->ToJavaScript(js, ReturnType::kInferred)) {
       return false;
+    }
   } else {
     *js << "null";
   }
   *js << ", \"";
   if (exp1 && exp1->GetOperatorToken() == TOKidentifier) {
-    if (!exp1->ToJavaScript(js, ReturnType::kInferred))
+    if (!exp1->ToJavaScript(js, ReturnType::kInferred)) {
       return false;
+    }
   }
   *js << "\", ";
-  if (GetOperatorToken() == TOKdotscream)
+  if (GetOperatorToken() == TOKdotscream) {
     *js << "\"#" << identifier_ << "\", ";
-  else if (GetOperatorToken() == TOKdotstar)
+  } else if (GetOperatorToken() == TOKdotstar) {
     *js << "\"*\", ";
-  else if (GetOperatorToken() == TOKcall)
+  } else if (GetOperatorToken() == TOKcall) {
     *js << "\"\", ";
-  else
+  } else {
     *js << "\"" << identifier_ << "\", ";
+  }
 
   CXFA_FMSimpleExpression* exp2 = GetSecondExpression();
-  if (!exp2->ToJavaScript(js, ReturnType::kInferred))
+  if (!exp2->ToJavaScript(js, ReturnType::kInferred)) {
     return false;
+  }
 
   *js << ")";
   return !CXFA_IsTooBig(*js);
@@ -628,8 +654,9 @@ void CXFA_FMIndexExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMIndexExpression::ToJavaScript(WideTextBuffer* js,
                                           ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   switch (accessor_index_) {
     case AccessorIndex::kNoIndex:
@@ -673,24 +700,28 @@ CXFA_FMDotDotAccessorExpression::~CXFA_FMDotDotAccessorExpression() = default;
 bool CXFA_FMDotDotAccessorExpression::ToJavaScript(WideTextBuffer* js,
                                                    ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   CXFA_FMSimpleExpression* exp1 = GetFirstExpression();
   *js << "pfm_rt.dotdot_acc(";
-  if (!exp1->ToJavaScript(js, ReturnType::kInferred))
+  if (!exp1->ToJavaScript(js, ReturnType::kInferred)) {
     return false;
+  }
   *js << ", "
       << "\"";
   if (exp1->GetOperatorToken() == TOKidentifier) {
-    if (!exp1->ToJavaScript(js, ReturnType::kInferred))
+    if (!exp1->ToJavaScript(js, ReturnType::kInferred)) {
       return false;
+    }
   }
 
   CXFA_FMSimpleExpression* exp2 = GetSecondExpression();
   *js << "\", \"" << identifier_ << "\", ";
-  if (!exp2->ToJavaScript(js, ReturnType::kInferred))
+  if (!exp2->ToJavaScript(js, ReturnType::kInferred)) {
     return false;
+  }
   *js << ")";
   return !CXFA_IsTooBig(*js);
 }
@@ -705,18 +736,21 @@ CXFA_FMMethodCallExpression::~CXFA_FMMethodCallExpression() = default;
 bool CXFA_FMMethodCallExpression::ToJavaScript(WideTextBuffer* js,
                                                ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   *js << "(function() {\n";
   *js << "  return pfm_method_runner(";
-  if (!GetFirstExpression()->ToJavaScript(js, ReturnType::kInferred))
+  if (!GetFirstExpression()->ToJavaScript(js, ReturnType::kInferred)) {
     return false;
+  }
 
   *js << ", function(obj) {\n";
   *js << "    return obj.";
-  if (!GetSecondExpression()->ToJavaScript(js, ReturnType::kInferred))
+  if (!GetSecondExpression()->ToJavaScript(js, ReturnType::kInferred)) {
     return false;
+  }
 
   *js << ";\n";
   *js << "  });\n";
@@ -744,8 +778,9 @@ void CXFA_FMFunctionDefinition::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMFunctionDefinition::ToJavaScript(WideTextBuffer* js,
                                              ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   if (name_.IsEmpty()) {
     return false;
@@ -765,8 +800,9 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(WideTextBuffer* js,
   for (const auto& expr : expressions_) {
     ReturnType ret_type = expr == expressions_.back() ? ReturnType::kImplied
                                                       : ReturnType::kInferred;
-    if (!expr->ToJavaScript(js, ret_type))
+    if (!expr->ToJavaScript(js, ret_type)) {
       return false;
+    }
   }
 
   *js << "return pfm_ret;\n";
@@ -809,14 +845,16 @@ std::optional<WideTextBuffer> CXFA_FMAST::ToJavaScript() const {
         expr == expressions_.back()
             ? CXFA_FMAssignExpression::ReturnType::kImplied
             : CXFA_FMAssignExpression::ReturnType::kInferred;
-    if (!expr->ToJavaScript(&js, ret_type))
+    if (!expr->ToJavaScript(&js, ret_type)) {
       return std::nullopt;
+    }
   }
   js << "return pfm_rt.get_val(pfm_ret);\n";
   js << "}).call(this);";
 
-  if (CXFA_IsTooBig(js))
+  if (CXFA_IsTooBig(js)) {
     return std::nullopt;
+  }
 
   return js;
 }
@@ -835,8 +873,9 @@ void CXFA_FMVarExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMVarExpression::ToJavaScript(WideTextBuffer* js,
                                         ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   WideString tempName = IdentifierToName(name_);
   *js << "var " << tempName << " = ";
@@ -851,8 +890,9 @@ bool CXFA_FMVarExpression::ToJavaScript(WideTextBuffer* js,
     *js << "\"\";\n";
   }
 
-  if (type == ReturnType::kImplied)
+  if (type == ReturnType::kImplied) {
     *js << "pfm_ret = " << tempName << ";\n";
+  }
 
   return !CXFA_IsTooBig(*js);
 }
@@ -870,8 +910,9 @@ void CXFA_FMExpExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMExpExpression::ToJavaScript(WideTextBuffer* js,
                                         ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   if (type == ReturnType::kInferred) {
     bool ret = expression_->ToJavaScript(js, ReturnType::kInferred);
@@ -923,20 +964,23 @@ void CXFA_FMBlockExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMBlockExpression::ToJavaScript(WideTextBuffer* js,
                                           ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   *js << "{\n";
   for (const auto& expr : expression_list_) {
     if (type == ReturnType::kInferred) {
-      if (!expr->ToJavaScript(js, ReturnType::kInferred))
+      if (!expr->ToJavaScript(js, ReturnType::kInferred)) {
         return false;
+      }
     } else {
       ReturnType ret_type = expr == expression_list_.back()
                                 ? ReturnType::kImplied
                                 : ReturnType::kInferred;
-      if (!expr->ToJavaScript(js, ret_type))
+      if (!expr->ToJavaScript(js, ret_type)) {
         return false;
+      }
     }
   }
   *js << "}\n";
@@ -957,8 +1001,9 @@ void CXFA_FMDoExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMDoExpression::ToJavaScript(WideTextBuffer* js,
                                        ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   return list_->ToJavaScript(js, type);
 }
@@ -988,11 +1033,13 @@ void CXFA_FMIfExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMIfExpression::ToJavaScript(WideTextBuffer* js,
                                        ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
-  if (type == ReturnType::kImplied)
+  if (type == ReturnType::kImplied) {
     *js << "pfm_ret = 0;\n";
+  }
 
   *js << "if (pfm_rt.get_val(";
   if (!expression_->ToJavaScript(js, ReturnType::kInferred)) {
@@ -1000,21 +1047,24 @@ bool CXFA_FMIfExpression::ToJavaScript(WideTextBuffer* js,
   }
   *js << "))\n";
 
-  if (CXFA_IsTooBig(*js))
+  if (CXFA_IsTooBig(*js)) {
     return false;
+  }
 
   if (if_expression_) {
     if (!if_expression_->ToJavaScript(js, type)) {
       return false;
     }
-    if (CXFA_IsTooBig(*js))
+    if (CXFA_IsTooBig(*js)) {
       return false;
+    }
   }
 
   for (auto& expr : else_if_expressions_) {
     *js << "else ";
-    if (!expr->ToJavaScript(js, ReturnType::kInferred))
+    if (!expr->ToJavaScript(js, ReturnType::kInferred)) {
       return false;
+    }
   }
 
   if (else_expression_) {
@@ -1042,11 +1092,13 @@ void CXFA_FMWhileExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMWhileExpression::ToJavaScript(WideTextBuffer* js,
                                           ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
-  if (type == ReturnType::kImplied)
+  if (type == ReturnType::kImplied) {
     *js << "pfm_ret = 0;\n";
+  }
 
   *js << "while (";
   if (!condition_->ToJavaScript(js, ReturnType::kInferred)) {
@@ -1054,8 +1106,9 @@ bool CXFA_FMWhileExpression::ToJavaScript(WideTextBuffer* js,
   }
 
   *js << ")\n";
-  if (CXFA_IsTooBig(*js))
+  if (CXFA_IsTooBig(*js)) {
     return false;
+  }
 
   if (!expression_->ToJavaScript(js, type)) {
     return false;
@@ -1071,8 +1124,9 @@ CXFA_FMBreakExpression::~CXFA_FMBreakExpression() = default;
 bool CXFA_FMBreakExpression::ToJavaScript(WideTextBuffer* js,
                                           ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   *js << "pfm_ret = 0;\nbreak;\n";
   return !CXFA_IsTooBig(*js);
@@ -1085,8 +1139,9 @@ CXFA_FMContinueExpression::~CXFA_FMContinueExpression() = default;
 bool CXFA_FMContinueExpression::ToJavaScript(WideTextBuffer* js,
                                              ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
   *js << "pfm_ret = 0;\ncontinue;\n";
   return !CXFA_IsTooBig(*js);
@@ -1118,11 +1173,13 @@ void CXFA_FMForExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMForExpression::ToJavaScript(WideTextBuffer* js,
                                         ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
-  if (type == ReturnType::kImplied)
+  if (type == ReturnType::kImplied) {
     *js << "pfm_ret = 0;\n";
+  }
 
   *js << "{\n";
 
@@ -1153,8 +1210,9 @@ bool CXFA_FMForExpression::ToJavaScript(WideTextBuffer* js,
     *js << "1";
   }
   *js << ")\n";
-  if (CXFA_IsTooBig(*js))
+  if (CXFA_IsTooBig(*js)) {
     return false;
+  }
 
   if (!list_->ToJavaScript(js, type)) {
     return false;
@@ -1183,11 +1241,13 @@ void CXFA_FMForeachExpression::Trace(cppgc::Visitor* visitor) const {
 bool CXFA_FMForeachExpression::ToJavaScript(WideTextBuffer* js,
                                             ReturnType type) const {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth())
+  if (CXFA_IsTooBig(*js) || !depthManager.IsWithinMaxDepth()) {
     return false;
+  }
 
-  if (type == ReturnType::kImplied)
+  if (type == ReturnType::kImplied) {
     *js << "pfm_ret = 0;\n";
+  }
 
   *js << "{\n";
 
@@ -1195,8 +1255,9 @@ bool CXFA_FMForeachExpression::ToJavaScript(WideTextBuffer* js,
   *js << "var " << tmpName << " = null;\n";
   *js << "var pfm_ary = pfm_rt.concat_obj(";
   for (const auto& expr : accessors_) {
-    if (!expr->ToJavaScript(js, ReturnType::kInferred))
+    if (!expr->ToJavaScript(js, ReturnType::kInferred)) {
       return false;
+    }
     if (expr != accessors_.back()) {
       *js << ", ";
     }

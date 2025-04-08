@@ -95,18 +95,23 @@ void CFGAS_GEPath::AddArc(const CFX_PointF& original_pos,
                           const CFX_SizeF& original_size,
                           float start_angle,
                           float sweep_angle) {
-  if (sweep_angle == 0)
+  if (sweep_angle == 0) {
     return;
+  }
 
   const float bezier_arc_angle_epsilon = 0.01f;
-  while (start_angle > FXSYS_PI * 2)
+  while (start_angle > FXSYS_PI * 2) {
     start_angle -= FXSYS_PI * 2;
-  while (start_angle < 0)
+  }
+  while (start_angle < 0) {
     start_angle += FXSYS_PI * 2;
-  if (sweep_angle >= FXSYS_PI * 2)
+  }
+  if (sweep_angle >= FXSYS_PI * 2) {
     sweep_angle = FXSYS_PI * 2;
-  if (sweep_angle <= -FXSYS_PI * 2)
+  }
+  if (sweep_angle <= -FXSYS_PI * 2) {
     sweep_angle = -FXSYS_PI * 2;
+  }
 
   CFX_SizeF size = original_size / 2;
   CFX_PointF pos(original_pos.x + size.width, original_pos.y + size.height);

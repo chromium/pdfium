@@ -40,8 +40,9 @@ void CFWL_Caret::Update() {}
 
 void CFWL_Caret::DrawWidget(CFGAS_GEGraphics* pGraphics,
                             const CFX_Matrix& matrix) {
-  if (!pGraphics)
+  if (!pGraphics) {
     return;
+  }
 
   DrawCaretBK(pGraphics, matrix);
 }
@@ -80,10 +81,11 @@ void CFWL_Caret::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
 }
 
 void CFWL_Caret::OnTimerFired() {
-  if (!(GetStates() & kStateHighlight))
+  if (!(GetStates() & kStateHighlight)) {
     SetStates(kStateHighlight);
-  else
+  } else {
     RemoveStates(kStateHighlight);
+  }
 
   CFX_RectF rt = GetWidgetRect();
   RepaintRect(CFX_RectF(0, 0, rt.width + 1, rt.height));

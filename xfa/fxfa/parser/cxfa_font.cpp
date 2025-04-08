@@ -87,8 +87,9 @@ float CXFA_Font::GetVerticalScale() {
 float CXFA_Font::GetLetterSpacing() {
   WideString wsValue = JSObject()->GetCData(XFA_Attribute::LetterSpacing);
   CXFA_Measurement ms(wsValue.AsStringView());
-  if (ms.GetUnit() == XFA_Unit::Em)
+  if (ms.GetUnit() == XFA_Unit::Em) {
     return ms.GetValue() * GetFontSize();
+  }
   return ms.ToUnit(XFA_Unit::Pt);
 }
 
@@ -126,8 +127,9 @@ bool CXFA_Font::IsItalic() {
 void CXFA_Font::SetColor(FX_ARGB color) {
   CXFA_Fill* node =
       JSObject()->GetOrCreateProperty<CXFA_Fill>(0, XFA_Element::Fill);
-  if (!node)
+  if (!node) {
     return;
+  }
 
   node->SetColor(color);
 }

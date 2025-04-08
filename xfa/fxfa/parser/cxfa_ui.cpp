@@ -51,10 +51,12 @@ CXFA_Ui::~CXFA_Ui() = default;
 
 bool CXFA_Ui::IsAOneOfChild(CXFA_Node* child) const {
   for (auto& prop : kUiPropertyData) {
-    if (prop.property != child->GetElementType())
+    if (prop.property != child->GetElementType()) {
       continue;
-    if (!!(prop.flags & XFA_PropertyFlag::kOneOf))
+    }
+    if (!!(prop.flags & XFA_PropertyFlag::kOneOf)) {
       return true;
+    }
   }
   return false;
 }

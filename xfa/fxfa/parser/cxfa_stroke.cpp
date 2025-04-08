@@ -114,8 +114,9 @@ void CXFA_Stroke::SetMSThickness(CXFA_Measurement msThinkness) {
 
 FX_ARGB CXFA_Stroke::GetColor() const {
   const auto* pNode = GetChild<CXFA_Color>(0, XFA_Element::Color, false);
-  if (!pNode)
+  if (!pNode) {
     return 0xFF000000;
+  }
 
   return CXFA_Color::StringToFXARGB(
       pNode->JSObject()->GetCData(XFA_Attribute::Value).AsStringView());
@@ -124,8 +125,9 @@ FX_ARGB CXFA_Stroke::GetColor() const {
 void CXFA_Stroke::SetColor(FX_ARGB argb) {
   CXFA_Color* pNode =
       JSObject()->GetOrCreateProperty<CXFA_Color>(0, XFA_Element::Color);
-  if (!pNode)
+  if (!pNode) {
     return;
+  }
 
   pNode->JSObject()->SetCData(
       XFA_Attribute::Value,
@@ -149,18 +151,22 @@ float CXFA_Stroke::GetRadius() const {
 
 bool CXFA_Stroke::SameStyles(CXFA_Stroke* stroke,
                              Mask<SameStyleOption> dwFlags) {
-  if (this == stroke)
+  if (this == stroke) {
     return true;
-  if (fabs(GetThickness() - stroke->GetThickness()) >= 0.01f)
+  }
+  if (fabs(GetThickness() - stroke->GetThickness()) >= 0.01f) {
     return false;
+  }
   if (!(dwFlags & SameStyleOption::kNoPresence) &&
       IsVisible() != stroke->IsVisible()) {
     return false;
   }
-  if (GetStrokeType() != stroke->GetStrokeType())
+  if (GetStrokeType() != stroke->GetStrokeType()) {
     return false;
-  if (GetColor() != stroke->GetColor())
+  }
+  if (GetColor() != stroke->GetColor()) {
     return false;
+  }
   if ((dwFlags & CXFA_Stroke::SameStyleOption::kCorner) &&
       fabs(GetRadius() - stroke->GetRadius()) >= 0.01f) {
     return false;
@@ -171,16 +177,19 @@ bool CXFA_Stroke::SameStyles(CXFA_Stroke* stroke,
 void CXFA_Stroke::Stroke(CFGAS_GEGraphics* pGS,
                          const CFGAS_GEPath& pPath,
                          const CFX_Matrix& matrix) {
-  if (!IsVisible())
+  if (!IsVisible()) {
     return;
+  }
 
   float fThickness = GetThickness();
-  if (fThickness < 0.001f)
+  if (fThickness < 0.001f) {
     return;
+  }
 
   CFGAS_GEGraphics::StateRestorer restorer(pGS);
-  if (IsCorner() && fThickness > 2 * GetRadius())
+  if (IsCorner() && fThickness > 2 * GetRadius()) {
     fThickness = 2 * GetRadius();
+  }
 
   pGS->SetLineWidth(fThickness);
   pGS->EnableActOnDash();
