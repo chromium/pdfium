@@ -29,7 +29,7 @@ class CFFL_TextObject : public CFFL_FormField {
   CPDF_BAFontMap* GetOrCreateFontMap();
 
  private:
-  std::unique_ptr<CPDF_BAFontMap> m_pFontMap;
+  std::unique_ptr<CPDF_BAFontMap> font_map_;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_TEXTOBJECT_H_

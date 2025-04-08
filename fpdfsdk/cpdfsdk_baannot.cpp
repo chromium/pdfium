@@ -29,7 +29,7 @@
 
 CPDFSDK_BAAnnot::CPDFSDK_BAAnnot(CPDF_Annot* pAnnot,
                                  CPDFSDK_PageView* pPageView)
-    : CPDFSDK_Annot(pPageView), m_pAnnot(pAnnot) {}
+    : CPDFSDK_Annot(pPageView), annot_(pAnnot) {}
 
 CPDFSDK_BAAnnot::~CPDFSDK_BAAnnot() = default;
 
@@ -42,15 +42,15 @@ CPDFSDK_Annot::UnsafeInputHandlers* CPDFSDK_BAAnnot::GetUnsafeInputHandlers() {
 }
 
 CPDF_Annot* CPDFSDK_BAAnnot::GetPDFAnnot() const {
-  return m_pAnnot;
+  return annot_;
 }
 
 const CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const {
-  return m_pAnnot->GetAnnotDict();
+  return annot_->GetAnnotDict();
 }
 
 RetainPtr<CPDF_Dictionary> CPDFSDK_BAAnnot::GetMutableAnnotDict() {
-  return m_pAnnot->GetMutableAnnotDict();
+  return annot_->GetMutableAnnotDict();
 }
 
 RetainPtr<CPDF_Dictionary> CPDFSDK_BAAnnot::GetAPDict() {
@@ -58,7 +58,7 @@ RetainPtr<CPDF_Dictionary> CPDFSDK_BAAnnot::GetAPDict() {
 }
 
 void CPDFSDK_BAAnnot::ClearCachedAnnotAP() {
-  m_pAnnot->ClearCachedAP();
+  annot_->ClearCachedAP();
 }
 
 bool CPDFSDK_BAAnnot::IsFocusableAnnot(
@@ -68,18 +68,18 @@ bool CPDFSDK_BAAnnot::IsFocusableAnnot(
 }
 
 CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
-  return m_pAnnot->GetRect();
+  return annot_->GetRect();
 }
 
 CPDF_Annot::Subtype CPDFSDK_BAAnnot::GetAnnotSubtype() const {
-  return m_pAnnot->GetSubtype();
+  return annot_->GetSubtype();
 }
 
 void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,
                                      const CFX_Matrix& mtUser2Device,
                                      CPDF_Annot::AppearanceMode mode) {
-  m_pAnnot->DrawAppearance(GetPageView()->GetPDFPage(), pDevice, mtUser2Device,
-                           mode);
+  annot_->DrawAppearance(GetPageView()->GetPDFPage(), pDevice, mtUser2Device,
+                         mode);
 }
 
 bool CPDFSDK_BAAnnot::IsAppearanceValid() {
@@ -221,14 +221,14 @@ CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
 }
 
 void CPDFSDK_BAAnnot::SetOpenState(bool bOpenState) {
-  m_pAnnot->SetPopupAnnotOpenState(bOpenState);
+  annot_->SetPopupAnnotOpenState(bOpenState);
 }
 
 void CPDFSDK_BAAnnot::UpdateAnnotRects() {
   std::vector<CFX_FloatRect> rects;
   rects.push_back(GetRect());
 
-  std::optional<CFX_FloatRect> annot_rect = m_pAnnot->GetPopupAnnotRect();
+  std::optional<CFX_FloatRect> annot_rect = annot_->GetPopupAnnotRect();
   if (annot_rect.has_value())
     rects.push_back(annot_rect.value());
 
@@ -251,8 +251,9 @@ void CPDFSDK_BAAnnot::InvalidateRect() {
 }
 
 int CPDFSDK_BAAnnot::GetLayoutOrder() const {
-  if (m_pAnnot->GetSubtype() == CPDF_Annot::Subtype::POPUP)
+  if (annot_->GetSubtype() == CPDF_Annot::Subtype::POPUP) {
     return 1;
+  }
 
   return CPDFSDK_Annot::GetLayoutOrder();
 }
@@ -418,8 +419,9 @@ bool CPDFSDK_BAAnnot::IsIndexSelected(int index) {
 }
 
 CPDF_Dest CPDFSDK_BAAnnot::GetDestination() const {
-  if (m_pAnnot->GetSubtype() != CPDF_Annot::Subtype::LINK)
+  if (annot_->GetSubtype() != CPDF_Annot::Subtype::LINK) {
     return CPDF_Dest(nullptr);
+  }
 
   // Link annotations can have "Dest" entry defined as an explicit array.
   // See ISO 32000-1:2008 spec, section 12.3.2.1.

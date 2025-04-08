@@ -60,7 +60,7 @@ class CFFL_ComboBox final : public CFFL_TextObject {
   CPWL_ComboBox* GetPWLComboBox(const CPDFSDK_PageView* pPageView) const;
   CPWL_ComboBox* CreateOrUpdatePWLComboBox(const CPDFSDK_PageView* pPageView);
 
-  FFL_ComboBoxState m_State;
+  FFL_ComboBoxState state_;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_COMBOBOX_H_

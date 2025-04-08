@@ -65,28 +65,29 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
 CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
     CPDF_Document* pDoc,
     FPDF_FORMFILLINFO* pFFinfo)
-    : m_pInfo(pFFinfo),
-      m_pCPDFDoc(pDoc),
-      m_pInteractiveFormFiller(
+    : info_(pFFinfo),
+      cpdfdoc_(pDoc),
+      interactive_form_filler_(
           std::make_unique<CFFL_InteractiveFormFiller>(this)) {
-  DCHECK(m_pCPDFDoc);
+  DCHECK(cpdfdoc_);
 }
 
 CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
-  m_bBeingDestroyed = true;
+  being_destroyed_ = true;
   ClearAllFocusedAnnots();
 
-  // |m_PageMap| will try to access |m_pInteractiveForm| when it cleans itself
-  // up. Make sure it is deleted before |m_pInteractiveForm|.
-  m_PageMap.clear();
+  // |page_map_| will try to access |interactive_form_| when it cleans itself
+  // up. Make sure it is deleted before |interactive_form_|.
+  page_map_.clear();
 
-  // Must destroy the |m_pInteractiveFormFiller| before the environment (|this|)
+  // Must destroy the |interactive_form_filler_| before the environment (|this|)
   // because any created form widgets hold a pointer to the environment.
   // Those widgets may call things like KillTimer() as they are shutdown.
-  m_pInteractiveFormFiller.reset();
+  interactive_form_filler_.reset();
 
-  if (m_pInfo && m_pInfo->Release)
-    m_pInfo->Release(m_pInfo);
+  if (info_ && info_->Release) {
+    info_->Release(info_);
+  }
 }
 
 void CPDFSDK_FormFillEnvironment::InvalidateRect(CPDFSDK_Widget* widget,
@@ -109,15 +110,16 @@ void CPDFSDK_FormFillEnvironment::InvalidateRect(CPDFSDK_Widget* widget,
 void CPDFSDK_FormFillEnvironment::OutputSelectedRect(
     CFFL_FormField* pFormField,
     const CFX_FloatRect& rect) {
-  if (!m_pInfo || !m_pInfo->FFI_OutputSelectedRect)
+  if (!info_ || !info_->FFI_OutputSelectedRect) {
     return;
+  }
 
   auto* pPage = FPDFPageFromIPDFPage(pFormField->GetSDKWidget()->GetPage());
   DCHECK(pPage);
 
   CFX_PointF ptA = pFormField->PWLtoFFL(CFX_PointF(rect.left, rect.bottom));
   CFX_PointF ptB = pFormField->PWLtoFFL(CFX_PointF(rect.right, rect.top));
-  m_pInfo->FFI_OutputSelectedRect(m_pInfo, pPage, ptA.x, ptB.y, ptB.x, ptA.y);
+  info_->FFI_OutputSelectedRect(info_, pPage, ptA.x, ptB.y, ptB.x, ptA.y);
 }
 
 bool CPDFSDK_FormFillEnvironment::IsSelectionImplemented() const {
@@ -132,25 +134,25 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetCurrentView() {
 }
 
 IPDF_Page* CPDFSDK_FormFillEnvironment::GetCurrentPage() const {
-  if (m_pInfo && m_pInfo->FFI_GetCurrentPage) {
-    return IPDFPageFromFPDFPage(m_pInfo->FFI_GetCurrentPage(
-        m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc)));
+  if (info_ && info_->FFI_GetCurrentPage) {
+    return IPDFPageFromFPDFPage(info_->FFI_GetCurrentPage(
+        info_, FPDFDocumentFromCPDFDocument(cpdfdoc_)));
   }
   return nullptr;
 }
 
 WideString CPDFSDK_FormFillEnvironment::GetLanguage() {
 #ifdef PDF_ENABLE_XFA
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_GetLanguage)
+  if (!info_ || info_->version < 2 || !info_->FFI_GetLanguage) {
     return WideString();
+  }
 
-  int nRequiredLen = m_pInfo->FFI_GetLanguage(m_pInfo, nullptr, 0);
+  int nRequiredLen = info_->FFI_GetLanguage(info_, nullptr, 0);
   if (nRequiredLen <= 0)
     return WideString();
 
   DataVector<uint8_t> pBuff(nRequiredLen);
-  int nActualLen =
-      m_pInfo->FFI_GetLanguage(m_pInfo, pBuff.data(), nRequiredLen);
+  int nActualLen = info_->FFI_GetLanguage(info_, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return WideString();
 
@@ -163,16 +165,16 @@ WideString CPDFSDK_FormFillEnvironment::GetLanguage() {
 
 WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
 #ifdef PDF_ENABLE_XFA
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_GetPlatform)
+  if (!info_ || info_->version < 2 || !info_->FFI_GetPlatform) {
     return WideString();
+  }
 
-  int nRequiredLen = m_pInfo->FFI_GetPlatform(m_pInfo, nullptr, 0);
+  int nRequiredLen = info_->FFI_GetPlatform(info_, nullptr, 0);
   if (nRequiredLen <= 0)
     return WideString();
 
   DataVector<uint8_t> pBuff(nRequiredLen);
-  int nActualLen =
-      m_pInfo->FFI_GetPlatform(m_pInfo, pBuff.data(), nRequiredLen);
+  int nActualLen = info_->FFI_GetPlatform(info_, pBuff.data(), nRequiredLen);
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return WideString();
 
@@ -338,46 +340,52 @@ void CPDFSDK_FormFillEnvironment::SubmitForm(
 }
 
 IJS_Runtime* CPDFSDK_FormFillEnvironment::GetIJSRuntime() {
-  if (!m_pIJSRuntime)
-    m_pIJSRuntime = IJS_Runtime::Create(this);
-  return m_pIJSRuntime.get();
+  if (!ijs_runtime_) {
+    ijs_runtime_ = IJS_Runtime::Create(this);
+  }
+  return ijs_runtime_.get();
 }
 
 void CPDFSDK_FormFillEnvironment::Invalidate(IPDF_Page* page,
                                              const FX_RECT& rect) {
-  if (m_pInfo && m_pInfo->FFI_Invalidate) {
-    m_pInfo->FFI_Invalidate(m_pInfo, FPDFPageFromIPDFPage(page), rect.left,
-                            rect.top, rect.right, rect.bottom);
+  if (info_ && info_->FFI_Invalidate) {
+    info_->FFI_Invalidate(info_, FPDFPageFromIPDFPage(page), rect.left,
+                          rect.top, rect.right, rect.bottom);
   }
 }
 
 void CPDFSDK_FormFillEnvironment::SetCursor(
     IPWL_FillerNotify::CursorStyle nCursorType) {
-  if (m_pInfo && m_pInfo->FFI_SetCursor)
-    m_pInfo->FFI_SetCursor(m_pInfo, static_cast<int>(nCursorType));
+  if (info_ && info_->FFI_SetCursor) {
+    info_->FFI_SetCursor(info_, static_cast<int>(nCursorType));
+  }
 }
 
 int CPDFSDK_FormFillEnvironment::SetTimer(int uElapse,
                                           TimerCallback lpTimerFunc) {
-  if (m_pInfo && m_pInfo->FFI_SetTimer)
-    return m_pInfo->FFI_SetTimer(m_pInfo, uElapse, lpTimerFunc);
+  if (info_ && info_->FFI_SetTimer) {
+    return info_->FFI_SetTimer(info_, uElapse, lpTimerFunc);
+  }
   return CFX_Timer::HandlerIface::kInvalidTimerID;
 }
 
 void CPDFSDK_FormFillEnvironment::KillTimer(int nTimerID) {
-  if (m_pInfo && m_pInfo->FFI_KillTimer)
-    m_pInfo->FFI_KillTimer(m_pInfo, nTimerID);
+  if (info_ && info_->FFI_KillTimer) {
+    info_->FFI_KillTimer(info_, nTimerID);
+  }
 }
 
 void CPDFSDK_FormFillEnvironment::OnChange() {
-  if (m_pInfo && m_pInfo->FFI_OnChange)
-    m_pInfo->FFI_OnChange(m_pInfo);
+  if (info_ && info_->FFI_OnChange) {
+    info_->FFI_OnChange(info_);
+  }
 }
 
 void CPDFSDK_FormFillEnvironment::ExecuteNamedAction(
     const ByteString& namedAction) {
-  if (m_pInfo && m_pInfo->FFI_ExecuteNamedAction)
-    m_pInfo->FFI_ExecuteNamedAction(m_pInfo, namedAction.c_str());
+  if (info_ && info_->FFI_ExecuteNamedAction) {
+    info_->FFI_ExecuteNamedAction(info_, namedAction.c_str());
+  }
 }
 
 void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocus(const WideString& text) {
@@ -387,13 +395,12 @@ void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocus(const WideString& text) {
 void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocusInternal(
     const WideString& text,
     bool bFocus) {
-  if (m_pInfo && m_pInfo->FFI_SetTextFieldFocus) {
+  if (info_ && info_->FFI_SetTextFieldFocus) {
     size_t nCharacters = text.GetLength();
     ByteString bsUTFText = text.ToUTF16LE();
     auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
-    m_pInfo->FFI_SetTextFieldFocus(
-        m_pInfo, pBuffer, pdfium::checked_cast<FPDF_DWORD>(nCharacters),
-        bFocus);
+    info_->FFI_SetTextFieldFocus(
+        info_, pBuffer, pdfium::checked_cast<FPDF_DWORD>(nCharacters), bFocus);
   }
 }
 
@@ -401,50 +408,52 @@ void CPDFSDK_FormFillEnvironment::OnCalculate(
     ObservedPtr<CPDFSDK_Annot>& pAnnot) {
   ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   if (pWidget) {
-    m_pInteractiveForm->OnCalculate(pWidget->GetFormField());
+    interactive_form_->OnCalculate(pWidget->GetFormField());
   }
 }
 
 void CPDFSDK_FormFillEnvironment::OnFormat(ObservedPtr<CPDFSDK_Annot>& pAnnot) {
   ObservedPtr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.Get()));
   std::optional<WideString> sValue =
-      m_pInteractiveForm->OnFormat(pWidget->GetFormField());
+      interactive_form_->OnFormat(pWidget->GetFormField());
   if (!pWidget) {
     return;
   }
   if (sValue.has_value()) {
-    m_pInteractiveForm->ResetFieldAppearance(pWidget->GetFormField(), sValue);
-    m_pInteractiveForm->UpdateField(pWidget->GetFormField());
+    interactive_form_->ResetFieldAppearance(pWidget->GetFormField(), sValue);
+    interactive_form_->UpdateField(pWidget->GetFormField());
   }
 }
 
 void CPDFSDK_FormFillEnvironment::DoURIAction(const ByteString& bsURI,
                                               Mask<FWL_EVENTFLAG> modifiers) {
-  if (!m_pInfo)
-    return;
-
-  if (m_pInfo->version >= 2 && m_pInfo->FFI_DoURIActionWithKeyboardModifier) {
-    m_pInfo->FFI_DoURIActionWithKeyboardModifier(m_pInfo, bsURI.c_str(),
-                                                 modifiers.UncheckedValue());
+  if (!info_) {
     return;
   }
 
-  if (m_pInfo->FFI_DoURIAction)
-    m_pInfo->FFI_DoURIAction(m_pInfo, bsURI.c_str());
+  if (info_->version >= 2 && info_->FFI_DoURIActionWithKeyboardModifier) {
+    info_->FFI_DoURIActionWithKeyboardModifier(info_, bsURI.c_str(),
+                                               modifiers.UncheckedValue());
+    return;
+  }
+
+  if (info_->FFI_DoURIAction) {
+    info_->FFI_DoURIAction(info_, bsURI.c_str());
+  }
 }
 
 void CPDFSDK_FormFillEnvironment::DoGoToAction(int nPageIndex,
                                                int zoomMode,
                                                pdfium::span<float> fPosArray) {
-  if (m_pInfo && m_pInfo->FFI_DoGoToAction) {
-    m_pInfo->FFI_DoGoToAction(m_pInfo, nPageIndex, zoomMode, fPosArray.data(),
-                              fxcrt::CollectionSize<int>(fPosArray));
+  if (info_ && info_->FFI_DoGoToAction) {
+    info_->FFI_DoGoToAction(info_, nPageIndex, zoomMode, fPosArray.data(),
+                            fxcrt::CollectionSize<int>(fPosArray));
   }
 }
 
 #ifdef PDF_ENABLE_XFA
 int CPDFSDK_FormFillEnvironment::GetPageViewCount() const {
-  return fxcrt::CollectionSize<int>(m_PageMap);
+  return fxcrt::CollectionSize<int>(page_map_);
 }
 
 void CPDFSDK_FormFillEnvironment::DisplayCaret(IPDF_Page* page,
@@ -453,46 +462,50 @@ void CPDFSDK_FormFillEnvironment::DisplayCaret(IPDF_Page* page,
                                                double top,
                                                double right,
                                                double bottom) {
-  if (m_pInfo && m_pInfo->version >= 2 && m_pInfo->FFI_DisplayCaret) {
-    m_pInfo->FFI_DisplayCaret(m_pInfo, FPDFPageFromIPDFPage(page), bVisible,
-                              left, top, right, bottom);
+  if (info_ && info_->version >= 2 && info_->FFI_DisplayCaret) {
+    info_->FFI_DisplayCaret(info_, FPDFPageFromIPDFPage(page), bVisible, left,
+                            top, right, bottom);
   }
 }
 
 int CPDFSDK_FormFillEnvironment::GetCurrentPageIndex() const {
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_GetCurrentPageIndex)
+  if (!info_ || info_->version < 2 || !info_->FFI_GetCurrentPageIndex) {
     return -1;
-  return m_pInfo->FFI_GetCurrentPageIndex(
-      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc));
+  }
+  return info_->FFI_GetCurrentPageIndex(info_,
+                                        FPDFDocumentFromCPDFDocument(cpdfdoc_));
 }
 
 void CPDFSDK_FormFillEnvironment::SetCurrentPage(int iCurPage) {
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_SetCurrentPage)
+  if (!info_ || info_->version < 2 || !info_->FFI_SetCurrentPage) {
     return;
-  m_pInfo->FFI_SetCurrentPage(m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc),
-                              iCurPage);
+  }
+  info_->FFI_SetCurrentPage(info_, FPDFDocumentFromCPDFDocument(cpdfdoc_),
+                            iCurPage);
 }
 
 void CPDFSDK_FormFillEnvironment::GotoURL(const WideString& wsURL) {
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_GotoURL)
+  if (!info_ || info_->version < 2 || !info_->FFI_GotoURL) {
     return;
+  }
 
   ByteString bsTo = wsURL.ToUTF16LE();
-  m_pInfo->FFI_GotoURL(m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc),
-                       AsFPDFWideString(&bsTo));
+  info_->FFI_GotoURL(info_, FPDFDocumentFromCPDFDocument(cpdfdoc_),
+                     AsFPDFWideString(&bsTo));
 }
 
 FS_RECTF CPDFSDK_FormFillEnvironment::GetPageViewRect(IPDF_Page* page) {
   FS_RECTF rect = {0.0f, 0.0f, 0.0f, 0.0f};
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_GetPageViewRect)
+  if (!info_ || info_->version < 2 || !info_->FFI_GetPageViewRect) {
     return rect;
+  }
 
   double left;
   double top;
   double right;
   double bottom;
-  m_pInfo->FFI_GetPageViewRect(m_pInfo, FPDFPageFromIPDFPage(page), &left, &top,
-                               &right, &bottom);
+  info_->FFI_GetPageViewRect(info_, FPDFPageFromIPDFPage(page), &left, &top,
+                             &right, &bottom);
 
   rect.left = static_cast<float>(left);
   rect.top = static_cast<float>(top);
@@ -504,9 +517,9 @@ FS_RECTF CPDFSDK_FormFillEnvironment::GetPageViewRect(IPDF_Page* page) {
 bool CPDFSDK_FormFillEnvironment::PopupMenu(IPDF_Page* page,
                                             int menuFlag,
                                             const CFX_PointF& pt) {
-  return m_pInfo && m_pInfo->version >= 2 && m_pInfo->FFI_PopupMenu &&
-         m_pInfo->FFI_PopupMenu(m_pInfo, FPDFPageFromIPDFPage(page), nullptr,
-                                menuFlag, pt.x, pt.y);
+  return info_ && info_->version >= 2 && info_->FFI_PopupMenu &&
+         info_->FFI_PopupMenu(info_, FPDFPageFromIPDFPage(page), nullptr,
+                              menuFlag, pt.x, pt.y);
 }
 
 void CPDFSDK_FormFillEnvironment::EmailTo(FPDF_FILEHANDLER* fileHandler,
@@ -515,34 +528,37 @@ void CPDFSDK_FormFillEnvironment::EmailTo(FPDF_FILEHANDLER* fileHandler,
                                           FPDF_WIDESTRING pCC,
                                           FPDF_WIDESTRING pBcc,
                                           FPDF_WIDESTRING pMsg) {
-  if (m_pInfo && m_pInfo->version >= 2 && m_pInfo->FFI_EmailTo)
-    m_pInfo->FFI_EmailTo(m_pInfo, fileHandler, pTo, pSubject, pCC, pBcc, pMsg);
+  if (info_ && info_->version >= 2 && info_->FFI_EmailTo) {
+    info_->FFI_EmailTo(info_, fileHandler, pTo, pSubject, pCC, pBcc, pMsg);
+  }
 }
 
 void CPDFSDK_FormFillEnvironment::UploadTo(FPDF_FILEHANDLER* fileHandler,
                                            int fileFlag,
                                            FPDF_WIDESTRING uploadTo) {
-  if (m_pInfo && m_pInfo->version >= 2 && m_pInfo->FFI_UploadTo)
-    m_pInfo->FFI_UploadTo(m_pInfo, fileHandler, fileFlag, uploadTo);
+  if (info_ && info_->version >= 2 && info_->FFI_UploadTo) {
+    info_->FFI_UploadTo(info_, fileHandler, fileFlag, uploadTo);
+  }
 }
 
 FPDF_FILEHANDLER* CPDFSDK_FormFillEnvironment::OpenFile(int fileType,
                                                         FPDF_WIDESTRING wsURL,
                                                         const char* mode) {
-  if (m_pInfo && m_pInfo->version >= 2 && m_pInfo->FFI_OpenFile)
-    return m_pInfo->FFI_OpenFile(m_pInfo, fileType, wsURL, mode);
+  if (info_ && info_->version >= 2 && info_->FFI_OpenFile) {
+    return info_->FFI_OpenFile(info_, fileType, wsURL, mode);
+  }
   return nullptr;
 }
 
 RetainPtr<IFX_SeekableReadStream> CPDFSDK_FormFillEnvironment::DownloadFromURL(
     const WideString& url) {
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_DownloadFromURL) {
+  if (!info_ || info_->version < 2 || !info_->FFI_DownloadFromURL) {
     return nullptr;
   }
 
   ByteString bstrURL = url.ToUTF16LE();
   FPDF_FILEHANDLER* file_handler =
-      m_pInfo->FFI_DownloadFromURL(m_pInfo, AsFPDFWideString(&bstrURL));
+      info_->FFI_DownloadFromURL(info_, AsFPDFWideString(&bstrURL));
   if (!file_handler) {
     return nullptr;
   }
@@ -556,8 +572,9 @@ WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
     const WideString& wsContentType,
     const WideString& wsEncode,
     const WideString& wsHeader) {
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_PostRequestURL)
+  if (!info_ || info_->version < 2 || !info_->FFI_PostRequestURL) {
     return WideString();
+  }
 
   ByteString bsURL = wsURL.ToUTF16LE();
   ByteString bsData = wsData.ToUTF16LE();
@@ -567,8 +584,8 @@ WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
 
   FPDF_BSTR response;
   FPDF_BStr_Init(&response);
-  m_pInfo->FFI_PostRequestURL(
-      m_pInfo, AsFPDFWideString(&bsURL), AsFPDFWideString(&bsData),
+  info_->FFI_PostRequestURL(
+      info_, AsFPDFWideString(&bsURL), AsFPDFWideString(&bsData),
       AsFPDFWideString(&bsContentType), AsFPDFWideString(&bsEncode),
       AsFPDFWideString(&bsHeader), &response);
 
@@ -585,27 +602,29 @@ FPDF_BOOL CPDFSDK_FormFillEnvironment::PutRequestURL(
     const WideString& wsURL,
     const WideString& wsData,
     const WideString& wsEncode) {
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_PutRequestURL)
+  if (!info_ || info_->version < 2 || !info_->FFI_PutRequestURL) {
     return false;
+  }
 
   ByteString bsURL = wsURL.ToUTF16LE();
   ByteString bsData = wsData.ToUTF16LE();
   ByteString bsEncode = wsEncode.ToUTF16LE();
 
-  return m_pInfo->FFI_PutRequestURL(m_pInfo, AsFPDFWideString(&bsURL),
-                                    AsFPDFWideString(&bsData),
-                                    AsFPDFWideString(&bsEncode));
+  return info_->FFI_PutRequestURL(info_, AsFPDFWideString(&bsURL),
+                                  AsFPDFWideString(&bsData),
+                                  AsFPDFWideString(&bsEncode));
 }
 
 void CPDFSDK_FormFillEnvironment::PageEvent(int iPageCount,
                                             uint32_t dwEventType) const {
-  if (m_pInfo && m_pInfo->version >= 2 && m_pInfo->FFI_PageEvent)
-    m_pInfo->FFI_PageEvent(m_pInfo, iPageCount, dwEventType);
+  if (info_ && info_->version >= 2 && info_->FFI_PageEvent) {
+    info_->FFI_PageEvent(info_, iPageCount, dwEventType);
+  }
 }
 #endif  // PDF_ENABLE_XFA
 
 void CPDFSDK_FormFillEnvironment::ClearAllFocusedAnnots() {
-  for (auto& it : m_PageMap) {
+  for (auto& it : page_map_) {
     if (it.second->IsValidSDKAnnot(GetFocusAnnot())) {
       ObservedPtr<CPDFSDK_PageView> pObserved(it.second.get());
       KillFocusAnnot({});
@@ -623,7 +642,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetOrCreatePageView(
 
   auto pNew = std::make_unique<CPDFSDK_PageView>(this, pUnderlyingPage);
   CPDFSDK_PageView* pPageView = pNew.get();
-  m_PageMap[pUnderlyingPage] = std::move(pNew);
+  page_map_[pUnderlyingPage] = std::move(pNew);
 
   // Delay to load all the annotations, to avoid endless loop.
   pPageView->LoadFXAnnots();
@@ -632,8 +651,8 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetOrCreatePageView(
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
     IPDF_Page* pUnderlyingPage) {
-  auto it = m_PageMap.find(pUnderlyingPage);
-  return it != m_PageMap.end() ? it->second.get() : nullptr;
+  auto it = page_map_.find(pUnderlyingPage);
+  return it != page_map_.end() ? it->second.get() : nullptr;
 }
 
 CFX_Timer::HandlerIface* CPDFSDK_FormFillEnvironment::GetTimerHandler() {
@@ -646,7 +665,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageViewAtIndex(int nIndex) {
 }
 
 void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
-  auto name_tree = CPDF_NameTree::Create(m_pCPDFDoc, "JavaScript");
+  auto name_tree = CPDF_NameTree::Create(cpdfdoc_, "JavaScript");
   if (!name_tree)
     return;
 
@@ -659,7 +678,7 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
 }
 
 bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
-  const CPDF_Dictionary* pRoot = m_pCPDFDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = cpdfdoc_->GetRoot();
   if (!pRoot)
     return false;
 
@@ -681,9 +700,10 @@ bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
 }
 
 void CPDFSDK_FormFillEnvironment::RemovePageView(IPDF_Page* pUnderlyingPage) {
-  auto it = m_PageMap.find(pUnderlyingPage);
-  if (it == m_PageMap.end())
+  auto it = page_map_.find(pUnderlyingPage);
+  if (it == page_map_.end()) {
     return;
+  }
 
   CPDFSDK_PageView* pPageView = it->second.get();
   if (pPageView->IsLocked() || pPageView->IsBeingDestroyed())
@@ -703,24 +723,26 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(IPDF_Page* pUnderlyingPage) {
 
   // Remove the page from the map to make sure we don't accidentally attempt
   // to use the |pPageView| while we're cleaning it up.
-  m_PageMap.erase(it);
+  page_map_.erase(it);
 }
 
 IPDF_Page* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) const {
-  if (!m_pInfo || !m_pInfo->FFI_GetPage)
+  if (!info_ || !info_->FFI_GetPage) {
     return nullptr;
-  return IPDFPageFromFPDFPage(m_pInfo->FFI_GetPage(
-      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc), nIndex));
+  }
+  return IPDFPageFromFPDFPage(info_->FFI_GetPage(
+      info_, FPDFDocumentFromCPDFDocument(cpdfdoc_), nIndex));
 }
 
 CPDFSDK_InteractiveForm* CPDFSDK_FormFillEnvironment::GetInteractiveForm() {
-  if (!m_pInteractiveForm)
-    m_pInteractiveForm = std::make_unique<CPDFSDK_InteractiveForm>(this);
-  return m_pInteractiveForm.get();
+  if (!interactive_form_) {
+    interactive_form_ = std::make_unique<CPDFSDK_InteractiveForm>(this);
+  }
+  return interactive_form_.get();
 }
 
 void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_Annot* pAnnot) {
-  for (const auto& it : m_PageMap) {
+  for (const auto& it : page_map_) {
     ObservedPtr<CPDFSDK_PageView> pObserved(it.second.get());
     if (pObserved) {
       pObserved->UpdateView(pAnnot);
@@ -731,24 +753,28 @@ void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_Annot* pAnnot) {
 }
 
 CPDFSDK_Annot* CPDFSDK_FormFillEnvironment::GetFocusAnnot() const {
-  return m_pFocusAnnot.Get();
+  return focus_annot_.Get();
 }
 
 bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     ObservedPtr<CPDFSDK_Annot>& pAnnot) {
-  if (m_bBeingDestroyed)
+  if (being_destroyed_) {
     return false;
-  if (m_pFocusAnnot == pAnnot)
+  }
+  if (focus_annot_ == pAnnot) {
     return true;
-  if (m_pFocusAnnot && !KillFocusAnnot({}))
+  }
+  if (focus_annot_ && !KillFocusAnnot({})) {
     return false;
+  }
   if (!pAnnot)
     return false;
   if (!pAnnot->GetPageView()->IsValid())
     return false;
 
-  if (m_pFocusAnnot)
+  if (focus_annot_) {
     return false;
+  }
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Widget* pXFAWidget = pAnnot->AsXFAWidget();
@@ -763,10 +789,10 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
   if (!CPDFSDK_Annot::OnSetFocus(pAnnot, {})) {
     return false;
   }
-  if (m_pFocusAnnot) {
+  if (focus_annot_) {
     return false;
   }
-  m_pFocusAnnot = pAnnot;
+  focus_annot_ = pAnnot;
 
   // If we are not able to inform the client about the focus change, it
   // shouldn't be considered as failure.
@@ -775,14 +801,15 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
 }
 
 bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlags) {
-  if (!m_pFocusAnnot)
+  if (!focus_annot_) {
     return false;
+  }
 
-  ObservedPtr<CPDFSDK_Annot> pFocusAnnot(m_pFocusAnnot.Get());
-  m_pFocusAnnot.Reset();
+  ObservedPtr<CPDFSDK_Annot> pFocusAnnot(focus_annot_.Get());
+  focus_annot_.Reset();
 
   if (!CPDFSDK_Annot::OnKillFocus(pFocusAnnot, nFlags)) {
-    m_pFocusAnnot = pFocusAnnot;
+    focus_annot_ = pFocusAnnot;
     return false;
   }
 
@@ -798,22 +825,23 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(Mask<FWL_EVENTFLAG> nFlags) {
       OnSetFieldInputFocusInternal(WideString(), false);
     }
   }
-  return !m_pFocusAnnot;
+  return !focus_annot_;
 }
 
 int CPDFSDK_FormFillEnvironment::GetPageCount() const {
-  CPDF_Document::Extension* pExtension = m_pCPDFDoc->GetExtension();
-  return pExtension ? pExtension->GetPageCount() : m_pCPDFDoc->GetPageCount();
+  CPDF_Document::Extension* pExtension = cpdfdoc_->GetExtension();
+  return pExtension ? pExtension->GetPageCount() : cpdfdoc_->GetPageCount();
 }
 
 bool CPDFSDK_FormFillEnvironment::HasPermissions(uint32_t flags) const {
-  return !!(m_pCPDFDoc->GetUserPermissions(/*get_owner_perms=*/true) & flags);
+  return !!(cpdfdoc_->GetUserPermissions(/*get_owner_perms=*/true) & flags);
 }
 
 void CPDFSDK_FormFillEnvironment::SendOnFocusChange(
     ObservedPtr<CPDFSDK_Annot>& pAnnot) {
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_OnFocusChange)
+  if (!info_ || info_->version < 2 || !info_->FFI_OnFocusChange) {
     return;
+  }
 
   // TODO(crbug.com/pdfium/1482): Handle XFA case.
   if (pAnnot->AsXFAWidget())
@@ -833,7 +861,7 @@ void CPDFSDK_FormFillEnvironment::SendOnFocusChange(
   FPDF_ANNOTATION fpdf_annot =
       FPDFAnnotationFromCPDFAnnotContext(focused_annot.get());
 
-  m_pInfo->FFI_OnFocusChange(m_pInfo, fpdf_annot, pPageView->GetPageIndex());
+  info_->FFI_OnFocusChange(info_, fpdf_annot, pPageView->GetPageIndex());
 }
 
 bool CPDFSDK_FormFillEnvironment::DoActionDocOpen(const CPDF_Action& action) {

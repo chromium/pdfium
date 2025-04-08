@@ -133,7 +133,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   CPDFSDK_PageView* GetCurPageView();
   void SetChangeMark();
 
-  CPDFSDK_Widget* GetSDKWidget() const { return m_pWidget; }
+  CPDFSDK_Widget* GetSDKWidget() const { return widget_; }
 
   CFFL_PerWindowData* GetPerPWLWindowData(const CPDFSDK_PageView* pPageView);
   void ResetPWLWindowForValueAge(const CPDFSDK_PageView* pPageView,
@@ -164,11 +164,11 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
 
   void InvalidateRect(const FX_RECT& rect);
 
-  bool m_bValid = false;
-  UnownedPtr<CFFL_InteractiveFormFiller> const m_pFormFiller;
-  UnownedPtr<CPDFSDK_Widget> m_pWidget;
-  std::unique_ptr<CFX_Timer> m_pTimer;
-  std::map<const CPDFSDK_PageView*, std::unique_ptr<CPWL_Wnd>> m_Maps;
+  bool valid_ = false;
+  UnownedPtr<CFFL_InteractiveFormFiller> const form_filler_;
+  UnownedPtr<CPDFSDK_Widget> widget_;
+  std::unique_ptr<CFX_Timer> timer_;
+  std::map<const CPDFSDK_PageView*, std::unique_ptr<CPWL_Wnd>> maps_;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_FORMFIELD_H_

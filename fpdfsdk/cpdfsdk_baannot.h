@@ -113,7 +113,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot,
   void InvalidateRect();
 
   bool is_focused_ = false;
-  UnownedPtr<CPDF_Annot> const m_pAnnot;
+  UnownedPtr<CPDF_Annot> const annot_;
 };
 
 #endif  // FPDFSDK_CPDFSDK_BAANNOT_H_

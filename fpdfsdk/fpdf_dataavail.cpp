@@ -105,19 +105,19 @@ class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
 class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {
  public:
   explicit FPDF_DownloadHintsContext(FX_DOWNLOADHINTS* pDownloadHints)
-      : m_pDownloadHints(pDownloadHints) {}
+      : download_hints_(pDownloadHints) {}
   ~FPDF_DownloadHintsContext() override = default;
 
   // IFX_DownloadHints
   void AddSegment(FX_FILESIZE offset, size_t size) override {
-    if (m_pDownloadHints) {
-      m_pDownloadHints->AddSegment(m_pDownloadHints,
-                                   static_cast<size_t>(offset), size);
+    if (download_hints_) {
+      download_hints_->AddSegment(download_hints_, static_cast<size_t>(offset),
+                                  size);
     }
   }
 
  private:
-  UnownedPtr<FX_DOWNLOADHINTS> m_pDownloadHints;
+  UnownedPtr<FX_DOWNLOADHINTS> download_hints_;
 };
 
 class FPDF_AvailContext {

@@ -16,15 +16,15 @@ CFFL_Button::CFFL_Button(CFFL_InteractiveFormFiller* pFormFiller,
 CFFL_Button::~CFFL_Button() = default;
 
 void CFFL_Button::OnMouseEnter(CPDFSDK_PageView* pPageView) {
-  m_bMouseIn = true;
+  mouse_in_ = true;
   InvalidateRect(GetViewBBox(pPageView));
 }
 
 void CFFL_Button::OnMouseExit(CPDFSDK_PageView* pPageView) {
-  m_bMouseIn = false;
+  mouse_in_ = false;
   InvalidateRect(GetViewBBox(pPageView));
-  m_pTimer.reset();
-  DCHECK(m_pWidget);
+  timer_.reset();
+  DCHECK(widget_);
 }
 
 bool CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
@@ -34,8 +34,8 @@ bool CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
   if (!pWidget->GetRect().Contains(point))
     return false;
 
-  m_bMouseDown = true;
-  m_bValid = true;
+  mouse_down_ = true;
+  valid_ = true;
   InvalidateRect(GetViewBBox(pPageView));
   return true;
 }
@@ -47,7 +47,7 @@ bool CFFL_Button::OnLButtonUp(CPDFSDK_PageView* pPageView,
   if (!pWidget->GetRect().Contains(point))
     return false;
 
-  m_bMouseDown = false;
+  mouse_down_ = false;
   InvalidateRect(GetViewBBox(pPageView));
   return true;
 }
@@ -68,7 +68,7 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
                             CPDF_Annot::AppearanceMode::kNormal);
     return;
   }
-  if (m_bMouseDown) {
+  if (mouse_down_) {
     if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode::kDown)) {
       pWidget->DrawAppearance(pDevice, mtUser2Device,
                               CPDF_Annot::AppearanceMode::kDown);
@@ -78,7 +78,7 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
     }
     return;
   }
-  if (m_bMouseIn) {
+  if (mouse_in_) {
     if (pWidget->IsWidgetAppearanceValid(
             CPDF_Annot::AppearanceMode::kRollover)) {
       pWidget->DrawAppearance(pDevice, mtUser2Device,

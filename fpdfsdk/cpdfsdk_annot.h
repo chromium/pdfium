@@ -126,13 +126,13 @@ class CPDFSDK_Annot : public Observable {
   IPDF_Page* GetXFAPage();  // Returns XFA page or nullptr.
 
   // Never returns nullptr.
-  CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
+  CPDFSDK_PageView* GetPageView() const { return page_view_; }
 
  protected:
   explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
 
  private:
-  UnownedPtr<CPDFSDK_PageView> const m_pPageView;
+  UnownedPtr<CPDFSDK_PageView> const page_view_;
 };
 
 inline CPDFXFA_Widget* ToXFAWidget(CPDFSDK_Annot* pAnnot) {

@@ -26,17 +26,17 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
       ADD_FAILURE();
       return ScopedEmbedderTestPage();
     }
-    m_pFormFillEnv =
+    form_fill_env_ =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
-    if (!m_pFormFillEnv) {
+    if (!form_fill_env_) {
       ADD_FAILURE();
       return ScopedEmbedderTestPage();
     }
 
-    m_pPageView =
-        m_pFormFillEnv->GetOrCreatePageView(IPDFPageFromFPDFPage(page.get()));
+    page_view_ =
+        form_fill_env_->GetOrCreatePageView(IPDFPageFromFPDFPage(page.get()));
 
-    if (!m_pPageView) {
+    if (!page_view_) {
       ADD_FAILURE();
       return ScopedEmbedderTestPage();
     }
@@ -44,13 +44,13 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
     return page;
   }
 
-  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
-  CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
+  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return form_fill_env_; }
+  CPDFSDK_PageView* GetPageView() const { return page_view_; }
 
   CPDFSDK_Annot* GetNthFocusableAnnot(size_t n) {
     DCHECK_NE(n, 0);
     CPDFSDK_AnnotIterator ai(GetPageView(),
-                             m_pFormFillEnv->GetFocusableAnnotSubtypes());
+                             form_fill_env_->GetFocusableAnnotSubtypes());
     CPDFSDK_Annot* pAnnot = ai.GetFirstAnnot();
     DCHECK(pAnnot);
 
@@ -63,8 +63,8 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
   }
 
  private:
-  CPDFSDK_PageView* m_pPageView = nullptr;
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv = nullptr;
+  CPDFSDK_PageView* page_view_ = nullptr;
+  CPDFSDK_FormFillEnvironment* form_fill_env_ = nullptr;
 };
 
 TEST_F(CPDFSDKBAAnnotTest, TabToLinkOrHighlightAnnot) {

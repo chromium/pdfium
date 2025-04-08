@@ -27,7 +27,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_CheckBox::NewPWLWindow(
     std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData) {
   auto pWnd = std::make_unique<CPWL_CheckBox>(cp, std::move(pAttachedData));
   pWnd->Realize();
-  pWnd->SetCheck(m_pWidget->IsChecked());
+  pWnd->SetCheck(widget_->IsChecked());
   return pWnd;
 }
 
@@ -51,14 +51,14 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Widget* pWidget,
       CPDFSDK_PageView* pPageView = pWidget->GetPageView();
       DCHECK(pPageView);
 
-      ObservedPtr<CPDFSDK_Widget> pObserved(m_pWidget);
-      if (m_pFormFiller->OnButtonUp(pObserved, pPageView, nFlags)) {
+      ObservedPtr<CPDFSDK_Widget> pObserved(widget_);
+      if (form_filler_->OnButtonUp(pObserved, pPageView, nFlags)) {
         if (!pObserved)
-          m_pWidget = nullptr;
+          widget_ = nullptr;
         return true;
       }
       if (!pObserved) {
-        m_pWidget = nullptr;
+        widget_ = nullptr;
         return true;
       }
 
@@ -100,7 +100,7 @@ bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
 
 bool CFFL_CheckBox::IsDataChanged(const CPDFSDK_PageView* pPageView) {
   CPWL_CheckBox* pWnd = GetPWLCheckBox(pPageView);
-  return pWnd && pWnd->IsChecked() != m_pWidget->IsChecked();
+  return pWnd && pWnd->IsChecked() != widget_->IsChecked();
 }
 
 void CFFL_CheckBox::SaveData(const CPDFSDK_PageView* pPageView) {
@@ -110,7 +110,7 @@ void CFFL_CheckBox::SaveData(const CPDFSDK_PageView* pPageView) {
     return;
   }
   bool bNewChecked = pWnd->IsChecked();
-  ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget);
+  ObservedPtr<CPDFSDK_Widget> observed_widget(widget_);
   observed_widget->SetCheck(bNewChecked);
   if (!observed_widget) {
     return;

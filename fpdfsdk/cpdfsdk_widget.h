@@ -135,8 +135,8 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   void ClearAppModified();
   bool IsAppModified() const;
 
-  uint32_t GetAppearanceAge() const { return m_nAppearanceAge; }
-  uint32_t GetValueAge() const { return m_nValueAge; }
+  uint32_t GetAppearanceAge() const { return appearance_age_; }
+  uint32_t GetValueAge() const { return value_age_; }
 
   bool IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) const;
   bool IsPushHighlighted() const;
@@ -182,10 +182,10 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
                         CPDFSDK_FormFillEnvironment* pFormFillEnv);
 #endif  // PDF_ENABLE_XFA
 
-  UnownedPtr<CPDFSDK_InteractiveForm> const m_pInteractiveForm;
-  bool m_bAppModified = false;
-  uint32_t m_nAppearanceAge = 0;
-  uint32_t m_nValueAge = 0;
+  UnownedPtr<CPDFSDK_InteractiveForm> const interactive_form_;
+  bool app_modified_ = false;
+  uint32_t appearance_age_ = 0;
+  uint32_t value_age_ = 0;
 };
 
 inline CPDFSDK_Widget* ToCPDFSDKWidget(CPDFSDK_Annot* pAnnot) {

@@ -27,7 +27,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_RadioButton::NewPWLWindow(
     std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData) {
   auto pWnd = std::make_unique<CPWL_RadioButton>(cp, std::move(pAttachedData));
   pWnd->Realize();
-  pWnd->SetCheck(m_pWidget->IsChecked());
+  pWnd->SetCheck(widget_->IsChecked());
   return pWnd;
 }
 
@@ -51,8 +51,8 @@ bool CFFL_RadioButton::OnChar(CPDFSDK_Widget* pWidget,
       CPDFSDK_PageView* pPageView = pWidget->GetPageView();
       DCHECK(pPageView);
 
-      ObservedPtr<CPDFSDK_Widget> pObserved(m_pWidget);
-      if (m_pFormFiller->OnButtonUp(pObserved, pPageView, nFlags) ||
+      ObservedPtr<CPDFSDK_Widget> pObserved(widget_);
+      if (form_filler_->OnButtonUp(pObserved, pPageView, nFlags) ||
           !pObserved) {
         return true;
       }
@@ -86,7 +86,7 @@ bool CFFL_RadioButton::OnLButtonUp(CPDFSDK_PageView* pPageView,
 
 bool CFFL_RadioButton::IsDataChanged(const CPDFSDK_PageView* pPageView) {
   CPWL_RadioButton* pWnd = GetPWLRadioButton(pPageView);
-  return pWnd && pWnd->IsChecked() != m_pWidget->IsChecked();
+  return pWnd && pWnd->IsChecked() != widget_->IsChecked();
 }
 
 void CFFL_RadioButton::SaveData(const CPDFSDK_PageView* pPageView) {
@@ -96,7 +96,7 @@ void CFFL_RadioButton::SaveData(const CPDFSDK_PageView* pPageView) {
     return;
   }
   bool bNewChecked = pWnd->IsChecked();
-  ObservedPtr<CPDFSDK_Widget> observed_widget(observed_this->m_pWidget);
+  ObservedPtr<CPDFSDK_Widget> observed_widget(observed_this->widget_);
   observed_widget->SetCheck(bNewChecked);
   if (!observed_widget) {
     return;

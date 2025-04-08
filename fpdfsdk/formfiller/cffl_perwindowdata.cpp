@@ -13,10 +13,10 @@ CFFL_PerWindowData::CFFL_PerWindowData(CPDFSDK_Widget* pWidget,
                                        const CPDFSDK_PageView* pPageView,
                                        uint32_t nAppearanceAge,
                                        uint32_t nValueAge)
-    : m_pWidget(pWidget),
-      m_pPageView(pPageView),
-      m_nAppearanceAge(nAppearanceAge),
-      m_nValueAge(nValueAge) {}
+    : widget_(pWidget),
+      page_view_(pPageView),
+      appearance_age_(nAppearanceAge),
+      value_age_(nValueAge) {}
 
 CFFL_PerWindowData::CFFL_PerWindowData(const CFFL_PerWindowData& that) =
     default;

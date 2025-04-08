@@ -29,24 +29,24 @@ class CFFL_PerWindowData final : public IPWL_FillerNotify::PerWindowData {
   // IPWL_FillerNotify::PerWindowData:
   std::unique_ptr<IPWL_FillerNotify::PerWindowData> Clone() const override;
 
-  CPDFSDK_Widget* GetWidget() const { return m_pWidget.Get(); }
-  const CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
+  CPDFSDK_Widget* GetWidget() const { return widget_.Get(); }
+  const CPDFSDK_PageView* GetPageView() const { return page_view_; }
   bool AppearanceAgeEquals(uint32_t age) const {
-    return age == m_nAppearanceAge;
+    return age == appearance_age_;
   }
-  uint32_t GetValueAge() const { return m_nValueAge; }
+  uint32_t GetValueAge() const { return value_age_; }
 
-  void SetFormField(CFFL_FormField* pFormField) { m_pFormField = pFormField; }
-  CFFL_FormField* GetFormField() { return m_pFormField; }
+  void SetFormField(CFFL_FormField* pFormField) { form_field_ = pFormField; }
+  CFFL_FormField* GetFormField() { return form_field_; }
 
  private:
   CFFL_PerWindowData(const CFFL_PerWindowData& that);
 
-  ObservedPtr<CPDFSDK_Widget> m_pWidget;
-  UnownedPtr<const CPDFSDK_PageView> const m_pPageView;
-  UnownedPtr<CFFL_FormField> m_pFormField;
-  const uint32_t m_nAppearanceAge;
-  const uint32_t m_nValueAge;
+  ObservedPtr<CPDFSDK_Widget> widget_;
+  UnownedPtr<const CPDFSDK_PageView> const page_view_;
+  UnownedPtr<CFFL_FormField> form_field_;
+  const uint32_t appearance_age_;
+  const uint32_t value_age_;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_PERWINDOWDATA_H_

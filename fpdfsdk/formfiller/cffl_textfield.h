@@ -55,7 +55,7 @@ class CFFL_TextField final : public CFFL_TextObject {
   CPWL_Edit* GetPWLEdit(const CPDFSDK_PageView* pPageView) const;
   CPWL_Edit* CreateOrUpdatePWLEdit(const CPDFSDK_PageView* pPageView);
 
-  FFL_TextFieldState m_State;
+  FFL_TextFieldState state_;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_TEXTFIELD_H_

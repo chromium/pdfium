@@ -10,8 +10,8 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
-    : m_pPageView(pPageView) {
-  DCHECK(m_pPageView);
+    : page_view_(pPageView) {
+  DCHECK(page_view_);
 }
 
 CPDFSDK_Annot::~CPDFSDK_Annot() = default;
@@ -114,7 +114,7 @@ bool CPDFSDK_Annot::OnKillFocus(ObservedPtr<CPDFSDK_Annot>& pAnnot,
 
 IPDF_Page* CPDFSDK_Annot::GetXFAPage() {
 #ifdef PDF_ENABLE_XFA
-  return m_pPageView->GetXFAPage();
+  return page_view_->GetXFAPage();
 #else
   return nullptr;
 #endif
@@ -138,5 +138,5 @@ IPDF_Page* CPDFSDK_Annot::GetPage() {
 }
 
 CPDF_Page* CPDFSDK_Annot::GetPDFPage() {
-  return m_pPageView->GetPDFPage();
+  return page_view_->GetPDFPage();
 }

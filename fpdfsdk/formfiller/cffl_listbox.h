@@ -44,8 +44,8 @@ class CFFL_ListBox final : public CFFL_TextObject {
   CPWL_ListBox* GetPWLListBox(const CPDFSDK_PageView* pPageView) const;
   CPWL_ListBox* CreateOrUpdatePWLListBox(const CPDFSDK_PageView* pPageView);
 
-  std::set<int> m_OriginSelections;
-  std::vector<int> m_State;
+  std::set<int> origin_selections_;
+  std::vector<int> state_;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_LISTBOX_H_
