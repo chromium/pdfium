@@ -28,14 +28,14 @@ skia_support_pdf = false
 
 if (pdf_enable_fontations) {
   source_set("path_bridge") {
-    sources = [ "//third_party/skia/src/ports/fontations/src/skpath_bridge.h" ]
+    sources = skia_fontations_path_bridge_sources
   }
 
   rust_static_library("bridge_rust_side") {
     allow_unsafe = true
-    crate_root = "//third_party/skia/src/ports/fontations/src/ffi.rs"
-    sources = [ "//third_party/skia/src/ports/fontations/src/ffi.rs" ]
-    cxx_bindings = [ "//third_party/skia/src/ports/fontations/src/ffi.rs" ]
+    crate_root = skia_fontations_bridge_root
+    sources = skia_ports_fontations_bridge_rust_side_sources
+    cxx_bindings = [ skia_fontations_bridge_root ]
     deps = [
       ":path_bridge",
       "//third_party/rust/font_types/v0_8:lib",
