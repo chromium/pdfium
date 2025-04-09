@@ -12,11 +12,11 @@ CFPF_SkiaPathFont::CFPF_SkiaPathFont(const ByteString& path,
                                      int32_t iFaceIndex,
                                      uint32_t dwCharsets,
                                      int32_t iGlyphNum)
-    : m_bsPath(path),
-      m_bsFamily(pFamily),
-      m_dwStyle(dwStyle),
-      m_iFaceIndex(iFaceIndex),
-      m_dwCharsets(dwCharsets),
-      m_iGlyphNum(iGlyphNum) {}
+    : path_(path),
+      family_(pFamily),
+      style_(dwStyle),
+      face_index_(iFaceIndex),
+      charsets_(dwCharsets),
+      glyph_num_(iGlyphNum) {}
 
 CFPF_SkiaPathFont::~CFPF_SkiaPathFont() = default;

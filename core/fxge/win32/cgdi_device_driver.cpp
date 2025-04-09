@@ -112,17 +112,18 @@ void SetPathToDC(HDC hDC, const CFX_Path& path, const CFX_Matrix* pMatrix) {
 
   pdfium::span<const CFX_Path::Point> points = path.GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
-    CFX_PointF pos = points[i].m_Point;
+    CFX_PointF pos = points[i].point_;
     if (pMatrix)
       pos = pMatrix->Transform(pos);
 
     CFX_Point screen(FXSYS_roundf(pos.x), FXSYS_roundf(pos.y));
-    CFX_Path::Point::Type point_type = points[i].m_Type;
+    CFX_Path::Point::Type point_type = points[i].type_;
     if (point_type == CFX_Path::Point::Type::kMove) {
       MoveToEx(hDC, screen.x, screen.y, nullptr);
     } else if (point_type == CFX_Path::Point::Type::kLine) {
-      if (points[i].m_Point == points[i - 1].m_Point)
+      if (points[i].point_ == points[i - 1].point_) {
         screen.x++;
+      }
 
       LineTo(hDC, screen.x, screen.y);
     } else if (point_type == CFX_Path::Point::Type::kBezier) {
@@ -130,14 +131,14 @@ void SetPathToDC(HDC hDC, const CFX_Path& path, const CFX_Matrix* pMatrix) {
       lppt[0].x = screen.x;
       lppt[0].y = screen.y;
 
-      pos = points[i + 1].m_Point;
+      pos = points[i + 1].point_;
       if (pMatrix)
         pos = pMatrix->Transform(pos);
 
       lppt[1].x = FXSYS_roundf(pos.x);
       lppt[1].y = FXSYS_roundf(pos.y);
 
-      pos = points[i + 2].m_Point;
+      pos = points[i + 2].point_;
       if (pMatrix)
         pos = pMatrix->Transform(pos);
 
@@ -146,8 +147,9 @@ void SetPathToDC(HDC hDC, const CFX_Path& path, const CFX_Matrix* pMatrix) {
       PolyBezierTo(hDC, lppt, 3);
       i += 2;
     }
-    if (points[i].m_CloseFigure)
+    if (points[i].close_figure_) {
       CloseFigure(hDC);
+    }
   }
   EndPath(hDC);
 }
@@ -343,68 +345,68 @@ unsigned LineClip(float w,
 }  // namespace
 
 CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
-    : m_hDC(hDC), m_DeviceType(device_type) {
-  SetStretchBltMode(m_hDC, HALFTONE);
-  DWORD obj_type = GetObjectType(m_hDC);
-  m_bMetafileDCType = obj_type == OBJ_ENHMETADC || obj_type == OBJ_ENHMETAFILE;
+    : dc_handle_(hDC), device_type_(device_type) {
+  SetStretchBltMode(dc_handle_, HALFTONE);
+  DWORD obj_type = GetObjectType(dc_handle_);
+  metafile_dctype_ = obj_type == OBJ_ENHMETADC || obj_type == OBJ_ENHMETAFILE;
   if (obj_type == OBJ_MEMDC) {
     HBITMAP hBitmap = CreateBitmap(1, 1, 1, 1, nullptr);
-    hBitmap = (HBITMAP)SelectObject(m_hDC, hBitmap);
+    hBitmap = (HBITMAP)SelectObject(dc_handle_, hBitmap);
     BITMAP bitmap;
     GetObject(hBitmap, sizeof(bitmap), &bitmap);
-    m_nBitsPerPixel = bitmap.bmBitsPixel;
-    m_Width = bitmap.bmWidth;
-    m_Height = abs(bitmap.bmHeight);
-    hBitmap = (HBITMAP)SelectObject(m_hDC, hBitmap);
+    bits_per_pixel_ = bitmap.bmBitsPixel;
+    width_ = bitmap.bmWidth;
+    height_ = abs(bitmap.bmHeight);
+    hBitmap = (HBITMAP)SelectObject(dc_handle_, hBitmap);
     DeleteObject(hBitmap);
   } else {
-    m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
-    m_Width = ::GetDeviceCaps(m_hDC, HORZRES);
-    m_Height = ::GetDeviceCaps(m_hDC, VERTRES);
+    bits_per_pixel_ = ::GetDeviceCaps(dc_handle_, BITSPIXEL);
+    width_ = ::GetDeviceCaps(dc_handle_, HORZRES);
+    height_ = ::GetDeviceCaps(dc_handle_, VERTRES);
   }
-  if (m_DeviceType == DeviceType::kDisplay) {
-    m_RenderCaps = FXRC_GET_BITS;
+  if (device_type_ == DeviceType::kDisplay) {
+    render_caps_ = FXRC_GET_BITS;
   } else {
-    m_RenderCaps = 0;
+    render_caps_ = 0;
   }
 }
 
 CGdiDeviceDriver::~CGdiDeviceDriver() = default;
 
 DeviceType CGdiDeviceDriver::GetDeviceType() const {
-  return m_DeviceType;
+  return device_type_;
 }
 
 int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
     case FXDC_PIXEL_WIDTH:
-      return m_Width;
+      return width_;
     case FXDC_PIXEL_HEIGHT:
-      return m_Height;
+      return height_;
     case FXDC_BITS_PIXEL:
-      return m_nBitsPerPixel;
+      return bits_per_pixel_;
     case FXDC_RENDER_CAPS:
-      return m_RenderCaps;
+      return render_caps_;
     default:
       NOTREACHED();
   }
 }
 
 void CGdiDeviceDriver::SaveState() {
-  SaveDC(m_hDC);
+  SaveDC(dc_handle_);
 }
 
 void CGdiDeviceDriver::RestoreState(bool bKeepSaved) {
-  RestoreDC(m_hDC, -1);
+  RestoreDC(dc_handle_, -1);
   if (bKeepSaved)
-    SaveDC(m_hDC);
+    SaveDC(dc_handle_);
 }
 
 bool CGdiDeviceDriver::GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
                                      const FX_RECT& src_rect,
                                      int left,
                                      int top) {
-  if (m_DeviceType == DeviceType::kPrinter) {
+  if (device_type_ == DeviceType::kPrinter) {
     RetainPtr<const CFX_DIBitmap> flipped_source =
         source->FlipImage(/*bXFlip=*/false, /*bYFlip=*/true);
     if (!flipped_source) {
@@ -420,8 +422,8 @@ bool CGdiDeviceDriver::GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
                        flipped_source->GetHeight());
     int dst_width = dst_rect.Width();
     int dst_height = dst_rect.Height();
-    ::StretchDIBits(m_hDC, left, top, dst_width, dst_height, 0, 0, dst_width,
-                    dst_height, flipped_source->GetBuffer().data(),
+    ::StretchDIBits(dc_handle_, left, top, dst_width, dst_height, 0, 0,
+                    dst_width, dst_height, flipped_source->GetBuffer().data(),
                     reinterpret_cast<BITMAPINFO*>(header), DIB_RGB_COLORS,
                     SRCCOPY);
     return true;
@@ -434,7 +436,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
   FixedSizeDataVector<uint8_t> info = GetBitmapInfoHeader(realized_source);
   auto* header = reinterpret_cast<BITMAPINFOHEADER*>(info.span().data());
   ::SetDIBitsToDevice(
-      m_hDC, left, top, src_rect.Width(), src_rect.Height(), src_rect.left,
+      dc_handle_, left, top, src_rect.Width(), src_rect.Height(), src_rect.left,
       realized_source->GetHeight() - src_rect.bottom, 0,
       realized_source->GetHeight(), realized_source->GetBuffer().data(),
       reinterpret_cast<BITMAPINFO*>(header), DIB_RGB_COLORS);
@@ -454,13 +456,13 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(RetainPtr<const CFX_DIBBase> source,
   if ((int64_t)abs(dest_width) * abs(dest_height) <
           (int64_t)source->GetWidth() * source->GetHeight() * 4 ||
       options.bInterpolateBilinear) {
-    SetStretchBltMode(m_hDC, HALFTONE);
+    SetStretchBltMode(dc_handle_, HALFTONE);
   } else {
-    SetStretchBltMode(m_hDC, COLORONCOLOR);
+    SetStretchBltMode(dc_handle_, COLORONCOLOR);
   }
 
   RetainPtr<const CFX_DIBitmap> realized_source;
-  if (m_DeviceType == DeviceType::kPrinter &&
+  if (device_type_ == DeviceType::kPrinter &&
       ((int64_t)source->GetWidth() * source->GetHeight() >
        (int64_t)abs(dest_width) * abs(dest_height))) {
     realized_source = source->StretchTo(dest_width, dest_height,
@@ -475,8 +477,8 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(RetainPtr<const CFX_DIBBase> source,
   CHECK(!realized_source->GetBuffer().empty());
   FixedSizeDataVector<uint8_t> info = GetBitmapInfoHeader(realized_source);
   auto* header = reinterpret_cast<BITMAPINFOHEADER*>(info.span().data());
-  ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
-                  realized_source->GetWidth(), realized_source->GetHeight(),
+  ::StretchDIBits(dc_handle_, dest_left, dest_top, dest_width, dest_height, 0,
+                  0, realized_source->GetWidth(), realized_source->GetHeight(),
                   realized_source->GetBuffer().data(),
                   reinterpret_cast<BITMAPINFO*>(header), DIB_RGB_COLORS,
                   SRCCOPY);
@@ -510,14 +512,14 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
   bmi.bmiHeader.biHeight = -height;
   bmi.bmiHeader.biPlanes = 1;
   bmi.bmiHeader.biWidth = width;
-  if (m_nBitsPerPixel != 1) {
-    SetStretchBltMode(m_hDC, HALFTONE);
+  if (bits_per_pixel_ != 1) {
+    SetStretchBltMode(dc_handle_, HALFTONE);
   }
   bmi.bmiColors[0] = 0xffffff;
   bmi.bmiColors[1] = 0;
 
   HBRUSH hPattern = CreateBrush(bitmap_color);
-  HBRUSH hOld = (HBRUSH)SelectObject(m_hDC, hPattern);
+  HBRUSH hOld = (HBRUSH)SelectObject(dc_handle_, hPattern);
 
   // In PDF, when image mask is 1, use device bitmap; when mask is 0, use brush
   // bitmap.
@@ -537,11 +539,11 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
   // http://msdn.microsoft.com/en-us/library/aa932106.aspx, the ROP3 code is
   // 0xB8074A
 
-  ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
-                  width, height, realized_source->GetBuffer().data(),
+  ::StretchDIBits(dc_handle_, dest_left, dest_top, dest_width, dest_height, 0,
+                  0, width, height, realized_source->GetBuffer().data(),
                   (BITMAPINFO*)&bmi, DIB_RGB_COLORS, 0xB8074A);
 
-  SelectObject(m_hDC, hOld);
+  SelectObject(dc_handle_, hOld);
   DeleteObject(hPattern);
 
   return true;
@@ -549,10 +551,10 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
 
 FX_RECT CGdiDeviceDriver::GetClipBox() const {
   FX_RECT rect;
-  if (::GetClipBox(m_hDC, reinterpret_cast<RECT*>(&rect))) {
+  if (::GetClipBox(dc_handle_, reinterpret_cast<RECT*>(&rect))) {
     return rect;
   }
-  return FX_RECT(0, 0, m_Width, m_Height);
+  return FX_RECT(0, 0, width_, height_);
 }
 
 bool CGdiDeviceDriver::MultiplyAlpha(float alpha) {
@@ -568,18 +570,18 @@ bool CGdiDeviceDriver::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
 }
 
 void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
-  if (!m_bMetafileDCType) {  // EMF drawing is not bound to the DC.
-    int startOutOfBoundsFlag = (x1 < 0) | ((x1 > m_Width) << 1) |
-                               ((y1 < 0) << 2) | ((y1 > m_Height) << 3);
-    int endOutOfBoundsFlag = (x2 < 0) | ((x2 > m_Width) << 1) |
-                             ((y2 < 0) << 2) | ((y2 > m_Height) << 3);
+  if (!metafile_dctype_) {  // EMF drawing is not bound to the DC.
+    int startOutOfBoundsFlag = (x1 < 0) | ((x1 > width_) << 1) |
+                               ((y1 < 0) << 2) | ((y1 > height_) << 3);
+    int endOutOfBoundsFlag = (x2 < 0) | ((x2 > width_) << 1) | ((y2 < 0) << 2) |
+                             ((y2 > height_) << 3);
     if (startOutOfBoundsFlag & endOutOfBoundsFlag)
       return;
 
     if (startOutOfBoundsFlag || endOutOfBoundsFlag) {
       float x[2];
       float y[2];
-      unsigned np = LineClip(m_Width, m_Height, x1, y1, x2, y2, x, y);
+      unsigned np = LineClip(width_, height_, x1, y1, x2, y2, x, y);
       if (np == 0)
         return;
 
@@ -596,8 +598,8 @@ void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
     }
   }
 
-  MoveToEx(m_hDC, FXSYS_roundf(x1), FXSYS_roundf(y1), nullptr);
-  LineTo(m_hDC, FXSYS_roundf(x2), FXSYS_roundf(y2));
+  MoveToEx(dc_handle_, FXSYS_roundf(x1), FXSYS_roundf(y1), nullptr);
+  LineTo(dc_handle_, FXSYS_roundf(x2), FXSYS_roundf(y2));
 }
 
 bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
@@ -609,7 +611,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
   auto* pPlatform =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
   if (!(pGraphState || stroke_color == 0) &&
-      !pPlatform->m_GdiplusExt.IsAvailable()) {
+      !pPlatform->gdiplus_ext_.IsAvailable()) {
     CFX_FloatRect bbox_f = path.GetBoundingBox();
     if (pMatrix)
       bbox_f = pMatrix->TransformRect(bbox_f);
@@ -629,18 +631,19 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
   int stroke_alpha = FXARGB_A(stroke_color);
   bool bDrawAlpha = (fill_alpha > 0 && fill_alpha < 255) ||
                     (stroke_alpha > 0 && stroke_alpha < 255 && pGraphState);
-  if (!pPlatform->m_GdiplusExt.IsAvailable() && bDrawAlpha)
+  if (!pPlatform->gdiplus_ext_.IsAvailable() && bDrawAlpha) {
     return false;
+  }
 
-  if (pPlatform->m_GdiplusExt.IsAvailable()) {
+  if (pPlatform->gdiplus_ext_.IsAvailable()) {
     if (bDrawAlpha ||
-        ((m_DeviceType != DeviceType::kPrinter && !fill_options.full_cover) ||
+        ((device_type_ != DeviceType::kPrinter && !fill_options.full_cover) ||
          (pGraphState && !pGraphState->dash_array().empty()))) {
       if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
             pGraphState->line_width() == 1.0f && path.IsRect())) {
-        if (pPlatform->m_GdiplusExt.DrawPath(m_hDC, path, pMatrix, pGraphState,
-                                             fill_color, stroke_color,
-                                             fill_options)) {
+        if (pPlatform->gdiplus_ext_.DrawPath(dc_handle_, path, pMatrix,
+                                             pGraphState, fill_color,
+                                             stroke_color, fill_options)) {
           return true;
         }
       }
@@ -651,14 +654,14 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
   HPEN hPen = nullptr;
   HBRUSH hBrush = nullptr;
   if (pGraphState && stroke_alpha) {
-    SetMiterLimit(m_hDC, pGraphState->miter_limit(), nullptr);
+    SetMiterLimit(dc_handle_, pGraphState->miter_limit(), nullptr);
     hPen = CreateExtPen(pGraphState, pMatrix, stroke_color);
-    hPen = (HPEN)SelectObject(m_hDC, hPen);
+    hPen = (HPEN)SelectObject(dc_handle_, hPen);
   }
   if (fill && fill_alpha) {
-    SetPolyFillMode(m_hDC, FillTypeToGdiFillType(fill_options.fill_type));
+    SetPolyFillMode(dc_handle_, FillTypeToGdiFillType(fill_options.fill_type));
     hBrush = CreateBrush(fill_color);
-    hBrush = (HBRUSH)SelectObject(m_hDC, hBrush);
+    hBrush = (HBRUSH)SelectObject(dc_handle_, hBrush);
   }
   if (path.GetPoints().size() == 2 && pGraphState &&
       !pGraphState->dash_array().empty()) {
@@ -670,29 +673,29 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
     }
     DrawLine(pos1.x, pos1.y, pos2.x, pos2.y);
   } else {
-    SetPathToDC(m_hDC, path, pMatrix);
+    SetPathToDC(dc_handle_, path, pMatrix);
     if (pGraphState && stroke_alpha) {
       if (fill && fill_alpha) {
         if (fill_options.text_mode) {
-          StrokeAndFillPath(m_hDC);
+          StrokeAndFillPath(dc_handle_);
         } else {
-          FillPath(m_hDC);
-          SetPathToDC(m_hDC, path, pMatrix);
-          StrokePath(m_hDC);
+          FillPath(dc_handle_);
+          SetPathToDC(dc_handle_, path, pMatrix);
+          StrokePath(dc_handle_);
         }
       } else {
-        StrokePath(m_hDC);
+        StrokePath(dc_handle_);
       }
     } else if (fill && fill_alpha) {
-      FillPath(m_hDC);
+      FillPath(dc_handle_);
     }
   }
   if (hPen) {
-    hPen = (HPEN)SelectObject(m_hDC, hPen);
+    hPen = (HPEN)SelectObject(dc_handle_, hPen);
     DeleteObject(hPen);
   }
   if (hBrush) {
-    hBrush = (HBRUSH)SelectObject(m_hDC, hBrush);
+    hBrush = (HBRUSH)SelectObject(dc_handle_, hBrush);
     DeleteObject(hBrush);
   }
   return true;
@@ -710,13 +713,13 @@ bool CGdiDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {
 
   HBRUSH hBrush = CreateSolidBrush(colorref);
   const RECT* pRect = reinterpret_cast<const RECT*>(&rect);
-  ::FillRect(m_hDC, pRect, hBrush);
+  ::FillRect(dc_handle_, pRect, hBrush);
   DeleteObject(hBrush);
   return true;
 }
 
 void CGdiDeviceDriver::SetBaseClip(const FX_RECT& rect) {
-  m_BaseClipBox = rect;
+  base_clip_box_ = rect;
 }
 
 bool CGdiDeviceDriver::SetClip_PathFill(
@@ -728,14 +731,15 @@ bool CGdiDeviceDriver::SetClip_PathFill(
     FX_RECT rect = maybe_rectf.value().GetOuterRect();
     // Can easily apply base clip to protect against wildly large rectangular
     // clips. crbug.com/1019026
-    if (m_BaseClipBox.has_value())
-      rect.Intersect(m_BaseClipBox.value());
-    return IntersectClipRect(m_hDC, rect.left, rect.top, rect.right,
+    if (base_clip_box_.has_value()) {
+      rect.Intersect(base_clip_box_.value());
+    }
+    return IntersectClipRect(dc_handle_, rect.left, rect.top, rect.right,
                              rect.bottom) != ERROR;
   }
-  SetPathToDC(m_hDC, path, pMatrix);
-  SetPolyFillMode(m_hDC, FillTypeToGdiFillType(fill_options.fill_type));
-  SelectClipPath(m_hDC, RGN_AND);
+  SetPathToDC(dc_handle_, path, pMatrix);
+  SetPolyFillMode(dc_handle_, FillTypeToGdiFillType(fill_options.fill_type));
+  SelectClipPath(dc_handle_, RGN_AND);
   return true;
 }
 
@@ -744,12 +748,12 @@ bool CGdiDeviceDriver::SetClip_PathStroke(
     const CFX_Matrix* pMatrix,
     const CFX_GraphStateData* pGraphState) {
   HPEN hPen = CreateExtPen(pGraphState, pMatrix, 0xff000000);
-  hPen = (HPEN)SelectObject(m_hDC, hPen);
-  SetPathToDC(m_hDC, path, pMatrix);
-  WidenPath(m_hDC);
-  SetPolyFillMode(m_hDC, WINDING);
-  bool ret = !!SelectClipPath(m_hDC, RGN_AND);
-  hPen = (HPEN)SelectObject(m_hDC, hPen);
+  hPen = (HPEN)SelectObject(dc_handle_, hPen);
+  SetPathToDC(dc_handle_, path, pMatrix);
+  WidenPath(dc_handle_);
+  SetPolyFillMode(dc_handle_, WINDING);
+  bool ret = !!SelectClipPath(dc_handle_, RGN_AND);
+  hPen = (HPEN)SelectObject(dc_handle_, hPen);
   DeleteObject(hPen);
   return ret;
 }
@@ -763,10 +767,11 @@ bool CGdiDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
   }
 
   HPEN hPen = CreatePen(PS_SOLID, 1, colorref);
-  hPen = (HPEN)SelectObject(m_hDC, hPen);
-  MoveToEx(m_hDC, FXSYS_roundf(ptMoveTo.x), FXSYS_roundf(ptMoveTo.y), nullptr);
-  LineTo(m_hDC, FXSYS_roundf(ptLineTo.x), FXSYS_roundf(ptLineTo.y));
-  hPen = (HPEN)SelectObject(m_hDC, hPen);
+  hPen = (HPEN)SelectObject(dc_handle_, hPen);
+  MoveToEx(dc_handle_, FXSYS_roundf(ptMoveTo.x), FXSYS_roundf(ptMoveTo.y),
+           nullptr);
+  LineTo(dc_handle_, FXSYS_roundf(ptLineTo.x), FXSYS_roundf(ptLineTo.y));
+  hPen = (HPEN)SelectObject(dc_handle_, hPen);
   DeleteObject(hPen);
   return true;
 }

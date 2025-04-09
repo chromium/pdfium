@@ -43,7 +43,7 @@ CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* pFont,
 CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() = default;
 
 uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
-  RetainPtr<CFX_Face> face = m_pFont->GetFace();
+  RetainPtr<CFX_Face> face = font_->GetFace();
   FT_UInt nIndex = face->GetCharIndex(charcode);
   if (nIndex > 0)
     return nIndex;
@@ -73,7 +73,7 @@ uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
       encoding_id_ == fxge::FontEncoding::kSymbol) {
     return Unicode;
   }
-  RetainPtr<CFX_Face> face = m_pFont->GetFace();
+  RetainPtr<CFX_Face> face = font_->GetFace();
   for (size_t i = 0; i < face->GetCharMapCount(); i++) {
     fxge::FontEncoding encoding_id = face->GetCharMapEncodingByIndex(i);
     if (encoding_id == fxge::FontEncoding::kUnicode ||

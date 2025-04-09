@@ -138,8 +138,8 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
                                            const CFX_Matrix& matrix,
                                            const FXDIB_ResampleOptions& options,
                                            const FX_RECT* pClip)
-    : m_pSrc(std::move(source)), m_matrix(matrix), m_ResampleOptions(options) {
-  FX_RECT result_rect = m_matrix.GetUnitRect().GetClosestRect();
+    : src_(std::move(source)), matrix_(matrix), resample_options_(options) {
+  FX_RECT result_rect = matrix_.GetUnitRect().GetClosestRect();
   FX_RECT result_clip = result_rect;
   if (pClip)
     result_clip.Intersect(*pClip);
@@ -147,51 +147,51 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
   if (result_clip.IsEmpty())
     return;
 
-  m_result = result_clip;
-  if (fabs(m_matrix.a) < fabs(m_matrix.b) / 20 &&
-      fabs(m_matrix.d) < fabs(m_matrix.c) / 20 && fabs(m_matrix.a) < 0.5f &&
-      fabs(m_matrix.d) < 0.5f) {
+  result_ = result_clip;
+  if (fabs(matrix_.a) < fabs(matrix_.b) / 20 &&
+      fabs(matrix_.d) < fabs(matrix_.c) / 20 && fabs(matrix_.a) < 0.5f &&
+      fabs(matrix_.d) < 0.5f) {
     int dest_width = result_rect.Width();
     int dest_height = result_rect.Height();
     result_clip.Offset(-result_rect.left, -result_rect.top);
     result_clip = result_clip.SwappedClipBox(dest_width, dest_height,
-                                             m_matrix.c > 0, m_matrix.b < 0);
-    m_Stretcher = std::make_unique<CFX_ImageStretcher>(
-        &m_Storer, m_pSrc, dest_height, dest_width, result_clip,
-        m_ResampleOptions);
-    m_Stretcher->Start();
-    m_type = StretchType::kRotate;
+                                             matrix_.c > 0, matrix_.b < 0);
+    stretcher_ = std::make_unique<CFX_ImageStretcher>(
+        &storer_, src_, dest_height, dest_width, result_clip,
+        resample_options_);
+    stretcher_->Start();
+    type_ = StretchType::kRotate;
     return;
   }
-  if (fabs(m_matrix.b) < kFix16 && fabs(m_matrix.c) < kFix16) {
+  if (fabs(matrix_.b) < kFix16 && fabs(matrix_.c) < kFix16) {
     int dest_width =
-        static_cast<int>(m_matrix.a > 0 ? ceil(m_matrix.a) : floor(m_matrix.a));
-    int dest_height = static_cast<int>(m_matrix.d > 0 ? -ceil(m_matrix.d)
-                                                      : -floor(m_matrix.d));
+        static_cast<int>(matrix_.a > 0 ? ceil(matrix_.a) : floor(matrix_.a));
+    int dest_height =
+        static_cast<int>(matrix_.d > 0 ? -ceil(matrix_.d) : -floor(matrix_.d));
     result_clip.Offset(-result_rect.left, -result_rect.top);
-    m_Stretcher = std::make_unique<CFX_ImageStretcher>(
-        &m_Storer, m_pSrc, dest_width, dest_height, result_clip,
-        m_ResampleOptions);
-    m_Stretcher->Start();
-    m_type = StretchType::kNormal;
+    stretcher_ = std::make_unique<CFX_ImageStretcher>(
+        &storer_, src_, dest_width, dest_height, result_clip,
+        resample_options_);
+    stretcher_->Start();
+    type_ = StretchType::kNormal;
     return;
   }
 
-  int stretch_width = static_cast<int>(ceil(hypotf(m_matrix.a, m_matrix.b)));
+  int stretch_width = static_cast<int>(ceil(hypotf(matrix_.a, matrix_.b)));
   if (stretch_width == 0) {
     return;
   }
 
-  int stretch_height = static_cast<int>(ceil(hypotf(m_matrix.c, m_matrix.d)));
+  int stretch_height = static_cast<int>(ceil(hypotf(matrix_.c, matrix_.d)));
   if (stretch_height == 0) {
     return;
   }
 
   CFX_Matrix stretch_to_dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, stretch_height);
   stretch_to_dest.Concat(
-      CFX_Matrix(m_matrix.a / stretch_width, m_matrix.b / stretch_width,
-                 m_matrix.c / stretch_height, m_matrix.d / stretch_height,
-                 m_matrix.e, m_matrix.f));
+      CFX_Matrix(matrix_.a / stretch_width, matrix_.b / stretch_width,
+                 matrix_.c / stretch_height, matrix_.d / stretch_height,
+                 matrix_.e, matrix_.f));
   CFX_Matrix dest_to_strech = stretch_to_dest.GetInverse();
 
   FX_RECT stretch_clip =
@@ -203,26 +203,27 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
   if (!stretch_clip.Valid())
     return;
 
-  m_dest2stretch = dest_to_strech;
-  m_StretchClip = stretch_clip;
-  m_Stretcher = std::make_unique<CFX_ImageStretcher>(
-      &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip,
-      m_ResampleOptions);
-  m_Stretcher->Start();
-  m_type = StretchType::kOther;
+  dest_to_stretch_ = dest_to_strech;
+  stretch_clip_ = stretch_clip;
+  stretcher_ = std::make_unique<CFX_ImageStretcher>(
+      &storer_, src_, stretch_width, stretch_height, stretch_clip_,
+      resample_options_);
+  stretcher_->Start();
+  type_ = StretchType::kOther;
 }
 
 CFX_ImageTransformer::~CFX_ImageTransformer() = default;
 
 bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
-  if (m_type == StretchType::kNone) {
+  if (type_ == StretchType::kNone) {
     return false;
   }
 
-  if (m_Stretcher->Continue(pPause))
+  if (stretcher_->Continue(pPause)) {
     return true;
+  }
 
-  switch (m_type) {
+  switch (type_) {
     case StretchType::kNone:
       // Already handled separately at the beginning of this method.
       NOTREACHED();
@@ -238,63 +239,62 @@ bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
 }
 
 void CFX_ImageTransformer::ContinueRotate(PauseIndicatorIface* pPause) {
-  if (m_Storer.GetBitmap()) {
-    m_Storer.Replace(
-        m_Storer.GetBitmap()->SwapXY(m_matrix.c > 0, m_matrix.b < 0));
+  if (storer_.GetBitmap()) {
+    storer_.Replace(storer_.GetBitmap()->SwapXY(matrix_.c > 0, matrix_.b < 0));
   }
 }
 
 void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
-  if (!m_Storer.GetBitmap())
+  if (!storer_.GetBitmap()) {
     return;
+  }
 
   auto pTransformed = pdfium::MakeRetain<CFX_DIBitmap>();
   // TODO(crbug.com/42271020): Consider adding support for
   // `FXDIB_Format::kBgraPremul`
-  FXDIB_Format dest_format = m_Stretcher->source()->IsMaskFormat()
+  FXDIB_Format dest_format = stretcher_->source()->IsMaskFormat()
                                  ? FXDIB_Format::k8bppMask
                                  : FXDIB_Format::kBgra;
-  if (!pTransformed->Create(m_result.Width(), m_result.Height(), dest_format)) {
+  if (!pTransformed->Create(result_.Width(), result_.Height(), dest_format)) {
     return;
   }
 
-  CFX_Matrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f, m_result.left,
-                            m_result.top);
-  result2stretch.Concat(m_dest2stretch);
-  result2stretch.Translate(-m_StretchClip.left, -m_StretchClip.top);
+  CFX_Matrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f, result_.left, result_.top);
+  result2stretch.Concat(dest_to_stretch_);
+  result2stretch.Translate(-stretch_clip_.left, -stretch_clip_.top);
 
   CalcData calc_data = {pTransformed.Get(), result2stretch,
-                        m_Storer.GetBitmap()->GetBuffer().data(),
-                        m_Storer.GetBitmap()->GetPitch()};
-  if (m_Storer.GetBitmap()->IsMaskFormat()) {
+                        storer_.GetBitmap()->GetBuffer().data(),
+                        storer_.GetBitmap()->GetPitch()};
+  if (storer_.GetBitmap()->IsMaskFormat()) {
     CalcAlpha(calc_data);
   } else {
-    const int src_bytes_per_pixel = m_Storer.GetBitmap()->GetBPP() / 8;
+    const int src_bytes_per_pixel = storer_.GetBitmap()->GetBPP() / 8;
     if (src_bytes_per_pixel == 1) {
       CalcMono(calc_data);
     } else {
       CalcColor(calc_data, dest_format, src_bytes_per_pixel);
     }
   }
-  m_Storer.Replace(std::move(pTransformed));
+  storer_.Replace(std::move(pTransformed));
 }
 
 RetainPtr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
-  return m_Storer.Detach();
+  return storer_.Detach();
 }
 
 void CFX_ImageTransformer::CalcAlpha(const CalcData& calc_data) {
   auto func = [&calc_data](const BilinearData& data, uint8_t* dest) {
     *dest = BilinearInterpolate(calc_data.buf, data, 1, 0);
   };
-  DoBilinearLoop(calc_data, m_result, m_StretchClip, 1, func);
+  DoBilinearLoop(calc_data, result_, stretch_clip_, 1, func);
 }
 
 void CFX_ImageTransformer::CalcMono(const CalcData& calc_data) {
   std::array<uint32_t, 256> argb;
-  if (m_Storer.GetBitmap()->HasPalette()) {
+  if (storer_.GetBitmap()->HasPalette()) {
     pdfium::span<const uint32_t> palette =
-        m_Storer.GetBitmap()->GetPaletteSpan();
+        storer_.GetBitmap()->GetPaletteSpan();
     fxcrt::Copy(palette.first(argb.size()), argb);
   } else {
     for (uint32_t i = 0; i < argb.size(); ++i) {
@@ -306,8 +306,7 @@ void CFX_ImageTransformer::CalcMono(const CalcData& calc_data) {
     uint8_t idx = BilinearInterpolate(calc_data.buf, data, 1, 0);
     *reinterpret_cast<uint32_t*>(dest) = argb[idx];
   };
-  DoBilinearLoop(calc_data, m_result, m_StretchClip, dest_bytes_per_pixel,
-                 func);
+  DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel, func);
 }
 
 void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
@@ -316,7 +315,7 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
   DCHECK(dest_format == FXDIB_Format::k8bppMask ||
          dest_format == FXDIB_Format::kBgra);
   const int dest_bytes_per_pixel = calc_data.bitmap->GetBPP() / 8;
-  if (!m_Storer.GetBitmap()->IsAlphaFormat()) {
+  if (!storer_.GetBitmap()->IsAlphaFormat()) {
     auto func = [&calc_data, src_bytes_per_pixel](const BilinearData& data,
                                                   uint8_t* dest) {
       uint8_t b =
@@ -327,7 +326,7 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
           BilinearInterpolate(calc_data.buf, data, src_bytes_per_pixel, 2);
       *reinterpret_cast<uint32_t*>(dest) = ArgbEncode(kOpaqueAlpha, r, g, b);
     };
-    DoBilinearLoop(calc_data, m_result, m_StretchClip, dest_bytes_per_pixel,
+    DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel,
                    func);
     return;
   }
@@ -345,7 +344,7 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
           BilinearInterpolate(calc_data.buf, data, src_bytes_per_pixel, 3);
       *reinterpret_cast<uint32_t*>(dest) = ArgbEncode(alpha, r, g, b);
     };
-    DoBilinearLoop(calc_data, m_result, m_StretchClip, dest_bytes_per_pixel,
+    DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel,
                    func);
     return;
   }
@@ -362,6 +361,5 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
         BilinearInterpolate(calc_data.buf, data, src_bytes_per_pixel, 3);
     *reinterpret_cast<uint32_t*>(dest) = FXCMYK_TODIB(CmykEncode(c, m, y, k));
   };
-  DoBilinearLoop(calc_data, m_result, m_StretchClip, dest_bytes_per_pixel,
-                 func);
+  DoBilinearLoop(calc_data, result_, stretch_clip_, dest_bytes_per_pixel, func);
 }

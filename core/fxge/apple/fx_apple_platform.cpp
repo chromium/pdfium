@@ -19,8 +19,8 @@
 namespace {
 
 struct Substs {
-  const char* m_pName;
-  const char* m_pSubstName;
+  const char* name_;
+  const char* subst_name_;
 };
 
 constexpr Substs kBase14Substs[] = {
@@ -72,8 +72,9 @@ void* CFX_MacFontInfo::MapFont(int weight,
                                int pitch_family,
                                const ByteString& face) {
   for (const auto& sub : kBase14Substs) {
-    if (face == ByteStringView(sub.m_pName))
-      return GetFont(sub.m_pSubstName);
+    if (face == ByteStringView(sub.name_)) {
+      return GetFont(sub.subst_name_);
+    }
   }
 
   // The request may not ask for the bold and/or italic version of a font by
@@ -81,7 +82,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
   // as there are fonts that have "Oblique" or "BoldOblique" or "Heavy" in their
   // names instead. But this at least works for common fonts like Arial and
   // Times New Roman. A more sophisticated approach would be to find all the
-  // fonts in |m_FontList| with |face| in the name, and examine the fonts to
+  // fonts in |font_list_| with |face| in the name, and examine the fonts to
   // see which best matches the requested characteristics.
   if (!face.Contains("Bold") && !face.Contains("Italic")) {
     ByteString new_face = face;
@@ -89,14 +90,16 @@ void* CFX_MacFontInfo::MapFont(int weight,
       new_face += " Bold";
     if (bItalic)
       new_face += " Italic";
-    auto it = m_FontList.find(new_face);
-    if (it != m_FontList.end())
+    auto it = font_list_.find(new_face);
+    if (it != font_list_.end()) {
       return it->second.get();
+    }
   }
 
-  auto it = m_FontList.find(face);
-  if (it != m_FontList.end())
+  auto it = font_list_.find(face);
+  if (it != font_list_.end()) {
     return it->second.get();
+  }
 
   if (charset == FX_Charset::kANSI && FontFamilyIsFixedPitch(pitch_family))
     return GetFont("Courier New");
@@ -122,8 +125,8 @@ void* CFX_MacFontInfo::MapFont(int weight,
       other_face = face;
       break;
   }
-  it = m_FontList.find(other_face);
-  return it != m_FontList.end() ? it->second.get() : nullptr;
+  it = font_list_.find(other_face);
+  return it != font_list_.end() ? it->second.get() : nullptr;
 }
 
 bool CFX_MacFontInfo::ParseFontCfg(const char** pUserPaths) {
@@ -159,7 +162,7 @@ CApplePlatform::CreateDefaultSystemFontInfo() {
 
 void* CApplePlatform::CreatePlatformFont(
     pdfium::span<const uint8_t> font_span) {
-  return m_quartz2d.CreateFont(font_span);
+  return quartz_2d_.CreateFont(font_span);
 }
 
 // static

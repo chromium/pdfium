@@ -47,7 +47,7 @@ class CFX_ImageTransformer {
 
   bool Continue(PauseIndicatorIface* pPause);
 
-  const FX_RECT& result() const { return m_result; }
+  const FX_RECT& result() const { return result_; }
   RetainPtr<CFX_DIBitmap> DetachBitmap();
 
  private:
@@ -67,15 +67,15 @@ class CFX_ImageTransformer {
                  FXDIB_Format format,
                  int src_bytes_per_pixel);
 
-  RetainPtr<const CFX_DIBBase> const m_pSrc;
-  const CFX_Matrix m_matrix;
-  FX_RECT m_StretchClip;
-  FX_RECT m_result;
-  CFX_Matrix m_dest2stretch;
-  std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
-  CFX_BitmapStorer m_Storer;
-  const FXDIB_ResampleOptions m_ResampleOptions;
-  StretchType m_type = StretchType::kNone;
+  RetainPtr<const CFX_DIBBase> const src_;
+  const CFX_Matrix matrix_;
+  FX_RECT stretch_clip_;
+  FX_RECT result_;
+  CFX_Matrix dest_to_stretch_;
+  std::unique_ptr<CFX_ImageStretcher> stretcher_;
+  CFX_BitmapStorer storer_;
+  const FXDIB_ResampleOptions resample_options_;
+  StretchType type_ = StretchType::kNone;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_IMAGETRANSFORMER_H_

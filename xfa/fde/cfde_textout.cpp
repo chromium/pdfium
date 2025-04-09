@@ -58,8 +58,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   if (FontStyleIsItalic(pFont->GetFontStyles()) && !pFxFont->IsItalic()) {
     for (auto& pos : pCharPos) {
       static constexpr float mc = 0.267949f;
-      pos.m_AdjustMatrix[2] += mc * pos.m_AdjustMatrix[0];
-      pos.m_AdjustMatrix[3] += mc * pos.m_AdjustMatrix[1];
+      pos.adjust_matrix_[2] += mc * pos.adjust_matrix_[0];
+      pos.adjust_matrix_[3] += mc * pos.adjust_matrix_[1];
     }
   }
 
@@ -67,10 +67,10 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   uint32_t dwFontStyle = pFont->GetFontStyles();
   CFX_Font FxFont;
   auto SubstFxFont = std::make_unique<CFX_SubstFont>();
-  SubstFxFont->m_Weight = FontStyleIsForceBold(dwFontStyle) ? 700 : 400;
-  SubstFxFont->m_ItalicAngle = FontStyleIsItalic(dwFontStyle) ? -12 : 0;
-  SubstFxFont->m_WeightCJK = SubstFxFont->m_Weight;
-  SubstFxFont->m_bItalicCJK = FontStyleIsItalic(dwFontStyle);
+  SubstFxFont->weight_ = FontStyleIsForceBold(dwFontStyle) ? 700 : 400;
+  SubstFxFont->italic_angle_ = FontStyleIsItalic(dwFontStyle) ? -12 : 0;
+  SubstFxFont->weight_cjk_ = SubstFxFont->weight_;
+  SubstFxFont->italic_cjk_ = FontStyleIsItalic(dwFontStyle);
   FxFont.SetSubstFont(std::move(SubstFxFont));
 #endif
 
@@ -80,9 +80,9 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   static constexpr CFX_TextRenderOptions kOptions(CFX_TextRenderOptions::kLcd);
   for (auto& pos : pCharPos) {
     RetainPtr<CFGAS_GEFont> pSTFont =
-        pFont->GetSubstFont(static_cast<int32_t>(pos.m_GlyphIndex));
-    pos.m_GlyphIndex &= 0x00FFFFFF;
-    pos.m_bFontStyle = false;
+        pFont->GetSubstFont(static_cast<int32_t>(pos.glyph_index_));
+    pos.glyph_index_ &= 0x00FFFFFF;
+    pos.font_style_ = false;
     if (pCurFont != pSTFont) {
       if (pCurFont) {
         pFxFont = pCurFont->GetDevFont();

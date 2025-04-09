@@ -810,14 +810,14 @@ size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
     }
 
     if (!bEmptyChar) {
-      current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wForm);
-      if (current_char_pos.m_GlyphIndex == 0xFFFF) {
-        current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wch);
+      current_char_pos.glyph_index_ = pFont->GetGlyphIndex(wForm);
+      if (current_char_pos.glyph_index_ == 0xFFFF) {
+        current_char_pos.glyph_index_ = pFont->GetGlyphIndex(wch);
       }
 #if BUILDFLAG(IS_APPLE)
-      current_char_pos.m_ExtGID = current_char_pos.m_GlyphIndex;
+      current_char_pos.ext_gid_ = current_char_pos.glyph_index_;
 #endif
-      current_char_pos.m_FontCharWidth = iCharWidth;
+      current_char_pos.font_char_width_ = iCharWidth;
     }
 
     float fCharWidth = fFontSize * iCharWidth / 1000.0f;
@@ -826,30 +826,30 @@ size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
     }
 
     if (!bEmptyChar) {
-      current_char_pos.m_Origin = CFX_PointF(fX, fY);
+      current_char_pos.origin_ = CFX_PointF(fX, fY);
     }
     if (!bRTLPiece && dwCharType != FX_CHARTYPE::kCombination) {
       fX += fCharWidth;
     }
 
     if (!bEmptyChar) {
-      current_char_pos.m_bGlyphAdjust = true;
-      current_char_pos.m_AdjustMatrix[0] = -1;
-      current_char_pos.m_AdjustMatrix[1] = 0;
-      current_char_pos.m_AdjustMatrix[2] = 0;
-      current_char_pos.m_AdjustMatrix[3] = 1;
-      current_char_pos.m_Origin.y += fAscent * iVerScale / 100.0f;
-      current_char_pos.m_Origin.y -= fAscent;
+      current_char_pos.glyph_adjust_ = true;
+      current_char_pos.adjust_matrix_[0] = -1;
+      current_char_pos.adjust_matrix_[1] = 0;
+      current_char_pos.adjust_matrix_[2] = 0;
+      current_char_pos.adjust_matrix_[3] = 1;
+      current_char_pos.origin_.y += fAscent * iVerScale / 100.0f;
+      current_char_pos.origin_.y -= fAscent;
 
       if (iHorScale != 100 || iVerScale != 100) {
-        current_char_pos.m_AdjustMatrix[0] =
-            current_char_pos.m_AdjustMatrix[0] * iHorScale / 100.0f;
-        current_char_pos.m_AdjustMatrix[1] =
-            current_char_pos.m_AdjustMatrix[1] * iHorScale / 100.0f;
-        current_char_pos.m_AdjustMatrix[2] =
-            current_char_pos.m_AdjustMatrix[2] * iVerScale / 100.0f;
-        current_char_pos.m_AdjustMatrix[3] =
-            current_char_pos.m_AdjustMatrix[3] * iVerScale / 100.0f;
+        current_char_pos.adjust_matrix_[0] =
+            current_char_pos.adjust_matrix_[0] * iHorScale / 100.0f;
+        current_char_pos.adjust_matrix_[1] =
+            current_char_pos.adjust_matrix_[1] * iHorScale / 100.0f;
+        current_char_pos.adjust_matrix_[2] =
+            current_char_pos.adjust_matrix_[2] * iVerScale / 100.0f;
+        current_char_pos.adjust_matrix_[3] =
+            current_char_pos.adjust_matrix_[3] * iVerScale / 100.0f;
       }
     }
     if (iWidth > 0) {

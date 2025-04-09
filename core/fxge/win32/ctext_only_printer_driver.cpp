@@ -22,14 +22,14 @@
 #include "core/fxge/text_char_pos.h"
 
 CTextOnlyPrinterDriver::CTextOnlyPrinterDriver(HDC hDC)
-    : m_hDC(hDC),
-      m_Width(INT_MAX),
-      m_Height(INT_MAX),
-      m_HorzSize(INT_MAX),
-      m_VertSize(INT_MAX),
-      m_OriginY(0.0f),
-      m_SetOrigin(false) {
-  m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
+    : dc_handle_(hDC),
+      width_(INT_MAX),
+      height_(INT_MAX),
+      horz_size_(INT_MAX),
+      vert_size_(INT_MAX),
+      origin_y_(0.0f),
+      set_origin_(false) {
+  bits_per_pixel_ = ::GetDeviceCaps(dc_handle_, BITSPIXEL);
 }
 
 CTextOnlyPrinterDriver::~CTextOnlyPrinterDriver() = default;
@@ -41,17 +41,17 @@ DeviceType CTextOnlyPrinterDriver::GetDeviceType() const {
 int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
     case FXDC_PIXEL_WIDTH:
-      return m_Width;
+      return width_;
     case FXDC_PIXEL_HEIGHT:
-      return m_Height;
+      return height_;
     case FXDC_BITS_PIXEL:
-      return m_nBitsPerPixel;
+      return bits_per_pixel_;
     case FXDC_RENDER_CAPS:
       return 0;
     case FXDC_HORZ_SIZE:
-      return m_HorzSize;
+      return horz_size_;
     case FXDC_VERT_SIZE:
-      return m_VertSize;
+      return vert_size_;
     default:
       NOTREACHED();
   }
@@ -95,7 +95,7 @@ bool CTextOnlyPrinterDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
 }
 
 FX_RECT CTextOnlyPrinterDriver::GetClipBox() const {
-  return FX_RECT(0, 0, m_Width, m_Height);
+  return FX_RECT(0, 0, width_, height_);
 }
 
 bool CTextOnlyPrinterDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
@@ -145,24 +145,24 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
   WideString wsText;
   size_t len = pCharPos.size();
   float fOffsetY = mtObject2Device.f * kScaleFactor;
-  if (m_SetOrigin && FXSYS_roundf(m_OriginY) != FXSYS_roundf(fOffsetY)) {
+  if (set_origin_ && FXSYS_roundf(origin_y_) != FXSYS_roundf(fOffsetY)) {
     wsText += L"\r\n";
     len += 2;
   }
   wsText.Reserve(len);
-  m_OriginY = fOffsetY;
-  m_SetOrigin = true;
+  origin_y_ = fOffsetY;
+  set_origin_ = true;
 
   // Text
   for (const auto& charpos : pCharPos) {
     // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
     // values from PDFs.
-    DCHECK_EQ(charpos.m_AdjustMatrix[0], 0);
-    DCHECK_EQ(charpos.m_AdjustMatrix[1], 0);
-    DCHECK_EQ(charpos.m_AdjustMatrix[2], 0);
-    DCHECK_EQ(charpos.m_AdjustMatrix[3], 0);
-    DCHECK_EQ(charpos.m_Origin.y, 0);
-    wsText += charpos.m_Unicode;
+    DCHECK_EQ(charpos.adjust_matrix_[0], 0);
+    DCHECK_EQ(charpos.adjust_matrix_[1], 0);
+    DCHECK_EQ(charpos.adjust_matrix_[2], 0);
+    DCHECK_EQ(charpos.adjust_matrix_[3], 0);
+    DCHECK_EQ(charpos.origin_.y, 0);
+    wsText += charpos.unicode_;
   }
   ByteString text = wsText.ToDefANSI();
   auto text_span = text.span();
@@ -171,7 +171,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
     size_t send_len = std::min<size_t>(text_span.size(), 1024);
     *(reinterpret_cast<uint16_t*>(buffer)) = static_cast<uint16_t>(send_len);
     UNSAFE_TODO(FXSYS_memcpy(buffer + 2, text_span.data(), send_len));
-    ::GdiComment(m_hDC, static_cast<UINT>(send_len + 2), buffer);
+    ::GdiComment(dc_handle_, static_cast<UINT>(send_len + 2), buffer);
     text_span = text_span.subspan(send_len);
   }
   return true;

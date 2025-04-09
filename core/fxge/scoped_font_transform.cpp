@@ -23,10 +23,10 @@ void ResetTransform(FT_Face face) {
 
 ScopedFontTransform::ScopedFontTransform(RetainPtr<CFX_Face> face,
                                          FT_Matrix* matrix)
-    : m_Face(std::move(face)) {
-  FT_Set_Transform(m_Face->GetRec(), matrix, nullptr);
+    : face_(std::move(face)) {
+  FT_Set_Transform(face_->GetRec(), matrix, nullptr);
 }
 
 ScopedFontTransform::~ScopedFontTransform() {
-  ResetTransform(m_Face->GetRec());
+  ResetTransform(face_->GetRec());
 }

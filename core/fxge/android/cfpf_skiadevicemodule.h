@@ -20,7 +20,7 @@ class CFPF_SkiaDeviceModule {
   CFPF_SkiaFontMgr* GetFontMgr();
 
  protected:
-  std::unique_ptr<CFPF_SkiaFontMgr> m_pFontMgr;
+  std::unique_ptr<CFPF_SkiaFontMgr> font_mgr_;
 };
 
 CFPF_SkiaDeviceModule* CFPF_GetSkiaDeviceModule();

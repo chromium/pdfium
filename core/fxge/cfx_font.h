@@ -72,11 +72,9 @@ class CFX_Font {
   bool LoadEmbedded(pdfium::span<const uint8_t> src_span,
                     bool force_vertical,
                     uint64_t object_tag);
-  RetainPtr<CFX_Face> GetFace() const { return m_Face; }
-  FXFT_FaceRec* GetFaceRec() const {
-    return m_Face ? m_Face->GetRec() : nullptr;
-  }
-  CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
+  RetainPtr<CFX_Face> GetFace() const { return face_; }
+  FXFT_FaceRec* GetFaceRec() const { return face_ ? face_->GetRec() : nullptr; }
+  CFX_SubstFont* GetSubstFont() const { return subst_font_.get(); }
   int GetSubstFontItalicAngle() const;
 
 #if defined(PDF_ENABLE_XFA)
@@ -84,7 +82,7 @@ class CFX_Font {
 
 #if !BUILDFLAG(IS_WIN)
   void SetFace(RetainPtr<CFX_Face> face);
-  void SetFontSpan(pdfium::span<uint8_t> pSpan) { m_FontData = pSpan; }
+  void SetFontSpan(pdfium::span<uint8_t> pSpan) { font_data_ = pSpan; }
   void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst);
 #endif  // !BUILDFLAG(IS_WIN)
 #endif  // defined(PDF_ENABLE_XFA)
@@ -105,7 +103,7 @@ class CFX_Font {
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
-  bool IsVertical() const { return m_bVertical; }
+  bool IsVertical() const { return vertical_; }
   ByteString GetPsName() const;
   ByteString GetFamilyName() const;
   ByteString GetBaseFontName() const;
@@ -117,10 +115,10 @@ class CFX_Font {
   // Bounding box adjusted for font units.
   std::optional<FX_RECT> GetBBox() const;
 
-  FontType GetFontType() const { return m_FontType; }
-  void SetFontType(FontType type) { m_FontType = type; }
-  uint64_t GetObjectTag() const { return m_ObjectTag; }
-  pdfium::raw_span<uint8_t> GetFontSpan() const { return m_FontData; }
+  FontType GetFontType() const { return font_type_; }
+  void SetFontType(FontType type) { font_type_ = type; }
+  uint64_t GetObjectTag() const { return object_tag_; }
+  pdfium::raw_span<uint8_t> GetFontSpan() const { return font_data_; }
   std::unique_ptr<CFX_Path> LoadGlyphPathImpl(uint32_t glyph_index,
                                               int dest_width) const;
   int GetGlyphWidthImpl(uint32_t glyph_index, int dest_width, int weight) const;
@@ -131,8 +129,8 @@ class CFX_Font {
 #endif
 
 #if BUILDFLAG(IS_APPLE)
-  void* GetPlatformFont() const { return m_pPlatformFont; }
-  void SetPlatformFont(void* font) { m_pPlatformFont = font; }
+  void* GetPlatformFont() const { return platform_font_; }
+  void SetPlatformFont(void* font) { platform_font_ = font; }
 #endif
 
  private:
@@ -144,21 +142,21 @@ class CFX_Font {
   ByteString GetFamilyNameOrUntitled() const;
 
 #if defined(PDF_ENABLE_XFA)
-  // |m_pOwnedFile| must outlive |m_pOwnedStreamRec|.
-  RetainPtr<IFX_SeekableReadStream> m_pOwnedFile;
-  std::unique_ptr<FXFT_StreamRec> m_pOwnedStreamRec;  // Must outlive |m_Face|.
+  // |owned_file_| must outlive |owned_stream_rec_|.
+  RetainPtr<IFX_SeekableReadStream> owned_file_;
+  std::unique_ptr<FXFT_StreamRec> owned_stream_rec_;  // Must outlive |face_|.
 #endif
 
-  mutable RetainPtr<CFX_Face> m_Face;
-  mutable RetainPtr<CFX_GlyphCache> m_GlyphCache;
-  std::unique_ptr<CFX_SubstFont> m_pSubstFont;
-  DataVector<uint8_t> m_FontDataAllocation;
-  pdfium::raw_span<uint8_t> m_FontData;
-  FontType m_FontType = FontType::kUnknown;
-  uint64_t m_ObjectTag = 0;
-  bool m_bVertical = false;
+  mutable RetainPtr<CFX_Face> face_;
+  mutable RetainPtr<CFX_GlyphCache> glyph_cache_;
+  std::unique_ptr<CFX_SubstFont> subst_font_;
+  DataVector<uint8_t> font_data_allocation_;
+  pdfium::raw_span<uint8_t> font_data_;
+  FontType font_type_ = FontType::kUnknown;
+  uint64_t object_tag_ = 0;
+  bool vertical_ = false;
 #if BUILDFLAG(IS_APPLE)
-  UNOWNED_PTR_EXCLUSION void* m_pPlatformFont = nullptr;
+  UNOWNED_PTR_EXCLUSION void* platform_font_ = nullptr;
 #endif
 };
 

@@ -32,11 +32,11 @@ void CFPF_SkiaDeviceModule::Destroy() {
 }
 
 CFPF_SkiaFontMgr* CFPF_SkiaDeviceModule::GetFontMgr() {
-  if (!m_pFontMgr) {
+  if (!font_mgr_) {
     auto pNewMgr = std::make_unique<CFPF_SkiaFontMgr>();
     if (!pNewMgr->InitFTLibrary())
       return nullptr;
-    m_pFontMgr = std::move(pNewMgr);
+    font_mgr_ = std::move(pNewMgr);
   }
-  return m_pFontMgr.get();
+  return font_mgr_.get();
 }

@@ -111,33 +111,37 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       JpFontFamilyRowIndex index =
           GetJapanesePreference(face, weight, pitch_family);
       for (const char* name : kJpFontTable[index]) {
-        auto it = m_FontList.find(name);
-        if (it != m_FontList.end())
+        auto it = font_list_.find(name);
+        if (it != font_list_.end()) {
           return it->second.get();
+        }
       }
       break;
     }
     case FX_Charset::kChineseSimplified: {
       for (const char* name : kGbFontList) {
-        auto it = m_FontList.find(name);
-        if (it != m_FontList.end())
+        auto it = font_list_.find(name);
+        if (it != font_list_.end()) {
           return it->second.get();
+        }
       }
       break;
     }
     case FX_Charset::kChineseTraditional: {
       for (const char* name : kB5FontList) {
-        auto it = m_FontList.find(name);
-        if (it != m_FontList.end())
+        auto it = font_list_.find(name);
+        if (it != font_list_.end()) {
           return it->second.get();
+        }
       }
       break;
     }
     case FX_Charset::kHangul: {
       for (const char* name : kHGFontList) {
-        auto it = m_FontList.find(name);
-        if (it != m_FontList.end())
+        auto it = font_list_.find(name);
+        if (it != font_list_.end()) {
           return it->second.get();
+        }
       }
       break;
     }

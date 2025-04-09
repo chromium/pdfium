@@ -22,8 +22,8 @@ bool CFX_AndroidFontInfo::Init(CFPF_SkiaFontMgr* pFontMgr,
     return false;
   }
 
-  m_pFontMgr = pFontMgr;
-  m_pFontMgr->LoadFonts(user_paths);
+  font_mgr_ = pFontMgr;
+  font_mgr_->LoadFonts(user_paths);
   return true;
 }
 
@@ -34,7 +34,7 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
                                    FX_Charset charset,
                                    int pitch_family,
                                    const ByteString& face) {
-  if (!m_pFontMgr) {
+  if (!font_mgr_) {
     return nullptr;
   }
 
@@ -54,7 +54,7 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
   if (FontFamilyIsRoman(pitch_family)) {
     dwStyle |= pdfium::kFontStyleSerif;
   }
-  return m_pFontMgr->CreateFont(face.AsStringView(), charset, dwStyle);
+  return font_mgr_->CreateFont(face.AsStringView(), charset, dwStyle);
 }
 
 void* CFX_AndroidFontInfo::GetFont(const ByteString& face) {

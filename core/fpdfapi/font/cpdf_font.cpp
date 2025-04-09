@@ -343,9 +343,10 @@ bool CPDF_Font::IsStandardFont() const {
 
 std::optional<FX_Charset> CPDF_Font::GetSubstFontCharset() const {
   CFX_SubstFont* pFont = m_Font.GetSubstFont();
-  if (!pFont)
+  if (!pFont) {
     return std::nullopt;
-  return pFont->m_Charset;
+  }
+  return pFont->charset_;
 }
 
 // static

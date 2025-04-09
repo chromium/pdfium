@@ -38,14 +38,15 @@ FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
   FX_RECT rect;
   bool bStarted = false;
   for (const TextGlyphPos& glyph : glyphs) {
-    if (!glyph.m_pGlyph)
+    if (!glyph.glyph_) {
       continue;
+    }
 
     std::optional<CFX_Point> point = glyph.GetOrigin({0, 0});
     if (!point.has_value())
       continue;
 
-    int char_width = glyph.m_pGlyph->GetBitmap()->GetWidth();
+    int char_width = glyph.glyph_->GetBitmap()->GetWidth();
     if (anti_alias == FT_RENDER_MODE_LCD)
       char_width /= 3;
 
@@ -55,7 +56,7 @@ FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
       continue;
 
     FX_SAFE_INT32 char_bottom = point.value().y;
-    char_bottom += glyph.m_pGlyph->GetBitmap()->GetHeight();
+    char_bottom += glyph.glyph_->GetBitmap()->GetHeight();
     if (!char_bottom.IsValid())
       continue;
 

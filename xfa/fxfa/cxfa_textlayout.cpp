@@ -1267,33 +1267,34 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
   if (szChars > 0) {
     CFX_PointF pt1;
     CFX_PointF pt2;
-    float fEndY = pCharPos[0].m_Origin.y + 1.05f;
+    float fEndY = pCharPos[0].origin_.y + 1.05f;
     if (pPiece->iPeriod == XFA_AttributeValue::Word) {
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         for (size_t j = 0; j < szChars; j++) {
-          pt1.x = pCharPos[j].m_Origin.x;
-          pt2.x =
-              pt1.x + pCharPos[j].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+          pt1.x = pCharPos[j].origin_.x;
+          pt2.x = pt1.x +
+                  pCharPos[j].font_char_width_ * pPiece->fFontSize / 1000.0f;
           pt1.y = pt2.y = fEndY;
           path.AppendLine(pt1, pt2);
         }
         fEndY += 2.0f;
       }
     } else {
-      pt1.x = pCharPos[0].m_Origin.x;
+      pt1.x = pCharPos[0].origin_.x;
       pt2.x =
-          pCharPos[szChars - 1].m_Origin.x +
-          pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+          pCharPos[szChars - 1].origin_.x +
+          pCharPos[szChars - 1].font_char_width_ * pPiece->fFontSize / 1000.0f;
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         pt1.y = pt2.y = fEndY;
         path.AppendLine(pt1, pt2);
         fEndY += 2.0f;
       }
     }
-    fEndY = pCharPos[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
-    pt1.x = pCharPos[0].m_Origin.x;
-    pt2.x = pCharPos[szChars - 1].m_Origin.x +
-            pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+    fEndY = pCharPos[0].origin_.y - pPiece->rtPiece.height * 0.25f;
+    pt1.x = pCharPos[0].origin_.x;
+    pt2.x =
+        pCharPos[szChars - 1].origin_.x +
+        pCharPos[szChars - 1].font_char_width_ * pPiece->fFontSize / 1000.0f;
     for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = pt2.y = fEndY;
       path.AppendLine(pt1, pt2);
@@ -1338,27 +1339,28 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
       return;
     }
 
-    fOrgX = pCharPos[szChars - 1].m_Origin.x +
-            pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+    fOrgX =
+        pCharPos[szChars - 1].origin_.x +
+        pCharPos[szChars - 1].font_char_width_ * pPiece->fFontSize / 1000.0f;
     pPiece = pPieceLine->text_pieces_[szPieceNext].get();
     szChars = GetDisplayPos(pPiece, pCharPos);
     if (szChars < 1) {
       return;
     }
 
-    fEndX = pCharPos[0].m_Origin.x;
+    fEndX = pCharPos[0].origin_.x;
     CFX_PointF pt1;
     CFX_PointF pt2;
     pt1.x = fOrgX;
     pt2.x = fEndX;
-    float fEndY = pCharPos[0].m_Origin.y + 1.05f;
+    float fEndY = pCharPos[0].origin_.y + 1.05f;
     for (int32_t i = 0; i < pPiece->iUnderline; i++) {
       pt1.y = fEndY;
       pt2.y = fEndY;
       path.AppendLine(pt1, pt2);
       fEndY += 2.0f;
     }
-    fEndY = pCharPos[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
+    fEndY = pCharPos[0].origin_.y - pPiece->rtPiece.height * 0.25f;
     for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = fEndY;
       pt2.y = fEndY;

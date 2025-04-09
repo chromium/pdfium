@@ -18,10 +18,10 @@ CFX_GEModule* g_pGEModule = nullptr;
 }  // namespace
 
 CFX_GEModule::CFX_GEModule(const char** pUserFontPaths)
-    : m_pPlatform(PlatformIface::Create()),
-      m_pFontMgr(std::make_unique<CFX_FontMgr>()),
-      m_pFontCache(std::make_unique<CFX_FontCache>()),
-      m_pUserFontPaths(pUserFontPaths) {}
+    : platform_(PlatformIface::Create()),
+      font_mgr_(std::make_unique<CFX_FontMgr>()),
+      font_cache_(std::make_unique<CFX_FontCache>()),
+      user_font_paths_(pUserFontPaths) {}
 
 CFX_GEModule::~CFX_GEModule() = default;
 
@@ -29,9 +29,9 @@ CFX_GEModule::~CFX_GEModule() = default;
 void CFX_GEModule::Create(const char** pUserFontPaths) {
   DCHECK(!g_pGEModule);
   g_pGEModule = new CFX_GEModule(pUserFontPaths);
-  g_pGEModule->m_pPlatform->Init();
+  g_pGEModule->platform_->Init();
   g_pGEModule->GetFontMgr()->GetBuiltinMapper()->SetSystemFontInfo(
-      g_pGEModule->m_pPlatform->CreateDefaultSystemFontInfo());
+      g_pGEModule->platform_->CreateDefaultSystemFontInfo());
 }
 
 // static

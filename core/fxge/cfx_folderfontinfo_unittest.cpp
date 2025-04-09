@@ -56,7 +56,7 @@ class CFXFolderFontInfoTest : public ::testing::Test {
   }
 
   ByteString GetFaceName(void* font) {
-    return static_cast<CFX_FolderFontInfo::FontFaceInfo*>(font)->m_FaceName;
+    return static_cast<CFX_FolderFontInfo::FontFaceInfo*>(font)->face_name_;
   }
 
  private:
@@ -64,8 +64,8 @@ class CFXFolderFontInfoTest : public ::testing::Test {
     auto info = std::make_unique<CFX_FolderFontInfo::FontFaceInfo>(
         /*filePath=*/"", font_name, /*fontTables=*/"",
         /*fontOffset=*/0, /*fileSize=*/0);
-    info->m_Charsets = charsets;
-    font_info_.m_FontList[font_name] = std::move(info);
+    info->charsets_ = charsets;
+    font_info_.font_list_[font_name] = std::move(info);
   }
 
   CFX_FolderFontInfo font_info_;

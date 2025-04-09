@@ -730,8 +730,8 @@ void CPDF_PageContentGenerator::ProcessPathPoints(fxcrt::ostringstream* buf,
                                                   CPDF_Path* pPath) {
   pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   if (pPath->IsRect()) {
-    CFX_PointF diff = points[2].m_Point - points[0].m_Point;
-    WritePoint(*buf, points[0].m_Point) << " ";
+    CFX_PointF diff = points[2].point_ - points[0].point_;
+    WritePoint(*buf, points[0].point_) << " ";
     WritePoint(*buf, diff) << " re";
     return;
   }
@@ -739,9 +739,9 @@ void CPDF_PageContentGenerator::ProcessPathPoints(fxcrt::ostringstream* buf,
     if (i > 0)
       *buf << " ";
 
-    WritePoint(*buf, points[i].m_Point);
+    WritePoint(*buf, points[i].point_);
 
-    CFX_Path::Point::Type point_type = points[i].m_Type;
+    CFX_Path::Point::Type point_type = points[i].type_;
     if (point_type == CFX_Path::Point::Type::kMove) {
       *buf << " m";
     } else if (point_type == CFX_Path::Point::Type::kLine) {
@@ -750,18 +750,19 @@ void CPDF_PageContentGenerator::ProcessPathPoints(fxcrt::ostringstream* buf,
       if (i + 2 >= points.size() ||
           !points[i].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) ||
           !points[i + 1].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) ||
-          points[i + 2].m_Type != CFX_Path::Point::Type::kBezier) {
+          points[i + 2].type_ != CFX_Path::Point::Type::kBezier) {
         // If format is not supported, close the path and paint
         *buf << " h";
         break;
       }
       *buf << " ";
-      WritePoint(*buf, points[i + 1].m_Point) << " ";
-      WritePoint(*buf, points[i + 2].m_Point) << " c";
+      WritePoint(*buf, points[i + 1].point_) << " ";
+      WritePoint(*buf, points[i + 2].point_) << " c";
       i += 2;
     }
-    if (points[i].m_CloseFigure)
+    if (points[i].close_figure_) {
       *buf << " h";
+    }
   }
 }
 

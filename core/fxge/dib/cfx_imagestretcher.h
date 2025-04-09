@@ -38,14 +38,14 @@ class CFX_ImageStretcher {
   bool StartStretch();
   bool ContinueStretch(PauseIndicatorIface* pPause);
 
-  UnownedPtr<ScanlineComposerIface> const m_pDest;
-  RetainPtr<const CFX_DIBBase> const m_pSource;
-  std::unique_ptr<CStretchEngine> m_pStretchEngine;
-  const FXDIB_ResampleOptions m_ResampleOptions;
-  const int m_DestWidth;
-  const int m_DestHeight;
-  const FX_RECT m_ClipRect;
-  const FXDIB_Format m_DestFormat;
+  UnownedPtr<ScanlineComposerIface> const dest_;
+  RetainPtr<const CFX_DIBBase> const source_;
+  std::unique_ptr<CStretchEngine> stretch_engine_;
+  const FXDIB_ResampleOptions resample_options_;
+  const int dest_width_;
+  const int dest_height_;
+  const FX_RECT clip_rect_;
+  const FXDIB_Format dest_format_;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_IMAGESTRETCHER_H_

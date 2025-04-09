@@ -598,7 +598,7 @@ struct CoonBezier {
     x.GetPoints(points_x);
     y.GetPoints(points_y);
     for (size_t i = 0; i < kPointsCount; ++i)
-      path_points[i].m_Point = {points_x[i], points_y[i]};
+      path_points[i].point_ = {points_x[i], points_y[i]};
   }
 
   void GetPointsReverse(pdfium::span<CFX_Path::Point> path_points) const {
@@ -609,8 +609,8 @@ struct CoonBezier {
     y.GetPoints(points_y);
     for (size_t i = 0; i < kPointsCount; ++i) {
       size_t reverse_index = kPointsCount - i - 1;
-      path_points[i].m_Point = {points_x[reverse_index],
-                                points_y[reverse_index]};
+      path_points[i].point_ = {points_x[reverse_index],
+                               points_y[reverse_index]};
     }
   }
 

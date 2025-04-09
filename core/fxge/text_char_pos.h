@@ -20,17 +20,17 @@ class TextCharPos {
 
   CFX_Matrix GetEffectiveMatrix(const CFX_Matrix& matrix) const;
 
-  CFX_PointF m_Origin;
-  uint32_t m_Unicode = 0;
-  uint32_t m_GlyphIndex = 0;
-  int m_FontCharWidth = 0;
+  CFX_PointF origin_;
+  uint32_t unicode_ = 0;
+  uint32_t glyph_index_ = 0;
+  int font_char_width_ = 0;
 #if BUILDFLAG(IS_APPLE)
-  uint32_t m_ExtGID = 0;
+  uint32_t ext_gid_ = 0;
 #endif
-  int32_t m_FallbackFontPosition = 0;
-  bool m_bGlyphAdjust = false;
-  bool m_bFontStyle = false;
-  std::array<float, 4> m_AdjustMatrix = {};
+  int32_t fallback_font_position_ = 0;
+  bool glyph_adjust_ = false;
+  bool font_style_ = false;
+  std::array<float, 4> adjust_matrix_ = {};
 };
 
 #endif  // CORE_FXGE_TEXT_CHAR_POS_H_

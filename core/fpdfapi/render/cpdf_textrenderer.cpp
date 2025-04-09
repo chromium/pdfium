@@ -66,10 +66,10 @@ bool CPDF_TextRenderer::DrawTextPath(
     return true;
 
   bool bDraw = true;
-  int32_t fontPosition = pos[0].m_FallbackFontPosition;
+  int32_t fontPosition = pos[0].fallback_font_position_;
   size_t startIndex = 0;
   for (size_t i = 0; i < pos.size(); ++i) {
-    int32_t curFontPosition = pos[i].m_FallbackFontPosition;
+    int32_t curFontPosition = pos[i].fallback_font_position_;
     if (fontPosition == curFontPosition)
       continue;
 
@@ -146,10 +146,10 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
   CFX_TextRenderOptions text_options =
       GetTextRenderOptionsHelper(pFont, options);
   bool bDraw = true;
-  int32_t fontPosition = pos[0].m_FallbackFontPosition;
+  int32_t fontPosition = pos[0].fallback_font_position_;
   size_t startIndex = 0;
   for (size_t i = 0; i < pos.size(); ++i) {
-    int32_t curFontPosition = pos[i].m_FallbackFontPosition;
+    int32_t curFontPosition = pos[i].fallback_font_position_;
     if (fontPosition == curFontPosition)
       continue;
 

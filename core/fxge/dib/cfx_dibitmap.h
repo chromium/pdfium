@@ -202,7 +202,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                   int src_left,
                                   int src_top);
 
-  MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
+  MaybeOwned<uint8_t, FxFreeDeleter> buffer_;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBITMAP_H_

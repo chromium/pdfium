@@ -23,8 +23,8 @@ class CPSOutput final : public IFX_RetainableWriteStream {
   bool WriteBlock(pdfium::span<const uint8_t> input) override;
 
  private:
-  const HDC m_hDC;
-  const OutputMode m_mode;
+  const HDC dc_handle_;
+  const OutputMode mode_;
 };
 
 #endif  // CORE_FXGE_WIN32_CPSOUTPUT_H_

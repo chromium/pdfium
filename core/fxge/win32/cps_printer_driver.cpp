@@ -50,7 +50,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
                                    WindowsPrintMode mode,
                                    CFX_PSFontTracker* ps_font_tracker,
                                    const EncoderIface* encoder_iface)
-    : m_hDC(hDC), m_PSRenderer(ps_font_tracker, encoder_iface) {
+    : dc_handle_(hDC), psrenderer_(ps_font_tracker, encoder_iface) {
   CFX_PSRenderer::RenderingLevel level =
       RenderingLevelFromWindowsPrintMode(mode);
   CPSOutput::OutputMode output_mode =
@@ -60,16 +60,16 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
           ? CPSOutput::OutputMode::kGdiComment
           : CPSOutput::OutputMode::kExtEscape;
 
-  m_HorzSize = ::GetDeviceCaps(m_hDC, HORZSIZE);
-  m_VertSize = ::GetDeviceCaps(m_hDC, VERTSIZE);
-  m_Width = ::GetDeviceCaps(m_hDC, HORZRES);
-  m_Height = ::GetDeviceCaps(m_hDC, VERTRES);
-  m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
+  horz_size_ = ::GetDeviceCaps(dc_handle_, HORZSIZE);
+  vert_size_ = ::GetDeviceCaps(dc_handle_, VERTSIZE);
+  width_ = ::GetDeviceCaps(dc_handle_, HORZRES);
+  height_ = ::GetDeviceCaps(dc_handle_, VERTRES);
+  bits_per_pixel_ = ::GetDeviceCaps(dc_handle_, BITSPIXEL);
 
-  m_PSRenderer.Init(pdfium::MakeRetain<CPSOutput>(m_hDC, output_mode), level,
-                    m_Width, m_Height);
+  psrenderer_.Init(pdfium::MakeRetain<CPSOutput>(dc_handle_, output_mode),
+                   level, width_, height_);
   HRGN hRgn = ::CreateRectRgn(0, 0, 1, 1);
-  if (::GetClipRgn(m_hDC, hRgn) == 1) {
+  if (::GetClipRgn(dc_handle_, hRgn) == 1) {
     DWORD dwCount = ::GetRegionData(hRgn, 0, nullptr);
     if (dwCount) {
       DataVector<uint8_t> buffer(dwCount);
@@ -85,8 +85,8 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
                           static_cast<float>(pRect->right),
                           static_cast<float>(pRect->top));
         }
-        m_PSRenderer.SetClip_PathFill(path, nullptr,
-                                      CFX_FillRenderOptions::WindingOptions());
+        psrenderer_.SetClip_PathFill(path, nullptr,
+                                     CFX_FillRenderOptions::WindingOptions());
       }
     }
   }
@@ -102,35 +102,35 @@ DeviceType CPSPrinterDriver::GetDeviceType() const {
 int CPSPrinterDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
     case FXDC_PIXEL_WIDTH:
-      return m_Width;
+      return width_;
     case FXDC_PIXEL_HEIGHT:
-      return m_Height;
+      return height_;
     case FXDC_BITS_PIXEL:
-      return m_nBitsPerPixel;
+      return bits_per_pixel_;
     case FXDC_RENDER_CAPS:
       return 0;
     case FXDC_HORZ_SIZE:
-      return m_HorzSize;
+      return horz_size_;
     case FXDC_VERT_SIZE:
-      return m_VertSize;
+      return vert_size_;
     default:
       NOTREACHED();
   }
 }
 
 void CPSPrinterDriver::SaveState() {
-  m_PSRenderer.SaveState();
+  psrenderer_.SaveState();
 }
 
 void CPSPrinterDriver::RestoreState(bool bKeepSaved) {
-  m_PSRenderer.RestoreState(bKeepSaved);
+  psrenderer_.RestoreState(bKeepSaved);
 }
 
 bool CPSPrinterDriver::SetClip_PathFill(
     const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
-  m_PSRenderer.SetClip_PathFill(path, pObject2Device, fill_options);
+  psrenderer_.SetClip_PathFill(path, pObject2Device, fill_options);
   return true;
 }
 
@@ -138,7 +138,7 @@ bool CPSPrinterDriver::SetClip_PathStroke(
     const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
-  m_PSRenderer.SetClip_PathStroke(path, pObject2Device, pGraphState);
+  psrenderer_.SetClip_PathStroke(path, pObject2Device, pGraphState);
   return true;
 }
 
@@ -148,12 +148,12 @@ bool CPSPrinterDriver::DrawPath(const CFX_Path& path,
                                 FX_ARGB fill_color,
                                 FX_ARGB stroke_color,
                                 const CFX_FillRenderOptions& fill_options) {
-  return m_PSRenderer.DrawPath(path, pObject2Device, pGraphState, fill_color,
-                               stroke_color, fill_options);
+  return psrenderer_.DrawPath(path, pObject2Device, pGraphState, fill_color,
+                              stroke_color, fill_options);
 }
 
 FX_RECT CPSPrinterDriver::GetClipBox() const {
-  return m_PSRenderer.GetClipBox();
+  return psrenderer_.GetClipBox();
 }
 
 bool CPSPrinterDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
@@ -164,7 +164,7 @@ bool CPSPrinterDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                  BlendMode blend_type) {
   if (blend_type != BlendMode::kNormal)
     return false;
-  return m_PSRenderer.SetDIBits(std::move(bitmap), color, left, top);
+  return psrenderer_.SetDIBits(std::move(bitmap), color, left, top);
 }
 
 bool CPSPrinterDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
@@ -177,8 +177,8 @@ bool CPSPrinterDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                      const FXDIB_ResampleOptions& options,
                                      BlendMode blend_type) {
   return blend_type == BlendMode::kNormal &&
-         m_PSRenderer.StretchDIBits(std::move(bitmap), color, dest_left,
-                                    dest_top, dest_width, dest_height, options);
+         psrenderer_.StretchDIBits(std::move(bitmap), color, dest_left,
+                                   dest_top, dest_width, dest_height, options);
 }
 
 RenderDeviceDriverIface::StartResult CPSPrinterDriver::StartDIBits(
@@ -193,7 +193,7 @@ RenderDeviceDriverIface::StartResult CPSPrinterDriver::StartDIBits(
   }
 
   bool success =
-      m_PSRenderer.DrawDIBits(std::move(bitmap), color, matrix, options);
+      psrenderer_.DrawDIBits(std::move(bitmap), color, matrix, options);
   return {success ? Result::kSuccess : Result::kFailure, nullptr};
 }
 
@@ -204,8 +204,8 @@ bool CPSPrinterDriver::DrawDeviceText(
     float font_size,
     uint32_t color,
     const CFX_TextRenderOptions& /*options*/) {
-  return m_PSRenderer.DrawText(pCharPos.size(), pCharPos.data(), pFont,
-                               mtObject2Device, font_size, color);
+  return psrenderer_.DrawText(pCharPos.size(), pCharPos.data(), pFont,
+                              mtObject2Device, font_size, color);
 }
 
 bool CPSPrinterDriver::MultiplyAlpha(float alpha) {

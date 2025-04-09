@@ -28,16 +28,16 @@
 
 CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
     : CGdiDeviceDriver(hDC, DeviceType::kPrinter),
-      m_HorzSize(::GetDeviceCaps(m_hDC, HORZSIZE)),
-      m_VertSize(::GetDeviceCaps(m_hDC, VERTSIZE)) {}
+      horz_size_(::GetDeviceCaps(dc_handle_, HORZSIZE)),
+      vert_size_(::GetDeviceCaps(dc_handle_, VERTSIZE)) {}
 
 CGdiPrinterDriver::~CGdiPrinterDriver() = default;
 
 int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
   if (caps_id == FXDC_HORZ_SIZE)
-    return m_HorzSize;
+    return horz_size_;
   if (caps_id == FXDC_VERT_SIZE)
-    return m_VertSize;
+    return vert_size_;
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);
 }
 

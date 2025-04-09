@@ -851,11 +851,11 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
         wLast = (wchar_t)form_chars[j - 1].wForm;
       }
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
-        front_ref.m_GlyphIndex = pFont->GetGlyphIndex(wForm);
+        front_ref.glyph_index_ = pFont->GetGlyphIndex(wForm);
 #if BUILDFLAG(IS_APPLE)
-        front_ref.m_ExtGID = front_ref.m_GlyphIndex;
+        front_ref.ext_gid_ = front_ref.glyph_index_;
 #endif
-        front_ref.m_FontCharWidth = iCharWidth;
+        front_ref.font_char_width_ = iCharWidth;
       }
 
       const float fCharWidth = fFontSize * iCharWidth / 1000.0f;
@@ -864,17 +864,17 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
       }
 
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
-        front_ref.m_Origin = CFX_PointF(fX, fY);
+        front_ref.origin_ = CFX_PointF(fX, fY);
 
         if (!!(dwStyles & LayoutStyle::kCombText)) {
           int32_t iFormWidth = pFont->GetCharWidth(wForm).value_or(iCharWidth);
           float fOffset = fFontSize * (iCharWidth - iFormWidth) / 2000.0f;
-          front_ref.m_Origin.x += fOffset;
+          front_ref.origin_.x += fOffset;
         }
         if (chartype == FX_CHARTYPE::kCombination) {
           std::optional<FX_RECT> rtBBox = pFont->GetCharBBox(wForm);
           if (rtBBox.has_value()) {
-            front_ref.m_Origin.y =
+            front_ref.origin_.y =
                 fYBase + fFontSize -
                 fFontSize * rtBBox.value().Height() / iMaxHeight;
           }
@@ -884,7 +884,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
                 FX_CHARTYPE::kCombination) {
               std::optional<FX_RECT> rtOtherBox = pFont->GetCharBBox(wLast);
               if (rtOtherBox.has_value()) {
-                front_ref.m_Origin.y -=
+                front_ref.origin_.y -=
                     fFontSize * rtOtherBox.value().Height() / iMaxHeight;
               }
             }
@@ -896,21 +896,21 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
       }
 
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
-        front_ref.m_bGlyphAdjust = true;
-        front_ref.m_AdjustMatrix[0] = -1;
-        front_ref.m_AdjustMatrix[1] = 0;
-        front_ref.m_AdjustMatrix[2] = 0;
-        front_ref.m_AdjustMatrix[3] = 1;
+        front_ref.glyph_adjust_ = true;
+        front_ref.adjust_matrix_[0] = -1;
+        front_ref.adjust_matrix_[1] = 0;
+        front_ref.adjust_matrix_[2] = 0;
+        front_ref.adjust_matrix_[3] = 1;
 
         if (iHorScale != 100 || iVerScale != 100) {
-          front_ref.m_AdjustMatrix[0] =
-              front_ref.m_AdjustMatrix[0] * iHorScale / 100.0f;
-          front_ref.m_AdjustMatrix[1] =
-              front_ref.m_AdjustMatrix[1] * iHorScale / 100.0f;
-          front_ref.m_AdjustMatrix[2] =
-              front_ref.m_AdjustMatrix[2] * iVerScale / 100.0f;
-          front_ref.m_AdjustMatrix[3] =
-              front_ref.m_AdjustMatrix[3] * iVerScale / 100.0f;
+          front_ref.adjust_matrix_[0] =
+              front_ref.adjust_matrix_[0] * iHorScale / 100.0f;
+          front_ref.adjust_matrix_[1] =
+              front_ref.adjust_matrix_[1] * iHorScale / 100.0f;
+          front_ref.adjust_matrix_[2] =
+              front_ref.adjust_matrix_[2] * iVerScale / 100.0f;
+          front_ref.adjust_matrix_[3] =
+              front_ref.adjust_matrix_[3] * iVerScale / 100.0f;
         }
         pCharPos = pCharPos.subspan(1);
       }

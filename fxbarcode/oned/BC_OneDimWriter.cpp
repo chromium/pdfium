@@ -131,21 +131,21 @@ void CBC_OneDimWriter::CalcTextInfo(const ByteString& text,
   float penY = (float)abs(cFont->GetDescent()) * (float)fontSize / 1000.0f;
   float left = leftPositon;
   float top = 0.0;
-  charPos[0].m_Origin = CFX_PointF(penX + left, penY + top);
-  charPos[0].m_GlyphIndex = encoding->GlyphFromCharCode(charcodes[0]);
-  charPos[0].m_FontCharWidth = cFont->GetGlyphWidth(charPos[0].m_GlyphIndex);
+  charPos[0].origin_ = CFX_PointF(penX + left, penY + top);
+  charPos[0].glyph_index_ = encoding->GlyphFromCharCode(charcodes[0]);
+  charPos[0].font_char_width_ = cFont->GetGlyphWidth(charPos[0].glyph_index_);
 #if BUILDFLAG(IS_APPLE)
-  charPos[0].m_ExtGID = charPos[0].m_GlyphIndex;
+  charPos[0].ext_gid_ = charPos[0].glyph_index_;
 #endif
-  penX += (float)(charPos[0].m_FontCharWidth) * (float)fontSize / 1000.0f;
+  penX += (float)(charPos[0].font_char_width_) * (float)fontSize / 1000.0f;
   for (size_t i = 1; i < length; i++) {
-    charPos[i].m_Origin = CFX_PointF(penX + left, penY + top);
-    charPos[i].m_GlyphIndex = encoding->GlyphFromCharCode(charcodes[i]);
-    charPos[i].m_FontCharWidth = cFont->GetGlyphWidth(charPos[i].m_GlyphIndex);
+    charPos[i].origin_ = CFX_PointF(penX + left, penY + top);
+    charPos[i].glyph_index_ = encoding->GlyphFromCharCode(charcodes[i]);
+    charPos[i].font_char_width_ = cFont->GetGlyphWidth(charPos[i].glyph_index_);
 #if BUILDFLAG(IS_APPLE)
-    charPos[i].m_ExtGID = charPos[i].m_GlyphIndex;
+    charPos[i].ext_gid_ = charPos[i].glyph_index_;
 #endif
-    penX += (float)(charPos[i].m_FontCharWidth) * (float)fontSize / 1000.0f;
+    penX += (float)(charPos[i].font_char_width_) * (float)fontSize / 1000.0f;
   }
 }
 

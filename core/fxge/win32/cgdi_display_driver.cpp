@@ -22,8 +22,8 @@ CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC)
     : CGdiDeviceDriver(hDC, DeviceType::kDisplay) {
   auto* pPlatform =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
-  if (pPlatform->m_GdiplusExt.IsAvailable()) {
-    m_RenderCaps |= FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE;
+  if (pPlatform->gdiplus_ext_.IsAvailable()) {
+    render_caps_ |= FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE;
   }
 }
 
@@ -41,10 +41,10 @@ bool CGdiDisplayDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
   bool ret = false;
   int width = bitmap->GetWidth();
   int height = bitmap->GetHeight();
-  HBITMAP hbmp = CreateCompatibleBitmap(m_hDC, width, height);
-  HDC hDCMemory = CreateCompatibleDC(m_hDC);
+  HBITMAP hbmp = CreateCompatibleBitmap(dc_handle_, width, height);
+  HDC hDCMemory = CreateCompatibleDC(dc_handle_);
   HBITMAP holdbmp = (HBITMAP)SelectObject(hDCMemory, hbmp);
-  BitBlt(hDCMemory, 0, 0, width, height, m_hDC, left, top, SRCCOPY);
+  BitBlt(hDCMemory, 0, 0, width, height, dc_handle_, left, top, SRCCOPY);
   SelectObject(hDCMemory, holdbmp);
   BITMAPINFO bmi = {};
   bmi.bmiHeader.biSize = sizeof bmi.bmiHeader;
@@ -201,10 +201,10 @@ bool CGdiDisplayDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   if (bitmap->IsAlphaFormat()) {
     auto* pPlatform =
         static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
-    if (pPlatform->m_GdiplusExt.IsAvailable()) {
-      return pPlatform->m_GdiplusExt.StretchDIBits(m_hDC, std::move(bitmap),
-                                                   dest_left, dest_top,
-                                                   dest_width, dest_height);
+    if (pPlatform->gdiplus_ext_.IsAvailable()) {
+      return pPlatform->gdiplus_ext_.StretchDIBits(
+          dc_handle_, std::move(bitmap), dest_left, dest_top, dest_width,
+          dest_height);
     }
     return UseFoxitStretchEngine(std::move(bitmap), color, dest_left, dest_top,
                                  dest_width, dest_height, pClipRect,

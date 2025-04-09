@@ -13,12 +13,12 @@
 #include "core/fxge/fx_fontencoding.h"
 
 CFX_UnicodeEncoding::CFX_UnicodeEncoding(const CFX_Font* pFont)
-    : m_pFont(pFont) {}
+    : font_(pFont) {}
 
 CFX_UnicodeEncoding::~CFX_UnicodeEncoding() = default;
 
 uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
-  RetainPtr<CFX_Face> face = m_pFont->GetFace();
+  RetainPtr<CFX_Face> face = font_->GetFace();
   if (!face)
     return charcode;
 
@@ -26,8 +26,8 @@ uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
     return face->GetCharIndex(charcode);
   }
 
-  if (m_pFont->GetSubstFont() &&
-      m_pFont->GetSubstFont()->m_Charset == FX_Charset::kSymbol) {
+  if (font_->GetSubstFont() &&
+      font_->GetSubstFont()->charset_ == FX_Charset::kSymbol) {
     uint32_t index = 0;
     if (face->SelectCharMap(fxge::FontEncoding::kSymbol)) {
       index = face->GetCharIndex(charcode);

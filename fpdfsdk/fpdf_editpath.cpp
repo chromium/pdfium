@@ -208,20 +208,20 @@ FPDFPathSegment_GetPoint(FPDF_PATHSEGMENT segment, float* x, float* y) {
     return false;
   }
 
-  *x = pPathPoint->m_Point.x;
-  *y = pPathPoint->m_Point.y;
+  *x = pPathPoint->point_.x;
+  *y = pPathPoint->point_.y;
   return true;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFPathSegment_GetType(FPDF_PATHSEGMENT segment) {
   auto* pPathPoint = FXPathPointFromFPDFPathSegment(segment);
-  return pPathPoint ? static_cast<int>(pPathPoint->m_Type)
+  return pPathPoint ? static_cast<int>(pPathPoint->type_)
                     : FPDF_SEGMENT_UNKNOWN;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPathSegment_GetClose(FPDF_PATHSEGMENT segment) {
   auto* pPathPoint = FXPathPointFromFPDFPathSegment(segment);
-  return pPathPoint && pPathPoint->m_CloseFigure;
+  return pPathPoint && pPathPoint->close_figure_;
 }

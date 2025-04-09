@@ -124,16 +124,16 @@ class CFX_FontMapper {
     uint32_t charset;
   };
 
-  bool m_bListLoaded = false;
-  ByteString m_LastFamily;
-  std::vector<FaceData> m_FaceArray;
-  std::unique_ptr<SystemFontInfoIface> m_pFontInfo;
-  UnownedPtr<CFX_FontMgr> const m_pFontMgr;
-  std::vector<ByteString> m_InstalledTTFonts;
-  std::vector<std::pair<ByteString, ByteString>> m_LocalizedTTFonts;
-  std::array<RetainPtr<CFX_Face>, kNumStandardFonts> m_StandardFaces;
-  RetainPtr<CFX_Face> m_GenericSansFace;
-  RetainPtr<CFX_Face> m_GenericSerifFace;
+  bool list_loaded_ = false;
+  ByteString last_family_;
+  std::vector<FaceData> face_array_;
+  std::unique_ptr<SystemFontInfoIface> font_info_;
+  UnownedPtr<CFX_FontMgr> const font_mgr_;
+  std::vector<ByteString> installed_ttfonts_;
+  std::vector<std::pair<ByteString, ByteString>> localized_ttfonts_;
+  std::array<RetainPtr<CFX_Face>, kNumStandardFonts> standard_faces_;
+  RetainPtr<CFX_Face> generic_sans_face_;
+  RetainPtr<CFX_Face> generic_serif_face_;
 };
 
 #endif  // CORE_FXGE_CFX_FONTMAPPER_H_

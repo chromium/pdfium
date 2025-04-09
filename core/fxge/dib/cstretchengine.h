@@ -47,36 +47,36 @@ class CStretchEngine {
   struct PixelWeight {
     void SetStartEnd(int src_start, int src_end, size_t weight_count) {
       CHECK_LT(src_end - src_start, static_cast<int>(weight_count));
-      m_SrcStart = src_start;
-      m_SrcEnd = src_end;
+      src_start_ = src_start;
+      src_end_ = src_end;
     }
 
     uint32_t GetWeightForPosition(int position) const {
-      CHECK_GE(position, m_SrcStart);
-      CHECK_LE(position, m_SrcEnd);
+      CHECK_GE(position, src_start_);
+      CHECK_LE(position, src_end_);
       // SAFETY: enforced by checks above.
-      return UNSAFE_BUFFERS(m_Weights[position - m_SrcStart]);
+      return UNSAFE_BUFFERS(weights_[position - src_start_]);
     }
 
     void SetWeightForPosition(int position, uint32_t weight) {
-      CHECK_GE(position, m_SrcStart);
-      CHECK_LE(position, m_SrcEnd);
+      CHECK_GE(position, src_start_);
+      CHECK_LE(position, src_end_);
       // SAFETY: enforced by checks above.
-      UNSAFE_BUFFERS(m_Weights[position - m_SrcStart] = weight);
+      UNSAFE_BUFFERS(weights_[position - src_start_] = weight);
     }
 
     // NOTE: relies on defined behaviour for unsigned overflow to
     // decrement the previous position, as needed.
     void RemoveLastWeightAndAdjust(uint32_t weight_change) {
-      CHECK_GT(m_SrcEnd, m_SrcStart);
-      --m_SrcEnd;
+      CHECK_GT(src_end_, src_start_);
+      --src_end_;
       // SAFETY: enforced by checks above.
-      UNSAFE_BUFFERS(m_Weights[m_SrcEnd - m_SrcStart] += weight_change);
+      UNSAFE_BUFFERS(weights_[src_end_ - src_start_] += weight_change);
     }
 
-    int m_SrcStart;
-    int m_SrcEnd;           // Note: inclusive, [0, -1] for empty range at 0.
-    uint32_t m_Weights[1];  // Not really 1, variable size.
+    int src_start_;
+    int src_end_;          // Note: inclusive, [0, -1] for empty range at 0.
+    uint32_t weights_[1];  // Not really 1, variable size.
   };
 
   class WeightTable {
@@ -98,10 +98,10 @@ class CStretchEngine {
     PixelWeight* GetPixelWeight(int pixel);
 
    private:
-    int m_DestMin = 0;
-    size_t m_ItemSizeBytes = 0;
-    size_t m_WeightTablesSizeBytes = 0;
-    DataVector<uint8_t> m_WeightTables;
+    int dest_min_ = 0;
+    size_t item_size_bytes_ = 0;
+    size_t weight_tables_size_bytes_ = 0;
+    DataVector<uint8_t> weight_tables_;
   };
 
   CStretchEngine(ScanlineComposerIface* pDestBitmap,
@@ -119,7 +119,7 @@ class CStretchEngine {
   void StretchVert();
 
   const FXDIB_ResampleOptions& GetResampleOptionsForTest() const {
-    return m_ResampleOptions;
+    return resample_options_;
   }
 
  private:
@@ -134,28 +134,28 @@ class CStretchEngine {
     kManyBpptoManyBppWithAlpha
   };
 
-  const FXDIB_Format m_DestFormat;
-  const int m_DestBpp;
-  const int m_SrcBpp;
-  const bool m_bHasAlpha;
-  RetainPtr<const CFX_DIBBase> const m_pSource;
-  pdfium::raw_span<const uint32_t> m_pSrcPalette;
-  const int m_SrcWidth;
-  const int m_SrcHeight;
-  UnownedPtr<ScanlineComposerIface> const m_pDestBitmap;
-  const int m_DestWidth;
-  const int m_DestHeight;
-  const FX_RECT m_DestClip;
-  DataVector<uint8_t> m_DestScanline;
-  FixedSizeDataVector<uint8_t> m_InterBuf;
-  FX_RECT m_SrcClip;
-  int m_InterPitch;
-  int m_ExtraMaskPitch;
-  FXDIB_ResampleOptions m_ResampleOptions;
-  TransformMethod m_TransMethod;
-  State m_State = State::kInitial;
-  int m_CurRow = 0;
-  WeightTable m_WeightTable;
+  const FXDIB_Format dest_format_;
+  const int dest_bpp_;
+  const int src_bpp_;
+  const bool has_alpha_;
+  RetainPtr<const CFX_DIBBase> const source_;
+  pdfium::raw_span<const uint32_t> src_palette_;
+  const int src_width_;
+  const int src_height_;
+  UnownedPtr<ScanlineComposerIface> const dest_bitmap_;
+  const int dest_width_;
+  const int dest_height_;
+  const FX_RECT dest_clip_;
+  DataVector<uint8_t> dest_scanline_;
+  FixedSizeDataVector<uint8_t> inter_buf_;
+  FX_RECT src_clip_;
+  int inter_pitch_;
+  int extra_mask_pitch_;
+  FXDIB_ResampleOptions resample_options_;
+  TransformMethod trans_method_;
+  State state_ = State::kInitial;
+  int cur_row_ = 0;
+  WeightTable weight_table_;
 };
 
 #endif  // CORE_FXGE_DIB_CSTRETCHENGINE_H_

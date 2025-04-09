@@ -21,20 +21,20 @@ class CFPF_SkiaPathFont {
                     int32_t iGlyphNum);
   ~CFPF_SkiaPathFont();
 
-  const char* path() const { return m_bsPath.c_str(); }
-  const char* family() const { return m_bsFamily.c_str(); }
-  uint32_t style() const { return m_dwStyle; }
-  int32_t face_index() const { return m_iFaceIndex; }
-  uint32_t charsets() const { return m_dwCharsets; }
-  int32_t glyph_num() const { return m_iGlyphNum; }
+  const char* path() const { return path_.c_str(); }
+  const char* family() const { return family_.c_str(); }
+  uint32_t style() const { return style_; }
+  int32_t face_index() const { return face_index_; }
+  uint32_t charsets() const { return charsets_; }
+  int32_t glyph_num() const { return glyph_num_; }
 
  private:
-  const ByteString m_bsPath;
-  const ByteString m_bsFamily;
-  const uint32_t m_dwStyle;
-  const int32_t m_iFaceIndex;
-  const uint32_t m_dwCharsets;
-  const int32_t m_iGlyphNum;
+  const ByteString path_;
+  const ByteString family_;
+  const uint32_t style_;
+  const int32_t face_index_;
+  const uint32_t charsets_;
+  const int32_t glyph_num_;
 };
 
 #endif  // CORE_FXGE_ANDROID_CFPF_SKIAPATHFONT_H_

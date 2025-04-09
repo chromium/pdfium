@@ -65,14 +65,14 @@ class CFX_ScanlineCompositor {
     pdfium::span<const uint32_t> Get32BitPalette() const;
 
    private:
-    // If 0, then no |m_pData|.
-    // If 1, then |m_pData| is really uint8_t* instead.
-    // If 4, then |m_pData| is uint32_t* as expected.
-    size_t m_Width = 0;
-    size_t m_nElements = 0;
+    // If 0, then no |data_|.
+    // If 1, then |data_| is really uint8_t* instead.
+    // If 4, then |data_| is uint32_t* as expected.
+    size_t width_ = 0;
+    size_t elements_ = 0;
 
     // TODO(tsepez): convert to variant of FixedArray.
-    std::unique_ptr<uint32_t, FxFreeDeleter> m_pData;
+    std::unique_ptr<uint32_t, FxFreeDeleter> data_;
   };
 
   void InitSourcePalette(pdfium::span<const uint32_t> src_palette);
@@ -108,15 +108,15 @@ class CFX_ScanlineCompositor {
       int width,
       pdfium::span<const uint8_t> clip_scan) const;
 
-  FXDIB_Format m_SrcFormat;
-  FXDIB_Format m_DestFormat;
-  Palette m_SrcPalette;
-  int m_MaskAlpha;
-  int m_MaskRed;
-  int m_MaskGreen;
-  int m_MaskBlue;
-  BlendMode m_BlendType = BlendMode::kNormal;
-  bool m_bRgbByteOrder = false;
+  FXDIB_Format src_format_;
+  FXDIB_Format dest_format_;
+  Palette src_palette_;
+  int mask_alpha_;
+  int mask_red_;
+  int mask_green_;
+  int mask_blue_;
+  BlendMode blend_type_ = BlendMode::kNormal;
+  bool rgb_byte_order_ = false;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_SCANLINECOMPOSITOR_H_

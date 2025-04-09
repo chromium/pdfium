@@ -66,14 +66,14 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                           int dest_height,
                           uint32_t bitmap_color);
 
-  const HDC m_hDC;
-  bool m_bMetafileDCType;
-  int m_Width;
-  int m_Height;
-  int m_nBitsPerPixel;
-  const DeviceType m_DeviceType;
-  int m_RenderCaps;
-  std::optional<FX_RECT> m_BaseClipBox;
+  const HDC dc_handle_;
+  bool metafile_dctype_;
+  int width_;
+  int height_;
+  int bits_per_pixel_;
+  const DeviceType device_type_;
+  int render_caps_;
+  std::optional<FX_RECT> base_clip_box_;
 };
 
 #endif  // CORE_FXGE_WIN32_CGDI_DEVICE_DRIVER_H_

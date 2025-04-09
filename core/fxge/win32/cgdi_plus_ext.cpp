@@ -193,7 +193,7 @@ Gdiplus::GpFillMode FillType2Gdip(CFX_FillRenderOptions::FillType fill_type) {
 const CGdiplusExt& GetGdiplusExt() {
   auto* pData =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
-  return pData->m_GdiplusExt;
+  return pData->gdiplus_ext_;
 }
 
 Gdiplus::GpBrush* GdipCreateBrushImpl(DWORD argb) {
@@ -387,10 +387,10 @@ class GpStream final : public IStream {
     return E_NOINTERFACE;
   }
   ULONG STDMETHODCALLTYPE AddRef() override {
-    return (ULONG)InterlockedIncrement(&m_RefCount);
+    return (ULONG)InterlockedIncrement(&ref_count_);
   }
   ULONG STDMETHODCALLTYPE Release() override {
-    ULONG res = (ULONG)InterlockedDecrement(&m_RefCount);
+    ULONG res = (ULONG)InterlockedDecrement(&ref_count_);
     if (res == 0) {
       delete this;
     }
@@ -404,15 +404,16 @@ class GpStream final : public IStream {
     if (pcbRead)
       *pcbRead = 0;
 
-    if (m_ReadPos >= m_InterStream.tellp())
+    if (read_pos_ >= inter_stream_.tellp()) {
       return HRESULT_FROM_WIN32(ERROR_END_OF_MEDIA);
+    }
 
     size_t bytes_left = pdfium::checked_cast<size_t>(
-        std::streamoff(m_InterStream.tellp()) - m_ReadPos);
+        std::streamoff(inter_stream_.tellp()) - read_pos_);
     size_t bytes_out = std::min(pdfium::checked_cast<size_t>(cb), bytes_left);
-    UNSAFE_TODO(FXSYS_memcpy(output, m_InterStream.str().c_str() + m_ReadPos,
+    UNSAFE_TODO(FXSYS_memcpy(output, inter_stream_.str().c_str() + read_pos_,
                              bytes_out));
-    m_ReadPos += bytes_out;
+    read_pos_ += bytes_out;
     if (pcbRead)
       *pcbRead = (ULONG)bytes_out;
 
@@ -426,7 +427,7 @@ class GpStream final : public IStream {
         *pcbWritten = 0;
       return S_OK;
     }
-    m_InterStream.write(reinterpret_cast<const char*>(input), cb);
+    inter_stream_.write(reinterpret_cast<const char*>(input), cb);
     if (pcbWritten)
       *pcbWritten = cb;
     return S_OK;
@@ -467,23 +468,25 @@ class GpStream final : public IStream {
         start = 0;
         break;
       case STREAM_SEEK_CUR:
-        start = m_ReadPos;
+        start = read_pos_;
         break;
       case STREAM_SEEK_END:
-        if (m_InterStream.tellp() < 0)
+        if (inter_stream_.tellp() < 0) {
           return STG_E_SEEKERROR;
-        start = m_InterStream.tellp();
+        }
+        start = inter_stream_.tellp();
         break;
       default:
         return STG_E_INVALIDFUNCTION;
     }
     new_read_position = start + liDistanceToMove.QuadPart;
-    if (new_read_position > m_InterStream.tellp())
+    if (new_read_position > inter_stream_.tellp()) {
       return STG_E_SEEKERROR;
+    }
 
-    m_ReadPos = new_read_position;
+    read_pos_ = new_read_position;
     if (lpNewFilePointer)
-      lpNewFilePointer->QuadPart = m_ReadPos;
+      lpNewFilePointer->QuadPart = read_pos_;
 
     return S_OK;
   }
@@ -494,17 +497,18 @@ class GpStream final : public IStream {
 
     UNSAFE_TODO(ZeroMemory(pStatstg, sizeof(STATSTG)));
 
-    if (m_InterStream.tellp() < 0)
+    if (inter_stream_.tellp() < 0) {
       return STG_E_SEEKERROR;
+    }
 
-    pStatstg->cbSize.QuadPart = m_InterStream.tellp();
+    pStatstg->cbSize.QuadPart = inter_stream_.tellp();
     return S_OK;
   }
 
  private:
-  LONG m_RefCount = 1;
-  std::streamoff m_ReadPos = 0;
-  fxcrt::ostringstream m_InterStream;
+  LONG ref_count_ = 1;
+  std::streamoff read_pos_ = 0;
+  fxcrt::ostringstream inter_stream_;
 };
 
 }  // namespace
@@ -600,10 +604,10 @@ bool CGdiplusExt::DrawPath(HDC hDC,
   size_t pos_subclose = 0;
   size_t startpoint = 0;
   for (size_t i = 0; i < points.size(); ++i) {
-    gp_points[i].X = points[i].m_Point.x;
-    gp_points[i].Y = points[i].m_Point.y;
+    gp_points[i].X = points[i].point_.x;
+    gp_points[i].Y = points[i].point_.y;
 
-    CFX_PointF pos = points[i].m_Point;
+    CFX_PointF pos = points[i].point_;
     if (pObject2Device)
       pos = pObject2Device->Transform(pos);
 
@@ -616,7 +620,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     if (pos.y < -50000.0f)
       gp_points[i].Y = -50000.0f;
 
-    CFX_Path::Point::Type point_type = points[i].m_Type;
+    CFX_Path::Point::Type point_type = points[i].type_;
     if (point_type == CFX_Path::Point::Type::kMove) {
       gp_types[i] = Gdiplus::PathPointTypeStart;
       nSubPathes++;
@@ -640,7 +644,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
       gp_types[i] = Gdiplus::PathPointTypeBezier;
       bSmooth = true;
     }
-    if (points[i].m_CloseFigure) {
+    if (points[i].close_figure_) {
       if (bSubClose)
         gp_types[pos_subclose] &= ~Gdiplus::PathPointTypeCloseSubpath;
       else

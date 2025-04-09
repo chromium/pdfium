@@ -22,7 +22,7 @@ class ScopedFontTransform {
   ~ScopedFontTransform();
 
  private:
-  RetainPtr<CFX_Face> m_Face;
+  RetainPtr<CFX_Face> face_;
 };
 
 #endif  // CORE_FXGE_SCOPED_FONT_TRANSFORM_H_

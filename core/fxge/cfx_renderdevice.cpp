@@ -45,20 +45,21 @@ namespace {
 void AdjustGlyphSpace(std::vector<TextGlyphPos>* pGlyphAndPos) {
   DCHECK_GT(pGlyphAndPos->size(), 1u);
   std::vector<TextGlyphPos>& glyphs = *pGlyphAndPos;
-  bool bVertical = glyphs.back().m_Origin.x == glyphs.front().m_Origin.x;
-  if (!bVertical && (glyphs.back().m_Origin.y != glyphs.front().m_Origin.y))
+  bool bVertical = glyphs.back().origin_.x == glyphs.front().origin_.x;
+  if (!bVertical && (glyphs.back().origin_.y != glyphs.front().origin_.y)) {
     return;
+  }
 
   for (size_t i = glyphs.size() - 1; i > 1; --i) {
     const TextGlyphPos& next = glyphs[i];
-    int next_origin = bVertical ? next.m_Origin.y : next.m_Origin.x;
+    int next_origin = bVertical ? next.origin_.y : next.origin_.x;
     float next_origin_f =
-        bVertical ? next.m_fDeviceOrigin.y : next.m_fDeviceOrigin.x;
+        bVertical ? next.device_origin_.y : next.device_origin_.x;
 
     TextGlyphPos& current = glyphs[i - 1];
-    int& current_origin = bVertical ? current.m_Origin.y : current.m_Origin.x;
+    int& current_origin = bVertical ? current.origin_.y : current.origin_.x;
     float current_origin_f =
-        bVertical ? current.m_fDeviceOrigin.y : current.m_fDeviceOrigin.x;
+        bVertical ? current.device_origin_.y : current.device_origin_.x;
 
     FX_SAFE_INT32 safe_space = next_origin;
     safe_space -= current_origin;
@@ -327,21 +328,21 @@ bool CheckSimpleLinePath(pdfium::span<const CFX_Path::Point> points,
   if (points.size() != 2 && points.size() != 3)
     return false;
 
-  if (points[0].m_Type != CFX_Path::Point::Type::kMove ||
-      points[1].m_Type != CFX_Path::Point::Type::kLine ||
-      (points.size() == 3 &&
-       (points[2].m_Type != CFX_Path::Point::Type::kLine ||
-        points[0].m_Point != points[2].m_Point))) {
+  if (points[0].type_ != CFX_Path::Point::Type::kMove ||
+      points[1].type_ != CFX_Path::Point::Type::kLine ||
+      (points.size() == 3 && (points[2].type_ != CFX_Path::Point::Type::kLine ||
+                              points[0].point_ != points[2].point_))) {
     return false;
   }
 
   // A special case that all points are identical, zero area is formed and no
   // thin line needs to be drawn.
-  if (points[0].m_Point == points[1].m_Point)
+  if (points[0].point_ == points[1].point_) {
     return true;
+  }
 
   for (size_t i = 0; i < 2; i++) {
-    CFX_PointF point = points[i].m_Point;
+    CFX_PointF point = points[i].point_;
     if (adjust) {
       if (matrix)
         point = matrix->Transform(point);
@@ -349,7 +350,7 @@ bool CheckSimpleLinePath(pdfium::span<const CFX_Path::Point> points,
       point = CFX_PointF(static_cast<int>(point.x) + 0.5f,
                          static_cast<int>(point.y) + 0.5f);
     }
-    new_path->AppendPoint(point, points[i].m_Type);
+    new_path->AppendPoint(point, points[i].type_);
   }
   if (adjust && matrix)
     *set_identity = true;
@@ -371,15 +372,14 @@ bool CheckPalindromicPath(pdfium::span<const CFX_Path::Point> points,
   for (size_t i = 0; i < mid; i++) {
     const CFX_Path::Point& left = points[mid - i - 1];
     const CFX_Path::Point& right = points[mid + i + 1];
-    bool zero_area = left.m_Point == right.m_Point &&
-                     left.m_Type != CFX_Path::Point::Type::kBezier &&
-                     right.m_Type != CFX_Path::Point::Type::kBezier;
+    bool zero_area = left.point_ == right.point_ &&
+                     left.type_ != CFX_Path::Point::Type::kBezier &&
+                     right.type_ != CFX_Path::Point::Type::kBezier;
     if (!zero_area)
       return false;
 
-    temp_path.AppendPoint(points[mid - i].m_Point,
-                          CFX_Path::Point::Type::kMove);
-    temp_path.AppendPoint(left.m_Point, CFX_Path::Point::Type::kLine);
+    temp_path.AppendPoint(points[mid - i].point_, CFX_Path::Point::Type::kMove);
+    temp_path.AppendPoint(left.point_, CFX_Path::Point::Type::kLine);
   }
 
   new_path->Append(temp_path, nullptr);
@@ -426,7 +426,7 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
     return true;
 
   for (size_t i = 0; i < points.size(); i++) {
-    CFX_Path::Point::Type point_type = points[i].m_Type;
+    CFX_Path::Point::Type point_type = points[i].type_;
     if (point_type == CFX_Path::Point::Type::kMove) {
       DCHECK_EQ(0u, i);
       continue;
@@ -441,29 +441,30 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
     DCHECK_EQ(point_type, CFX_Path::Point::Type::kLine);
     size_t next_index = (i + 1) % (points.size());
     const CFX_Path::Point& next = points[next_index];
-    if (next.m_Type != CFX_Path::Point::Type::kLine)
-      continue;
-
-    const CFX_Path::Point& prev = points[i - 1];
-    const CFX_Path::Point& cur = points[i];
-    if (IsFoldingVerticalLine(prev.m_Point, cur.m_Point, next.m_Point)) {
-      bool use_prev = fabs(cur.m_Point.y - prev.m_Point.y) <
-                      fabs(cur.m_Point.y - next.m_Point.y);
-      const CFX_Path::Point& start = use_prev ? prev : cur;
-      const CFX_Path::Point& end = use_prev ? cur : next;
-      new_path->AppendPoint(start.m_Point, CFX_Path::Point::Type::kMove);
-      new_path->AppendPoint(end.m_Point, CFX_Path::Point::Type::kLine);
+    if (next.type_ != CFX_Path::Point::Type::kLine) {
       continue;
     }
 
-    if (IsFoldingHorizontalLine(prev.m_Point, cur.m_Point, next.m_Point) ||
-        IsFoldingDiagonalLine(prev.m_Point, cur.m_Point, next.m_Point)) {
-      bool use_prev = fabs(cur.m_Point.x - prev.m_Point.x) <
-                      fabs(cur.m_Point.x - next.m_Point.x);
+    const CFX_Path::Point& prev = points[i - 1];
+    const CFX_Path::Point& cur = points[i];
+    if (IsFoldingVerticalLine(prev.point_, cur.point_, next.point_)) {
+      bool use_prev = fabs(cur.point_.y - prev.point_.y) <
+                      fabs(cur.point_.y - next.point_.y);
       const CFX_Path::Point& start = use_prev ? prev : cur;
       const CFX_Path::Point& end = use_prev ? cur : next;
-      new_path->AppendPoint(start.m_Point, CFX_Path::Point::Type::kMove);
-      new_path->AppendPoint(end.m_Point, CFX_Path::Point::Type::kLine);
+      new_path->AppendPoint(start.point_, CFX_Path::Point::Type::kMove);
+      new_path->AppendPoint(end.point_, CFX_Path::Point::Type::kLine);
+      continue;
+    }
+
+    if (IsFoldingHorizontalLine(prev.point_, cur.point_, next.point_) ||
+        IsFoldingDiagonalLine(prev.point_, cur.point_, next.point_)) {
+      bool use_prev = fabs(cur.point_.x - prev.point_.x) <
+                      fabs(cur.point_.x - next.point_.x);
+      const CFX_Path::Point& start = use_prev ? prev : cur;
+      const CFX_Path::Point& end = use_prev ? cur : next;
+      new_path->AppendPoint(start.point_, CFX_Path::Point::Type::kMove);
+      new_path->AppendPoint(end.point_, CFX_Path::Point::Type::kLine);
       continue;
     }
   }
@@ -509,45 +510,45 @@ CFX_Matrix CFX_RenderDevice::GetFlipMatrix(float width,
 void CFX_RenderDevice::SetDeviceDriver(
     std::unique_ptr<RenderDeviceDriverIface> pDriver) {
   DCHECK(pDriver);
-  DCHECK(!m_pDeviceDriver);
-  m_pDeviceDriver = std::move(pDriver);
+  DCHECK(!device_driver_);
+  device_driver_ = std::move(pDriver);
   InitDeviceInfo();
 }
 
 void CFX_RenderDevice::InitDeviceInfo() {
-  m_Width = m_pDeviceDriver->GetDeviceCaps(FXDC_PIXEL_WIDTH);
-  m_Height = m_pDeviceDriver->GetDeviceCaps(FXDC_PIXEL_HEIGHT);
-  m_bpp = m_pDeviceDriver->GetDeviceCaps(FXDC_BITS_PIXEL);
-  m_RenderCaps = m_pDeviceDriver->GetDeviceCaps(FXDC_RENDER_CAPS);
-  m_DeviceType = m_pDeviceDriver->GetDeviceType();
-  m_ClipBox = m_pDeviceDriver->GetClipBox();
+  width_ = device_driver_->GetDeviceCaps(FXDC_PIXEL_WIDTH);
+  height_ = device_driver_->GetDeviceCaps(FXDC_PIXEL_HEIGHT);
+  bpp_ = device_driver_->GetDeviceCaps(FXDC_BITS_PIXEL);
+  render_caps_ = device_driver_->GetDeviceCaps(FXDC_RENDER_CAPS);
+  device_type_ = device_driver_->GetDeviceType();
+  clip_box_ = device_driver_->GetClipBox();
 }
 
 void CFX_RenderDevice::SaveState() {
-  m_pDeviceDriver->SaveState();
+  device_driver_->SaveState();
 }
 
 void CFX_RenderDevice::RestoreState(bool bKeepSaved) {
-  if (m_pDeviceDriver) {
-    m_pDeviceDriver->RestoreState(bKeepSaved);
+  if (device_driver_) {
+    device_driver_->RestoreState(bKeepSaved);
     UpdateClipBox();
   }
 }
 
 int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
-  return m_pDeviceDriver->GetDeviceCaps(caps_id);
+  return device_driver_->GetDeviceCaps(caps_id);
 }
 
 RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBitmap() {
-  return m_pBitmap;
+  return bitmap_;
 }
 
 RetainPtr<const CFX_DIBitmap> CFX_RenderDevice::GetBitmap() const {
-  return m_pBitmap;
+  return bitmap_;
 }
 
 void CFX_RenderDevice::SetBitmap(RetainPtr<CFX_DIBitmap> bitmap) {
-  m_pBitmap = std::move(bitmap);
+  bitmap_ = std::move(bitmap);
 }
 
 bool CFX_RenderDevice::CreateCompatibleBitmap(
@@ -556,19 +557,20 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
     int height) const {
   return pDIB->Create(
       width, height,
-      GetCreateCompatibleBitmapFormat(m_RenderCaps, /*use_argb_premul=*/true));
+      GetCreateCompatibleBitmapFormat(render_caps_, /*use_argb_premul=*/true));
 }
 
 void CFX_RenderDevice::SetBaseClip(const FX_RECT& rect) {
-  m_pDeviceDriver->SetBaseClip(rect);
+  device_driver_->SetBaseClip(rect);
 }
 
 bool CFX_RenderDevice::SetClip_PathFill(
     const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_FillRenderOptions& fill_options) {
-  if (!m_pDeviceDriver->SetClip_PathFill(path, pObject2Device, fill_options))
+  if (!device_driver_->SetClip_PathFill(path, pObject2Device, fill_options)) {
     return false;
+  }
 
   UpdateClipBox();
   return true;
@@ -578,8 +580,9 @@ bool CFX_RenderDevice::SetClip_PathStroke(
     const CFX_Path& path,
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
-  if (!m_pDeviceDriver->SetClip_PathStroke(path, pObject2Device, pGraphState))
+  if (!device_driver_->SetClip_PathStroke(path, pObject2Device, pGraphState)) {
     return false;
+  }
 
   UpdateClipBox();
   return true;
@@ -598,7 +601,7 @@ bool CFX_RenderDevice::SetClip_Rect(const FX_RECT& rect) {
 }
 
 void CFX_RenderDevice::UpdateClipBox() {
-  m_ClipBox = m_pDeviceDriver->GetClipBox();
+  clip_box_ = device_driver_->GetClipBox();
 }
 
 bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
@@ -613,8 +616,8 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
   uint8_t stroke_alpha = pGraphState ? FXARGB_A(stroke_color) : 0;
   pdfium::span<const CFX_Path::Point> points = path.GetPoints();
   if (stroke_alpha == 0 && points.size() == 2) {
-    CFX_PointF pos1 = points[0].m_Point;
-    CFX_PointF pos2 = points[1].m_Point;
+    CFX_PointF pos1 = points[0].point_;
+    CFX_PointF pos2 = points[1].point_;
     if (pObject2Device) {
       pos1 = pObject2Device->Transform(pos1);
       pos2 = pObject2Device->Transform(pos2);
@@ -688,10 +691,10 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
 
   if (fill && stroke_alpha == 0 && !fill_options.stroke &&
       !fill_options.text_mode) {
-    bool adjust = !!m_pDeviceDriver->GetDriverType();
+    bool adjust = !!device_driver_->GetDriverType();
     std::vector<CFX_Path::Point> sub_path;
     for (size_t i = 0; i < points.size(); i++) {
-      CFX_Path::Point::Type point_type = points[i].m_Type;
+      CFX_Path::Point::Type point_type = points[i].type_;
       if (point_type == CFX_Path::Point::Type::kMove) {
         // Process the existing sub path.
         DrawZeroAreaPath(sub_path, pObject2Device, adjust,
@@ -721,19 +724,19 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
 
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
 #if defined(PDF_USE_SKIA)
-    if (m_RenderCaps & FXRC_FILLSTROKE_PATH) {
+    if (render_caps_ & FXRC_FILLSTROKE_PATH) {
       const bool using_skia = CFX_DefaultRenderDevice::UseSkiaRenderer();
       if (using_skia) {
-        m_pDeviceDriver->SetGroupKnockout(true);
+        device_driver_->SetGroupKnockout(true);
       }
       bool draw_fillstroke_path_result =
-          m_pDeviceDriver->DrawPath(path, pObject2Device, pGraphState,
-                                    fill_color, stroke_color, fill_options);
+          device_driver_->DrawPath(path, pObject2Device, pGraphState,
+                                   fill_color, stroke_color, fill_options);
 
       if (using_skia) {
-        // Restore the group knockout status for `m_pDeviceDriver` after
+        // Restore the group knockout status for `device_driver_` after
         // finishing painting a fill-and-stroke path.
-        m_pDeviceDriver->SetGroupKnockout(false);
+        device_driver_->SetGroupKnockout(false);
       }
       return draw_fillstroke_path_result;
     }
@@ -741,8 +744,8 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
     return DrawFillStrokePath(path, pObject2Device, pGraphState, fill_color,
                               stroke_color, fill_options);
   }
-  return m_pDeviceDriver->DrawPath(path, pObject2Device, pGraphState,
-                                   fill_color, stroke_color, fill_options);
+  return device_driver_->DrawPath(path, pObject2Device, pGraphState, fill_color,
+                                  stroke_color, fill_options);
 }
 
 // This can be removed once PDFium entirely relies on Skia
@@ -753,8 +756,9 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     uint32_t fill_color,
     uint32_t stroke_color,
     const CFX_FillRenderOptions& fill_options) {
-  if (!(m_RenderCaps & FXRC_GET_BITS))
+  if (!(render_caps_ & FXRC_GET_BITS)) {
     return false;
+  }
   CFX_FloatRect bbox;
   if (pGraphState) {
     bbox = path.GetBoundingBoxForStrokePath(pGraphState->line_width(),
@@ -777,8 +781,9 @@ bool CFX_RenderDevice::DrawFillStrokePath(
   if (bitmap->IsAlphaFormat()) {
     backdrop->Copy(bitmap);
   } else {
-    if (!m_pDeviceDriver->GetDIBits(bitmap, rect.left, rect.top))
+    if (!device_driver_->GetDIBits(bitmap, rect.left, rect.top)) {
       return false;
+    }
     backdrop->Copy(bitmap);
   }
   CFX_DefaultRenderDevice bitmap_device;
@@ -794,16 +799,16 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     return false;
   }
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
-  return m_pDeviceDriver->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
-                                    rect.left, rect.top, BlendMode::kNormal);
+  return device_driver_->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
+                                   rect.left, rect.top, BlendMode::kNormal);
 }
 
 bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
-  if (m_pDeviceDriver->FillRect(rect, fill_color)) {
+  if (device_driver_->FillRect(rect, fill_color)) {
     return true;
   }
 
-  if (!(m_RenderCaps & FXRC_GET_BITS)) {
+  if (!(render_caps_ & FXRC_GET_BITS)) {
     return false;
   }
 
@@ -812,7 +817,7 @@ bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
     return false;
   }
 
-  if (!m_pDeviceDriver->GetDIBits(bitmap, rect.left, rect.top)) {
+  if (!device_driver_->GetDIBits(bitmap, rect.left, rect.top)) {
     return false;
   }
 
@@ -821,8 +826,8 @@ bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
   }
 
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
-  m_pDeviceDriver->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
-                             rect.left, rect.top, BlendMode::kNormal);
+  device_driver_->SetDIBits(std::move(bitmap), /*color=*/0, src_rect, rect.left,
+                            rect.top, BlendMode::kNormal);
   return true;
 }
 
@@ -832,15 +837,15 @@ bool CFX_RenderDevice::DrawCosmeticLine(
     uint32_t color,
     const CFX_FillRenderOptions& fill_options) {
   if ((color >= 0xff000000) &&
-      m_pDeviceDriver->DrawCosmeticLine(ptMoveTo, ptLineTo, color)) {
+      device_driver_->DrawCosmeticLine(ptMoveTo, ptLineTo, color)) {
     return true;
   }
   CFX_GraphStateData graph_state;
   CFX_Path path;
   path.AppendPoint(ptMoveTo, CFX_Path::Point::Type::kMove);
   path.AppendPoint(ptLineTo, CFX_Path::Point::Type::kLine);
-  return m_pDeviceDriver->DrawPath(path, nullptr, &graph_state, 0, color,
-                                   fill_options);
+  return device_driver_->DrawPath(path, nullptr, &graph_state, 0, color,
+                                  fill_options);
 }
 
 void CFX_RenderDevice::DrawZeroAreaPath(
@@ -875,15 +880,15 @@ void CFX_RenderDevice::DrawZeroAreaPath(
   path_options.zero_area = true;
   path_options.aliased_path = aliased_path;
 
-  m_pDeviceDriver->DrawPath(new_path, new_matrix, &graph_state, 0, stroke_color,
-                            path_options);
+  device_driver_->DrawPath(new_path, new_matrix, &graph_state, 0, stroke_color,
+                           path_options);
 }
 
 bool CFX_RenderDevice::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                  int left,
                                  int top) const {
-  return (m_RenderCaps & FXRC_GET_BITS) &&
-         m_pDeviceDriver->GetDIBits(std::move(bitmap), left, top);
+  return (render_caps_ & FXRC_GET_BITS) &&
+         device_driver_->GetDIBits(std::move(bitmap), left, top);
 }
 
 bool CFX_RenderDevice::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
@@ -893,7 +898,7 @@ bool CFX_RenderDevice::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
 }
 
 RetainPtr<const CFX_DIBitmap> CFX_RenderDevice::GetBackDrop() const {
-  return m_pDeviceDriver->GetBackDrop();
+  return device_driver_->GetBackDrop();
 }
 
 bool CFX_RenderDevice::SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
@@ -903,21 +908,21 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
   DCHECK(!bitmap->IsMaskFormat());
   FX_RECT dest_rect(left, top, left + bitmap->GetWidth(),
                     top + bitmap->GetHeight());
-  dest_rect.Intersect(m_ClipBox);
+  dest_rect.Intersect(clip_box_);
   if (dest_rect.IsEmpty())
     return true;
 
   FX_RECT src_rect(dest_rect.left - left, dest_rect.top - top,
                    dest_rect.left - left + dest_rect.Width(),
                    dest_rect.top - top + dest_rect.Height());
-  if ((blend_mode == BlendMode::kNormal || (m_RenderCaps & FXRC_BLEND_MODE)) &&
-      (!bitmap->IsAlphaFormat() || (m_RenderCaps & FXRC_ALPHA_IMAGE))) {
-    return m_pDeviceDriver->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
-                                      dest_rect.left, dest_rect.top,
-                                      blend_mode);
+  if ((blend_mode == BlendMode::kNormal || (render_caps_ & FXRC_BLEND_MODE)) &&
+      (!bitmap->IsAlphaFormat() || (render_caps_ & FXRC_ALPHA_IMAGE))) {
+    return device_driver_->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
+                                     dest_rect.left, dest_rect.top, blend_mode);
   }
-  if (!(m_RenderCaps & FXRC_GET_BITS))
+  if (!(render_caps_ & FXRC_GET_BITS)) {
     return false;
+  }
 
   int bg_pixel_width = dest_rect.Width();
   int bg_pixel_height = dest_rect.Height();
@@ -926,8 +931,9 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
                           FXDIB_Format::kBgrx)) {
     return false;
   }
-  if (!m_pDeviceDriver->GetDIBits(background, dest_rect.left, dest_rect.top))
+  if (!device_driver_->GetDIBits(background, dest_rect.left, dest_rect.top)) {
     return false;
+  }
 
   if (!background->CompositeBitmap(0, 0, bg_pixel_width, bg_pixel_height,
                                    std::move(bitmap), src_rect.left,
@@ -935,9 +941,9 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
     return false;
   }
   FX_RECT rect(0, 0, bg_pixel_width, bg_pixel_height);
-  return m_pDeviceDriver->SetDIBits(std::move(background), /*color=*/0, rect,
-                                    dest_rect.left, dest_rect.top,
-                                    BlendMode::kNormal);
+  return device_driver_->SetDIBits(std::move(background), /*color=*/0, rect,
+                                   dest_rect.left, dest_rect.top,
+                                   BlendMode::kNormal);
 }
 
 bool CFX_RenderDevice::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
@@ -959,9 +965,9 @@ bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
     const FXDIB_ResampleOptions& options,
     BlendMode blend_mode) {
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
-  FX_RECT clip_box = m_ClipBox;
+  FX_RECT clip_box = clip_box_;
   clip_box.Intersect(dest_rect);
-  return clip_box.IsEmpty() || m_pDeviceDriver->StretchDIBits(
+  return clip_box.IsEmpty() || device_driver_->StretchDIBits(
                                    std::move(bitmap), 0, left, top, dest_width,
                                    dest_height, &clip_box, options, blend_mode);
 }
@@ -971,8 +977,8 @@ bool CFX_RenderDevice::SetBitMask(RetainPtr<const CFX_DIBBase> bitmap,
                                   int top,
                                   uint32_t argb) {
   FX_RECT src_rect(0, 0, bitmap->GetWidth(), bitmap->GetHeight());
-  return m_pDeviceDriver->SetDIBits(std::move(bitmap), argb, src_rect, left,
-                                    top, BlendMode::kNormal);
+  return device_driver_->SetDIBits(std::move(bitmap), argb, src_rect, left, top,
+                                   BlendMode::kNormal);
 }
 
 bool CFX_RenderDevice::StretchBitMask(RetainPtr<CFX_DIBBase> bitmap,
@@ -994,11 +1000,11 @@ bool CFX_RenderDevice::StretchBitMaskWithFlags(
     uint32_t argb,
     const FXDIB_ResampleOptions& options) {
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
-  FX_RECT clip_box = m_ClipBox;
+  FX_RECT clip_box = clip_box_;
   clip_box.Intersect(dest_rect);
-  return m_pDeviceDriver->StretchDIBits(std::move(bitmap), argb, left, top,
-                                        dest_width, dest_height, &clip_box,
-                                        options, BlendMode::kNormal);
+  return device_driver_->StretchDIBits(std::move(bitmap), argb, left, top,
+                                       dest_width, dest_height, &clip_box,
+                                       options, BlendMode::kNormal);
 }
 
 RenderDeviceDriverIface::StartResult CFX_RenderDevice::StartDIBits(
@@ -1018,13 +1024,13 @@ RenderDeviceDriverIface::StartResult CFX_RenderDevice::StartDIBitsWithBlend(
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
     BlendMode blend_mode) {
-  return m_pDeviceDriver->StartDIBits(std::move(bitmap), alpha, argb, matrix,
-                                      options, blend_mode);
+  return device_driver_->StartDIBits(std::move(bitmap), alpha, argb, matrix,
+                                     options, blend_mode);
 }
 
 bool CFX_RenderDevice::ContinueDIBits(CFX_AggImageRenderer* handle,
                                       PauseIndicatorIface* pPause) {
-  return m_pDeviceDriver->ContinueDIBits(handle, pPause);
+  return device_driver_->ContinueDIBits(handle, pPause);
 }
 
 #if defined(PDF_USE_SKIA)
@@ -1032,7 +1038,7 @@ bool CFX_RenderDevice::DrawShading(const CPDF_ShadingPattern& pattern,
                                    const CFX_Matrix& matrix,
                                    const FX_RECT& clip_rect,
                                    int alpha) {
-  return m_pDeviceDriver->DrawShading(pattern, matrix, clip_rect, alpha);
+  return device_driver_->DrawShading(pattern, matrix, clip_rect, alpha);
 }
 
 bool CFX_RenderDevice::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
@@ -1041,12 +1047,12 @@ bool CFX_RenderDevice::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
                                        int top,
                                        float alpha,
                                        BlendMode blend_type) {
-  return m_pDeviceDriver->SetBitsWithMask(std::move(bitmap), std::move(mask),
-                                          left, top, alpha, blend_type);
+  return device_driver_->SetBitsWithMask(std::move(bitmap), std::move(mask),
+                                         left, top, alpha, blend_type);
 }
 
 void CFX_RenderDevice::SyncInternalBitmaps() {
-  m_pDeviceDriver->SyncInternalBitmaps();
+  device_driver_->SyncInternalBitmaps();
 }
 #endif  // defined(PDF_USE_SKIA)
 
@@ -1064,7 +1070,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   // RenderDeviceDriverIface. But now it only affects Skia rendering.
   CFX_TextRenderOptions text_options(options);
   if (is_text_smooth) {
-    if (GetDeviceType() == DeviceType::kDisplay && m_bpp > 1) {
+    if (GetDeviceType() == DeviceType::kDisplay && bpp_ > 1) {
       if (!CFX_GEModule::Get()->GetFontMgr()->FTLibrarySupportsHinting()) {
         // Some Freetype implementations (like the one packaged with Fedora) do
         // not support hinting due to patents 6219025, 6239783, 6307566,
@@ -1079,14 +1085,14 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
           // anti-aliasing as well.
           text_options.aliasing_type = CFX_TextRenderOptions::kAntiAliasing;
         }
-      } else if ((m_RenderCaps & FXRC_ALPHA_OUTPUT)) {
+      } else if ((render_caps_ & FXRC_ALPHA_OUTPUT)) {
         // Whether Skia uses LCD optimization should strictly follow the
         // rendering options provided by |text_options|. No change needs to be
         // done for |text_options| here.
         anti_alias = FT_RENDER_MODE_LCD;
         normalize = true;
-      } else if (m_bpp < 16) {
-        // This case doesn't apply to Skia since Skia always have |m_bpp| = 32.
+      } else if (bpp_ < 16) {
+        // This case doesn't apply to Skia since Skia always have |bpp_| = 32.
         anti_alias = FT_RENDER_MODE_NORMAL;
       } else {
         // Whether Skia uses LCD optimization should strictly follow the
@@ -1110,8 +1116,8 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
 #if BUILDFLAG(IS_WIN)
   if (GetDeviceType() == DeviceType::kPrinter) {
     if (ShouldDrawDeviceText(pFont, options) &&
-        m_pDeviceDriver->DrawDeviceText(pCharPos, pFont, mtText2Device,
-                                        font_size, fill_color, text_options)) {
+        device_driver_->DrawDeviceText(pCharPos, pFont, mtText2Device,
+                                       font_size, fill_color, text_options)) {
       return true;
     }
     if (FXARGB_A(fill_color) < 255) {
@@ -1124,8 +1130,8 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
 
   if (try_native_text && options.native_text) {
     if (ShouldDrawDeviceText(pFont, options) &&
-        m_pDeviceDriver->DrawDeviceText(pCharPos, pFont, mtText2Device,
-                                        font_size, fill_color, text_options)) {
+        device_driver_->DrawDeviceText(pCharPos, pFont, mtText2Device,
+                                       font_size, fill_color, text_options)) {
       return true;
     }
   }
@@ -1144,22 +1150,22 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   std::vector<TextGlyphPos> glyphs(pCharPos.size());
   for (auto [charpos, glyph] :
        fxcrt::Zip(pCharPos, pdfium::make_span(glyphs))) {
-    glyph.m_fDeviceOrigin = text2Device.Transform(charpos.m_Origin);
-    glyph.m_Origin.x = anti_alias < FT_RENDER_MODE_LCD
-                           ? FXSYS_roundf(glyph.m_fDeviceOrigin.x)
-                           : static_cast<int>(floor(glyph.m_fDeviceOrigin.x));
-    glyph.m_Origin.y = FXSYS_roundf(glyph.m_fDeviceOrigin.y);
+    glyph.device_origin_ = text2Device.Transform(charpos.origin_);
+    glyph.origin_.x = anti_alias < FT_RENDER_MODE_LCD
+                          ? FXSYS_roundf(glyph.device_origin_.x)
+                          : static_cast<int>(floor(glyph.device_origin_.x));
+    glyph.origin_.y = FXSYS_roundf(glyph.device_origin_.y);
 
     CFX_Matrix matrix = charpos.GetEffectiveMatrix(char2device);
-    glyph.m_pGlyph = pFont->LoadGlyphBitmap(
-        charpos.m_GlyphIndex, charpos.m_bFontStyle, matrix,
-        charpos.m_FontCharWidth, anti_alias, &text_options);
+    glyph.glyph_ = pFont->LoadGlyphBitmap(
+        charpos.glyph_index_, charpos.font_style_, matrix,
+        charpos.font_char_width_, anti_alias, &text_options);
   }
   if (anti_alias < FT_RENDER_MODE_LCD && glyphs.size() > 1)
     AdjustGlyphSpace(&glyphs);
 
   FX_RECT bmp_rect = GetGlyphsBBox(glyphs, anti_alias);
-  bmp_rect.Intersect(m_ClipBox);
+  bmp_rect.Intersect(clip_box_);
   if (bmp_rect.IsEmpty())
     return true;
 
@@ -1172,14 +1178,15 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k1bppMask))
       return false;
     for (const TextGlyphPos& glyph : glyphs) {
-      if (!glyph.m_pGlyph)
+      if (!glyph.glyph_) {
         continue;
+      }
 
       std::optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
       if (!point.has_value())
         continue;
 
-      const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.m_pGlyph->GetBitmap();
+      const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.glyph_->GetBitmap();
       bitmap->CompositeOneBPPMask(point.value().x, point.value().y,
                                   pGlyph->GetWidth(), pGlyph->GetHeight(),
                                   pGlyph, 0, 0);
@@ -1188,7 +1195,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
                       fill_color);
   }
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (m_bpp == 8) {
+  if (bpp_ == 8) {
     if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k8bppMask))
       return false;
   } else {
@@ -1196,7 +1203,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     // DrawNormalTextHelper() supports `FXDIB_Format::kBgraPremul`.
     if (!bitmap->Create(pixel_width, pixel_height,
                         GetCreateCompatibleBitmapFormat(
-                            m_RenderCaps, /*use_argb_premul=*/false))) {
+                            render_caps_, /*use_argb_premul=*/false))) {
       return false;
     }
   }
@@ -1212,14 +1219,15 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   }
 
   for (const TextGlyphPos& glyph : glyphs) {
-    if (!glyph.m_pGlyph)
+    if (!glyph.glyph_) {
       continue;
+    }
 
     std::optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
     if (!point.has_value())
       continue;
 
-    const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.m_pGlyph->GetBitmap();
+    const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.glyph_->GetBitmap();
     int ncols = pGlyph->GetWidth();
     int nrows = pGlyph->GetHeight();
     if (anti_alias == FT_RENDER_MODE_NORMAL) {
@@ -1231,7 +1239,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
       continue;
     }
     ncols /= 3;
-    int x_subpixel = static_cast<int>(glyph.m_fDeviceOrigin.x * 3) % 3;
+    int x_subpixel = static_cast<int>(glyph.device_origin_.x * 3) % 3;
     int start_col = std::max(point->x, 0);
     FX_SAFE_INT32 end_col_safe = point->x;
     end_col_safe += ncols;
@@ -1266,12 +1274,12 @@ bool CFX_RenderDevice::DrawTextPath(pdfium::span<const TextCharPos> pCharPos,
                                     const CFX_FillRenderOptions& fill_options) {
   for (const auto& charpos : pCharPos) {
     const CFX_Path* pPath =
-        pFont->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
+        pFont->LoadGlyphPath(charpos.glyph_index_, charpos.font_char_width_);
     if (!pPath)
       continue;
 
-    CFX_Matrix matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
-                      charpos.m_Origin.y);
+    CFX_Matrix matrix(font_size, 0, 0, font_size, charpos.origin_.x,
+                      charpos.origin_.y);
     matrix = charpos.GetEffectiveMatrix(matrix);
     matrix.Concat(mtText2User);
 
@@ -1501,18 +1509,18 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
 }
 
 bool CFX_RenderDevice::MultiplyAlpha(float alpha) {
-  return m_pDeviceDriver->MultiplyAlpha(alpha);
+  return device_driver_->MultiplyAlpha(alpha);
 }
 
 bool CFX_RenderDevice::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
-  return m_pDeviceDriver->MultiplyAlphaMask(std::move(mask));
+  return device_driver_->MultiplyAlphaMask(std::move(mask));
 }
 
 CFX_RenderDevice::StateRestorer::StateRestorer(CFX_RenderDevice* pDevice)
-    : m_pDevice(pDevice) {
-  m_pDevice->SaveState();
+    : device_(pDevice) {
+  device_->SaveState();
 }
 
 CFX_RenderDevice::StateRestorer::~StateRestorer() {
-  m_pDevice->RestoreState(false);
+  device_->RestoreState(false);
 }

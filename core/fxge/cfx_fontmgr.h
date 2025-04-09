@@ -31,7 +31,7 @@ class CFX_FontMgr {
    public:
     CONSTRUCT_VIA_MAKE_RETAIN;
 
-    pdfium::span<const uint8_t> FontData() const { return m_pFontData; }
+    pdfium::span<const uint8_t> FontData() const { return font_data_; }
     void SetFace(size_t index, CFX_Face* face);
     CFX_Face* GetFace(size_t index) const;
 
@@ -39,8 +39,8 @@ class CFX_FontMgr {
     explicit FontDesc(FixedSizeDataVector<uint8_t> data);
     ~FontDesc() override;
 
-    const FixedSizeDataVector<uint8_t> m_pFontData;
-    std::array<ObservedPtr<CFX_Face>, 16> m_TTCFaces;
+    const FixedSizeDataVector<uint8_t> font_data_;
+    std::array<ObservedPtr<CFX_Face>, 16> ttc_faces_;
   };
 
   // `index` must be less than `CFX_FontMapper::kNumStandardFonts`.
@@ -69,21 +69,21 @@ class CFX_FontMgr {
                                    size_t face_index);
 
   // Always present.
-  CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }
+  CFX_FontMapper* GetBuiltinMapper() const { return builtin_mapper_.get(); }
 
-  FXFT_LibraryRec* GetFTLibrary() const { return m_FTLibrary.get(); }
-  bool FTLibrarySupportsHinting() const { return m_FTLibrarySupportsHinting; }
+  FXFT_LibraryRec* GetFTLibrary() const { return ft_library_.get(); }
+  bool FTLibrarySupportsHinting() const { return ft_library_supports_hinting_; }
 
  private:
   bool FreeTypeVersionSupportsHinting() const;
   bool SetLcdFilterMode() const;
 
-  // Must come before |m_pBuiltinMapper| and |m_FaceMap|.
-  ScopedFXFTLibraryRec const m_FTLibrary;
-  std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
-  std::map<std::tuple<ByteString, int, bool>, ObservedPtr<FontDesc>> m_FaceMap;
-  std::map<std::tuple<size_t, uint32_t>, ObservedPtr<FontDesc>> m_TTCFaceMap;
-  const bool m_FTLibrarySupportsHinting;
+  // Must come before |builtin_mapper_| and |face_map_|.
+  ScopedFXFTLibraryRec const ft_library_;
+  std::unique_ptr<CFX_FontMapper> builtin_mapper_;
+  std::map<std::tuple<ByteString, int, bool>, ObservedPtr<FontDesc>> face_map_;
+  std::map<std::tuple<size_t, uint32_t>, ObservedPtr<FontDesc>> ttc_face_map_;
+  const bool ft_library_supports_hinting_;
 };
 
 #endif  // CORE_FXGE_CFX_FONTMGR_H_

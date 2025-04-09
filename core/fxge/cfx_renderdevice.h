@@ -44,7 +44,7 @@ class CFX_RenderDevice {
     ~StateRestorer();
 
    private:
-    UnownedPtr<CFX_RenderDevice> m_pDevice;
+    UnownedPtr<CFX_RenderDevice> device_;
   };
 
   virtual ~CFX_RenderDevice();
@@ -57,17 +57,17 @@ class CFX_RenderDevice {
   void SaveState();
   void RestoreState(bool bKeepSaved);
 
-  int GetWidth() const { return m_Width; }
-  int GetHeight() const { return m_Height; }
-  DeviceType GetDeviceType() const { return m_DeviceType; }
-  int GetRenderCaps() const { return m_RenderCaps; }
+  int GetWidth() const { return width_; }
+  int GetHeight() const { return height_; }
+  DeviceType GetDeviceType() const { return device_type_; }
+  int GetRenderCaps() const { return render_caps_; }
   int GetDeviceCaps(int id) const;
   RetainPtr<CFX_DIBitmap> GetBitmap();
   RetainPtr<const CFX_DIBitmap> GetBitmap() const;
   [[nodiscard]] bool CreateCompatibleBitmap(const RetainPtr<CFX_DIBitmap>& pDIB,
                                             int width,
                                             int height) const;
-  const FX_RECT& GetClipBox() const { return m_ClipBox; }
+  const FX_RECT& GetClipBox() const { return clip_box_; }
   void SetBaseClip(const FX_RECT& rect);
   bool SetClip_PathFill(const CFX_Path& path,
                         const CFX_Matrix* pObject2Device,
@@ -211,7 +211,7 @@ class CFX_RenderDevice {
 
   void SetDeviceDriver(std::unique_ptr<RenderDeviceDriverIface> pDriver);
   RenderDeviceDriverIface* GetDeviceDriver() const {
-    return m_pDeviceDriver.get();
+    return device_driver_.get();
   }
 
  private:
@@ -234,14 +234,14 @@ class CFX_RenderDevice {
                         uint32_t fill_color,
                         uint8_t fill_alpha);
 
-  RetainPtr<CFX_DIBitmap> m_pBitmap;
-  int m_Width = 0;
-  int m_Height = 0;
-  int m_bpp = 0;
-  int m_RenderCaps = 0;
-  DeviceType m_DeviceType = DeviceType::kDisplay;
-  FX_RECT m_ClipBox;
-  std::unique_ptr<RenderDeviceDriverIface> m_pDeviceDriver;
+  RetainPtr<CFX_DIBitmap> bitmap_;
+  int width_ = 0;
+  int height_ = 0;
+  int bpp_ = 0;
+  int render_caps_ = 0;
+  DeviceType device_type_ = DeviceType::kDisplay;
+  FX_RECT clip_box_;
+  std::unique_ptr<RenderDeviceDriverIface> device_driver_;
 };
 
 #endif  // CORE_FXGE_CFX_RENDERDEVICE_H_

@@ -69,7 +69,7 @@ class CFX_PSRenderer {
   void SetClip_PathStroke(const CFX_Path& path,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
-  FX_RECT GetClipBox() const { return m_ClipBox; }
+  FX_RECT GetClipBox() const { return clip_box_; }
   bool DrawPath(const CFX_Path& path,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,
@@ -163,20 +163,20 @@ class CFX_PSRenderer {
   void WriteStream(fxcrt::ostringstream& stream);
   void WriteString(ByteStringView str);
 
-  bool m_bInited = false;
-  bool m_bGraphStateSet = false;
-  bool m_bColorSet = false;
-  std::optional<RenderingLevel> m_Level;
-  uint32_t m_LastColor = 0;
-  FX_RECT m_ClipBox;
-  CFX_GraphStateData m_CurGraphState;
-  UnownedPtr<CFX_PSFontTracker> const m_pFontTracker;
-  UnownedPtr<const EncoderIface> const m_pEncoderIface;
-  RetainPtr<IFX_RetainableWriteStream> m_pStream;
-  std::vector<std::unique_ptr<Glyph>> m_PSFontList;
-  fxcrt::ostringstream m_PreambleOutput;
-  fxcrt::ostringstream m_Output;
-  std::vector<FX_RECT> m_ClipBoxStack;
+  bool inited_ = false;
+  bool graph_state_set_ = false;
+  bool color_set_ = false;
+  std::optional<RenderingLevel> level_;
+  uint32_t last_color_ = 0;
+  FX_RECT clip_box_;
+  CFX_GraphStateData cur_graph_state_;
+  UnownedPtr<CFX_PSFontTracker> const font_tracker_;
+  UnownedPtr<const EncoderIface> const encoder_iface_;
+  RetainPtr<IFX_RetainableWriteStream> stream_;
+  std::vector<std::unique_ptr<Glyph>> psfont_list_;
+  fxcrt::ostringstream preamble_output_;
+  fxcrt::ostringstream output_;
+  std::vector<FX_RECT> clip_box_stack_;
 };
 
 #endif  // CORE_FXGE_WIN32_CFX_PSRENDERER_H_

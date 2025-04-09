@@ -932,7 +932,7 @@ void CPDF_StreamContentParser::Handle_ClosePath() {
   if (m_PathStart.x != m_PathCurrent.x || m_PathStart.y != m_PathCurrent.y) {
     AddPathPointAndClose(m_PathStart, CFX_Path::Point::Type::kLine);
   } else {
-    m_PathPoints.back().m_CloseFigure = true;
+    m_PathPoints.back().close_figure_ = true;
   }
 }
 
@@ -1465,8 +1465,8 @@ void CPDF_StreamContentParser::AddPathPoint(const CFX_PointF& point,
   // If the path point is the same move as the previous one and neither of them
   // closes the path, then just skip it.
   if (type == CFX_Path::Point::Type::kMove && !m_PathPoints.empty() &&
-      !m_PathPoints.back().m_CloseFigure &&
-      m_PathPoints.back().m_Type == type && m_PathCurrent == point) {
+      !m_PathPoints.back().close_figure_ && m_PathPoints.back().type_ == type &&
+      m_PathCurrent == point) {
     return;
   }
 
@@ -1475,7 +1475,7 @@ void CPDF_StreamContentParser::AddPathPoint(const CFX_PointF& point,
     m_PathStart = point;
     if (!m_PathPoints.empty() &&
         m_PathPoints.back().IsTypeAndOpen(CFX_Path::Point::Type::kMove)) {
-      m_PathPoints.back().m_Point = point;
+      m_PathPoints.back().point_ = point;
       return;
     }
   } else if (m_PathPoints.empty()) {
@@ -1515,7 +1515,7 @@ void CPDF_StreamContentParser::AddPathObject(
     }
 
     CFX_Path::Point& point = path_points.front();
-    if (point.m_Type != CFX_Path::Point::Type::kMove || !point.m_CloseFigure ||
+    if (point.type_ != CFX_Path::Point::Type::kMove || !point.close_figure_ ||
         m_pCurStates->graph_state().GetLineCap() !=
             CFX_GraphStateData::LineCap::kRound) {
       return;
@@ -1525,8 +1525,8 @@ void CPDF_StreamContentParser::AddPathObject(
     // gets closed, we can treat it as drawing a path from this point to itself
     // and closing the path. This should not apply to butt line cap or
     // projecting square line cap since they should not be rendered.
-    point.m_CloseFigure = false;
-    path_points.emplace_back(point.m_Point, CFX_Path::Point::Type::kLine,
+    point.close_figure_ = false;
+    path_points.emplace_back(point.point_, CFX_Path::Point::Type::kLine,
                              /*close=*/true);
   }
 
@@ -1535,10 +1535,11 @@ void CPDF_StreamContentParser::AddPathObject(
 
   CPDF_Path path;
   for (const auto& point : path_points) {
-    if (point.m_CloseFigure)
-      path.AppendPointAndClose(point.m_Point, point.m_Type);
-    else
-      path.AppendPoint(point.m_Point, point.m_Type);
+    if (point.close_figure_) {
+      path.AppendPointAndClose(point.point_, point.type_);
+    } else {
+      path.AppendPoint(point.point_, point.type_);
+    }
   }
 
   CFX_Matrix matrix =

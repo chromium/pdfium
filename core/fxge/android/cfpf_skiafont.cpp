@@ -19,23 +19,25 @@
 CFPF_SkiaFont::CFPF_SkiaFont(CFPF_SkiaFontMgr* pFontMgr,
                              const CFPF_SkiaPathFont* pFont,
                              FX_Charset uCharset)
-    : m_pFontMgr(pFontMgr),
-      m_pFont(pFont),
-      m_Face(m_pFontMgr->GetFontFace(m_pFont->path(), m_pFont->face_index())),
-      m_uCharset(uCharset) {}
+    : font_mgr_(pFontMgr),
+      font_(pFont),
+      face_(font_mgr_->GetFontFace(font_->path(), font_->face_index())),
+      charset_(uCharset) {}
 
 CFPF_SkiaFont::~CFPF_SkiaFont() = default;
 
 ByteString CFPF_SkiaFont::GetFamilyName() {
-  if (!m_Face)
+  if (!face_) {
     return ByteString();
-  return m_Face->GetFamilyName();
+  }
+  return face_->GetFamilyName();
 }
 
 uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
                                     pdfium::span<uint8_t> pBuffer) {
-  if (!m_Face)
+  if (!face_) {
     return 0;
+  }
 
-  return pdfium::checked_cast<uint32_t>(m_Face->GetSfntTable(dwTable, pBuffer));
+  return pdfium::checked_cast<uint32_t>(face_->GetSfntTable(dwTable, pBuffer));
 }

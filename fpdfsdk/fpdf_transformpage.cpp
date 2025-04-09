@@ -76,22 +76,22 @@ void OutputPath(fxcrt::ostringstream& buf, CPDF_Path path) {
 
   pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   if (path.IsRect()) {
-    CFX_PointF diff = points[2].m_Point - points[0].m_Point;
-    buf << points[0].m_Point.x << " " << points[0].m_Point.y << " " << diff.x
+    CFX_PointF diff = points[2].point_ - points[0].point_;
+    buf << points[0].point_.x << " " << points[0].point_.y << " " << diff.x
         << " " << diff.y << " re\n";
     return;
   }
 
   for (size_t i = 0; i < points.size(); ++i) {
-    buf << points[i].m_Point.x << " " << points[i].m_Point.y;
-    CFX_Path::Point::Type point_type = points[i].m_Type;
+    buf << points[i].point_.x << " " << points[i].point_.y;
+    CFX_Path::Point::Type point_type = points[i].type_;
     if (point_type == CFX_Path::Point::Type::kMove) {
       buf << " m\n";
     } else if (point_type == CFX_Path::Point::Type::kBezier) {
-      buf << " " << points[i + 1].m_Point.x << " " << points[i + 1].m_Point.y
-          << " " << points[i + 2].m_Point.x << " " << points[i + 2].m_Point.y;
+      buf << " " << points[i + 1].point_.x << " " << points[i + 1].point_.y
+          << " " << points[i + 2].point_.x << " " << points[i + 2].point_.y;
       buf << " c";
-      if (points[i + 2].m_CloseFigure) {
+      if (points[i + 2].close_figure_) {
         buf << " h";
       }
       buf << "\n";
@@ -99,7 +99,7 @@ void OutputPath(fxcrt::ostringstream& buf, CPDF_Path path) {
       i += 2;
     } else if (point_type == CFX_Path::Point::Type::kLine) {
       buf << " l";
-      if (points[i].m_CloseFigure) {
+      if (points[i].close_figure_) {
         buf << " h";
       }
       buf << "\n";

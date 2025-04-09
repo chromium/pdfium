@@ -1063,18 +1063,18 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
   }
 
   CFX_Font* pCfxFont;
-  if (pos[0].m_FallbackFontPosition == -1) {
+  if (pos[0].fallback_font_position_ == -1) {
     pCfxFont = pFont->GetFont();
     DCHECK(pCfxFont);  // Never null.
   } else {
-    pCfxFont = pFont->GetFontFallback(pos[0].m_FallbackFontPosition);
+    pCfxFont = pFont->GetFontFallback(pos[0].fallback_font_position_);
     if (!pCfxFont) {
       return nullptr;
     }
   }
 
   const CFX_Path* pPath =
-      pCfxFont->LoadGlyphPath(pos[0].m_GlyphIndex, pos[0].m_FontCharWidth);
+      pCfxFont->LoadGlyphPath(pos[0].glyph_index_, pos[0].font_char_width_);
 
   return FPDFGlyphPathFromCFXPath(pPath);
 }

@@ -50,25 +50,25 @@ class CFX_AggBitmapComposer final : public ScanlineComposerIface {
                  pdfium::span<const uint8_t> clip_scan);
   void ComposeScanlineV(int line, pdfium::span<const uint8_t> scanline);
 
-  RetainPtr<CFX_DIBitmap> m_pBitmap;
-  UnownedPtr<const CFX_AggClipRgn> m_pClipRgn;
-  FXDIB_Format m_SrcFormat;
-  int m_DestLeft;
-  int m_DestTop;
-  int m_DestWidth;
-  int m_DestHeight;
-  float m_Alpha;
-  uint32_t m_MaskColor;
-  RetainPtr<CFX_DIBitmap> m_pClipMask;
-  CFX_ScanlineCompositor m_Compositor;
-  bool m_bVertical;
-  bool m_bFlipX;
-  bool m_bFlipY;
-  bool m_bRgbByteOrder = false;
-  BlendMode m_BlendMode = BlendMode::kNormal;
-  DataVector<uint8_t> m_pScanlineV;
-  DataVector<uint8_t> m_pClipScanV;
-  DataVector<uint8_t> m_pAddClipScan;
+  RetainPtr<CFX_DIBitmap> bitmap_;
+  UnownedPtr<const CFX_AggClipRgn> clip_rgn_;
+  FXDIB_Format src_format_;
+  int dest_left_;
+  int dest_top_;
+  int dest_width_;
+  int dest_height_;
+  float alpha_;
+  uint32_t mask_color_;
+  RetainPtr<CFX_DIBitmap> clip_mask_;
+  CFX_ScanlineCompositor compositor_;
+  bool vertical_;
+  bool flip_x_;
+  bool flip_y_;
+  bool rgb_byte_order_ = false;
+  BlendMode blend_mode_ = BlendMode::kNormal;
+  DataVector<uint8_t> scanline_v_;
+  DataVector<uint8_t> clip_scan_v_;
+  DataVector<uint8_t> add_clip_scan_;
 };
 
 #endif  // CORE_FXGE_AGG_CFX_AGG_BITMAPCOMPOSER_H_

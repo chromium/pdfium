@@ -41,10 +41,10 @@ class CFX_GraphState {
   void SetMiterLimit(float limit);
 
   // FIXME(tsepez): remove when all GraphStateData usage gone.
-  const CFX_GraphStateData* GetObject() const { return m_Ref.GetObject(); }
+  const CFX_GraphStateData* GetObject() const { return ref_.GetObject(); }
 
  private:
-  SharedCopyOnWrite<CFX_RetainableGraphStateData> m_Ref;
+  SharedCopyOnWrite<CFX_RetainableGraphStateData> ref_;
 };
 
 #endif  // CORE_FXGE_CFX_GRAPHSTATE_H_

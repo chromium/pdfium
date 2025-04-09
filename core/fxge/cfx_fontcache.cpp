@@ -17,7 +17,7 @@ CFX_FontCache::~CFX_FontCache() = default;
 RetainPtr<CFX_GlyphCache> CFX_FontCache::GetGlyphCache(const CFX_Font* pFont) {
   RetainPtr<CFX_Face> face = pFont->GetFace();
   const bool bExternal = !face;
-  auto& map = bExternal ? m_ExtGlyphCacheMap : m_GlyphCacheMap;
+  auto& map = bExternal ? ext_glyph_cache_map_ : glyph_cache_map_;
   auto it = map.find(face.Get());
   if (it != map.end() && it->second)
     return pdfium::WrapRetain(it->second.Get());

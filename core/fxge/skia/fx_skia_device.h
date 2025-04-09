@@ -127,33 +127,33 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
     CharDetail();
     ~CharDetail();
 
-    const DataVector<SkPoint>& GetPositions() const { return m_positions; }
+    const DataVector<SkPoint>& GetPositions() const { return positions_; }
     void SetPositionAt(size_t index, const SkPoint& position) {
-      m_positions[index] = position;
+      positions_[index] = position;
     }
-    const DataVector<uint16_t>& GetGlyphs() const { return m_glyphs; }
-    void SetGlyphAt(size_t index, uint16_t glyph) { m_glyphs[index] = glyph; }
+    const DataVector<uint16_t>& GetGlyphs() const { return glyphs_; }
+    void SetGlyphAt(size_t index, uint16_t glyph) { glyphs_[index] = glyph; }
     const DataVector<uint32_t>& GetFontCharWidths() const {
-      return m_fontCharWidths;
+      return font_char_widths_;
     }
     void SetFontCharWidthAt(size_t index, uint32_t width) {
-      m_fontCharWidths[index] = width;
+      font_char_widths_[index] = width;
     }
     size_t Count() const {
-      DCHECK_EQ(m_positions.size(), m_glyphs.size());
-      return m_glyphs.size();
+      DCHECK_EQ(positions_.size(), glyphs_.size());
+      return glyphs_.size();
     }
     void SetCount(size_t count) {
-      m_positions.resize(count);
-      m_glyphs.resize(count);
-      m_fontCharWidths.resize(count);
+      positions_.resize(count);
+      glyphs_.resize(count);
+      font_char_widths_.resize(count);
     }
 
    private:
-    DataVector<SkPoint> m_positions;  // accumulator for text positions
-    DataVector<uint16_t> m_glyphs;    // accumulator for text glyphs
+    DataVector<SkPoint> positions_;  // accumulator for text positions
+    DataVector<uint16_t> glyphs_;    // accumulator for text glyphs
     // accumulator for glyphs' width defined in pdf
-    DataVector<uint32_t> m_fontCharWidths;
+    DataVector<uint32_t> font_char_widths_;
   };
 
   // Use the public creation methods instead.
@@ -181,22 +181,22 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   // A wrapper around SkCanvas::drawPath() that optionally can show debug data.
   void DrawPathImpl(const SkPath& path, const SkPaint& paint);
 
-  RetainPtr<CFX_DIBitmap> m_pBitmap;
-  RetainPtr<CFX_DIBitmap> m_pBackdropBitmap;
+  RetainPtr<CFX_DIBitmap> bitmap_;
+  RetainPtr<CFX_DIBitmap> backdrop_bitmap_;
 
   // The input bitmap passed by the render device. Only used when the input
   // bitmap is 24 bpp and cannot be directly used as the back of a SkCanvas.
-  RetainPtr<CFX_DIBitmap> m_pOriginalBitmap;
+  RetainPtr<CFX_DIBitmap> original_bitmap_;
 
   sk_sp<SkSurface> surface_;
-  UnownedPtr<SkCanvas> m_pCanvas;
-  CFX_FillRenderOptions m_FillOptions;
-  const bool m_bRgbByteOrder;
-  bool m_bGroupKnockout;
+  UnownedPtr<SkCanvas> canvas_;
+  CFX_FillRenderOptions fill_options_;
+  const bool rgb_byte_order_;
+  bool group_knockout_;
 
-  CharDetail m_charDetails;
+  CharDetail char_details_;
   // accumulator for txt rotate/scale/translate
-  DataVector<SkRSXform> m_rsxform;
+  DataVector<SkRSXform> rsxform_;
 };
 
 #endif  // CORE_FXGE_SKIA_FX_SKIA_DEVICE_H_

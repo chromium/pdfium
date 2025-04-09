@@ -933,14 +933,15 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       if (!glyphs.empty()) {
         for (size_t i = 0; i < iChar; ++i) {
           const TextGlyphPos& glyph = glyphs[i];
-          if (!glyph.m_pGlyph)
+          if (!glyph.glyph_) {
             continue;
+          }
 
           std::optional<CFX_Point> point = glyph.GetOrigin({0, 0});
           if (!point.has_value())
             continue;
 
-          m_pDevice->SetBitMask(glyph.m_pGlyph->GetBitmap(), point->x, point->y,
+          m_pDevice->SetBitMask(glyph.glyph_->GetBitmap(), point->x, point->y,
                                 fill_argb);
         }
         glyphs.clear();
@@ -1041,8 +1042,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         m_pDevice->SetBitMask(pBitmap->GetBitmap(), left.ValueOrDie(),
                               top.ValueOrDie(), fill_argb);
       } else {
-        glyphs[iChar].m_pGlyph = pBitmap;
-        glyphs[iChar].m_Origin = origin;
+        glyphs[iChar].glyph_ = pBitmap;
+        glyphs[iChar].origin_ = origin;
       }
     }
   }
@@ -1057,16 +1058,17 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   }
 
   for (const TextGlyphPos& glyph : glyphs) {
-    if (!glyph.m_pGlyph || !glyph.m_pGlyph->GetBitmap()->IsMaskFormat())
+    if (!glyph.glyph_ || !glyph.glyph_->GetBitmap()->IsMaskFormat()) {
       continue;
+    }
 
     std::optional<CFX_Point> point = glyph.GetOrigin({rect.left, rect.top});
     if (!point.has_value())
       continue;
 
     bitmap->CompositeMask(
-        point->x, point->y, glyph.m_pGlyph->GetBitmap()->GetWidth(),
-        glyph.m_pGlyph->GetBitmap()->GetHeight(), glyph.m_pGlyph->GetBitmap(),
+        point->x, point->y, glyph.glyph_->GetBitmap()->GetWidth(),
+        glyph.glyph_->GetBitmap()->GetHeight(), glyph.glyph_->GetBitmap(),
         fill_argb, 0, 0, BlendMode::kNormal, nullptr, false);
   }
   m_pDevice->SetBitMask(std::move(bitmap), rect.left, rect.top, fill_argb);
@@ -1101,11 +1103,11 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
   std::vector<TextCharPos> char_pos_list = GetCharPosList(
       textobj->GetCharCodes(), textobj->GetCharPositions(), pFont, font_size);
   for (const TextCharPos& charpos : char_pos_list) {
-    auto* font = charpos.m_FallbackFontPosition == -1
+    auto* font = charpos.fallback_font_position_ == -1
                      ? pFont->GetFont()
-                     : pFont->GetFontFallback(charpos.m_FallbackFontPosition);
+                     : pFont->GetFontFallback(charpos.fallback_font_position_);
     const CFX_Path* pPath =
-        font->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
+        font->LoadGlyphPath(charpos.glyph_index_, charpos.font_char_width_);
     if (!pPath)
       continue;
 
@@ -1114,7 +1116,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     path.mutable_color_state() = textobj->color_state();
 
     CFX_Matrix matrix = charpos.GetEffectiveMatrix(CFX_Matrix(
-        font_size, 0, 0, font_size, charpos.m_Origin.x, charpos.m_Origin.y));
+        font_size, 0, 0, font_size, charpos.origin_.x, charpos.origin_.y));
     matrix.Concat(mtTextMatrix);
     path.set_stroke(stroke);
     path.set_filltype(fill ? CFX_FillRenderOptions::FillType::kWinding

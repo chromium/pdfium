@@ -20,9 +20,9 @@ class CFX_AggClipRgn {
   CFX_AggClipRgn(const CFX_AggClipRgn& src);
   ~CFX_AggClipRgn();
 
-  ClipType GetType() const { return m_Type; }
-  const FX_RECT& GetBox() const { return m_Box; }
-  RetainPtr<CFX_DIBitmap> GetMask() const { return m_Mask; }
+  ClipType GetType() const { return type_; }
+  const FX_RECT& GetBox() const { return box_; }
+  RetainPtr<CFX_DIBitmap> GetMask() const { return mask_; }
 
   void IntersectRect(const FX_RECT& rect);
   void IntersectMaskF(int left, int top, RetainPtr<CFX_DIBitmap> Mask);
@@ -32,9 +32,9 @@ class CFX_AggClipRgn {
                          FX_RECT mask_rect,
                          RetainPtr<CFX_DIBitmap> pOldMask);
 
-  ClipType m_Type = kRectI;
-  FX_RECT m_Box;
-  RetainPtr<CFX_DIBitmap> m_Mask;
+  ClipType type_ = kRectI;
+  FX_RECT box_;
+  RetainPtr<CFX_DIBitmap> mask_;
 };
 
 #endif  // CORE_FXGE_AGG_CFX_AGG_CLIPRGN_H_

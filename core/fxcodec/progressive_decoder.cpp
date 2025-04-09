@@ -960,10 +960,10 @@ void ProgressiveDecoder::ResampleScanline(
       case TransformMethod::k8BppGrayToRgbMaybeAlpha: {
         UNSAFE_TODO({
           uint32_t dest_g = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
+          for (int j = pPixelWeights->src_start_; j <= pPixelWeights->src_end_;
                j++) {
             uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
+                pPixelWeights->weights_[j - pPixelWeights->src_start_];
             dest_g += pixel_weight * src_scan[j];
           }
           FXSYS_memset(dest_scan, CStretchEngine::PixelFromFixed(dest_g), 3);
@@ -976,10 +976,10 @@ void ProgressiveDecoder::ResampleScanline(
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;
           uint32_t dest_b = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
+          for (int j = pPixelWeights->src_start_; j <= pPixelWeights->src_end_;
                j++) {
             uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
+                pPixelWeights->weights_[j - pPixelWeights->src_start_];
             uint32_t argb = src_palette_[src_scan[j]];
             dest_r += pixel_weight * FXARGB_R(argb);
             dest_g += pixel_weight * FXARGB_G(argb);
@@ -999,10 +999,10 @@ void ProgressiveDecoder::ResampleScanline(
             uint32_t dest_r = 0;
             uint32_t dest_g = 0;
             uint32_t dest_b = 0;
-            for (int j = pPixelWeights->m_SrcStart;
-                 j <= pPixelWeights->m_SrcEnd; j++) {
+            for (int j = pPixelWeights->src_start_;
+                 j <= pPixelWeights->src_end_; j++) {
               uint32_t pixel_weight =
-                  pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
+                  pPixelWeights->weights_[j - pPixelWeights->src_start_];
               uint32_t argb = src_palette_[src_scan[j]];
               dest_r += pixel_weight * FXARGB_R(argb);
               dest_g += pixel_weight * FXARGB_G(argb);
@@ -1021,10 +1021,10 @@ void ProgressiveDecoder::ResampleScanline(
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;
           uint32_t dest_b = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
+          for (int j = pPixelWeights->src_start_; j <= pPixelWeights->src_end_;
                j++) {
             uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
+                pPixelWeights->weights_[j - pPixelWeights->src_start_];
             FX_ARGB argb = src_palette_[src_scan[j]];
             dest_a += pixel_weight * FXARGB_A(argb);
             dest_r += pixel_weight * FXARGB_R(argb);
@@ -1043,10 +1043,10 @@ void ProgressiveDecoder::ResampleScanline(
           uint32_t dest_b = 0;
           uint32_t dest_g = 0;
           uint32_t dest_r = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
+          for (int j = pPixelWeights->src_start_; j <= pPixelWeights->src_end_;
                j++) {
             uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
+                pPixelWeights->weights_[j - pPixelWeights->src_start_];
             const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
             dest_b += pixel_weight * (*src_pixel++);
             dest_g += pixel_weight * (*src_pixel++);
@@ -1064,10 +1064,10 @@ void ProgressiveDecoder::ResampleScanline(
           uint32_t dest_b = 0;
           uint32_t dest_g = 0;
           uint32_t dest_r = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
+          for (int j = pPixelWeights->src_start_; j <= pPixelWeights->src_end_;
                j++) {
             uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
+                pPixelWeights->weights_[j - pPixelWeights->src_start_];
             const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
             FX_RGB_STRUCT<uint8_t> src_rgb =
                 AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
@@ -1089,10 +1089,10 @@ void ProgressiveDecoder::ResampleScanline(
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;
           uint32_t dest_b = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
+          for (int j = pPixelWeights->src_start_; j <= pPixelWeights->src_end_;
                j++) {
             uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
+                pPixelWeights->weights_[j - pPixelWeights->src_start_];
             const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
             pixel_weight = pixel_weight * src_pixel[3] / 255;
             dest_b += pixel_weight * (*src_pixel++);

@@ -204,20 +204,21 @@ SkPath BuildPath(const CFX_Path& path) {
   SkPath sk_path;
   pdfium::span<const CFX_Path::Point> points = path.GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
-    const CFX_PointF& point = points[i].m_Point;
-    CFX_Path::Point::Type point_type = points[i].m_Type;
+    const CFX_PointF& point = points[i].point_;
+    CFX_Path::Point::Type point_type = points[i].type_;
     if (point_type == CFX_Path::Point::Type::kMove) {
       sk_path.moveTo(point.x, point.y);
     } else if (point_type == CFX_Path::Point::Type::kLine) {
       sk_path.lineTo(point.x, point.y);
     } else if (point_type == CFX_Path::Point::Type::kBezier) {
-      const CFX_PointF& point2 = points[i + 1].m_Point;
-      const CFX_PointF& point3 = points[i + 2].m_Point;
+      const CFX_PointF& point2 = points[i + 1].point_;
+      const CFX_PointF& point3 = points[i + 2].point_;
       sk_path.cubicTo(point.x, point.y, point2.x, point2.y, point3.x, point3.y);
       i += 2;
     }
-    if (points[i].m_CloseFigure)
+    if (points[i].close_figure_) {
       sk_path.close();
+    }
   }
   return sk_path;
 }
@@ -643,21 +644,21 @@ bool HasRSX(pdfium::span<const TextCharPos> char_pos,
   bool oneAtATime = false;
   float scaleX = 1;
   for (const TextCharPos& cp : char_pos) {
-    if (!cp.m_bGlyphAdjust) {
+    if (!cp.glyph_adjust_) {
       continue;
     }
-    bool upright = 0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2];
-    if (cp.m_AdjustMatrix[0] != cp.m_AdjustMatrix[3]) {
-      if (upright && 1 == cp.m_AdjustMatrix[3]) {
+    bool upright = 0 == cp.adjust_matrix_[1] && 0 == cp.adjust_matrix_[2];
+    if (cp.adjust_matrix_[0] != cp.adjust_matrix_[3]) {
+      if (upright && 1 == cp.adjust_matrix_[3]) {
         if (1 == scaleX) {
-          scaleX = cp.m_AdjustMatrix[0];
-        } else if (scaleX != cp.m_AdjustMatrix[0]) {
+          scaleX = cp.adjust_matrix_[0];
+        } else if (scaleX != cp.adjust_matrix_[0]) {
           oneAtATime = true;
         }
       } else {
         oneAtATime = true;
       }
-    } else if (cp.m_AdjustMatrix[1] != -cp.m_AdjustMatrix[2]) {
+    } else if (cp.adjust_matrix_[1] != -cp.adjust_matrix_[2]) {
       oneAtATime = true;
     } else {
       useRSXform = true;
@@ -679,7 +680,7 @@ std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
   auto driver = pdfium::WrapUnique(
       new CFX_SkiaDeviceDriver(std::move(pBitmap), bRgbByteOrder,
                                std::move(pBackdropBitmap), bGroupKnockout));
-  if (!driver->m_pCanvas) {
+  if (!driver->canvas_) {
     return nullptr;
   }
 
@@ -690,7 +691,7 @@ std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
 std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
     SkCanvas& canvas) {
   auto driver = pdfium::WrapUnique(new CFX_SkiaDeviceDriver(canvas));
-  if (!driver->m_pBitmap || !driver->m_pBackdropBitmap) {
+  if (!driver->bitmap_ || !driver->backdrop_bitmap_) {
     return nullptr;
   }
 
@@ -702,36 +703,36 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     bool bRgbByteOrder,
     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
     bool bGroupKnockout)
-    : m_pBitmap(std::move(pBitmap)),
-      m_pBackdropBitmap(pBackdropBitmap),
-      m_bRgbByteOrder(bRgbByteOrder),
-      m_bGroupKnockout(bGroupKnockout) {
+    : bitmap_(std::move(pBitmap)),
+      backdrop_bitmap_(pBackdropBitmap),
+      rgb_byte_order_(bRgbByteOrder),
+      group_knockout_(bGroupKnockout) {
   SkColorType color_type;
-  const int bpp = m_pBitmap->GetBPP();
+  const int bpp = bitmap_->GetBPP();
   SkAlphaType alpha_type = kPremul_SkAlphaType;
   if (bpp == 8) {
-    color_type = m_pBitmap->IsAlphaFormat() || m_pBitmap->IsMaskFormat()
+    color_type = bitmap_->IsAlphaFormat() || bitmap_->IsMaskFormat()
                      ? kAlpha_8_SkColorType
                      : kGray_8_SkColorType;
   } else if (bpp == 24) {
-    DCHECK_EQ(m_pBitmap->GetFormat(), FXDIB_Format::kBgr);
+    DCHECK_EQ(bitmap_->GetFormat(), FXDIB_Format::kBgr);
 
-    // Save the input bitmap as `m_pOriginalBitmap` and save its 32 bpp
-    // equivalent at `m_pBitmap` for Skia's internal process.
-    m_pOriginalBitmap = std::move(m_pBitmap);
-    const int width = m_pOriginalBitmap->GetWidth();
-    const int height = m_pOriginalBitmap->GetHeight();
+    // Save the input bitmap as `original_bitmap_` and save its 32 bpp
+    // equivalent at `bitmap_` for Skia's internal process.
+    original_bitmap_ = std::move(bitmap_);
+    const int width = original_bitmap_->GetWidth();
+    const int height = original_bitmap_->GetHeight();
 
-    m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!m_pBitmap->Create(width, height, FXDIB_Format::kBgraPremul) ||
-        !m_pBitmap->TransferBitmap(width, height, m_pOriginalBitmap,
-                                   /*src_left=*/0, /*src_top=*/0)) {
+    bitmap_ = pdfium::MakeRetain<CFX_DIBitmap>();
+    if (!bitmap_->Create(width, height, FXDIB_Format::kBgraPremul) ||
+        !bitmap_->TransferBitmap(width, height, original_bitmap_,
+                                 /*src_left=*/0, /*src_top=*/0)) {
       // Skip creating SkCanvas if the 32-bpp bitmap creation fails.
-      // CFX_SkiaDeviceDriver::Create() will check for the missing `m_pCanvas`
+      // CFX_SkiaDeviceDriver::Create() will check for the missing `canvas_`
       // and not use `this`.
-      // Also reset `m_pOriginalBitmap` so the dtor does not try to transfer
-      // `m_pBitmap` back to `m_pOriginalBitmap`.
-      m_pOriginalBitmap.Reset();
+      // Also reset `original_bitmap_` so the dtor does not try to transfer
+      // `bitmap_` back to `original_bitmap_`.
+      original_bitmap_.Reset();
       return;
     }
 
@@ -739,7 +740,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   } else {
     DCHECK_EQ(bpp, 32);
     color_type = Get32BitSkColorType(bRgbByteOrder);
-    FXDIB_Format format = m_pBitmap->GetFormat();
+    FXDIB_Format format = bitmap_->GetFormat();
     if (format == FXDIB_Format::kBgrx) {
       alpha_type = kOpaque_SkAlphaType;
     } else if (format == FXDIB_Format::kBgra) {
@@ -748,22 +749,22 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   }
 
   SkImageInfo imageInfo = SkImageInfo::Make(
-      m_pBitmap->GetWidth(), m_pBitmap->GetHeight(), color_type, alpha_type);
+      bitmap_->GetWidth(), bitmap_->GetHeight(), color_type, alpha_type);
   surface_ = SkSurfaces::WrapPixels(
-      imageInfo, m_pBitmap->GetWritableBuffer().data(), m_pBitmap->GetPitch());
-  m_pCanvas = surface_->getCanvas();
+      imageInfo, bitmap_->GetWritableBuffer().data(), bitmap_->GetPitch());
+  canvas_ = surface_->getCanvas();
 }
 
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkCanvas& canvas)
-    : m_pCanvas(&canvas), m_bRgbByteOrder(false), m_bGroupKnockout(false) {
-  int width = m_pCanvas->imageInfo().width();
-  int height = m_pCanvas->imageInfo().height();
-  DCHECK_EQ(kUnknown_SkColorType, m_pCanvas->imageInfo().colorType());
+    : canvas_(&canvas), rgb_byte_order_(false), group_knockout_(false) {
+  int width = canvas_->imageInfo().width();
+  int height = canvas_->imageInfo().height();
+  DCHECK_EQ(kUnknown_SkColorType, canvas_->imageInfo().colorType());
 
   static constexpr uint32_t kMagenta = 0xffff00ff;
   static constexpr uint32_t kGreen = 0xff00ff00;
-  m_pBitmap = MakeDebugBitmap(width, height, kMagenta);
-  m_pBackdropBitmap = MakeDebugBitmap(width, height, kGreen);
+  bitmap_ = MakeDebugBitmap(width, height, kMagenta);
+  backdrop_bitmap_ = MakeDebugBitmap(width, height, kGreen);
 }
 
 CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
@@ -804,57 +805,58 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   font.setSkewX(tanf(pFont->GetSubstFontItalicAngle() * FXSYS_PI / 180.0));
   font.setEdging(GetFontEdgingType(options));
 
-  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+  SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
   const float horizontal_flip = font_size < 0 ? -1.f : 1.f;
   const float vertical_flip = pFont->IsVertical() ? -1.f : 1.f;
   SkMatrix skMatrix = ToFlippedSkMatrix(mtObject2Device, horizontal_flip);
-  m_pCanvas->concat(skMatrix);
+  canvas_->concat(skMatrix);
   DataVector<SkPoint> positions(pCharPos.size());
   DataVector<uint16_t> glyphs(pCharPos.size());
 
   for (size_t index = 0; index < pCharPos.size(); ++index) {
     const TextCharPos& cp = pCharPos[index];
-    positions[index] = {cp.m_Origin.x * horizontal_flip,
-                        cp.m_Origin.y * vertical_flip};
-    glyphs[index] = static_cast<uint16_t>(cp.m_GlyphIndex);
+    positions[index] = {cp.origin_.x * horizontal_flip,
+                        cp.origin_.y * vertical_flip};
+    glyphs[index] = static_cast<uint16_t>(cp.glyph_index_);
 #if BUILDFLAG(IS_APPLE)
-    if (cp.m_ExtGID)
-      glyphs[index] = static_cast<uint16_t>(cp.m_ExtGID);
+    if (cp.ext_gid_) {
+      glyphs[index] = static_cast<uint16_t>(cp.ext_gid_);
+    }
 #endif
   }
 
   for (size_t index = 0; index < pCharPos.size(); ++index) {
     const TextCharPos& cp = pCharPos[index];
-    if (cp.m_bGlyphAdjust) {
-      if (0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2] &&
-          1 == cp.m_AdjustMatrix[3]) {
-        font.setScaleX(cp.m_AdjustMatrix[0]);
+    if (cp.glyph_adjust_) {
+      if (0 == cp.adjust_matrix_[1] && 0 == cp.adjust_matrix_[2] &&
+          1 == cp.adjust_matrix_[3]) {
+        font.setScaleX(cp.adjust_matrix_[0]);
         auto blob =
             SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]),
                                      font, SkTextEncoding::kGlyphID);
-        m_pCanvas->drawTextBlob(blob, positions[index].fX, positions[index].fY,
-                                paint);
+        canvas_->drawTextBlob(blob, positions[index].fX, positions[index].fY,
+                              paint);
         font.setScaleX(SkIntToScalar(1));
       } else {
-        SkAutoCanvasRestore scoped_save_restore2(m_pCanvas, /*doSave=*/true);
+        SkAutoCanvasRestore scoped_save_restore2(canvas_, /*doSave=*/true);
         SkMatrix adjust;
         adjust.preTranslate(positions[index].fX, -positions[index].fY);
-        adjust.setScaleX(cp.m_AdjustMatrix[0]);
-        adjust.setSkewX(cp.m_AdjustMatrix[1]);
-        adjust.setSkewY(cp.m_AdjustMatrix[2]);
-        adjust.setScaleY(cp.m_AdjustMatrix[3]);
-        m_pCanvas->concat(adjust);
+        adjust.setScaleX(cp.adjust_matrix_[0]);
+        adjust.setSkewX(cp.adjust_matrix_[1]);
+        adjust.setSkewY(cp.adjust_matrix_[2]);
+        adjust.setScaleY(cp.adjust_matrix_[3]);
+        canvas_->concat(adjust);
         auto blob =
             SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]),
                                      font, SkTextEncoding::kGlyphID);
-        m_pCanvas->drawTextBlob(blob, 0, 0, paint);
+        canvas_->drawTextBlob(blob, 0, 0, paint);
       }
     } else {
       auto blob =
           SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]), font,
                                    SkTextEncoding::kGlyphID);
-      m_pCanvas->drawTextBlob(blob, positions[index].fX, positions[index].fY,
-                              paint);
+      canvas_->drawTextBlob(blob, positions[index].fX, positions[index].fY,
+                            paint);
     }
   }
   return true;
@@ -877,37 +879,37 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
     return false;
   }
 
-  m_charDetails.SetCount(char_pos.size());
+  char_details_.SetCount(char_pos.size());
   if (hasRSX) {
-    m_rsxform.resize(char_pos.size());
+    rsxform_.resize(char_pos.size());
   } else {
-    m_rsxform.resize(0);
+    rsxform_.resize(0);
   }
 
   const float horizontal_flip = font_size < 0 ? -1.f : 1.f;
   const float vertical_flip = pFont->IsVertical() ? -1.f : 1.f;
   for (size_t index = 0; index < char_pos.size(); ++index) {
     const TextCharPos& cp = char_pos[index];
-    m_charDetails.SetPositionAt(index, {cp.m_Origin.x * horizontal_flip,
-                                        cp.m_Origin.y * vertical_flip});
-    m_charDetails.SetGlyphAt(index, static_cast<uint16_t>(cp.m_GlyphIndex));
-    m_charDetails.SetFontCharWidthAt(index, cp.m_FontCharWidth);
+    char_details_.SetPositionAt(
+        index, {cp.origin_.x * horizontal_flip, cp.origin_.y * vertical_flip});
+    char_details_.SetGlyphAt(index, static_cast<uint16_t>(cp.glyph_index_));
+    char_details_.SetFontCharWidthAt(index, cp.font_char_width_);
 #if BUILDFLAG(IS_APPLE)
-    if (cp.m_ExtGID) {
-      m_charDetails.SetGlyphAt(index, static_cast<uint16_t>(cp.m_ExtGID));
+    if (cp.ext_gid_) {
+      char_details_.SetGlyphAt(index, static_cast<uint16_t>(cp.ext_gid_));
     }
 #endif
   }
   if (hasRSX) {
-    const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
+    const DataVector<SkPoint>& positions = char_details_.GetPositions();
     for (size_t index = 0; index < char_pos.size(); ++index) {
       const TextCharPos& cp = char_pos[index];
-      SkRSXform& rsxform = m_rsxform[index];
-      if (cp.m_bGlyphAdjust) {
-        rsxform.fSCos = cp.m_AdjustMatrix[0];
-        rsxform.fSSin = cp.m_AdjustMatrix[1];
-        rsxform.fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
-        rsxform.fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
+      SkRSXform& rsxform = rsxform_[index];
+      if (cp.glyph_adjust_) {
+        rsxform.fSCos = cp.adjust_matrix_[0];
+        rsxform.fSSin = cp.adjust_matrix_[1];
+        rsxform.fTx = cp.adjust_matrix_[0] * positions[index].fX;
+        rsxform.fTy = -cp.adjust_matrix_[3] * positions[index].fY;
       } else {
         rsxform.fSCos = 1;
         rsxform.fSSin = 0;
@@ -933,20 +935,20 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
   font.setSubpixel(true);
   font.setEdging(GetFontEdgingType(options));
 
-  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
-  m_pCanvas->concat(ToFlippedSkMatrix(matrix, horizontal_flip));
+  SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
+  canvas_->concat(ToFlippedSkMatrix(matrix, horizontal_flip));
 
-  const DataVector<uint16_t>& glyphs = m_charDetails.GetGlyphs();
-  if (!m_rsxform.empty()) {
+  const DataVector<uint16_t>& glyphs = char_details_.GetGlyphs();
+  if (!rsxform_.empty()) {
     sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
-        glyphs.data(), glyphs.size() * sizeof(uint16_t), m_rsxform.data(), font,
+        glyphs.data(), glyphs.size() * sizeof(uint16_t), rsxform_.data(), font,
         SkTextEncoding::kGlyphID);
-    m_pCanvas->drawTextBlob(blob, 0, 0, skPaint);
+    canvas_->drawTextBlob(blob, 0, 0, skPaint);
     return true;
   }
-  const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
-  const DataVector<uint32_t>& widths = m_charDetails.GetFontCharWidths();
-  for (size_t i = 0; i < m_charDetails.Count(); ++i) {
+  const DataVector<SkPoint>& positions = char_details_.GetPositions();
+  const DataVector<uint32_t>& widths = char_details_.GetFontCharWidths();
+  for (size_t i = 0; i < char_details_.Count(); ++i) {
     const uint32_t font_glyph_width = pFont->GetGlyphWidth(glyphs[i]);
     const uint32_t pdf_glyph_width = widths[i];
     if (pdf_glyph_width > 0 && font_glyph_width > 0) {
@@ -960,7 +962,7 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
     auto blob =
         SkTextBlob::MakeFromPosText(&glyphs[i], sizeof(uint16_t), &positions[i],
                                     font, SkTextEncoding::kGlyphID);
-    m_pCanvas->drawTextBlob(blob, 0, 0, skPaint);
+    canvas_->drawTextBlob(blob, 0, 0, skPaint);
   }
   return true;
 }
@@ -977,7 +979,7 @@ bool CFX_SkiaDeviceDriver::MultiplyAlpha(float alpha) {
     SkPaint paint;
     paint.setAlphaf(alpha);
     paint.setBlendMode(SkBlendMode::kDstIn);
-    m_pCanvas->drawPaint(paint);
+    canvas_->drawPaint(paint);
   }
   return true;
 }
@@ -994,9 +996,8 @@ bool CFX_SkiaDeviceDriver::MultiplyAlphaMask(
 
   SkPaint paint;
   paint.setBlendMode(SkBlendMode::kDstIn);
-  m_pCanvas->drawImageRect(skia_mask,
-                           SkRect::Make(m_pCanvas->imageInfo().bounds()),
-                           SkSamplingOptions(), &paint);
+  canvas_->drawImageRect(skia_mask, SkRect::Make(canvas_->imageInfo().bounds()),
+                         SkSamplingOptions(), &paint);
   return true;
 }
 
@@ -1007,9 +1008,9 @@ DeviceType CFX_SkiaDeviceDriver::GetDeviceType() const {
 int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
     case FXDC_PIXEL_WIDTH:
-      return m_pCanvas->imageInfo().width();
+      return canvas_->imageInfo().width();
     case FXDC_PIXEL_HEIGHT:
-      return m_pCanvas->imageInfo().height();
+      return canvas_->imageInfo().height();
     case FXDC_BITS_PIXEL:
       return 32;
     case FXDC_HORZ_SIZE:
@@ -1025,13 +1026,13 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
 }
 
 void CFX_SkiaDeviceDriver::SaveState() {
-  m_pCanvas->save();
+  canvas_->save();
 }
 
 void CFX_SkiaDeviceDriver::RestoreState(bool bKeepSaved) {
-  m_pCanvas->restore();
+  canvas_->restore();
   if (bKeepSaved) {
-    m_pCanvas->save();
+    canvas_->save();
   }
 }
 
@@ -1039,7 +1040,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
     const CFX_Path& path,              // path info
     const CFX_Matrix* pObject2Device,  // flips object's y-axis
     const CFX_FillRenderOptions& fill_options) {
-  m_FillOptions = fill_options;
+  fill_options_ = fill_options;
   const CFX_Matrix& deviceMatrix =
       pObject2Device ? *pObject2Device : CFX_Matrix();
 
@@ -1063,8 +1064,8 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
     skClipPath.transform(ToSkMatrix(deviceMatrix));
     DebugShowSkiaPath(skClipPath);
   }
-  m_pCanvas->clipPath(skClipPath, SkClipOp::kIntersect, true);
-  DebugShowCanvasClip(this, m_pCanvas);
+  canvas_->clipPath(skClipPath, SkClipOp::kIntersect, true);
+  DebugShowCanvasClip(this, canvas_);
   return true;
 }
 
@@ -1080,8 +1081,8 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
   SkPath dst_path;
   skpathutils::FillPathWithPaint(skPath, skPaint, &dst_path);
   dst_path.transform(skMatrix);
-  m_pCanvas->clipPath(dst_path, SkClipOp::kIntersect, true);
-  DebugShowCanvasClip(this, m_pCanvas);
+  canvas_->clipPath(dst_path, SkClipOp::kIntersect, true);
+  DebugShowCanvasClip(this, canvas_);
   return true;
 }
 
@@ -1091,7 +1092,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(const CFX_Path& path,
                                     uint32_t fill_color,
                                     uint32_t stroke_color,
                                     const CFX_FillRenderOptions& fill_options) {
-  m_FillOptions = fill_options;
+  fill_options_ = fill_options;
 
   SkPath skia_path = BuildPath(path);
   skia_path.setFillType(GetAlternateOrWindingFillType(fill_options));
@@ -1109,15 +1110,15 @@ bool CFX_SkiaDeviceDriver::DrawPath(const CFX_Path& path,
     PaintStroke(&skPaint, &graph_state, skMatrix, fill_options);
   }
 
-  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
-  m_pCanvas->concat(skMatrix);
+  SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
+  canvas_->concat(skMatrix);
   bool do_stroke = true;
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
       fill_color) {
     SkPath strokePath;
     const SkPath* fillPath = &skia_path;
     if (stroke_alpha) {
-      if (m_bGroupKnockout) {
+      if (group_knockout_) {
         skpathutils::FillPathWithPaint(skia_path, skPaint, &strokePath);
         if (stroke_color == fill_color &&
             Op(skia_path, strokePath, SkPathOp::kUnion_SkPathOp, &strokePath)) {
@@ -1138,7 +1139,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(const CFX_Path& path,
     skPaint.setColor(stroke_color);
     if (!skia_path.isLastContourClosed() && IsPathAPoint(skia_path)) {
       DCHECK_GE(skia_path.countPoints(), 1);
-      m_pCanvas->drawPoint(skia_path.getPoint(0), skPaint);
+      canvas_->drawPoint(skia_path.getPoint(0), skPaint);
     } else if (IsPathAPoint(skia_path) &&
                skPaint.getStrokeCap() != SkPaint::kRound_Cap) {
       // Do nothing. A closed 0-length closed path can be rendered only if
@@ -1156,8 +1157,8 @@ bool CFX_SkiaDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {
   spaint.setColor(fill_color);
   SkRect srect = SkRect::MakeLTRB(rect.left, std::min(rect.top, rect.bottom),
                                   rect.right, std::max(rect.bottom, rect.top));
-  DebugShowSkiaDrawRect(this, m_pCanvas, spaint, srect);
-  m_pCanvas->drawRect(srect, spaint);
+  DebugShowSkiaDrawRect(this, canvas_, spaint, srect);
+  canvas_->drawRect(srect, spaint);
   return true;
 }
 
@@ -1305,10 +1306,10 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
       return false;
     std::array<SkPoint, 12> cubics;
     std::array<SkColor, 4> colors;
-    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+    SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
     if (!skClip.isEmpty())
-      m_pCanvas->clipPath(skClip, SkClipOp::kIntersect, true);
-    m_pCanvas->concat(skMatrix);
+      canvas_->clipPath(skClip, SkClipOp::kIntersect, true);
+    canvas_->concat(skMatrix);
     while (!stream.IsEOF()) {
       const uint32_t flag = stream.ReadFlag();
       if (flag) {
@@ -1334,28 +1335,28 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
             SkColorSetARGB(0xFF, (U8CPU)(rgb.red * 255),
                            (U8CPU)(rgb.green * 255), (U8CPU)(rgb.blue * 255));
       }
-      m_pCanvas->drawPatch(cubics.data(), colors.data(), /*texCoords=*/nullptr,
-                           SkBlendMode::kDst, paint);
+      canvas_->drawPatch(cubics.data(), colors.data(), /*texCoords=*/nullptr,
+                         SkBlendMode::kDst, paint);
     }
     return true;
   }
-  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+  SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
   if (!skClip.isEmpty())
-    m_pCanvas->clipPath(skClip, SkClipOp::kIntersect, true);
-  m_pCanvas->concat(skMatrix);
+    canvas_->clipPath(skClip, SkClipOp::kIntersect, true);
+  canvas_->concat(skMatrix);
   DrawPathImpl(skPath, paint);
   return true;
 }
 
 FX_RECT CFX_SkiaDeviceDriver::GetClipBox() const {
-  SkIRect clip = m_pCanvas->getDeviceClipBounds();
+  SkIRect clip = canvas_->getDeviceClipBounds();
   return FX_RECT(clip.fLeft, clip.fTop, clip.fRight, clip.fBottom);
 }
 
 bool CFX_SkiaDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                      int left,
                                      int top) const {
-  const uint8_t* input_buffer = m_pBitmap->GetBuffer().data();
+  const uint8_t* input_buffer = bitmap_->GetBuffer().data();
   if (!input_buffer) {
     return true;
   }
@@ -1363,15 +1364,15 @@ bool CFX_SkiaDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
   uint8_t* output_buffer = bitmap->GetWritableBuffer().data();
   DCHECK(output_buffer);
 
-  SkImageInfo input_info = m_pCanvas->imageInfo();
+  SkImageInfo input_info = canvas_->imageInfo();
   sk_sp<SkImage> input = SkImages::RasterFromPixmap(
-      SkPixmap(input_info, input_buffer, m_pBitmap->GetPitch()),
+      SkPixmap(input_info, input_buffer, bitmap_->GetPitch()),
       /*rasterReleaseProc=*/nullptr, /*releaseContext=*/nullptr);
 
   CHECK_EQ(32, bitmap->GetBPP());
   SkImageInfo output_info = SkImageInfo::Make(
       bitmap->GetWidth(), bitmap->GetHeight(),
-      Get32BitSkColorType(m_bRgbByteOrder),
+      Get32BitSkColorType(rgb_byte_order_),
       bitmap->IsPremultiplied() ? kPremul_SkAlphaType : kUnpremul_SkAlphaType);
   sk_sp<SkSurface> output =
       SkSurfaces::WrapPixels(output_info, output_buffer, bitmap->GetPitch());
@@ -1381,7 +1382,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
 }
 
 RetainPtr<const CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() const {
-  return m_pBackdropBitmap;
+  return backdrop_bitmap_;
 }
 
 bool CFX_SkiaDeviceDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
@@ -1390,7 +1391,7 @@ bool CFX_SkiaDeviceDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                      int left,
                                      int top,
                                      BlendMode blend_type) {
-  if (m_pBitmap->GetBuffer().empty()) {
+  if (bitmap_->GetBuffer().empty()) {
     return true;
   }
 
@@ -1414,15 +1415,16 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                          const FX_RECT* pClipRect,
                                          const FXDIB_ResampleOptions& options,
                                          BlendMode blend_type) {
-  if (m_pBitmap->GetBuffer().empty())
+  if (bitmap_->GetBuffer().empty()) {
     return true;
+  }
 
   CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(dest_width, dest_height,
                                                       dest_left, dest_top);
-  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+  SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
   SkRect skClipRect = SkRect::MakeLTRB(pClipRect->left, pClipRect->bottom,
                                        pClipRect->right, pClipRect->top);
-  m_pCanvas->clipRect(skClipRect, SkClipOp::kIntersect, true);
+  canvas_->clipRect(skClipRect, SkClipOp::kIntersect, true);
 
   // `bNoSmoothing` prevents linear sampling when rendering bitmaps.
   FXDIB_ResampleOptions sampling_options;
@@ -1499,7 +1501,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
                                             float alpha,
                                             const CFX_Matrix& matrix,
                                             BlendMode blend_type) {
-  DebugValidate(m_pBitmap);
+  DebugValidate(bitmap_);
 
   sk_sp<SkImage> skia_source = bitmap->RealizeSkImage();
   if (!skia_source) {
@@ -1514,15 +1516,15 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
   DCHECK_EQ(skia_mask->colorType(), kAlpha_8_SkColorType);
 
   {
-    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+    SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
 
     const int src_width = bitmap->GetWidth();
     const int src_height = bitmap->GetHeight();
     SkMatrix skMatrix;
     SetBitmapMatrix(matrix, src_width, src_height, &skMatrix);
-    m_pCanvas->concat(skMatrix);
+    canvas_->concat(skMatrix);
     SkPaint paint;
-    SetBitmapPaintForMerge(bitmap->IsMaskFormat(), !m_FillOptions.aliased_path,
+    SetBitmapPaintForMerge(bitmap->IsMaskFormat(), !fill_options_.aliased_path,
                            alpha, blend_type, &paint);
     sk_sp<SkShader> source_shader = skia_source->makeShader(
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());
@@ -1530,12 +1532,12 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());
     paint.setShader(SkShaders::Blend(
         SkBlendMode::kSrcIn, std::move(mask_shader), std::move(source_shader)));
-    m_pCanvas->drawRect(
+    canvas_->drawRect(
         SkRect::MakeWH(SkIntToScalar(src_width), SkIntToScalar(src_height)),
         paint);
   }
 
-  DebugValidate(m_pBitmap);
+  DebugValidate(bitmap_);
   return true;
 }
 
@@ -1545,7 +1547,7 @@ bool CFX_SkiaDeviceDriver::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
                                            int dest_top,
                                            float alpha,
                                            BlendMode blend_type) {
-  if (m_pBitmap->GetBuffer().empty()) {
+  if (bitmap_->GetBuffer().empty()) {
     return true;
   }
 
@@ -1556,25 +1558,25 @@ bool CFX_SkiaDeviceDriver::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
 }
 
 void CFX_SkiaDeviceDriver::SetGroupKnockout(bool group_knockout) {
-  m_bGroupKnockout = group_knockout;
+  group_knockout_ = group_knockout;
 }
 
 void CFX_SkiaDeviceDriver::SyncInternalBitmaps() {
-  if (!m_pOriginalBitmap) {
+  if (!original_bitmap_) {
     return;
   }
 
-  int width = m_pOriginalBitmap->GetWidth();
-  int height = m_pOriginalBitmap->GetHeight();
-  DCHECK_EQ(width, m_pBitmap->GetWidth());
-  DCHECK_EQ(height, m_pBitmap->GetHeight());
-  DCHECK_EQ(FXDIB_Format::kBgr, m_pOriginalBitmap->GetFormat());
-  m_pOriginalBitmap->TransferBitmap(width, height, m_pBitmap, /*src_left=*/0,
-                                    /*src_top=*/0);
+  int width = original_bitmap_->GetWidth();
+  int height = original_bitmap_->GetHeight();
+  DCHECK_EQ(width, bitmap_->GetWidth());
+  DCHECK_EQ(height, bitmap_->GetHeight());
+  DCHECK_EQ(FXDIB_Format::kBgr, original_bitmap_->GetFormat());
+  original_bitmap_->TransferBitmap(width, height, bitmap_, /*src_left=*/0,
+                                   /*src_top=*/0);
 }
 
 void CFX_SkiaDeviceDriver::Clear(uint32_t color) {
-  m_pCanvas->clear(color);
+  canvas_->clear(color);
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBitsSkia(RetainPtr<const CFX_DIBBase> bitmap,
@@ -1584,7 +1586,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(RetainPtr<const CFX_DIBBase> bitmap,
                                            const CFX_Matrix& matrix,
                                            const FXDIB_ResampleOptions& options,
                                            BlendMode blend_type) {
-  DebugValidate(m_pBitmap);
+  DebugValidate(bitmap_);
 
   sk_sp<SkImage> skia_source = bitmap->RealizeSkImage();
   if (!skia_source) {
@@ -1592,15 +1594,15 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(RetainPtr<const CFX_DIBBase> bitmap,
   }
 
   {
-    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+    SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
 
     const int width = bitmap->GetWidth();
     const int height = bitmap->GetHeight();
     SkMatrix skMatrix;
     SetBitmapMatrix(matrix, width, height, &skMatrix);
-    m_pCanvas->concat(skMatrix);
+    canvas_->concat(skMatrix);
     SkPaint paint;
-    SetBitmapPaint(bitmap->IsMaskFormat(), !m_FillOptions.aliased_path, alpha,
+    SetBitmapPaint(bitmap->IsMaskFormat(), !fill_options_.aliased_path, alpha,
                    color, blend_type, &paint);
 
     bool use_interpolate_bilinear = options.bInterpolateBilinear;
@@ -1620,22 +1622,22 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(RetainPtr<const CFX_DIBBase> bitmap,
           SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear);
     }
 
-    m_pCanvas->drawImageRect(
-        skia_source,
-        SkRect::MakeLTRB(src_rect.left, src_rect.top, src_rect.right,
-                         src_rect.bottom),
-        SkRect::MakeWH(src_rect.Width(), src_rect.Height()), sampling_options,
-        &paint, SkCanvas::kFast_SrcRectConstraint);
+    canvas_->drawImageRect(skia_source,
+                           SkRect::MakeLTRB(src_rect.left, src_rect.top,
+                                            src_rect.right, src_rect.bottom),
+                           SkRect::MakeWH(src_rect.Width(), src_rect.Height()),
+                           sampling_options, &paint,
+                           SkCanvas::kFast_SrcRectConstraint);
   }
 
-  DebugValidate(m_pBitmap);
+  DebugValidate(bitmap_);
   return true;
 }
 
 void CFX_SkiaDeviceDriver::DrawPathImpl(const SkPath& path,
                                         const SkPaint& paint) {
-  DebugShowSkiaDrawPath(this, m_pCanvas, paint, path);
-  m_pCanvas->drawPath(path, paint);
+  DebugShowSkiaDrawPath(this, canvas_, paint, path);
+  canvas_->drawPath(path, paint);
 }
 
 CFX_SkiaDeviceDriver::CharDetail::CharDetail() = default;

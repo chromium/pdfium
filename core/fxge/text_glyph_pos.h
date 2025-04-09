@@ -22,9 +22,9 @@ class TextGlyphPos {
 
   std::optional<CFX_Point> GetOrigin(const CFX_Point& offset) const;
 
-  UnownedPtr<const CFX_GlyphBitmap> m_pGlyph;
-  CFX_Point m_Origin;
-  CFX_PointF m_fDeviceOrigin;
+  UnownedPtr<const CFX_GlyphBitmap> glyph_;
+  CFX_Point origin_;
+  CFX_PointF device_origin_;
 };
 
 #endif  // CORE_FXGE_TEXT_GLYPH_POS_H_

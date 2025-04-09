@@ -27,12 +27,12 @@ class CFX_Path {
     ~Point();
 
     bool IsTypeAndOpen(Type type) const {
-      return m_Type == type && !m_CloseFigure;
+      return type_ == type && !close_figure_;
     }
 
-    CFX_PointF m_Point;
-    Type m_Type = Type::kLine;
-    bool m_CloseFigure = false;
+    CFX_PointF point_;
+    Type type_ = Type::kLine;
+    bool close_figure_ = false;
   };
 
   CFX_Path();
@@ -42,13 +42,13 @@ class CFX_Path {
 
   void Clear();
 
-  Point::Type GetType(size_t index) const { return m_Points[index].m_Type; }
+  Point::Type GetType(size_t index) const { return points_[index].type_; }
   bool IsClosingFigure(size_t index) const {
-    return m_Points[index].m_CloseFigure;
+    return points_[index].close_figure_;
   }
-  CFX_PointF GetPoint(size_t index) const { return m_Points[index].m_Point; }
-  const std::vector<Point>& GetPoints() const { return m_Points; }
-  std::vector<Point>& GetPoints() { return m_Points; }
+  CFX_PointF GetPoint(size_t index) const { return points_[index].point_; }
+  const std::vector<Point>& GetPoints() const { return points_; }
+  std::vector<Point>& GetPoints() { return points_; }
 
   CFX_FloatRect GetBoundingBox() const;
   CFX_FloatRect GetBoundingBoxForStrokePath(float line_width,
@@ -67,7 +67,7 @@ class CFX_Path {
   void ClosePath();
 
  private:
-  std::vector<Point> m_Points;
+  std::vector<Point> points_;
 };
 
 class CFX_RetainablePath final : public Retainable, public CFX_Path {

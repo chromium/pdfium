@@ -69,30 +69,30 @@ CFX_ImageStretcher::CFX_ImageStretcher(ScanlineComposerIface* pDest,
                                        int dest_height,
                                        const FX_RECT& bitmap_rect,
                                        const FXDIB_ResampleOptions& options)
-    : m_pDest(pDest),
-      m_pSource(std::move(source)),
-      m_ResampleOptions(options),
-      m_DestWidth(dest_width),
-      m_DestHeight(dest_height),
-      m_ClipRect(bitmap_rect),
-      m_DestFormat(GetStretchedFormat(*m_pSource)) {
-  DCHECK(m_ClipRect.Valid());
+    : dest_(pDest),
+      source_(std::move(source)),
+      resample_options_(options),
+      dest_width_(dest_width),
+      dest_height_(dest_height),
+      clip_rect_(bitmap_rect),
+      dest_format_(GetStretchedFormat(*source_)) {
+  DCHECK(clip_rect_.Valid());
 }
 
 CFX_ImageStretcher::~CFX_ImageStretcher() = default;
 
 bool CFX_ImageStretcher::Start() {
-  if (m_DestWidth == 0 || m_DestHeight == 0)
+  if (dest_width_ == 0 || dest_height_ == 0) {
     return false;
+  }
 
-  if (m_pSource->GetFormat() == FXDIB_Format::k1bppRgb &&
-      m_pSource->HasPalette()) {
-    if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(), m_DestFormat,
-                          BuildPaletteFrom1BppSource(m_pSource))) {
+  if (source_->GetFormat() == FXDIB_Format::k1bppRgb && source_->HasPalette()) {
+    if (!dest_->SetInfo(clip_rect_.Width(), clip_rect_.Height(), dest_format_,
+                        BuildPaletteFrom1BppSource(source_))) {
       return false;
     }
-  } else if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(),
-                               m_DestFormat, {})) {
+  } else if (!dest_->SetInfo(clip_rect_.Width(), clip_rect_.Height(),
+                             dest_format_, {})) {
     return false;
   }
   return StartStretch();
@@ -103,21 +103,21 @@ bool CFX_ImageStretcher::Continue(PauseIndicatorIface* pPause) {
 }
 
 RetainPtr<const CFX_DIBBase> CFX_ImageStretcher::source() {
-  return m_pSource;
+  return source_;
 }
 
 bool CFX_ImageStretcher::StartStretch() {
-  m_pStretchEngine = std::make_unique<CStretchEngine>(
-      m_pDest, m_DestFormat, m_DestWidth, m_DestHeight, m_ClipRect, m_pSource,
-      m_ResampleOptions);
-  m_pStretchEngine->StartStretchHorz();
-  if (SourceSizeWithinLimit(m_pSource->GetWidth(), m_pSource->GetHeight())) {
-    m_pStretchEngine->Continue(nullptr);
+  stretch_engine_ = std::make_unique<CStretchEngine>(
+      dest_, dest_format_, dest_width_, dest_height_, clip_rect_, source_,
+      resample_options_);
+  stretch_engine_->StartStretchHorz();
+  if (SourceSizeWithinLimit(source_->GetWidth(), source_->GetHeight())) {
+    stretch_engine_->Continue(nullptr);
     return false;
   }
   return true;
 }
 
 bool CFX_ImageStretcher::ContinueStretch(PauseIndicatorIface* pPause) {
-  return m_pStretchEngine && m_pStretchEngine->Continue(pPause);
+  return stretch_engine_ && stretch_engine_->Continue(pPause);
 }

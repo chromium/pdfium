@@ -20,20 +20,19 @@ class CFX_SubstFont {
 #endif
   void UseChromeSerif();
 
-  void SetIsBuiltInGenericFont() { m_bFlagMM = true; }
-  bool IsBuiltInGenericFont() const { return m_bFlagMM; }
+  void SetIsBuiltInGenericFont() { flag_mm_ = true; }
+  bool IsBuiltInGenericFont() const { return flag_mm_; }
 
-  ByteString m_Family;
-  FX_Charset m_Charset = FX_Charset::kANSI;
-  int m_Weight = 0;
-  int m_ItalicAngle = 0;
-  int m_WeightCJK = 0;
-
-  bool m_bSubstCJK = false;
-  bool m_bItalicCJK = false;
+  ByteString family_;
+  FX_Charset charset_ = FX_Charset::kANSI;
+  int weight_ = 0;
+  int italic_angle_ = 0;
+  int weight_cjk_ = 0;
+  bool subst_cjk_ = false;
+  bool italic_cjk_ = false;
 
  private:
-  bool m_bFlagMM = false;
+  bool flag_mm_ = false;
 };
 
 #endif  // CORE_FXGE_CFX_SUBSTFONT_H_

@@ -26,17 +26,17 @@ class CFPF_SkiaFont {
                 FX_Charset uCharset);
   ~CFPF_SkiaFont();
 
-  bool IsValid() const { return !!m_Face; }
+  bool IsValid() const { return !!face_; }
 
   ByteString GetFamilyName();
-  FX_Charset GetCharset() const { return m_uCharset; }
+  FX_Charset GetCharset() const { return charset_; }
   uint32_t GetFontData(uint32_t dwTable, pdfium::span<uint8_t> pBuffer);
 
  private:
-  UnownedPtr<CFPF_SkiaFontMgr> const m_pFontMgr;
-  UnownedPtr<const CFPF_SkiaPathFont> const m_pFont;
-  RetainPtr<CFX_Face> const m_Face;
-  const FX_Charset m_uCharset;
+  UnownedPtr<CFPF_SkiaFontMgr> const font_mgr_;
+  UnownedPtr<const CFPF_SkiaPathFont> const font_;
+  RetainPtr<CFX_Face> const face_;
+  const FX_Charset charset_;
 };
 
 #endif  // CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
