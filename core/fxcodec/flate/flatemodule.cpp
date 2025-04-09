@@ -99,7 +99,7 @@ bool FlateOutput(z_stream* context, pdfium::span<uint8_t> dest_span) {
 
   uint32_t post_pos = FlateGetPossiblyTruncatedTotalOut(context);
   CHECK_GE(post_pos, pre_pos);
-  fxcrt::Fill(dest_span.subspan(post_pos - pre_pos), 0);
+  std::ranges::fill(dest_span.subspan(post_pos - pre_pos), 0);
 
   return ret;
 }
