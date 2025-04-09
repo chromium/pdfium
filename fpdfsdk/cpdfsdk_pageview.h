@@ -91,7 +91,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool SetIndexSelected(int index, bool selected);
   bool IsIndexSelected(int index);
 
-  const CFX_Matrix& GetCurrentMatrix() const { return cur_matrix_; }
+  const CFX_Matrix& GetCurrentMatrix() const { return matrix_; }
   void UpdateRects(const std::vector<CFX_FloatRect>& rects);
   void UpdateView(CPDFSDK_Annot* pAnnot);
 
@@ -120,7 +120,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
                    Mask<FWL_EVENTFLAG> nFlags);
   void ExitWidget(bool callExitCallback, Mask<FWL_EVENTFLAG> nFlags);
 
-  CFX_Matrix cur_matrix_;
+  CFX_Matrix matrix_;
   UnownedPtr<IPDF_Page> const page_;
   std::unique_ptr<CPDF_AnnotList> annot_list_;
   std::vector<std::unique_ptr<CPDFSDK_Annot>> sdkannot_array_;

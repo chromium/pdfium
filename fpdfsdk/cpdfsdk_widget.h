@@ -131,9 +131,10 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 
   void DrawShadow(CFX_RenderDevice* pDevice, CPDFSDK_PageView* pPageView);
 
-  void SetAppModified();
-  void ClearAppModified();
-  bool IsAppModified() const;
+  void set_appearance_modified(bool appearance_modified) {
+    appearance_modified_ = appearance_modified;
+  }
+  bool appearance_modified() const { return appearance_modified_; }
 
   uint32_t GetAppearanceAge() const { return appearance_age_; }
   uint32_t GetValueAge() const { return value_age_; }
@@ -183,7 +184,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 #endif  // PDF_ENABLE_XFA
 
   UnownedPtr<CPDFSDK_InteractiveForm> const interactive_form_;
-  bool app_modified_ = false;
+  bool appearance_modified_ = false;
   uint32_t appearance_age_ = 0;
   uint32_t value_age_ = 0;
 };

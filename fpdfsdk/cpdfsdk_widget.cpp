@@ -655,18 +655,6 @@ void CPDFSDK_Widget::ClearSelection() {
 
 void CPDFSDK_Widget::SetTopVisibleIndex(int index) {}
 
-void CPDFSDK_Widget::SetAppModified() {
-  app_modified_ = true;
-}
-
-void CPDFSDK_Widget::ClearAppModified() {
-  app_modified_ = false;
-}
-
-bool CPDFSDK_Widget::IsAppModified() const {
-  return app_modified_;
-}
-
 #ifdef PDF_ENABLE_XFA
 void CPDFSDK_Widget::ResetXFAAppearance(ValueChanged bValueChanged) {
   switch (GetFieldType()) {
@@ -684,7 +672,7 @@ void CPDFSDK_Widget::ResetXFAAppearance(ValueChanged bValueChanged) {
 
 void CPDFSDK_Widget::ResetAppearance(std::optional<WideString> sValue,
                                      ValueChanged bValueChanged) {
-  SetAppModified();
+  set_appearance_modified(true);
 
   appearance_age_++;
   if (bValueChanged == kValueChanged) {

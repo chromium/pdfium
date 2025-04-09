@@ -75,7 +75,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix& mtUser2Device,
                                        CPDF_RenderOptions* pOptions,
                                        const FX_RECT& pClip) {
-  cur_matrix_ = mtUser2Device;
+  matrix_ = mtUser2Device;
 
 #ifdef PDF_ENABLE_XFA
   IPDF_Page* pPage = GetXFAPage();

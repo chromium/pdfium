@@ -52,7 +52,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_ListBox::NewPWLWindow(
   }
 
   if (pWnd->HasFlag(PLBS_MULTIPLESEL)) {
-    origin_selections_.clear();
+    original_selections_.clear();
 
     bool bSetCaret = false;
     for (int32_t i = 0, sz = widget_->CountOptions(); i < sz; i++) {
@@ -62,7 +62,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_ListBox::NewPWLWindow(
           bSetCaret = true;
         }
         pWnd->Select(i);
-        origin_selections_.insert(i);
+        original_selections_.insert(i);
       }
     }
   } else {
@@ -94,7 +94,7 @@ bool CFFL_ListBox::IsDataChanged(const CPDFSDK_PageView* pPageView) {
     size_t nSelCount = 0;
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; ++i) {
       if (pListBox->IsItemSelected(i)) {
-        if (!pdfium::Contains(origin_selections_, i)) {
+        if (!pdfium::Contains(original_selections_, i)) {
           return true;
         }
 
@@ -102,7 +102,7 @@ bool CFFL_ListBox::IsDataChanged(const CPDFSDK_PageView* pPageView) {
       }
     }
 
-    return nSelCount != origin_selections_.size();
+    return nSelCount != original_selections_.size();
   }
   return pListBox->GetCurSel() != widget_->GetSelectedIndex(0);
 }
