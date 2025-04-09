@@ -81,8 +81,9 @@ CFX_AggImageRenderer::CFX_AggImageRenderer(
     dest_height = -dest_height;
   }
 
-  if (dest_width == 0 || dest_height == 0)
+  if (dest_width == 0 || dest_height == 0) {
     return;
+  }
 
   FX_RECT bitmap_clip = clip_box_;
   bitmap_clip.Offset(-image_rect.left, -image_rect.top);
@@ -110,8 +111,9 @@ bool CFX_AggImageRenderer::Continue(PauseIndicatorIface* pPause) {
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap = transformer_->DetachBitmap();
-  if (!pBitmap || pBitmap->GetBuffer().empty())
+  if (!pBitmap || pBitmap->GetBuffer().empty()) {
     return false;
+  }
 
   if (pBitmap->IsMaskFormat()) {
     if (alpha_ != 1.0f) {

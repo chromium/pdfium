@@ -63,19 +63,22 @@ void AdjustGlyphSpace(std::vector<TextGlyphPos>* pGlyphAndPos) {
 
     FX_SAFE_INT32 safe_space = next_origin;
     safe_space -= current_origin;
-    if (!safe_space.IsValid())
+    if (!safe_space.IsValid()) {
       continue;
+    }
 
     int space = safe_space.ValueOrDie();
     float space_f = next_origin_f - current_origin_f;
     float error = fabs(space_f) - fabs(static_cast<float>(space));
-    if (error <= 0.5f)
+    if (error <= 0.5f) {
       continue;
+    }
 
     FX_SAFE_INT32 safe_origin = current_origin;
     safe_origin += space > 0 ? -1 : 1;
-    if (!safe_origin.IsValid())
+    if (!safe_origin.IsValid()) {
       continue;
+    }
 
     current_origin = safe_origin.ValueOrDie();
   }
@@ -175,8 +178,9 @@ void NormalizeDest(bool has_alpha,
     return;
   }
   int src_alpha = CalcAlpha(TextGammaAdjust(src_value), bgra.alpha);
-  if (src_alpha == 0)
+  if (src_alpha == 0) {
     return;
+  }
 
   ApplyAlpha(dest, bgra, src_alpha);
 }
@@ -190,8 +194,9 @@ void NormalizeSrc(bool has_alpha,
     return;
   }
   int src_alpha = CalcAlpha(TextGammaAdjust(src_value), bgra.alpha);
-  if (src_alpha != 0)
+  if (src_alpha != 0) {
     NormalizeArgb(src_value, bgra, dest, src_alpha);
+  }
 }
 
 void NextPixel(const uint8_t** src_scan, uint8_t** dst_scan, int bpp) {
@@ -304,15 +309,18 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
 bool ShouldDrawDeviceText(const CFX_Font* pFont,
                           const CFX_TextRenderOptions& options) {
 #if BUILDFLAG(IS_APPLE)
-  if (options.font_is_cid)
+  if (options.font_is_cid) {
     return false;
+  }
 
   const ByteString bsPsName = pFont->GetPsName();
-  if (bsPsName.Contains("+ZJHL"))
+  if (bsPsName.Contains("+ZJHL")) {
     return false;
+  }
 
-  if (bsPsName == "CNAAJI+cmex10")
+  if (bsPsName == "CNAAJI+cmex10") {
     return false;
+  }
 #endif
   return true;
 }
@@ -325,8 +333,9 @@ bool CheckSimpleLinePath(pdfium::span<const CFX_Path::Point> points,
                          CFX_Path* new_path,
                          bool* thin,
                          bool* set_identity) {
-  if (points.size() != 2 && points.size() != 3)
+  if (points.size() != 2 && points.size() != 3) {
     return false;
+  }
 
   if (points[0].type_ != CFX_Path::Point::Type::kMove ||
       points[1].type_ != CFX_Path::Point::Type::kLine ||
@@ -344,16 +353,18 @@ bool CheckSimpleLinePath(pdfium::span<const CFX_Path::Point> points,
   for (size_t i = 0; i < 2; i++) {
     CFX_PointF point = points[i].point_;
     if (adjust) {
-      if (matrix)
+      if (matrix) {
         point = matrix->Transform(point);
+      }
 
       point = CFX_PointF(static_cast<int>(point.x) + 0.5f,
                          static_cast<int>(point.y) + 0.5f);
     }
     new_path->AppendPoint(point, points[i].type_);
   }
-  if (adjust && matrix)
+  if (adjust && matrix) {
     *set_identity = true;
+  }
 
   *thin = true;
   return true;
@@ -364,8 +375,9 @@ bool CheckSimpleLinePath(pdfium::span<const CFX_Path::Point> points,
 bool CheckPalindromicPath(pdfium::span<const CFX_Path::Point> points,
                           CFX_Path* new_path,
                           bool* thin) {
-  if (points.size() <= 3 || !(points.size() % 2))
+  if (points.size() <= 3 || !(points.size() % 2)) {
     return false;
+  }
 
   const size_t mid = points.size() / 2;
   CFX_Path temp_path;
@@ -375,8 +387,9 @@ bool CheckPalindromicPath(pdfium::span<const CFX_Path::Point> points,
     bool zero_area = left.point_ == right.point_ &&
                      left.type_ != CFX_Path::Point::Type::kBezier &&
                      right.type_ != CFX_Path::Point::Type::kBezier;
-    if (!zero_area)
+    if (!zero_area) {
       return false;
+    }
 
     temp_path.AppendPoint(points[mid - i].point_, CFX_Path::Point::Type::kMove);
     temp_path.AppendPoint(left.point_, CFX_Path::Point::Type::kLine);
@@ -414,16 +427,18 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
                      bool* set_identity) {
   *set_identity = false;
 
-  if (points.size() < 2)
+  if (points.size() < 2) {
     return false;
+  }
 
   if (CheckSimpleLinePath(points, matrix, adjust, new_path, thin,
                           set_identity)) {
     return true;
   }
 
-  if (CheckPalindromicPath(points, new_path, thin))
+  if (CheckPalindromicPath(points, new_path, thin)) {
     return true;
+  }
 
   for (size_t i = 0; i < points.size(); i++) {
     CFX_Path::Point::Type point_type = points[i].type_;
@@ -470,8 +485,9 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
   }
 
   size_t new_path_size = new_path->GetPoints().size();
-  if (points.size() > 3 && new_path_size > 0)
+  if (points.size() > 3 && new_path_size > 0) {
     *thin = true;
+  }
   return new_path_size != 0;
 }
 
@@ -766,17 +782,20 @@ bool CFX_RenderDevice::DrawFillStrokePath(
   } else {
     bbox = path.GetBoundingBox();
   }
-  if (pObject2Device)
+  if (pObject2Device) {
     bbox = pObject2Device->TransformRect(bbox);
+  }
 
   FX_RECT rect = bbox.GetOuterRect();
-  if (!rect.Valid())
+  if (!rect.Valid()) {
     return false;
+  }
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   auto backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!CreateCompatibleBitmap(bitmap, rect.Width(), rect.Height()))
+  if (!CreateCompatibleBitmap(bitmap, rect.Width(), rect.Height())) {
     return false;
+  }
 
   if (bitmap->IsAlphaFormat()) {
     backdrop->Copy(bitmap);
@@ -791,8 +810,9 @@ bool CFX_RenderDevice::DrawFillStrokePath(
                                                    /*bGroupKnockout=*/true);
 
   CFX_Matrix matrix;
-  if (pObject2Device)
+  if (pObject2Device) {
     matrix = *pObject2Device;
+  }
   matrix.Translate(-rect.left, -rect.top);
   if (!bitmap_device.GetDeviceDriver()->DrawPath(
           path, &matrix, pGraphState, fill_color, stroke_color, fill_options)) {
@@ -855,26 +875,30 @@ void CFX_RenderDevice::DrawZeroAreaPath(
     bool aliased_path,
     uint32_t fill_color,
     uint8_t fill_alpha) {
-  if (path.empty())
+  if (path.empty()) {
     return;
+  }
 
   CFX_Path new_path;
   bool thin = false;
   bool set_identity = false;
 
-  if (!GetZeroAreaPath(path, matrix, adjust, &new_path, &thin, &set_identity))
+  if (!GetZeroAreaPath(path, matrix, adjust, &new_path, &thin, &set_identity)) {
     return;
+  }
 
   CFX_GraphStateData graph_state;
   graph_state.set_line_width(0.0f);
 
   uint32_t stroke_color = fill_color;
-  if (thin)
+  if (thin) {
     stroke_color = (((fill_alpha >> 2) << 24) | (stroke_color & 0x00ffffff));
+  }
 
   const CFX_Matrix* new_matrix = nullptr;
-  if (matrix && !matrix->IsIdentity() && !set_identity)
+  if (matrix && !matrix->IsIdentity() && !set_identity) {
     new_matrix = matrix;
+  }
 
   CFX_FillRenderOptions path_options;
   path_options.zero_area = true;
@@ -909,8 +933,9 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
   FX_RECT dest_rect(left, top, left + bitmap->GetWidth(),
                     top + bitmap->GetHeight());
   dest_rect.Intersect(clip_box_);
-  if (dest_rect.IsEmpty())
+  if (dest_rect.IsEmpty()) {
     return true;
+  }
 
   FX_RECT src_rect(dest_rect.left - left, dest_rect.top - top,
                    dest_rect.left - left + dest_rect.Width(),
@@ -1161,13 +1186,15 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
         charpos.glyph_index_, charpos.font_style_, matrix,
         charpos.font_char_width_, anti_alias, &text_options);
   }
-  if (anti_alias < FT_RENDER_MODE_LCD && glyphs.size() > 1)
+  if (anti_alias < FT_RENDER_MODE_LCD && glyphs.size() > 1) {
     AdjustGlyphSpace(&glyphs);
+  }
 
   FX_RECT bmp_rect = GetGlyphsBBox(glyphs, anti_alias);
   bmp_rect.Intersect(clip_box_);
-  if (bmp_rect.IsEmpty())
+  if (bmp_rect.IsEmpty()) {
     return true;
+  }
 
   int pixel_width = bmp_rect.Width();
   int pixel_height = bmp_rect.Height();
@@ -1175,16 +1202,18 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   int pixel_top = bmp_rect.top;
   if (anti_alias == FT_RENDER_MODE_MONO) {
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k1bppMask))
+    if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k1bppMask)) {
       return false;
+    }
     for (const TextGlyphPos& glyph : glyphs) {
       if (!glyph.glyph_) {
         continue;
       }
 
       std::optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
-      if (!point.has_value())
+      if (!point.has_value()) {
         continue;
+      }
 
       const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.glyph_->GetBitmap();
       bitmap->CompositeOneBPPMask(point.value().x, point.value().y,
@@ -1196,8 +1225,9 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   }
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (bpp_ == 8) {
-    if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k8bppMask))
+    if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k8bppMask)) {
       return false;
+    }
   } else {
     // TODO(crbug.com/42271020): Switch to CreateCompatibleBitmap() once
     // DrawNormalTextHelper() supports `FXDIB_Format::kBgraPremul`.
@@ -1209,8 +1239,9 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   }
   if (!bitmap->IsAlphaFormat() && !bitmap->IsMaskFormat()) {
     bitmap->Clear(0xFFFFFFFF);
-    if (!GetDIBits(bitmap, bmp_rect.left, bmp_rect.top))
+    if (!GetDIBits(bitmap, bmp_rect.left, bmp_rect.top)) {
       return false;
+    }
   }
   int dest_width = pixel_width;
   FX_BGRA_STRUCT<uint8_t> bgra;
@@ -1224,8 +1255,9 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     }
 
     std::optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
-    if (!point.has_value())
+    if (!point.has_value()) {
       continue;
+    }
 
     const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.glyph_->GetBitmap();
     int ncols = pGlyph->GetWidth();
@@ -1243,12 +1275,14 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     int start_col = std::max(point->x, 0);
     FX_SAFE_INT32 end_col_safe = point->x;
     end_col_safe += ncols;
-    if (!end_col_safe.IsValid())
+    if (!end_col_safe.IsValid()) {
       continue;
+    }
 
     int end_col = std::min<int>(end_col_safe.ValueOrDie(), dest_width);
-    if (start_col >= end_col)
+    if (start_col >= end_col) {
       continue;
+    }
 
     DrawNormalTextHelper(bitmap, pGlyph, nrows, point->x, point->y, start_col,
                          end_col, normalize, x_subpixel, bgra);
@@ -1275,8 +1309,9 @@ bool CFX_RenderDevice::DrawTextPath(pdfium::span<const TextCharPos> pCharPos,
   for (const auto& charpos : pCharPos) {
     const CFX_Path* pPath =
         pFont->LoadGlyphPath(charpos.glyph_index_, charpos.font_char_width_);
-    if (!pPath)
+    if (!pPath) {
       continue;
+    }
 
     CFX_Matrix matrix(font_size, 0, 0, font_size, charpos.origin_.x,
                       charpos.origin_.y);
@@ -1318,8 +1353,9 @@ void CFX_RenderDevice::DrawFillArea(const CFX_Matrix& mtUser2Device,
   DCHECK(!points.empty());
   CFX_Path path;
   path.AppendPoint(points[0], CFX_Path::Point::Type::kMove);
-  for (size_t i = 1; i < points.size(); ++i)
+  for (size_t i = 1; i < points.size(); ++i) {
     path.AppendPoint(points[i], CFX_Path::Point::Type::kLine);
+  }
 
   DrawPath(path, &mtUser2Device, nullptr, color, 0,
            CFX_FillRenderOptions::EvenOddOptions());
@@ -1392,8 +1428,9 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
                                   const CFX_Color& crRightBottom,
                                   BorderStyle nStyle,
                                   int32_t nTransparency) {
-  if (fWidth <= 0.0f)
+  if (fWidth <= 0.0f) {
     return;
+  }
 
   const float fLeft = rect.left;
   const float fRight = rect.right;

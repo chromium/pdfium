@@ -20,14 +20,16 @@ std::optional<CFX_Point> TextGlyphPos::GetOrigin(
   FX_SAFE_INT32 left = origin_.x;
   left += glyph_->left();
   left -= offset.x;
-  if (!left.IsValid())
+  if (!left.IsValid()) {
     return std::nullopt;
+  }
 
   FX_SAFE_INT32 top = origin_.y;
   top -= glyph_->top();
   top -= offset.y;
-  if (!top.IsValid())
+  if (!top.IsValid()) {
     return std::nullopt;
+  }
 
   return CFX_Point(left.ValueOrDie(), top.ValueOrDie());
 }

@@ -198,9 +198,9 @@ constexpr FX_CMYK CmykEncode(uint32_t c, uint32_t m, uint32_t y, uint32_t k) {
 #define FXARGB_G(argb) ((uint8_t)((argb) >> 8))
 #define FXARGB_B(argb) ((uint8_t)(argb))
 #define FXARGB_MUL_ALPHA(argb, alpha) \
-  (((((argb) >> 24) * (alpha) / 255) << 24) | ((argb)&0xffffff))
+  (((((argb) >> 24) * (alpha) / 255) << 24) | ((argb) & 0xffffff))
 
-#define FXRGB2GRAY(r, g, b) (((b)*11 + (g)*59 + (r)*30) / 100)
+#define FXRGB2GRAY(r, g, b) (((b) * 11 + (g) * 59 + (r) * 30) / 100)
 #define FXDIB_ALPHA_MERGE(backdrop, source, source_alpha) \
   (((backdrop) * (255 - (source_alpha)) + (source) * (source_alpha)) / 255)
 

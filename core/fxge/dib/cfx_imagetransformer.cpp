@@ -65,10 +65,12 @@ class CFX_BilinearMatrix {
     *y1 = pdfium::saturated_cast<int>(val.y / kBase);
     *res_x = static_cast<int>(val.x) % kBase;
     *res_y = static_cast<int>(val.y) % kBase;
-    if (*res_x < 0 && *res_x > -kBase)
+    if (*res_x < 0 && *res_x > -kBase) {
       *res_x = kBase + *res_x;
-    if (*res_y < 0 && *res_y > -kBase)
+    }
+    if (*res_y < 0 && *res_y > -kBase) {
       *res_y = kBase + *res_y;
+    }
   }
 
  private:
@@ -93,10 +95,12 @@ bool InStretchBounds(const FX_RECT& clip_rect, int col, int row) {
 void AdjustCoords(const FX_RECT& clip_rect, int* col, int* row) {
   int& src_col = *col;
   int& src_row = *row;
-  if (src_col == clip_rect.Width())
+  if (src_col == clip_rect.Width()) {
     src_col--;
-  if (src_row == clip_rect.Height())
+  }
+  if (src_row == clip_rect.Height()) {
     src_row--;
+  }
 }
 
 // Let the compiler deduce the type for |func|, which cheaper than specifying it
@@ -141,11 +145,13 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
     : src_(std::move(source)), matrix_(matrix), resample_options_(options) {
   FX_RECT result_rect = matrix_.GetUnitRect().GetClosestRect();
   FX_RECT result_clip = result_rect;
-  if (pClip)
+  if (pClip) {
     result_clip.Intersect(*pClip);
+  }
 
-  if (result_clip.IsEmpty())
+  if (result_clip.IsEmpty()) {
     return;
+  }
 
   result_ = result_clip;
   if (fabs(matrix_.a) < fabs(matrix_.b) / 20 &&
@@ -196,12 +202,14 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
 
   FX_RECT stretch_clip =
       dest_to_strech.TransformRect(CFX_FloatRect(result_clip)).GetOuterRect();
-  if (!stretch_clip.Valid())
+  if (!stretch_clip.Valid()) {
     return;
+  }
 
   stretch_clip.Intersect(0, 0, stretch_width, stretch_height);
-  if (!stretch_clip.Valid())
+  if (!stretch_clip.Valid()) {
     return;
+  }
 
   dest_to_stretch_ = dest_to_strech;
   stretch_clip_ = stretch_clip;

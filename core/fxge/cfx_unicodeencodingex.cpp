@@ -45,8 +45,9 @@ CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() = default;
 uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
   RetainPtr<CFX_Face> face = font_->GetFace();
   FT_UInt nIndex = face->GetCharIndex(charcode);
-  if (nIndex > 0)
+  if (nIndex > 0) {
     return nIndex;
+  }
 
   size_t map_index = 0;
   while (map_index < face->GetCharMapCount()) {
@@ -92,8 +93,9 @@ std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(
 
   for (fxge::FontEncoding id : kEncodingIDs) {
     auto pFontEncoding = FXFM_CreateFontEncoding(pFont, id);
-    if (pFontEncoding)
+    if (pFontEncoding) {
       return pFontEncoding;
+    }
   }
   return nullptr;
 }

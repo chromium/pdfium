@@ -53,16 +53,18 @@ constexpr auto kBase14Substs = fxcrt::ToArray<const FontSubst>({
 // Used with std::unique_ptr to automatically call fclose().
 struct FxFileCloser {
   inline void operator()(FILE* h) const {
-    if (h)
+    if (h) {
       fclose(h);
+    }
   }
 };
 
 bool FindFamilyNameMatch(ByteStringView family_name,
                          const ByteString& installed_font_name) {
   std::optional<size_t> result = installed_font_name.Find(family_name, 0);
-  if (!result.has_value())
+  if (!result.has_value()) {
     return false;
+  }
 
   size_t next_index = result.value() + family_name.GetLength();
   // Rule out the case that |family_name| is a substring of
@@ -155,20 +157,23 @@ void CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
 
 void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
   std::unique_ptr<FX_Folder> handle = FX_Folder::OpenFolder(path);
-  if (!handle)
+  if (!handle) {
     return;
+  }
 
   ByteString filename;
   bool bFolder;
   while (handle->GetNextFile(&filename, &bFolder)) {
     if (bFolder) {
-      if (filename == "." || filename == "..")
+      if (filename == "." || filename == "..") {
         continue;
+      }
     } else {
       ByteString ext = filename.Last(4);
       ext.MakeLower();
-      if (ext != ".ttf" && ext != ".ttc" && ext != ".otf")
+      if (ext != ".ttf" && ext != ".ttc" && ext != ".otf") {
         continue;
+      }
     }
 
     ByteString fullpath = path;
@@ -185,8 +190,9 @@ void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
 
 void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   std::unique_ptr<FILE, FxFileCloser> pFile(fopen(path.c_str(), "rb"));
-  if (!pFile)
+  if (!pFile) {
     return;
+  }
 
   fseek(pFile.get(), 0, SEEK_END);
 
@@ -211,8 +217,9 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
       fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).subspan<8u>());
   FX_SAFE_SIZE_T safe_face_bytes = nFaces;
   safe_face_bytes *= 4;
-  if (!safe_face_bytes.IsValid())
+  if (!safe_face_bytes.IsValid()) {
     return;
+  }
 
   auto offsets =
       FixedSizeDataVector<uint8_t>::Uninit(safe_face_bytes.ValueOrDie());
@@ -245,23 +252,27 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   uint32_t nTables =
       fxcrt::GetUInt16MSBFirst(pdfium::as_byte_span(buffer).subspan<4, 2>());
   ByteString tables = ReadStringFromFile(pFile, nTables * 16);
-  if (tables.IsEmpty())
+  if (tables.IsEmpty()) {
     return;
+  }
 
   static constexpr uint32_t kNameTag =
       CFX_FontMapper::MakeTag('n', 'a', 'm', 'e');
   ByteString names = LoadTableFromTT(pFile, tables.unsigned_str(), nTables,
                                      kNameTag, filesize);
-  if (names.IsEmpty())
+  if (names.IsEmpty()) {
     return;
+  }
 
   ByteString facename = GetNameFromTT(names.unsigned_span(), 1);
-  if (facename.IsEmpty())
+  if (facename.IsEmpty()) {
     return;
+  }
 
   ByteString style = GetNameFromTT(names.unsigned_span(), 2);
-  if (style != "Regular")
+  if (style != "Regular") {
     facename += " " + style;
+  }
 
   if (pdfium::Contains(font_list_, facename)) {
     return;
@@ -376,8 +387,9 @@ void* CFX_FolderFontInfo::FindFont(int weight,
 
   if (charset == FX_Charset::kANSI && FontFamilyIsFixedPitch(pitch_family)) {
     auto* courier_new = GetFont("Courier New");
-    if (courier_new)
+    if (courier_new) {
       return courier_new;
+    }
   }
 
   return nullptr;
@@ -399,8 +411,9 @@ void* CFX_FolderFontInfo::GetFont(const ByteString& face) {
 size_t CFX_FolderFontInfo::GetFontData(void* hFont,
                                        uint32_t table,
                                        pdfium::span<uint8_t> buffer) {
-  if (!hFont)
+  if (!hFont) {
     return 0;
+  }
 
   const FontFaceInfo* pFont = static_cast<FontFaceInfo*>(hFont);
   uint32_t datasize = 0;
@@ -422,13 +435,15 @@ size_t CFX_FolderFontInfo::GetFontData(void* hFont,
     }
   }
 
-  if (!datasize || buffer.size() < datasize)
+  if (!datasize || buffer.size() < datasize) {
     return datasize;
+  }
 
   std::unique_ptr<FILE, FxFileCloser> pFile(
       fopen(pFont->file_path_.c_str(), "rb"));
-  if (!pFile)
+  if (!pFile) {
     return 0;
+  }
 
   if (fseek(pFile.get(), offset, SEEK_SET) < 0) {
     return 0;
@@ -451,8 +466,9 @@ size_t CFX_FolderFontInfo::GetFontData(void* hFont,
 void CFX_FolderFontInfo::DeleteFont(void* hFont) {}
 
 bool CFX_FolderFontInfo::GetFaceName(void* hFont, ByteString* name) {
-  if (!hFont)
+  if (!hFont) {
     return false;
+  }
   *name = static_cast<FontFaceInfo*>(hFont)->face_name_;
   return true;
 }

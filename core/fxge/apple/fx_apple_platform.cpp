@@ -59,10 +59,12 @@ constexpr char kJapanMincho[] = "Hiragino Mincho Pro W6";
 ByteString GetJapanesePreference(const ByteString& face,
                                  int weight,
                                  int pitch_family) {
-  if (face.Contains("Gothic"))
+  if (face.Contains("Gothic")) {
     return kJapanGothic;
-  if (FontFamilyIsRoman(pitch_family) || weight <= 400)
+  }
+  if (FontFamilyIsRoman(pitch_family) || weight <= 400) {
     return kJapanMincho;
+  }
   return kJapanGothic;
 }
 
@@ -86,10 +88,12 @@ void* CFX_MacFontInfo::MapFont(int weight,
   // see which best matches the requested characteristics.
   if (!face.Contains("Bold") && !face.Contains("Italic")) {
     ByteString new_face = face;
-    if (weight > 400)
+    if (weight > 400) {
       new_face += " Bold";
-    if (bItalic)
+    }
+    if (bItalic) {
       new_face += " Italic";
+    }
     auto it = font_list_.find(new_face);
     if (it != font_list_.end()) {
       return it->second.get();
@@ -101,11 +105,13 @@ void* CFX_MacFontInfo::MapFont(int weight,
     return it->second.get();
   }
 
-  if (charset == FX_Charset::kANSI && FontFamilyIsFixedPitch(pitch_family))
+  if (charset == FX_Charset::kANSI && FontFamilyIsFixedPitch(pitch_family)) {
     return GetFont("Courier New");
+  }
 
-  if (charset == FX_Charset::kANSI || charset == FX_Charset::kSymbol)
+  if (charset == FX_Charset::kANSI || charset == FX_Charset::kSymbol) {
     return nullptr;
+  }
 
   ByteString other_face;
   switch (charset) {

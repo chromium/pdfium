@@ -18,8 +18,9 @@
 namespace {
 
 bool IsRectPreTransform(const std::vector<CFX_Path::Point>& points) {
-  if (points.size() != 5 && points.size() != 4)
+  if (points.size() != 5 && points.size() != 4) {
     return false;
+  }
 
   if (points.size() == 5 && points[0].point_ != points[4].point_) {
     return false;
@@ -43,8 +44,9 @@ bool XYBothNotEqual(const CFX_PointF& p1, const CFX_PointF& p2) {
 }
 
 bool IsRectImpl(const std::vector<CFX_Path::Point>& points) {
-  if (!IsRectPreTransform(points))
+  if (!IsRectPreTransform(points)) {
     return false;
+  }
 
   for (int i = 1; i < 4; i++) {
     if (XYBothNotEqual(points[i].point_, points[i - 1].point_)) {
@@ -98,8 +100,9 @@ std::vector<CFX_Path::Point> GetNormalizedPoints(
     normalized.push_back(point);
 
     // Too many points. Not considered as a rectangle.
-    if (normalized.size() > 5)
+    if (normalized.size() > 5) {
       return {};
+    }
   }
 
   DCHECK_EQ(5u, normalized.size());
@@ -118,10 +121,11 @@ void UpdateLineEndPoints(CFX_FloatRect* rect,
     }
 
     float point_y;
-    if (end_pos.y < start_pos.y)
+    if (end_pos.y < start_pos.y) {
       point_y = end_pos.y - hw;
-    else
+    } else {
       point_y = end_pos.y + hw;
+    }
 
     rect->UpdateRect(CFX_PointF(end_pos.x + hw, point_y));
     rect->UpdateRect(CFX_PointF(end_pos.x - hw, point_y));
@@ -130,10 +134,11 @@ void UpdateLineEndPoints(CFX_FloatRect* rect,
 
   if (start_pos.y == end_pos.y) {
     float point_x;
-    if (end_pos.x < start_pos.x)
+    if (end_pos.x < start_pos.x) {
       point_x = end_pos.x - hw;
-    else
+    } else {
       point_x = end_pos.x + hw;
+    }
 
     rect->UpdateRect(CFX_PointF(point_x, end_pos.y + hw));
     rect->UpdateRect(CFX_PointF(point_x, end_pos.y - hw));
@@ -192,15 +197,17 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
   }
   if (bStartVert) {
     CFX_PointF outside(start_pos.x, 0);
-    if (end_pos.x < start_pos.x)
+    if (end_pos.x < start_pos.x) {
       outside.x += half_width;
-    else
+    } else {
       outside.x -= half_width;
+    }
 
-    if (start_pos.y < (end_k * start_pos.x) + end_c)
+    if (start_pos.y < (end_k * start_pos.x) + end_c) {
       outside.y = (end_k * outside.x) + end_c + end_dc;
-    else
+    } else {
       outside.y = (end_k * outside.x) + end_c - end_dc;
+    }
 
     rect->UpdateRect(outside);
     return;
@@ -208,15 +215,17 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
 
   if (bEndVert) {
     CFX_PointF outside(end_pos.x, 0);
-    if (start_pos.x < end_pos.x)
+    if (start_pos.x < end_pos.x) {
       outside.x += half_width;
-    else
+    } else {
       outside.x -= half_width;
+    }
 
-    if (end_pos.y < (start_k * end_pos.x) + start_c)
+    if (end_pos.y < (start_k * end_pos.x) + start_c) {
       outside.y = (start_k * outside.x) + start_c + start_dc;
-    else
+    } else {
       outside.y = (start_k * outside.x) + start_c - start_dc;
+    }
 
     rect->UpdateRect(outside);
     return;
@@ -225,24 +234,27 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
   if (fabs(start_k - end_k) < one_twentieth) {
     int start_dir = mid_pos.x > start_pos.x ? 1 : -1;
     int end_dir = end_pos.x > mid_pos.x ? 1 : -1;
-    if (start_dir == end_dir)
+    if (start_dir == end_dir) {
       UpdateLineEndPoints(rect, mid_pos, end_pos, half_width);
-    else
+    } else {
       UpdateLineEndPoints(rect, start_pos, mid_pos, half_width);
+    }
     return;
   }
 
   float start_outside_c = start_c;
-  if (end_pos.y < (start_k * end_pos.x) + start_c)
+  if (end_pos.y < (start_k * end_pos.x) + start_c) {
     start_outside_c += start_dc;
-  else
+  } else {
     start_outside_c -= start_dc;
+  }
 
   float end_outside_c = end_c;
-  if (start_pos.y < (end_k * start_pos.x) + end_c)
+  if (start_pos.y < (end_k * start_pos.x) + end_c) {
     end_outside_c += end_dc;
-  else
+  } else {
     end_outside_c -= end_dc;
+  }
 
   float join_x = (end_outside_c - start_outside_c) / (start_k - end_k);
   float join_y = start_k * join_x + start_outside_c;
@@ -287,8 +299,9 @@ void CFX_Path::Append(const CFX_Path& src, const CFX_Matrix* matrix) {
   size_t cur_size = points_.size();
   points_.insert(points_.end(), src.points_.begin(), src.points_.end());
 
-  if (!matrix)
+  if (!matrix) {
     return;
+  }
 
   for (size_t i = cur_size; i < points_.size(); i++) {
     points_[i].point_ = matrix->Transform(points_[i].point_);
@@ -416,32 +429,38 @@ bool CFX_Path::IsRect() const {
 std::optional<CFX_FloatRect> CFX_Path::GetRect(const CFX_Matrix* matrix) const {
   bool do_normalize = PathPointsNeedNormalization(points_);
   std::vector<Point> normalized;
-  if (do_normalize)
+  if (do_normalize) {
     normalized = GetNormalizedPoints(points_);
+  }
   const std::vector<Point>& path_points = do_normalize ? normalized : points_;
 
   if (!matrix) {
-    if (!IsRectImpl(path_points))
+    if (!IsRectImpl(path_points)) {
       return std::nullopt;
+    }
 
     return CreateRectFromPoints(path_points[0].point_, path_points[2].point_);
   }
 
-  if (!IsRectPreTransform(path_points))
+  if (!IsRectPreTransform(path_points)) {
     return std::nullopt;
+  }
 
   std::array<CFX_PointF, 5> points;
   for (size_t i = 0; i < path_points.size(); ++i) {
     points[i] = matrix->Transform(path_points[i].point_);
 
-    if (i == 0)
+    if (i == 0) {
       continue;
-    if (XYBothNotEqual(points[i], points[i - 1]))
+    }
+    if (XYBothNotEqual(points[i], points[i - 1])) {
       return std::nullopt;
+    }
   }
 
-  if (XYBothNotEqual(points[0], points[3]))
+  if (XYBothNotEqual(points[0], points[3])) {
     return std::nullopt;
+  }
 
   return CreateRectFromPoints(points[0], points[2]);
 }

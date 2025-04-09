@@ -64,8 +64,9 @@ int Sat(FX_RGB_STRUCT<int> color) {
 FX_RGB_STRUCT<int> SetSat(FX_RGB_STRUCT<int> color, int s) {
   int min = std::min(color.red, std::min(color.green, color.blue));
   int max = std::max(color.red, std::max(color.green, color.blue));
-  if (min == max)
+  if (min == max) {
     return {};
+  }
 
   color.red = (color.red - min) * s / (max - min);
   color.green = (color.green - min) * s / (max - min);
@@ -937,10 +938,11 @@ void CompositeRow_8bppPal2Gray(pdfium::span<uint8_t> dest_span,
     }
     for (int col = 0; col < pixel_count; col++) {
       uint8_t gray = pPalette[*src_scan];
-      if (clip_scan && clip_scan[col] < 255)
+      if (clip_scan && clip_scan[col] < 255) {
         *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, clip_scan[col]);
-      else
+      } else {
         *dest_scan = gray;
+      }
       dest_scan++;
       src_scan++;
     }
@@ -2379,8 +2381,9 @@ void CFX_ScanlineCompositor::InitSourcePalette(
       gray_pal[0] = 0;
       gray_pal[1] = 255;
     } else {
-      for (size_t i = 0; i < pal_count; ++i)
+      for (size_t i = 0; i < pal_count; ++i) {
         gray_pal[i] = i;
+      }
     }
     return;
   }

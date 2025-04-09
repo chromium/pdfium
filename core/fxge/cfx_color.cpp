@@ -26,42 +26,48 @@ bool InRange(float comp) {
 }
 
 CFX_Color ConvertCMYK2GRAY(float dC, float dM, float dY, float dK) {
-  if (!InRange(dC) || !InRange(dM) || !InRange(dY) || !InRange(dK))
+  if (!InRange(dC) || !InRange(dM) || !InRange(dY) || !InRange(dK)) {
     return CFX_Color(CFX_Color::Type::kGray);
+  }
   return CFX_Color(
       CFX_Color::Type::kGray,
       1.0f - std::min(1.0f, 0.3f * dC + 0.59f * dM + 0.11f * dY + dK));
 }
 
 CFX_Color ConvertGRAY2CMYK(float dGray) {
-  if (!InRange(dGray))
+  if (!InRange(dGray)) {
     return CFX_Color(CFX_Color::Type::kCMYK);
+  }
   return CFX_Color(CFX_Color::Type::kCMYK, 0.0f, 0.0f, 0.0f, 1.0f - dGray);
 }
 
 CFX_Color ConvertGRAY2RGB(float dGray) {
-  if (!InRange(dGray))
+  if (!InRange(dGray)) {
     return CFX_Color(CFX_Color::Type::kRGB);
+  }
   return CFX_Color(CFX_Color::Type::kRGB, dGray, dGray, dGray);
 }
 
 CFX_Color ConvertRGB2GRAY(float dR, float dG, float dB) {
-  if (!InRange(dR) || !InRange(dG) || !InRange(dB))
+  if (!InRange(dR) || !InRange(dG) || !InRange(dB)) {
     return CFX_Color(CFX_Color::Type::kGray);
+  }
   return CFX_Color(CFX_Color::Type::kGray, 0.3f * dR + 0.59f * dG + 0.11f * dB);
 }
 
 CFX_Color ConvertCMYK2RGB(float dC, float dM, float dY, float dK) {
-  if (!InRange(dC) || !InRange(dM) || !InRange(dY) || !InRange(dK))
+  if (!InRange(dC) || !InRange(dM) || !InRange(dY) || !InRange(dK)) {
     return CFX_Color(CFX_Color::Type::kRGB);
+  }
   return CFX_Color(CFX_Color::Type::kRGB, 1.0f - std::min(1.0f, dC + dK),
                    1.0f - std::min(1.0f, dM + dK),
                    1.0f - std::min(1.0f, dY + dK));
 }
 
 CFX_Color ConvertRGB2CMYK(float dR, float dG, float dB) {
-  if (!InRange(dR) || !InRange(dG) || !InRange(dB))
+  if (!InRange(dR) || !InRange(dG) || !InRange(dB)) {
     return CFX_Color(CFX_Color::Type::kCMYK);
+  }
 
   float c = 1.0f - dR;
   float m = 1.0f - dG;
@@ -73,8 +79,9 @@ CFX_Color ConvertRGB2CMYK(float dR, float dG, float dB) {
 }  // namespace
 
 CFX_Color CFX_Color::ConvertColorType(Type nConvertColorType) const {
-  if (nColorType == nConvertColorType)
+  if (nColorType == nConvertColorType) {
     return *this;
+  }
 
   CFX_Color ret;
   switch (nColorType) {

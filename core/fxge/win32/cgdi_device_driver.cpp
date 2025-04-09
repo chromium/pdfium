@@ -113,8 +113,9 @@ void SetPathToDC(HDC hDC, const CFX_Path& path, const CFX_Matrix* pMatrix) {
   pdfium::span<const CFX_Path::Point> points = path.GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     CFX_PointF pos = points[i].point_;
-    if (pMatrix)
+    if (pMatrix) {
       pos = pMatrix->Transform(pos);
+    }
 
     CFX_Point screen(FXSYS_roundf(pos.x), FXSYS_roundf(pos.y));
     CFX_Path::Point::Type point_type = points[i].type_;
@@ -132,15 +133,17 @@ void SetPathToDC(HDC hDC, const CFX_Path& path, const CFX_Matrix* pMatrix) {
       lppt[0].y = screen.y;
 
       pos = points[i + 1].point_;
-      if (pMatrix)
+      if (pMatrix) {
         pos = pMatrix->Transform(pos);
+      }
 
       lppt[1].x = FXSYS_roundf(pos.x);
       lppt[1].y = FXSYS_roundf(pos.y);
 
       pos = points[i + 2].point_;
-      if (pMatrix)
+      if (pMatrix) {
         pos = pMatrix->Transform(pos);
+      }
 
       lppt[2].x = FXSYS_roundf(pos.x);
       lppt[2].y = FXSYS_roundf(pos.y);
@@ -221,8 +224,9 @@ unsigned clip_liang_barsky(float x1,
   float deltax = x2 - x1;
   float deltay = y2 - y1;
   unsigned np = 0;
-  if (deltax == 0)
+  if (deltax == 0) {
     deltax = (x1 > clip_box.x1) ? -nearzero : nearzero;
+  }
   float xin;
   float xout;
   if (deltax > 0) {
@@ -233,8 +237,9 @@ unsigned clip_liang_barsky(float x1,
     xout = clip_box.x1;
   }
   float tinx = (xin - x1) / deltax;
-  if (deltay == 0)
+  if (deltay == 0) {
     deltay = (y1 > clip_box.y1) ? -nearzero : nearzero;
+  }
   float yin;
   float yout;
   if (deltay > 0) {
@@ -398,8 +403,9 @@ void CGdiDeviceDriver::SaveState() {
 
 void CGdiDeviceDriver::RestoreState(bool bKeepSaved) {
   RestoreDC(dc_handle_, -1);
-  if (bKeepSaved)
+  if (bKeepSaved) {
     SaveDC(dc_handle_);
+  }
 }
 
 bool CGdiDeviceDriver::GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
@@ -575,15 +581,17 @@ void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
                                ((y1 < 0) << 2) | ((y1 > height_) << 3);
     int endOutOfBoundsFlag = (x2 < 0) | ((x2 > width_) << 1) | ((y2 < 0) << 2) |
                              ((y2 > height_) << 3);
-    if (startOutOfBoundsFlag & endOutOfBoundsFlag)
+    if (startOutOfBoundsFlag & endOutOfBoundsFlag) {
       return;
+    }
 
     if (startOutOfBoundsFlag || endOutOfBoundsFlag) {
       float x[2];
       float y[2];
       unsigned np = LineClip(width_, height_, x1, y1, x2, y2, x, y);
-      if (np == 0)
+      if (np == 0) {
         return;
+      }
 
       if (np == 1) {
         x2 = x[0];
@@ -613,8 +621,9 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
   if (!(pGraphState || stroke_color == 0) &&
       !pPlatform->gdiplus_ext_.IsAvailable()) {
     CFX_FloatRect bbox_f = path.GetBoundingBox();
-    if (pMatrix)
+    if (pMatrix) {
       bbox_f = pMatrix->TransformRect(bbox_f);
+    }
 
     FX_RECT bbox = bbox_f.GetInnerRect();
     if (bbox.Width() <= 0) {

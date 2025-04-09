@@ -39,8 +39,9 @@ bool CFX_BitmapStorer::SetInfo(int width,
   DCHECK_NE(src_format, FXDIB_Format::k1bppMask);
   DCHECK_NE(src_format, FXDIB_Format::k1bppRgb);
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pBitmap->Create(width, height, src_format))
+  if (!pBitmap->Create(width, height, src_format)) {
     return false;
+  }
 
   if (!src_palette.empty()) {
     pBitmap->TakePalette(std::move(src_palette));

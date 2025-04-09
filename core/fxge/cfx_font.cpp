@@ -63,8 +63,9 @@ FX_RECT ScaledFXRectFromFTPos(FT_Pos left,
                               FT_Pos bottom,
                               int x_scale,
                               int y_scale) {
-  if (x_scale == 0 || y_scale == 0)
+  if (x_scale == 0 || y_scale == 0) {
     return FXRectFromFTPos(left, top, right, bottom);
+  }
 
   return FXRectFromFTPos(left * 1000 / x_scale, top * 1000 / y_scale,
                          right * 1000 / x_scale, bottom * 1000 / y_scale);
@@ -75,8 +76,9 @@ unsigned long FTStreamRead(FXFT_StreamRec* stream,
                            unsigned long offset,
                            unsigned char* buffer,
                            unsigned long count) {
-  if (count == 0)
+  if (count == 0) {
     return 0;
+  }
 
   IFX_SeekableReadStream* pFile =
       static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
@@ -125,8 +127,9 @@ ByteString CFX_Font::GetDefaultFontNameByCharset(FX_Charset nCharset) {
 // static
 FX_Charset CFX_Font::GetCharSetFromUnicode(uint16_t word) {
   // to avoid CJK Font to show ASCII
-  if (word < 0x7F)
+  if (word < 0x7F) {
     return FX_Charset::kANSI;
+  }
 
   // find new charset
   if ((word >= 0x4E00 && word <= 0x9FA5) ||
@@ -149,26 +152,35 @@ FX_Charset CFX_Font::GetCharSetFromUnicode(uint16_t word) {
     return FX_Charset::kHangul;
   }
 
-  if (word >= 0x0E00 && word <= 0x0E7F)
+  if (word >= 0x0E00 && word <= 0x0E7F) {
     return FX_Charset::kThai;
+  }
 
-  if ((word >= 0x0370 && word <= 0x03FF) || (word >= 0x1F00 && word <= 0x1FFF))
+  if ((word >= 0x0370 && word <= 0x03FF) ||
+      (word >= 0x1F00 && word <= 0x1FFF)) {
     return FX_Charset::kMSWin_Greek;
+  }
 
-  if ((word >= 0x0600 && word <= 0x06FF) || (word >= 0xFB50 && word <= 0xFEFC))
+  if ((word >= 0x0600 && word <= 0x06FF) ||
+      (word >= 0xFB50 && word <= 0xFEFC)) {
     return FX_Charset::kMSWin_Arabic;
+  }
 
-  if (word >= 0x0590 && word <= 0x05FF)
+  if (word >= 0x0590 && word <= 0x05FF) {
     return FX_Charset::kMSWin_Hebrew;
+  }
 
-  if (word >= 0x0400 && word <= 0x04FF)
+  if (word >= 0x0400 && word <= 0x04FF) {
     return FX_Charset::kMSWin_Cyrillic;
+  }
 
-  if (word >= 0x0100 && word <= 0x024F)
+  if (word >= 0x0100 && word <= 0x024F) {
     return FX_Charset::kMSWin_EasternEuropean;
+  }
 
-  if (word >= 0x1E00 && word <= 0x1EFF)
+  if (word >= 0x1E00 && word <= 0x1EFF) {
     return FX_Charset::kMSWin_Vietnamese;
+  }
 
   return FX_Charset::kANSI;
 }
@@ -308,18 +320,21 @@ std::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
 
   if (face_->IsTricky()) {
     int error = FT_Set_Char_Size(face_->GetRec(), 0, 1000 * 64, 72, 72);
-    if (error)
+    if (error) {
       return std::nullopt;
+    }
 
     error = FT_Load_Glyph(face_->GetRec(), glyph_index,
                           FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
-    if (error)
+    if (error) {
       return std::nullopt;
+    }
 
     FT_Glyph glyph;
     error = FT_Get_Glyph(face_->GetRec()->glyph, &glyph);
-    if (error)
+    if (error) {
       return std::nullopt;
+    }
 
     FT_BBox cbox;
     FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_PIXELS, &cbox);
@@ -386,8 +401,9 @@ ByteString CFX_Font::GetPsName() const {
   }
 
   ByteString psName = FT_Get_Postscript_Name(face_->GetRec());
-  if (psName.IsEmpty())
+  if (psName.IsEmpty()) {
     psName = kUntitledFontName;
+  }
   return psName;
 }
 
@@ -408,15 +424,18 @@ ByteString CFX_Font::GetFamilyNameOrUntitled() const {
 
 ByteString CFX_Font::GetBaseFontName() const {
   ByteString psname = GetPsName();
-  if (!psname.IsEmpty() && psname != kUntitledFontName)
+  if (!psname.IsEmpty() && psname != kUntitledFontName) {
     return psname;
+  }
   if (face_) {
     ByteString style = face_->GetStyleName();
     ByteString facename = GetFamilyNameOrUntitled();
-    if (IsTTFont())
+    if (IsTTFont()) {
       facename.Remove(' ');
-    if (ShouldAppendStyle(style))
+    }
+    if (ShouldAppendStyle(style)) {
       facename += (IsTTFont() ? "," : " ") + style;
+    }
     return facename;
   }
   if (subst_font_) {
@@ -434,8 +453,9 @@ std::optional<FX_RECT> CFX_Font::GetRawBBox() const {
 
 std::optional<FX_RECT> CFX_Font::GetBBox() const {
   std::optional<FX_RECT> result = GetRawBBox();
-  if (!result.has_value())
+  if (!result.has_value()) {
     return result;
+  }
 
   int em = face_->GetUnitsPerEm();
   if (em != 0) {

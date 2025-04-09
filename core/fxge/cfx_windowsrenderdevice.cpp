@@ -26,16 +26,18 @@ std::unique_ptr<RenderDeviceDriverIface> CreateDriver(
                      device_type == DT_PLOTTER ||
                      device_type == DT_CHARSTREAM || obj_type == OBJ_ENHMETADC;
 
-  if (!use_printer)
+  if (!use_printer) {
     return std::make_unique<CGdiDisplayDriver>(hDC);
+  }
 
   if (g_pdfium_print_mode == WindowsPrintMode::kEmf ||
       g_pdfium_print_mode == WindowsPrintMode::kEmfImageMasks) {
     return std::make_unique<CGdiPrinterDriver>(hDC);
   }
 
-  if (g_pdfium_print_mode == WindowsPrintMode::kTextOnly)
+  if (g_pdfium_print_mode == WindowsPrintMode::kTextOnly) {
     return std::make_unique<CTextOnlyPrinterDriver>(hDC);
+  }
 
   return std::make_unique<CPSPrinterDriver>(hDC, g_pdfium_print_mode,
                                             ps_font_tracker, encoder_iface);

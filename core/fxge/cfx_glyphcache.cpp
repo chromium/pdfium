@@ -21,9 +21,9 @@
 #include "core/fxge/cfx_substfont.h"
 
 #if defined(PDF_USE_SKIA)
-#include "third_party/skia/include/core/SkStream.h"  // nogncheck
-#include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
-#include "third_party/skia/include/core/SkFontMgr.h"  // nogncheck
+#include "third_party/skia/include/core/SkFontMgr.h"         // nogncheck
+#include "third_party/skia/include/core/SkStream.h"          // nogncheck
+#include "third_party/skia/include/core/SkTypeface.h"        // nogncheck
 #include "third_party/skia/include/ports/SkFontMgr_empty.h"  // nogncheck
 
 #if BUILDFLAG(IS_WIN)
@@ -160,8 +160,9 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
     int dest_width,
     int anti_alias,
     CFX_TextRenderOptions* text_options) {
-  if (glyph_index == kInvalidGlyphIndex)
+  if (glyph_index == kInvalidGlyphIndex) {
     return nullptr;
+  }
 
 #if BUILDFLAG(IS_APPLE)
   const bool bNative = text_options->native_text;
@@ -190,8 +191,9 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
   if (it != size_map_.end()) {
     SizeGlyphCache* pSizeCache = &(it->second);
     auto it2 = pSizeCache->find(glyph_index);
-    if (it2 != pSizeCache->end())
+    if (it2 != pSizeCache->end()) {
       return it2->second.get();
+    }
 
     pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, matrix,
                                           dest_width, anti_alias);
@@ -301,8 +303,9 @@ CFX_GlyphBitmap* CFX_GlyphCache::LookUpGlyphBitmap(
   }
 
   auto it2 = pSizeCache->find(glyph_index);
-  if (it2 != pSizeCache->end())
+  if (it2 != pSizeCache->end()) {
     return it2->second.get();
+  }
 
   std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap = RenderGlyph(
       pFont, glyph_index, bFontStyle, matrix, dest_width, anti_alias);

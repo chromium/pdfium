@@ -75,8 +75,9 @@ JpFontFamilyRowIndex GetJapanesePreference(const ByteString& face,
     }
     return kJpFontMincho;
   }
-  if (!FontFamilyIsRoman(pitch_family) && weight > 400)
+  if (!FontFamilyIsRoman(pitch_family) && weight > 400) {
     return kJpFontPGothic;
+  }
 
   return kJpFontPMincho;
 }
@@ -102,8 +103,9 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
                                  int pitch_family,
                                  const ByteString& face) {
   void* font = GetSubstFont(face);
-  if (font)
+  if (font) {
     return font;
+  }
 
   bool bCJK = true;
   switch (charset) {
@@ -153,8 +155,9 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
 }
 
 bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
-  if (!pUserPaths)
+  if (!pUserPaths) {
     return false;
+  }
 
   // SAFETY: nullptr-terminated array required from caller.
   UNSAFE_BUFFERS({

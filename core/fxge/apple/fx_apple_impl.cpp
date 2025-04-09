@@ -34,34 +34,39 @@ bool CGDrawGlyphRun(CGContextRef pContext,
                     const CFX_Matrix& mtObject2Device,
                     float font_size,
                     uint32_t argb) {
-  if (pCharPos.empty())
+  if (pCharPos.empty()) {
     return true;
+  }
 
   bool bNegSize = font_size < 0;
-  if (bNegSize)
+  if (bNegSize) {
     font_size = -font_size;
+  }
 
   CFX_Matrix new_matrix = mtObject2Device;
   CQuartz2D& quartz2d =
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
           ->quartz_2d_;
   if (!pFont->GetPlatformFont()) {
-    if (pFont->GetPsName() == "DFHeiStd-W5")
+    if (pFont->GetPsName() == "DFHeiStd-W5") {
       return false;
+    }
 
     pFont->SetPlatformFont(quartz2d.CreateFont(pFont->GetFontSpan()));
-    if (!pFont->GetPlatformFont())
+    if (!pFont->GetPlatformFont()) {
       return false;
+    }
   }
   DataVector<uint16_t> glyph_indices(pCharPos.size());
   std::vector<CGPoint> glyph_positions(pCharPos.size());
   for (size_t i = 0; i < pCharPos.size(); i++) {
     glyph_indices[i] =
         pCharPos[i].ext_gid_ ? pCharPos[i].ext_gid_ : pCharPos[i].glyph_index_;
-    if (bNegSize)
+    if (bNegSize) {
       glyph_positions[i].x = -pCharPos[i].origin_.x;
-    else
+    } else {
       glyph_positions[i].x = pCharPos[i].origin_.x;
+    }
     glyph_positions[i].y = pCharPos[i].origin_.y;
   }
   if (bNegSize) {
@@ -105,8 +110,9 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
     float font_size,
     uint32_t color,
     const CFX_TextRenderOptions& /*options*/) {
-  if (!pFont)
+  if (!pFont) {
     return false;
+  }
 
   bool bBold = pFont->IsBold();
   if (!bBold && pFont->GetSubstFont() &&
@@ -120,8 +126,9 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
     }
   }
   CGContextRef ctx = CGContextRef(platform_graphics_);
-  if (!ctx)
+  if (!ctx) {
     return false;
+  }
 
   CGContextSaveGState(ctx);
   CGContextSetTextDrawingMode(ctx, kCGTextFillClip);
@@ -146,10 +153,11 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
     rect_cg = CGRectMake(0, 0, bitmap_->GetWidth(), bitmap_->GetHeight());
   }
   rect_cg = CGContextConvertRectToDeviceSpace(ctx, rect_cg);
-  if (pImageCG)
+  if (pImageCG) {
     CGContextClipToMask(ctx, rect_cg, pImageCG);
-  else
+  } else {
     CGContextClipToRect(ctx, rect_cg);
+  }
 
   if (rgb_byte_order_) {
     uint8_t a = FXARGB_A(color);
@@ -160,8 +168,9 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
   }
   bool ret =
       CGDrawGlyphRun(ctx, pCharPos, pFont, mtObject2Device, font_size, color);
-  if (pImageCG)
+  if (pImageCG) {
     CGImageRelease(pImageCG);
+  }
   CGContextRestoreGState(ctx);
   return ret;
 }

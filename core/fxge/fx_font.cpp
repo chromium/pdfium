@@ -26,8 +26,9 @@ constexpr uint16_t kNameWindowsEncodingUnicode = 1;
 ByteString GetStringFromTable(pdfium::span<const uint8_t> string_span,
                               uint16_t offset,
                               uint16_t length) {
-  if (string_span.size() < static_cast<uint32_t>(offset + length))
+  if (string_span.size() < static_cast<uint32_t>(offset + length)) {
     return ByteString();
+  }
 
   return ByteString(ByteStringView(string_span.subspan(offset, length)));
 }
@@ -43,22 +44,26 @@ FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
     }
 
     std::optional<CFX_Point> point = glyph.GetOrigin({0, 0});
-    if (!point.has_value())
+    if (!point.has_value()) {
       continue;
+    }
 
     int char_width = glyph.glyph_->GetBitmap()->GetWidth();
-    if (anti_alias == FT_RENDER_MODE_LCD)
+    if (anti_alias == FT_RENDER_MODE_LCD) {
       char_width /= 3;
+    }
 
     FX_SAFE_INT32 char_right = point.value().x;
     char_right += char_width;
-    if (!char_right.IsValid())
+    if (!char_right.IsValid()) {
       continue;
+    }
 
     FX_SAFE_INT32 char_bottom = point.value().y;
     char_bottom += glyph.glyph_->GetBitmap()->GetHeight();
-    if (!char_bottom.IsValid())
+    if (!char_bottom.IsValid()) {
       continue;
+    }
 
     if (bStarted) {
       rect.left = std::min(rect.left, point.value().x);
@@ -81,20 +86,23 @@ FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
 
 ByteString GetNameFromTT(pdfium::span<const uint8_t> name_table,
                          uint32_t name_id) {
-  if (name_table.size() < 6)
+  if (name_table.size() < 6) {
     return ByteString();
+  }
 
   uint32_t name_count = fxcrt::GetUInt16MSBFirst(name_table.subspan(2));
   uint32_t string_offset = fxcrt::GetUInt16MSBFirst(name_table.subspan(4));
   // We will ignore the possibility of overlap of structures and
   // string table as if it's all corrupt there's not a lot we can do.
-  if (name_table.size() < string_offset)
+  if (name_table.size() < string_offset) {
     return ByteString();
+  }
 
   pdfium::span<const uint8_t> string_span = name_table.subspan(string_offset);
   name_table = name_table.subspan(6);
-  if (name_table.size() < name_count * 12)
+  if (name_table.size() < name_count * 12) {
     return ByteString();
+  }
 
   for (uint32_t i = 0; i < name_count;
        i++, name_table = name_table.subspan(12)) {

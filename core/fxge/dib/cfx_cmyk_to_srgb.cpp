@@ -1685,17 +1685,21 @@ FX_RGB_STRUCT<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
   int fix_g = start_rgb.green << 8;
   int fix_b = start_rgb.blue << 8;
   int c1_index = fix_c >> 13;
-  if (c1_index == c_index)
+  if (c1_index == c_index) {
     c1_index = c1_index == 8 ? c1_index - 1 : c1_index + 1;
+  }
   int m1_index = fix_m >> 13;
-  if (m1_index == m_index)
+  if (m1_index == m_index) {
     m1_index = m1_index == 8 ? m1_index - 1 : m1_index + 1;
+  }
   int y1_index = fix_y >> 13;
-  if (y1_index == y_index)
+  if (y1_index == y_index) {
     y1_index = y1_index == 8 ? y1_index - 1 : y1_index + 1;
+  }
   int k1_index = fix_k >> 13;
-  if (k1_index == k_index)
+  if (k1_index == k_index) {
     k1_index = k1_index == 8 ? k1_index - 1 : k1_index + 1;
+  }
 
   const auto& c1_rgb =
       kCMYK[IndexFromCMYK(c1_index, m_index, y_index, k_index)];

@@ -565,12 +565,14 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
   FX_RECT rect(0, 0, GetWidth(), GetHeight());
   if (pClip) {
     rect.Intersect(*pClip);
-    if (rect.IsEmpty())
+    if (rect.IsEmpty()) {
       return nullptr;
+    }
   }
   auto pNewBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pNewBitmap->Create(rect.Width(), rect.Height(), GetFormat()))
+  if (!pNewBitmap->Create(rect.Width(), rect.Height(), GetFormat())) {
     return nullptr;
+  }
 
   pNewBitmap->SetPalette(GetPaletteSpan());
   if (GetBPP() == 1 && rect.left % 8 != 0) {
@@ -604,8 +606,9 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
     FX_SAFE_UINT32 offset = rect.left;
     offset *= GetBPP();
     offset /= 8;
-    if (!offset.IsValid())
+    if (!offset.IsValid()) {
       return nullptr;
+    }
 
     for (int row = rect.top; row < rect.bottom; ++row) {
       const uint8_t* src_scan =
@@ -619,21 +622,24 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
 }
 
 void CFX_DIBBase::BuildPalette() {
-  if (HasPalette())
+  if (HasPalette()) {
     return;
+  }
 
   if (GetBPP() == 1) {
     palette_ = {0xff000000, 0xffffffff};
   } else if (GetBPP() == 8) {
     palette_.resize(256);
-    for (int i = 0; i < 256; ++i)
+    for (int i = 0; i < 256; ++i) {
       palette_[i] = ArgbEncode(0xff, i, i, i);
+    }
   }
 }
 
 size_t CFX_DIBBase::GetRequiredPaletteSize() const {
-  if (IsMaskFormat())
+  if (IsMaskFormat()) {
     return 0;
+  }
 
   switch (GetBPP()) {
     case 1:
@@ -647,11 +653,13 @@ size_t CFX_DIBBase::GetRequiredPaletteSize() const {
 
 uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
   DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMaskFormat());
-  if (HasPalette())
+  if (HasPalette()) {
     return GetPaletteSpan()[index];
+  }
 
-  if (GetBPP() == 1)
+  if (GetBPP() == 1) {
     return index ? 0xffffffff : 0xff000000;
+  }
 
   return ArgbEncode(0xff, index, index, index);
 }
@@ -668,14 +676,16 @@ int CFX_DIBBase::FindPalette(uint32_t color) const {
     int palsize = (1 << GetBPP());
     pdfium::span<const uint32_t> palette = GetPaletteSpan();
     for (int i = 0; i < palsize; ++i) {
-      if (palette[i] == color)
+      if (palette[i] == color) {
         return i;
+      }
     }
     return -1;
   }
 
-  if (GetBPP() == 1)
+  if (GetBPP() == 1) {
     return (static_cast<uint8_t>(color) == 0xff) ? 1 : 0;
+  }
   return static_cast<uint8_t>(color);
 }
 
@@ -688,8 +698,9 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
                                  int& src_left,
                                  int& src_top,
                                  const CFX_AggClipRgn* pClipRgn) const {
-  if (width == 0 || height == 0)
+  if (width == 0 || height == 0) {
     return false;
+  }
 
   DCHECK_GT(width, 0);
   DCHECK_GT(height, 0);
@@ -700,13 +711,15 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
 
   FX_SAFE_INT32 safe_src_width = src_left;
   safe_src_width += width;
-  if (!safe_src_width.IsValid())
+  if (!safe_src_width.IsValid()) {
     return false;
+  }
 
   FX_SAFE_INT32 safe_src_height = src_top;
   safe_src_height += height;
-  if (!safe_src_height.IsValid())
+  if (!safe_src_height.IsValid()) {
     return false;
+  }
 
   FX_RECT src_rect(src_left, src_top, safe_src_width.ValueOrDie(),
                    safe_src_height.ValueOrDie());
@@ -715,33 +728,39 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
 
   FX_SAFE_INT32 safe_x_offset = dest_left;
   safe_x_offset -= src_left;
-  if (!safe_x_offset.IsValid())
+  if (!safe_x_offset.IsValid()) {
     return false;
+  }
 
   FX_SAFE_INT32 safe_y_offset = dest_top;
   safe_y_offset -= src_top;
-  if (!safe_y_offset.IsValid())
+  if (!safe_y_offset.IsValid()) {
     return false;
+  }
 
   FX_SAFE_INT32 safe_dest_left = safe_x_offset;
   safe_dest_left += src_rect.left;
-  if (!safe_dest_left.IsValid())
+  if (!safe_dest_left.IsValid()) {
     return false;
+  }
 
   FX_SAFE_INT32 safe_dest_top = safe_y_offset;
   safe_dest_top += src_rect.top;
-  if (!safe_dest_top.IsValid())
+  if (!safe_dest_top.IsValid()) {
     return false;
+  }
 
   FX_SAFE_INT32 safe_dest_right = safe_x_offset;
   safe_dest_right += src_rect.right;
-  if (!safe_dest_right.IsValid())
+  if (!safe_dest_right.IsValid()) {
     return false;
+  }
 
   FX_SAFE_INT32 safe_dest_bottom = safe_y_offset;
   safe_dest_bottom += src_rect.bottom;
-  if (!safe_dest_bottom.IsValid())
+  if (!safe_dest_bottom.IsValid()) {
     return false;
+  }
 
   FX_RECT dest_rect(safe_dest_left.ValueOrDie(), safe_dest_top.ValueOrDie(),
                     safe_dest_right.ValueOrDie(),
@@ -749,25 +768,29 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
   FX_RECT dest_bound(0, 0, GetWidth(), GetHeight());
   dest_rect.Intersect(dest_bound);
 
-  if (pClipRgn)
+  if (pClipRgn) {
     dest_rect.Intersect(pClipRgn->GetBox());
+  }
   dest_left = dest_rect.left;
   dest_top = dest_rect.top;
 
   FX_SAFE_INT32 safe_new_src_left = dest_left;
   safe_new_src_left -= safe_x_offset;
-  if (!safe_new_src_left.IsValid())
+  if (!safe_new_src_left.IsValid()) {
     return false;
+  }
   src_left = safe_new_src_left.ValueOrDie();
 
   FX_SAFE_INT32 safe_new_src_top = dest_top;
   safe_new_src_top -= safe_y_offset;
-  if (!safe_new_src_top.IsValid())
+  if (!safe_new_src_top.IsValid()) {
     return false;
+  }
   src_top = safe_new_src_top.ValueOrDie();
 
-  if (dest_rect.IsEmpty())
+  if (dest_rect.IsEmpty()) {
     return false;
+  }
 
   width = dest_rect.Width();
   height = dest_rect.Height();
@@ -930,14 +953,16 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ConvertTo(FXDIB_Format dest_format) const {
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   FX_RECT dest_clip(0, 0, GetHeight(), GetWidth());
-  if (dest_clip.IsEmpty())
+  if (dest_clip.IsEmpty()) {
     return nullptr;
+  }
 
   auto pTransBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   const int result_height = dest_clip.Height();
   const int result_width = dest_clip.Width();
-  if (!pTransBitmap->Create(result_width, result_height, GetFormat()))
+  if (!pTransBitmap->Create(result_width, result_height, GetFormat())) {
     return nullptr;
+  }
 
   pTransBitmap->SetPalette(GetPaletteSpan());
   const int dest_pitch = pTransBitmap->GetPitch();
@@ -1059,11 +1084,13 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::StretchTo(
     const FX_RECT* pClip) const {
   RetainPtr<const CFX_DIBBase> holder(this);
   FX_RECT clip_rect(0, 0, abs(dest_width), abs(dest_height));
-  if (pClip)
+  if (pClip) {
     clip_rect.Intersect(*pClip);
+  }
 
-  if (clip_rect.IsEmpty())
+  if (clip_rect.IsEmpty()) {
     return nullptr;
+  }
 
   if (dest_width == GetWidth() && dest_height == GetHeight()) {
     return ClipTo(clip_rect);
@@ -1072,8 +1099,9 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::StretchTo(
   CFX_BitmapStorer storer;
   CFX_ImageStretcher stretcher(&storer, holder, dest_width, dest_height,
                                clip_rect, options);
-  if (stretcher.Start())
+  if (stretcher.Start()) {
     stretcher.Continue(nullptr);
+  }
 
   return storer.Detach();
 }

@@ -184,16 +184,18 @@ bool CFX_Win32FontInfo::IsSupportedFont(const LOGFONTA* plf) {
 void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
                                          uint32_t font_type) {
   ByteString name(plf->lfFaceName);
-  if (name.GetLength() > 0 && name[0] == '@')
+  if (name.GetLength() > 0 && name[0] == '@') {
     return;
+  }
 
   if (name == last_family_) {
     mapper_->AddInstalledFont(name, FX_GetCharsetFromInt(plf->lfCharSet));
     return;
   }
   if (!(font_type & TRUETYPE_FONTTYPE)) {
-    if (!(font_type & DEVICE_FONTTYPE) || !IsSupportedFont(plf))
+    if (!(font_type & DEVICE_FONTTYPE) || !IsSupportedFont(plf)) {
       return;
+    }
   }
 
   mapper_->AddInstalledFont(name, FX_GetCharsetFromInt(plf->lfCharSet));
@@ -219,13 +221,15 @@ ByteString CFX_Win32FontInfo::FindFont(const ByteString& name) {
 
   std::optional<ByteString> maybe_installed =
       mapper_->InstalledFontNameStartingWith(name);
-  if (maybe_installed.has_value())
+  if (maybe_installed.has_value()) {
     return maybe_installed.value();
+  }
 
   std::optional<ByteString> maybe_localized =
       mapper_->LocalizedFontNameStartingWith(name);
-  if (maybe_localized.has_value())
+  if (maybe_localized.has_value()) {
     return maybe_localized.value();
+  }
 
   return ByteString();
 }
@@ -244,8 +248,9 @@ void* CFX_Win32FontInfo::GetFontFromList(
   for (const char* face : font_faces) {
     font = Win32CreateFont(weight, italic, charset, pitch_family, face);
     ByteString actual_face;
-    if (GetFaceName(font, &actual_face) && actual_face.EqualNoCase(face))
+    if (GetFaceName(font, &actual_face) && actual_face.EqualNoCase(face)) {
       break;
+    }
   }
   return font;
 }
@@ -256,8 +261,9 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
                                          int pitch_family,
                                          const ByteString& face) {
   void* font = GetSubstFont(face);
-  if (font)
+  if (font) {
     return font;
+  }
 
   bool bCJK = true;
   switch (charset) {
@@ -330,8 +336,9 @@ void CFX_Win32FontInfo::GetJapanesePreference(ByteString& face,
     }
     return;
   }
-  if (GetSubFontName(&face))
+  if (GetSubFontName(&face)) {
     return;
+  }
 
   if (!(pitch_family & FF_ROMAN) && weight > 400) {
     face = "MS PGothic";
@@ -354,8 +361,9 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       break;
     }
   }
-  if (charset == FX_Charset::kANSI || charset == FX_Charset::kSymbol)
+  if (charset == FX_Charset::kANSI || charset == FX_Charset::kSymbol) {
     charset = FX_Charset::kDefault;
+  }
 
   int subst_pitch_family;
   switch (charset) {
@@ -386,12 +394,14 @@ void* CFX_Win32FontInfo::MapFont(int weight,
     }
 
     WideString wsName(variant.variant_name_);
-    if (wsFace == wsName)
+    if (wsFace == wsName) {
       return hFont;
+    }
   }
   ::DeleteObject(hFont);
-  if (charset == FX_Charset::kDefault)
+  if (charset == FX_Charset::kDefault) {
     return nullptr;
+  }
 
   switch (charset) {
     case FX_Charset::kShiftJIS:

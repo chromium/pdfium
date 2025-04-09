@@ -19,8 +19,9 @@ CFX_UnicodeEncoding::~CFX_UnicodeEncoding() = default;
 
 uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
   RetainPtr<CFX_Face> face = font_->GetFace();
-  if (!face)
+  if (!face) {
     return charcode;
+  }
 
   if (face->SelectCharMap(fxge::FontEncoding::kUnicode)) {
     return face->GetCharIndex(charcode);

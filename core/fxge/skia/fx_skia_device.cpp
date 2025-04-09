@@ -176,26 +176,31 @@ SkPathFillType GetAlternateOrWindingFillType(
 }
 
 SkFont::Edging GetFontEdgingType(const CFX_TextRenderOptions& text_options) {
-  if (text_options.aliasing_type == CFX_TextRenderOptions::kAliasing)
+  if (text_options.aliasing_type == CFX_TextRenderOptions::kAliasing) {
     return SkFont::Edging::kAlias;
+  }
 
-  if (text_options.aliasing_type == CFX_TextRenderOptions::kAntiAliasing)
+  if (text_options.aliasing_type == CFX_TextRenderOptions::kAntiAliasing) {
     return SkFont::Edging::kAntiAlias;
+  }
 
   DCHECK_EQ(text_options.aliasing_type, CFX_TextRenderOptions::kLcd);
   return SkFont::Edging::kSubpixelAntiAlias;
 }
 
 bool IsPathAPoint(const SkPath& path) {
-  if (path.isEmpty())
+  if (path.isEmpty()) {
     return false;
+  }
 
-  if (path.countPoints() == 1)
+  if (path.countPoints() == 1) {
     return true;
+  }
 
   for (int i = 0; i < path.countPoints() - 1; ++i) {
-    if (path.getPoint(i) != path.getPoint(i + 1))
+    if (path.getPoint(i) != path.getPoint(i + 1)) {
       return false;
+    }
   }
   return true;
 }
@@ -354,22 +359,21 @@ bool AddSamples(const CPDF_SampledFunc* func,
     colors_min[i] = func->GetRange(i * 2);
     colors_max[i] = func->GetRange(i * 2 + 1);
   }
-    pdfium::span<const uint8_t> sample_data =
-        func->GetSampleStream()->GetSpan();
-    CFX_BitStream bitstream(sample_data);
-    for (uint32_t i = 0; i < sample_count; ++i) {
-      std::array<float, 3> float_colors;
-      for (uint32_t j = 0; j < 3; ++j) {
-        float sample = static_cast<float>(bitstream.GetBits(sample_size));
-        float interp = sample / (sample_count - 1);
-        float_colors[j] =
-            colors_min[j] + (colors_max[j] - colors_min[j]) * interp;
-      }
-      colors.push_back(SkColorSetRGB(FloatToByte(float_colors[0]),
-                                     FloatToByte(float_colors[1]),
-                                     FloatToByte(float_colors[2])));
-      pos.push_back(static_cast<float>(i) / (sample_count - 1));
+  pdfium::span<const uint8_t> sample_data = func->GetSampleStream()->GetSpan();
+  CFX_BitStream bitstream(sample_data);
+  for (uint32_t i = 0; i < sample_count; ++i) {
+    std::array<float, 3> float_colors;
+    for (uint32_t j = 0; j < 3; ++j) {
+      float sample = static_cast<float>(bitstream.GetBits(sample_size));
+      float interp = sample / (sample_count - 1);
+      float_colors[j] =
+          colors_min[j] + (colors_max[j] - colors_min[j]) * interp;
     }
+    colors.push_back(SkColorSetRGB(FloatToByte(float_colors[0]),
+                                   FloatToByte(float_colors[1]),
+                                   FloatToByte(float_colors[2])));
+    pos.push_back(static_cast<float>(i) / (sample_count - 1));
+  }
   return true;
 }
 
@@ -382,8 +386,9 @@ bool AddStitching(const CPDF_StitchFunc* func,
   const size_t sub_function_count = sub_functions.size();
   for (size_t i = 0; i < sub_function_count; ++i) {
     const CPDF_ExpIntFunc* sub_func = sub_functions[i]->ToExpIntFunc();
-    if (!sub_func)
+    if (!sub_func) {
       return false;
+    }
     // Check if the matching encode values are reversed
     bool is_encode_reversed =
         func->GetEncode(2 * i) > func->GetEncode(2 * i + 1);
@@ -784,8 +789,9 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   // any font data, each text blob will have zero area to be drawn and the
   // drawing command will be rejected. In this case, we fall back to drawing
   // characters by their glyph bitmaps.
-  if (pFont->GetFontSpan().empty())
+  if (pFont->GetFontSpan().empty()) {
     return false;
+  }
 
   if (TryDrawText(pCharPos, pFont, mtObject2Device, font_size, color,
                   options)) {
@@ -1180,8 +1186,9 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
   const std::vector<std::unique_ptr<CPDF_Function>>& pFuncs =
       pattern.GetFuncs();
   size_t nFuncs = pFuncs.size();
-  if (nFuncs > 1)  // TODO(caryclark) remove this restriction
+  if (nFuncs > 1) {  // TODO(caryclark) remove this restriction
     return false;
+  }
   RetainPtr<const CPDF_Dictionary> pDict =
       pattern.GetShadingObject()->GetDict();
   RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
@@ -1193,8 +1200,9 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
   DataVector<SkColor> sk_colors;
   DataVector<float> sk_pos;
   for (size_t j = 0; j < nFuncs; j++) {
-    if (!pFuncs[j])
+    if (!pFuncs[j]) {
       continue;
+    }
 
     if (const CPDF_SampledFunc* pSampledFunc = pFuncs[j]->ToSampledFunc()) {
       /* TODO(caryclark)
@@ -1246,19 +1254,23 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
           std::swap(pts[0].fY, pts[1].fY);
           std::swap(clipStart, clipEnd);
         }
-        if (clipStart)
+        if (clipStart) {
           skRect.fTop = std::max(skRect.fTop, pts[0].fY);
-        if (clipEnd)
+        }
+        if (clipEnd) {
           skRect.fBottom = std::min(skRect.fBottom, pts[1].fY);
+        }
       } else if (pts[0].fY == pts[1].fY) {  // horizontal
         if (pts[0].fX > pts[1].fX) {
           std::swap(pts[0].fX, pts[1].fX);
           std::swap(clipStart, clipEnd);
         }
-        if (clipStart)
+        if (clipStart) {
           skRect.fLeft = std::max(skRect.fLeft, pts[0].fX);
-        if (clipEnd)
+        }
+        if (clipEnd) {
           skRect.fRight = std::min(skRect.fRight, pts[1].fX);
+        }
       } else {  // if the gradient is angled and contained by the rect, clip
         SkPoint rectPts[4] = {{skRect.fLeft, skRect.fTop},
                               {skRect.fRight, skRect.fTop},
@@ -1282,33 +1294,39 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
         pts[0], start_r, pts[1], end_r, sk_colors.data(), sk_pos.data(),
         fxcrt::CollectionSize<int>(sk_colors), SkTileMode::kClamp));
     if (clipStart || clipEnd) {
-      if (clipStart && start_r)
+      if (clipStart && start_r) {
         skClip.addCircle(pts[0].fX, pts[0].fY, start_r);
-      if (clipEnd)
+      }
+      if (clipEnd) {
         skClip.addCircle(pts[1].fX, pts[1].fY, end_r, SkPathDirection::kCCW);
-      else
+      } else {
         skClip.setFillType(SkPathFillType::kInverseWinding);
+      }
       skClip.transform(skMatrix);
     }
     SkMatrix inverse;
-    if (!skMatrix.invert(&inverse))
+    if (!skMatrix.invert(&inverse)) {
       return false;
+    }
     skPath.addRect(skRect);
     skPath.transform(inverse);
   } else {
     CHECK_EQ(kCoonsPatchMeshShading, shading_type);
     RetainPtr<const CPDF_Stream> pStream = ToStream(pattern.GetShadingObject());
-    if (!pStream)
+    if (!pStream) {
       return false;
+    }
     CPDF_MeshStream stream(shading_type, pattern.GetFuncs(), std::move(pStream),
                            pattern.GetCS());
-    if (!stream.Load())
+    if (!stream.Load()) {
       return false;
+    }
     std::array<SkPoint, 12> cubics;
     std::array<SkColor, 4> colors;
     SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
-    if (!skClip.isEmpty())
+    if (!skClip.isEmpty()) {
       canvas_->clipPath(skClip, SkClipOp::kIntersect, true);
+    }
     canvas_->concat(skMatrix);
     while (!stream.IsEOF()) {
       const uint32_t flag = stream.ReadFlag();
@@ -1341,8 +1359,9 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
     return true;
   }
   SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
-  if (!skClip.isEmpty())
+  if (!skClip.isEmpty()) {
     canvas_->clipPath(skClip, SkClipOp::kIntersect, true);
+  }
   canvas_->concat(skMatrix);
   DrawPathImpl(skPath, paint);
   return true;
@@ -1650,14 +1669,16 @@ bool CFX_DefaultRenderDevice::AttachSkiaImpl(
     bool bGroupKnockout) {
   // FPDF_FFLDrawSkia() ends up calling this method with a deliberately null
   // `pBitmap`.
-  if (!pBitmap)
+  if (!pBitmap) {
     return false;
+  }
   SetBitmap(pBitmap);
   auto driver =
       CFX_SkiaDeviceDriver::Create(std::move(pBitmap), bRgbByteOrder,
                                    std::move(pBackdropBitmap), bGroupKnockout);
-  if (!driver)
+  if (!driver) {
     return false;
+  }
 
   SetDeviceDriver(std::move(driver));
   return true;
@@ -1678,14 +1699,16 @@ bool CFX_DefaultRenderDevice::CreateSkia(
     FXDIB_Format format,
     RetainPtr<CFX_DIBitmap> pBackdropBitmap) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pBitmap->Create(width, height, format))
+  if (!pBitmap->Create(width, height, format)) {
     return false;
+  }
 
   SetBitmap(pBitmap);
   auto driver = CFX_SkiaDeviceDriver::Create(std::move(pBitmap), false,
                                              std::move(pBackdropBitmap), false);
-  if (!driver)
+  if (!driver) {
     return false;
+  }
 
   SetDeviceDriver(std::move(driver));
   return true;

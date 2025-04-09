@@ -24,8 +24,9 @@
 FX_DATA_PARTITION_EXCEPTION(CGPoint);
 
 void* CQuartz2D::CreateGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
-  if (!pBitmap)
+  if (!pBitmap) {
     return nullptr;
+  }
   CGBitmapInfo bmpInfo = kCGBitmapByteOrder32Little;
   switch (pBitmap->GetFormat()) {
     case FXDIB_Format::kBgrx:
@@ -44,8 +45,9 @@ void* CQuartz2D::CreateGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
 }
 
 void CQuartz2D::DestroyGraphics(void* graphics) {
-  if (graphics)
+  if (graphics) {
     CGContextRelease((CGContextRef)graphics);
+  }
 }
 
 void* CQuartz2D::CreateFont(pdfium::span<const uint8_t> font_data) {
@@ -66,8 +68,9 @@ void CQuartz2D::DestroyFont(void* font) {
 
 void CQuartz2D::SetGraphicsTextMatrix(void* graphics,
                                       const CFX_Matrix& matrix) {
-  if (!graphics)
+  if (!graphics) {
     return;
+  }
   CGContextRef context = reinterpret_cast<CGContextRef>(graphics);
   CGFloat ty = CGBitmapContextGetHeight(context) - matrix.f;
   CGContextSetTextMatrix(
@@ -81,8 +84,9 @@ bool CQuartz2D::DrawGraphicsString(void* graphics,
                                    pdfium::span<uint16_t> glyph_indices,
                                    pdfium::span<CGPoint> glyph_positions,
                                    FX_ARGB argb) {
-  if (!graphics)
+  if (!graphics) {
     return false;
+  }
 
   CGContextRef context = (CGContextRef)graphics;
   CGContextSetFont(context, (CGFontRef)font);

@@ -49,8 +49,9 @@ std::optional<uint32_t> CalculatePitch8(uint32_t bits_per_component,
                                         int width_in_pixels) {
   FX_SAFE_UINT32 pitch =
       CalculatePitch8Safely(bits_per_component, components, width_in_pixels);
-  if (!pitch.IsValid())
+  if (!pitch.IsValid()) {
     return std::nullopt;
+  }
   return pitch.ValueOrDie();
 }
 
@@ -58,8 +59,9 @@ std::optional<uint32_t> CalculatePitch32(int bits_per_pixel,
                                          int width_in_pixels) {
   FX_SAFE_UINT32 pitch =
       CalculatePitch32Safely(bits_per_pixel, width_in_pixels);
-  if (!pitch.IsValid())
+  if (!pitch.IsValid()) {
     return std::nullopt;
+  }
   return pitch.ValueOrDie();
 }
 

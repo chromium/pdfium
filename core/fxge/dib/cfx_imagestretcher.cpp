@@ -28,12 +28,15 @@ bool SourceSizeWithinLimit(int width, int height) {
 
 FXDIB_Format GetStretchedFormat(const CFX_DIBBase& src) {
   FXDIB_Format format = src.GetFormat();
-  if (format == FXDIB_Format::k1bppMask)
+  if (format == FXDIB_Format::k1bppMask) {
     return FXDIB_Format::k8bppMask;
-  if (format == FXDIB_Format::k1bppRgb)
+  }
+  if (format == FXDIB_Format::k1bppRgb) {
     return FXDIB_Format::k8bppRgb;
-  if (format == FXDIB_Format::k8bppRgb && src.HasPalette())
+  }
+  if (format == FXDIB_Format::k8bppRgb && src.HasPalette()) {
     return FXDIB_Format::kBgr;
+  }
   return format;
 }
 

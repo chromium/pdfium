@@ -30,8 +30,9 @@ CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC)
 CGdiDisplayDriver::~CGdiDisplayDriver() = default;
 
 int CGdiDisplayDriver::GetDeviceCaps(int caps_id) const {
-  if (caps_id == FXDC_HORZ_SIZE || caps_id == FXDC_VERT_SIZE)
+  if (caps_id == FXDC_HORZ_SIZE || caps_id == FXDC_VERT_SIZE) {
     return 0;
+  }
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);
 }
 
@@ -134,11 +135,13 @@ bool CGdiDisplayDriver::UseFoxitStretchEngine(
     const FX_RECT* pClipRect,
     const FXDIB_ResampleOptions& options) {
   FX_RECT bitmap_clip = *pClipRect;
-  if (dest_width < 0)
+  if (dest_width < 0) {
     dest_left += dest_width;
+  }
 
-  if (dest_height < 0)
+  if (dest_height < 0) {
     dest_top += dest_height;
+  }
 
   bitmap_clip.Offset(-dest_left, -dest_top);
   bitmap = bitmap->StretchTo(dest_width, dest_height, options, &bitmap_clip);

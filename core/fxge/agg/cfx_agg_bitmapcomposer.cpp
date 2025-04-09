@@ -120,8 +120,9 @@ void CFX_AggBitmapComposer::ComposeScanline(
     FX_SAFE_UINT32 offset = dest_left_;
     offset *= bitmap_->GetBPP();
     offset /= 8;
-    if (!offset.IsValid())
+    if (!offset.IsValid()) {
       return;
+    }
 
     dest_scan = dest_scan.subspan(offset.ValueOrDie());
   }

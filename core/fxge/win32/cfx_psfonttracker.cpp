@@ -25,7 +25,8 @@ void CFX_PSFontTracker::AddFontObject(const CFX_Font* font) {
 
 bool CFX_PSFontTracker::SeenFontObject(const CFX_Font* font) const {
   uint64_t tag = font->GetObjectTag();
-  if (tag != 0)
+  if (tag != 0) {
     return pdfium::Contains(seen_font_tags_, tag);
+  }
   return pdfium::Contains(seen_font_ptrs_, font);
 }

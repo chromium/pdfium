@@ -348,8 +348,9 @@ RetainPtr<CFX_DIBitmap> GetClipMaskFromRegion(const CFX_AggClipRgn* r) {
 
 FX_RECT GetClipBoxFromRegion(const RetainPtr<CFX_DIBitmap>& device,
                              const CFX_AggClipRgn* region) {
-  if (region)
+  if (region) {
     return region->GetBox();
+  }
   return FX_RECT(0, 0, device->GetWidth(), device->GetHeight());
 }
 
@@ -865,8 +866,9 @@ class RendererScanLineAaOffset {
         ren_->blend_hline(x - left_, y - top_, (unsigned)(x - span->len - 1),
                           color_, *(span->covers));
       }
-      if (--num_spans == 0)
+      if (--num_spans == 0) {
         break;
+      }
 
       UNSAFE_TODO(++span);
     }
@@ -885,8 +887,9 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
   pdfium::span<const CFX_Path::Point> points = path.GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     CFX_PointF pos = points[i].point_;
-    if (pObject2Device)
+    if (pObject2Device) {
       pos = pObject2Device->Transform(pos);
+    }
 
     pos = HardClip(pos);
     CFX_Path::Point::Type point_type = points[i].type_;
@@ -1150,8 +1153,9 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
                      /*bGroupKnockout=*/false);
   }
   int stroke_alpha = FXARGB_A(stroke_color);
-  if (!pGraphState || !stroke_alpha)
+  if (!pGraphState || !stroke_alpha) {
     return true;
+  }
 
   if (fill_options.zero_area) {
     agg::path_storage path_data = BuildAggPath(path, pObject2Device);
@@ -1239,15 +1243,17 @@ bool CFX_AggDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
   RetainPtr<CFX_DIBitmap> pBack;
   if (backdrop_bitmap_) {
     pBack = backdrop_bitmap_->ClipTo(rect);
-    if (!pBack)
+    if (!pBack) {
       return true;
+    }
 
     pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(), bitmap_,
                            0, 0, BlendMode::kNormal, nullptr, false);
   } else {
     pBack = bitmap_->ClipTo(rect);
-    if (!pBack)
+    if (!pBack) {
       return true;
+    }
   }
 
   left = std::min(left, 0);
@@ -1317,8 +1323,9 @@ bool CFX_AggDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
   CFX_ImageStretcher stretcher(&composer, std::move(bitmap), dest_width,
                                dest_height, dest_clip, options);
-  if (stretcher.Start())
+  if (stretcher.Start()) {
     stretcher.Continue(nullptr);
+  }
   return true;
 }
 
@@ -1365,8 +1372,9 @@ bool CFX_DefaultRenderDevice::CreateAgg(
     FXDIB_Format format,
     RetainPtr<CFX_DIBitmap> pBackdropBitmap) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pBitmap->Create(width, height, format))
+  if (!pBitmap->Create(width, height, format)) {
     return false;
+  }
 
   SetBitmap(pBitmap);
   SetDeviceDriver(std::make_unique<pdfium::CFX_AggDeviceDriver>(

@@ -112,8 +112,9 @@ pdfium::span<const uint8_t> CFX_DIBitmap::GetBuffer() const {
 
 pdfium::span<const uint8_t> CFX_DIBitmap::GetScanline(int line) const {
   auto buffer_span = GetBuffer();
-  if (buffer_span.empty())
+  if (buffer_span.empty()) {
     return pdfium::span<const uint8_t>();
+  }
 
   return buffer_span.subspan(line * GetPitch(), GetPitch());
 }
@@ -249,8 +250,9 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
     RetainPtr<const CFX_DIBBase> source,
     int src_left,
     int src_top) {
-  if (HasPalette())
+  if (HasPalette()) {
     return false;
+  }
 
   if (GetBPP() == 8) {
     dest_format = FXDIB_Format::k8bppMask;
@@ -259,8 +261,9 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
   FX_SAFE_UINT32 offset = dest_left;
   offset *= GetBPP();
   offset /= 8;
-  if (!offset.IsValid())
+  if (!offset.IsValid()) {
     return false;
+  }
 
   pdfium::span<uint8_t> dest_buf = GetWritableBuffer().subspan(
       dest_top * GetPitch() + static_cast<uint32_t>(offset.ValueOrDie()));
@@ -419,8 +422,9 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
   FX_SAFE_UINT32 offset = x;
   offset *= GetBPP();
   offset /= 8;
-  if (!offset.IsValid())
+  if (!offset.IsValid()) {
     return 0;
+  }
 
   uint8_t* pos =
       UNSAFE_TODO(buffer_.Get() + y * GetPitch() + offset.ValueOrDie());
@@ -467,8 +471,9 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
   int bg = FXSYS_GetGValue(backcolor);
   int bb = FXSYS_GetBValue(backcolor);
   if (GetBPP() <= 8) {
-    if (forecolor == 0 && backcolor == 0xffffff && !HasPalette())
+    if (forecolor == 0 && backcolor == 0xffffff && !HasPalette()) {
       return;
+    }
 
     BuildPalette();
     int size = 1 << GetBPP();
@@ -546,8 +551,9 @@ std::optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
   }
   FX_SAFE_UINT32 safe_size = pitch;
   safe_size *= height;
-  if (!safe_size.IsValid())
+  if (!safe_size.IsValid()) {
     return std::nullopt;
+  }
 
   return PitchAndSize{pitch, safe_size.ValueOrDie()};
 }
@@ -647,8 +653,9 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   }
 
   int src_alpha = FXARGB_A(color);
-  if (src_alpha == 0)
+  if (src_alpha == 0) {
     return true;
+  }
 
   RetainPtr<CFX_DIBitmap> pClipMask;
   FX_RECT clip_box;
@@ -722,13 +729,15 @@ bool CFX_DIBitmap::CompositeRect(int left,
   }
 
   int src_alpha = FXARGB_A(color);
-  if (src_alpha == 0)
+  if (src_alpha == 0) {
     return true;
+  }
 
   FX_RECT rect(left, top, left + width, top + height);
   rect.Intersect(0, 0, GetWidth(), GetHeight());
-  if (rect.IsEmpty())
+  if (rect.IsEmpty()) {
     return true;
+  }
 
   width = rect.Width();
   uint32_t dst_color = color;

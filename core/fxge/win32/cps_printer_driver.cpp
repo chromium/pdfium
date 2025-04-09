@@ -162,8 +162,9 @@ bool CPSPrinterDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                  int left,
                                  int top,
                                  BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
+  if (blend_type != BlendMode::kNormal) {
     return false;
+  }
   return psrenderer_.SetDIBits(std::move(bitmap), color, left, top);
 }
 

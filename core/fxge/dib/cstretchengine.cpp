@@ -76,11 +76,13 @@ bool CStretchEngine::WeightTable::CalculateWeights(
   item_size_bytes_ = 0;
   weight_tables_size_bytes_ = 0;
   weight_tables_.clear();
-  if (dest_len == 0)
+  if (dest_len == 0) {
     return true;
+  }
 
-  if (dest_min > dest_max)
+  if (dest_min > dest_max) {
     return false;
+  }
 
   dest_min_ = dest_min;
 
@@ -91,8 +93,9 @@ bool CStretchEngine::WeightTable::CalculateWeights(
 
   const size_t dest_range = static_cast<size_t>(dest_max - dest_min);
   const size_t kMaxTableItemsAllowed = kMaxTableBytesAllowed / item_size_bytes_;
-  if (dest_range > kMaxTableItemsAllowed)
+  if (dest_range > kMaxTableItemsAllowed) {
     return false;
+  }
 
   weight_tables_size_bytes_ = dest_range * item_size_bytes_;
   weight_tables_.resize(weight_tables_size_bytes_);
@@ -214,8 +217,9 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
 
   std::optional<uint32_t> maybe_size =
       fxge::CalculatePitch32(dest_bpp_, clip_rect.Width());
-  if (!maybe_size.has_value())
+  if (!maybe_size.has_value()) {
     return;
+  }
 
   dest_scanline_.resize(maybe_size.value());
   if (dest_format == FXDIB_Format::kBgrx) {
@@ -241,10 +245,12 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
   double src_right = scale_x * (clip_rect.right + base_x);
   double src_top = scale_y * (clip_rect.top + base_y);
   double src_bottom = scale_y * (clip_rect.bottom + base_y);
-  if (src_left > src_right)
+  if (src_left > src_right) {
     std::swap(src_left, src_right);
-  if (src_top > src_bottom)
+  }
+  if (src_top > src_bottom) {
     std::swap(src_top, src_bottom);
+  }
   src_clip_.left = static_cast<int>(floor(src_left));
   src_clip_.right = static_cast<int>(ceil(src_right));
   src_clip_.top = static_cast<int>(floor(src_top));
@@ -272,8 +278,9 @@ CStretchEngine::~CStretchEngine() = default;
 
 bool CStretchEngine::Continue(PauseIndicatorIface* pPause) {
   while (state_ == State::kHorizontal) {
-    if (ContinueStretchHorz(pPause))
+    if (ContinueStretchHorz(pPause)) {
       return true;
+    }
 
     state_ = State::kVertical;
     StretchVert();
@@ -319,8 +326,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
   int rows_to_go = kStrechPauseRows;
   for (; cur_row_ < src_clip_.bottom; ++cur_row_) {
     if (rows_to_go == 0) {
-      if (pPause && pPause->NeedToPauseNow())
+      if (pPause && pPause->NeedToPauseNow()) {
         return true;
+      }
 
       rows_to_go = kStrechPauseRows;
     }

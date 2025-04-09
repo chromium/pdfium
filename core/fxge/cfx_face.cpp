@@ -307,8 +307,9 @@ RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
                                    const FT_Open_Args* args,
                                    FT_Long face_index) {
   FXFT_FaceRec* pRec = nullptr;
-  if (FT_Open_Face(library, args, face_index, &pRec) != 0)
+  if (FT_Open_Face(library, args, face_index, &pRec) != 0) {
     return nullptr;
+  }
 
   // Private ctor.
   return pdfium::WrapRetain(new CFX_Face(pRec, nullptr));
