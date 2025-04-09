@@ -36,8 +36,9 @@ class FX_PosixFolder : public FX_Folder {
 
 std::unique_ptr<FX_Folder> FX_Folder::OpenFolder(const ByteString& path) {
   DIR* dir = opendir(path.c_str());
-  if (!dir)
+  if (!dir) {
     return nullptr;
+  }
 
   // Private ctor.
   return pdfium::WrapUnique(new FX_PosixFolder(path, dir));
@@ -52,13 +53,15 @@ FX_PosixFolder::~FX_PosixFolder() {
 
 bool FX_PosixFolder::GetNextFile(ByteString* filename, bool* bFolder) {
   struct dirent* de = readdir(dir_);
-  if (!de)
+  if (!de) {
     return false;
+  }
 
   ByteString fullpath = path_ + "/" + de->d_name;
   struct stat deStat;
-  if (stat(fullpath.c_str(), &deStat) < 0)
+  if (stat(fullpath.c_str(), &deStat) < 0) {
     return false;
+  }
 
   *filename = de->d_name;
   *bFolder = S_ISDIR(deStat.st_mode);

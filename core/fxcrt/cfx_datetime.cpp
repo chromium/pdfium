@@ -51,8 +51,9 @@ int64_t DateToDays(int32_t iYear,
 
   int64_t iDays = DaysBeforeMonthInYear(iYear, iMonth);
   iDays += iDay;
-  if (!bIncludeThisDay)
+  if (!bIncludeThisDay) {
     iDays--;
+  }
 
   if (iYear > 0) {
     iYear--;
@@ -93,8 +94,9 @@ CFX_DateTime CFX_DateTime::Now() {
 
 int32_t CFX_DateTime::GetDayOfWeek() const {
   int32_t v = static_cast<int32_t>(DateToDays(year_, month_, day_, true) % 7);
-  if (v < 0)
+  if (v < 0) {
     v += 7;
+  }
   return v;
 }
 

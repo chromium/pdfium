@@ -30,8 +30,9 @@ CFX_XMLNode* CFX_XMLElement::Clone(CFX_XMLDocument* doc) {
   // text nodes?
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
-    if (pChild->GetType() == Type::kText)
+    if (pChild->GetType() == Type::kText) {
       node->AppendLastChild(pChild->Clone(doc));
+    }
   }
   return node;
 }
@@ -71,8 +72,9 @@ WideString CFX_XMLElement::GetTextData() const {
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
     CFX_XMLText* pText = ToXMLText(pChild);
-    if (pText)
+    if (pText) {
       buffer += pText->GetText();
+    }
   }
   return buffer;
 }
@@ -115,10 +117,12 @@ CFX_XMLElement* CFX_XMLElement::GetNthChildNamed(WideStringView name,
                                                  size_t idx) const {
   for (auto* child = GetFirstChild(); child; child = child->GetNextSibling()) {
     CFX_XMLElement* elem = ToXMLElement(child);
-    if (!elem || elem->name_ != name)
+    if (!elem || elem->name_ != name) {
       continue;
-    if (idx == 0)
+    }
+    if (idx == 0) {
       return elem;
+    }
 
     --idx;
   }

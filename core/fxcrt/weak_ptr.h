@@ -59,8 +59,8 @@ class WeakPtr {
     explicit Handle(std::unique_ptr<T, D> ptr) : obj_(std::move(ptr)) {}
 
     void Reset(std::unique_ptr<T, D> ptr) { obj_ = std::move(ptr); }
-    void Clear() {     // Now you're all weak ptrs ...
-      obj_.reset();    // unique_ptr nulls first before invoking delete.
+    void Clear() {   // Now you're all weak ptrs ...
+      obj_.reset();  // unique_ptr nulls first before invoking delete.
     }
     T* Get() const { return obj_.get(); }
     T* Retain() {

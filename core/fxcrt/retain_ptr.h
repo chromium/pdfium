@@ -71,8 +71,9 @@ class TRIVIAL_ABI RetainPtr {
   // Copy-assign a RetainPtr.
   // Required in addition to copy conversion assignment below.
   RetainPtr& operator=(const RetainPtr& that) {
-    if (*this != that)
+    if (*this != that) {
       Reset(that.Get());
+    }
     return *this;
   }
 
@@ -88,8 +89,9 @@ class TRIVIAL_ABI RetainPtr {
             typename = typename std::enable_if<
                 std::is_convertible<U*, T*>::value>::type>
   RetainPtr& operator=(const RetainPtr<U>& that) {
-    if (*this != that)
+    if (*this != that) {
       Reset(that.Get());
+    }
     return *this;
   }
 
@@ -115,8 +117,9 @@ class TRIVIAL_ABI RetainPtr {
   }
 
   void Reset(T* obj = nullptr) {
-    if (obj)
+    if (obj) {
       obj->Retain();
+    }
     obj_.reset(obj);
   }
 

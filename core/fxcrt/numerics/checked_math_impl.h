@@ -34,8 +34,9 @@ constexpr bool CheckedAddImpl(T x, T y, T* result) {
   // that of y.
   if (std::is_signed<T>::value
           ? static_cast<SignedDst>((uresult ^ ux) & (uresult ^ uy)) < 0
-          : uresult < uy)  // Unsigned is either valid or underflow.
+          : uresult < uy) {  // Unsigned is either valid or underflow.
     return false;
+  }
   *result = static_cast<T>(uresult);
   return true;
 }
@@ -51,8 +52,9 @@ struct CheckedAddOp<T,
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V>
   static constexpr bool Do(T x, U y, V* result) {
-    if constexpr (CheckedAddFastOp<T, U>::is_supported)
+    if constexpr (CheckedAddFastOp<T, U>::is_supported) {
       return CheckedAddFastOp<T, U>::Do(x, y, result);
+    }
 
     // Double the underlying type up to a full machine word.
     using FastPromotion = typename FastIntegerArithmeticPromotion<T, U>::type;
@@ -76,8 +78,9 @@ struct CheckedAddOp<T,
       is_valid = CheckedAddImpl(static_cast<Promotion>(x),
                                 static_cast<Promotion>(y), &presult);
     }
-    if (!is_valid || !IsValueInRangeForNumericType<V>(presult))
+    if (!is_valid || !IsValueInRangeForNumericType<V>(presult)) {
       return false;
+    }
     *result = static_cast<V>(presult);
     return true;
   }
@@ -97,8 +100,9 @@ constexpr bool CheckedSubImpl(T x, T y, T* result) {
   // the same sign.
   if (std::is_signed<T>::value
           ? static_cast<SignedDst>((uresult ^ ux) & (ux ^ uy)) < 0
-          : x < y)
+          : x < y) {
     return false;
+  }
   *result = static_cast<T>(uresult);
   return true;
 }
@@ -114,8 +118,9 @@ struct CheckedSubOp<T,
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V>
   static constexpr bool Do(T x, U y, V* result) {
-    if constexpr (CheckedSubFastOp<T, U>::is_supported)
+    if constexpr (CheckedSubFastOp<T, U>::is_supported) {
       return CheckedSubFastOp<T, U>::Do(x, y, result);
+    }
 
     // Double the underlying type up to a full machine word.
     using FastPromotion = typename FastIntegerArithmeticPromotion<T, U>::type;
@@ -139,8 +144,9 @@ struct CheckedSubOp<T,
       is_valid = CheckedSubImpl(static_cast<Promotion>(x),
                                 static_cast<Promotion>(y), &presult);
     }
-    if (!is_valid || !IsValueInRangeForNumericType<V>(presult))
+    if (!is_valid || !IsValueInRangeForNumericType<V>(presult)) {
       return false;
+    }
     *result = static_cast<V>(presult);
     return true;
   }
@@ -162,8 +168,9 @@ constexpr bool CheckedMulImpl(T x, T y, T* result) {
   // After that it's an unsigned overflow check on the absolute value, with
   // a +1 bound for a negative result.
   if (uy > UnsignedDst(!std::is_signed<T>::value || is_negative) &&
-      ux > (std::numeric_limits<T>::max() + UnsignedDst(is_negative)) / uy)
+      ux > (std::numeric_limits<T>::max() + UnsignedDst(is_negative)) / uy) {
     return false;
+  }
   *result = static_cast<T>(is_negative ? 0 - uresult : uresult);
   return true;
 }
@@ -179,8 +186,9 @@ struct CheckedMulOp<T,
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V>
   static constexpr bool Do(T x, U y, V* result) {
-    if constexpr (CheckedMulFastOp<T, U>::is_supported)
+    if constexpr (CheckedMulFastOp<T, U>::is_supported) {
       return CheckedMulFastOp<T, U>::Do(x, y, result);
+    }
 
     using Promotion = typename FastIntegerArithmeticPromotion<T, U>::type;
     // Verify the destination type can hold the result (always true for 0).
@@ -204,8 +212,9 @@ struct CheckedMulOp<T,
       is_valid = CheckedMulImpl(static_cast<Promotion>(x),
                                 static_cast<Promotion>(y), &presult);
     }
-    if (!is_valid || !IsValueInRangeForNumericType<V>(presult))
+    if (!is_valid || !IsValueInRangeForNumericType<V>(presult)) {
       return false;
+    }
     *result = static_cast<V>(presult);
     return true;
   }
@@ -224,8 +233,9 @@ struct CheckedDivOp<T,
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V>
   static constexpr bool Do(T x, U y, V* result) {
-    if (BASE_NUMERICS_UNLIKELY(!y))
+    if (BASE_NUMERICS_UNLIKELY(!y)) {
       return false;
+    }
 
     // The overflow check can be compiled away if we don't have the exact
     // combination of types needed to trigger this case.
@@ -247,8 +257,9 @@ struct CheckedDivOp<T,
     }
 
     const Promotion presult = Promotion(x) / Promotion(y);
-    if (!IsValueInRangeForNumericType<V>(presult))
+    if (!IsValueInRangeForNumericType<V>(presult)) {
       return false;
+    }
     *result = static_cast<V>(presult);
     return true;
   }
@@ -265,8 +276,9 @@ struct CheckedModOp<T,
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V>
   static constexpr bool Do(T x, U y, V* result) {
-    if (BASE_NUMERICS_UNLIKELY(!y))
+    if (BASE_NUMERICS_UNLIKELY(!y)) {
       return false;
+    }
 
     using Promotion = typename BigEnoughPromotion<T, U>::type;
     if (BASE_NUMERICS_UNLIKELY(
@@ -281,8 +293,9 @@ struct CheckedModOp<T,
 
     const Promotion presult =
         static_cast<Promotion>(x) % static_cast<Promotion>(y);
-    if (!IsValueInRangeForNumericType<V>(presult))
+    if (!IsValueInRangeForNumericType<V>(presult)) {
       return false;
+    }
     *result = static_cast<Promotion>(presult);
     return true;
   }
@@ -314,8 +327,9 @@ struct CheckedLshOp<T,
 
     // Handle the legal corner-case of a full-width signed shift of zero.
     if (!std::is_signed<T>::value || x ||
-        as_unsigned(shift) != as_unsigned(std::numeric_limits<T>::digits))
+        as_unsigned(shift) != as_unsigned(std::numeric_limits<T>::digits)) {
       return false;
+    }
     *result = 0;
     return true;
   }
@@ -342,8 +356,9 @@ struct CheckedRshOp<T,
     }
 
     const T tmp = x >> shift;
-    if (!IsValueInRangeForNumericType<V>(tmp))
+    if (!IsValueInRangeForNumericType<V>(tmp)) {
       return false;
+    }
     *result = static_cast<V>(tmp);
     return true;
   }
@@ -364,8 +379,9 @@ struct CheckedAndOp<T,
   static constexpr bool Do(T x, U y, V* result) {
     const result_type tmp =
         static_cast<result_type>(x) & static_cast<result_type>(y);
-    if (!IsValueInRangeForNumericType<V>(tmp))
+    if (!IsValueInRangeForNumericType<V>(tmp)) {
       return false;
+    }
     *result = static_cast<V>(tmp);
     return true;
   }
@@ -386,8 +402,9 @@ struct CheckedOrOp<T,
   static constexpr bool Do(T x, U y, V* result) {
     const result_type tmp =
         static_cast<result_type>(x) | static_cast<result_type>(y);
-    if (!IsValueInRangeForNumericType<V>(tmp))
+    if (!IsValueInRangeForNumericType<V>(tmp)) {
       return false;
+    }
     *result = static_cast<V>(tmp);
     return true;
   }
@@ -408,8 +425,9 @@ struct CheckedXorOp<T,
   static constexpr bool Do(T x, U y, V* result) {
     const result_type tmp =
         static_cast<result_type>(x) ^ static_cast<result_type>(y);
-    if (!IsValueInRangeForNumericType<V>(tmp))
+    if (!IsValueInRangeForNumericType<V>(tmp)) {
       return false;
+    }
     *result = static_cast<V>(tmp);
     return true;
   }
@@ -432,8 +450,9 @@ struct CheckedMaxOp<
     const result_type tmp = IsGreater<T, U>::Test(x, y)
                                 ? static_cast<result_type>(x)
                                 : static_cast<result_type>(y);
-    if (!IsValueInRangeForNumericType<V>(tmp))
+    if (!IsValueInRangeForNumericType<V>(tmp)) {
       return false;
+    }
     *result = static_cast<V>(tmp);
     return true;
   }
@@ -456,8 +475,9 @@ struct CheckedMinOp<
     const result_type tmp = IsLess<T, U>::Test(x, y)
                                 ? static_cast<result_type>(x)
                                 : static_cast<result_type>(y);
-    if (!IsValueInRangeForNumericType<V>(tmp))
+    if (!IsValueInRangeForNumericType<V>(tmp)) {
       return false;
+    }
     *result = static_cast<V>(tmp);
     return true;
   }

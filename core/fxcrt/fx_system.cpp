@@ -22,8 +22,9 @@ uint32_t g_last_error = 0;
 
 template <typename IntType, typename CharType>
 IntType FXSYS_StrToInt(const CharType* str) {
-  if (!str)
+  if (!str) {
     return 0;
+  }
 
   // Process the sign.
   bool neg = *str == '-';
@@ -98,22 +99,28 @@ STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
 }  // namespace
 
 int FXSYS_roundf(float f) {
-  if (isnan(f))
+  if (isnan(f)) {
     return 0;
-  if (f < static_cast<float>(std::numeric_limits<int>::min()))
+  }
+  if (f < static_cast<float>(std::numeric_limits<int>::min())) {
     return std::numeric_limits<int>::min();
-  if (f >= static_cast<float>(std::numeric_limits<int>::max()))
+  }
+  if (f >= static_cast<float>(std::numeric_limits<int>::max())) {
     return std::numeric_limits<int>::max();
+  }
   return static_cast<int>(round(f));
 }
 
 int FXSYS_round(double d) {
-  if (isnan(d))
+  if (isnan(d)) {
     return 0;
-  if (d < static_cast<double>(std::numeric_limits<int>::min()))
+  }
+  if (d < static_cast<double>(std::numeric_limits<int>::min())) {
     return std::numeric_limits<int>::min();
-  if (d >= static_cast<double>(std::numeric_limits<int>::max()))
+  }
+  if (d >= static_cast<double>(std::numeric_limits<int>::max())) {
     return std::numeric_limits<int>::max();
+  }
   return static_cast<int>(round(d));
 }
 

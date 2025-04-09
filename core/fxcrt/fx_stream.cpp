@@ -71,8 +71,9 @@ bool IFX_WriteStream::WriteFilesize(FX_FILESIZE size) {
 RetainPtr<IFX_SeekableReadStream> IFX_SeekableReadStream::CreateFromFilename(
     const char* filename) {
   std::unique_ptr<FileAccessIface> pFA = FileAccessIface::Create();
-  if (!pFA->Open(filename))
+  if (!pFA->Open(filename)) {
     return nullptr;
+  }
   return pdfium::MakeRetain<CFX_CRTFileStream>(std::move(pFA));
 }
 

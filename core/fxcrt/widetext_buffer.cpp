@@ -46,8 +46,9 @@ void WideTextBuffer::AppendWideString(WideStringView str) {
 
 WideTextBuffer& WideTextBuffer::operator<<(ByteStringView ascii) {
   pdfium::span<wchar_t> new_span = ExpandWideBuf(ascii.GetLength());
-  for (size_t i = 0; i < ascii.GetLength(); ++i)
+  for (size_t i = 0; i < ascii.GetLength(); ++i) {
     new_span[i] = ascii[i];
+  }
   return *this;
 }
 

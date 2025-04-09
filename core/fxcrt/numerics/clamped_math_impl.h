@@ -80,8 +80,9 @@ struct ClampedAddOp<T,
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V = result_type>
   static constexpr V Do(T x, U y) {
-    if (!IsConstantEvaluated() && ClampedAddFastOp<T, U>::is_supported)
+    if (!IsConstantEvaluated() && ClampedAddFastOp<T, U>::is_supported) {
       return ClampedAddFastOp<T, U>::template Do<V>(x, y);
+    }
 
     static_assert(std::is_same<V, result_type>::value ||
                       IsTypeInRangeForNumericType<U, V>::value,
@@ -106,8 +107,9 @@ struct ClampedSubOp<T,
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V = result_type>
   static constexpr V Do(T x, U y) {
-    if (!IsConstantEvaluated() && ClampedSubFastOp<T, U>::is_supported)
+    if (!IsConstantEvaluated() && ClampedSubFastOp<T, U>::is_supported) {
       return ClampedSubFastOp<T, U>::template Do<V>(x, y);
+    }
 
     static_assert(std::is_same<V, result_type>::value ||
                       IsTypeInRangeForNumericType<U, V>::value,
@@ -132,8 +134,9 @@ struct ClampedMulOp<T,
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V = result_type>
   static constexpr V Do(T x, U y) {
-    if (!IsConstantEvaluated() && ClampedMulFastOp<T, U>::is_supported)
+    if (!IsConstantEvaluated() && ClampedMulFastOp<T, U>::is_supported) {
       return ClampedMulFastOp<T, U>::template Do<V>(x, y);
+    }
 
     V result = {};
     const V saturated =
@@ -156,8 +159,9 @@ struct ClampedDivOp<T,
   template <typename V = result_type>
   static constexpr V Do(T x, U y) {
     V result = {};
-    if (BASE_NUMERICS_LIKELY((CheckedDivOp<T, U>::Do(x, y, &result))))
+    if (BASE_NUMERICS_LIKELY((CheckedDivOp<T, U>::Do(x, y, &result)))) {
       return result;
+    }
     // Saturation goes to max, min, or NaN (if x is zero).
     return x ? CommonMaxOrMin<V>(IsValueNegative(x) ^ IsValueNegative(y))
              : SaturationDefaultLimits<V>::NaN();
@@ -200,8 +204,9 @@ struct ClampedLshOp<T,
       // Shift as unsigned to avoid undefined behavior.
       V result = static_cast<V>(as_unsigned(x) << shift);
       // If the shift can be reversed, we know it was valid.
-      if (BASE_NUMERICS_LIKELY(result >> shift == x))
+      if (BASE_NUMERICS_LIKELY(result >> shift == x)) {
         return result;
+      }
     }
     return x ? CommonMaxOrMin<V>(IsValueNegative(x)) : 0;
   }

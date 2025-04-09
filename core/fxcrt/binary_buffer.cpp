@@ -95,8 +95,9 @@ void BinaryBuffer::ExpandBuf(size_t add_size) {
 }
 
 void BinaryBuffer::AppendSpan(pdfium::span<const uint8_t> span) {
-  if (span.empty())
+  if (span.empty()) {
     return;
+  }
 
   ExpandBuf(span.size());
   fxcrt::Copy(span, pdfium::make_span(buffer_).subspan(GetSize()));

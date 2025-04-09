@@ -57,8 +57,9 @@ const CFX_CSSData::Color kColorTable[] = {
 
 const CFX_CSSData::Property* CFX_CSSData::GetPropertyByName(
     WideStringView name) {
-  if (name.IsEmpty())
+  if (name.IsEmpty()) {
     return nullptr;
+  }
 
   uint32_t hash = FX_HashCode_GetLoweredW(name);
   auto* result = std::lower_bound(
@@ -83,8 +84,9 @@ const CFX_CSSData::Property* CFX_CSSData::GetPropertyByEnum(
 
 const CFX_CSSData::PropertyValue* CFX_CSSData::GetPropertyValueByName(
     WideStringView wsName) {
-  if (wsName.IsEmpty())
+  if (wsName.IsEmpty()) {
     return nullptr;
+  }
 
   uint32_t hash = FX_HashCode_GetLoweredW(wsName);
   auto* result = std::lower_bound(

@@ -34,8 +34,9 @@ void CFX_CSSStyleSelector::SetDefaultFontSize(float fFontSize) {
 RetainPtr<CFX_CSSComputedStyle> CFX_CSSStyleSelector::CreateComputedStyle(
     const CFX_CSSComputedStyle* pParentStyle) {
   auto pStyle = pdfium::MakeRetain<CFX_CSSComputedStyle>();
-  if (pParentStyle)
+  if (pParentStyle) {
     pStyle->inherited_data_ = pParentStyle->inherited_data_;
+  }
   return pStyle;
 }
 
@@ -51,16 +52,19 @@ void CFX_CSSStyleSelector::UpdateStyleIndex() {
 std::vector<const CFX_CSSDeclaration*> CFX_CSSStyleSelector::MatchDeclarations(
     const WideString& tagname) {
   std::vector<const CFX_CSSDeclaration*> matchedDecls;
-  if (tagname.IsEmpty())
+  if (tagname.IsEmpty()) {
     return matchedDecls;
+  }
 
   auto* rules = ua_rules_.GetTagRuleData(tagname);
-  if (!rules)
+  if (!rules) {
     return matchedDecls;
+  }
 
   for (const auto& d : *rules) {
-    if (MatchSelector(tagname, d->pSelector))
+    if (MatchSelector(tagname, d->pSelector)) {
       matchedDecls.push_back(d->pDeclaration);
+    }
   }
   return matchedDecls;
 }
@@ -70,8 +74,9 @@ bool CFX_CSSStyleSelector::MatchSelector(const WideString& tagname,
   // TODO(dsinclair): The code only supports a single level of selector at this
   // point. None of the code using selectors required the complexity so lets
   // just say we don't support them to simplify the code for now.
-  if (!pSel || pSel->next_selector() || pSel->is_descendant())
+  if (!pSel || pSel->next_selector() || pSel->is_descendant()) {
     return false;
+  }
   return pSel->name_hash() == FX_HashCode_GetLoweredW(tagname.AsStringView());
 }
 
@@ -84,8 +89,9 @@ void CFX_CSSStyleSelector::ComputeStyle(
   if (!styleString.IsEmpty() || !alignString.IsEmpty()) {
     pDecl = std::make_unique<CFX_CSSDeclaration>();
 
-    if (!styleString.IsEmpty())
+    if (!styleString.IsEmpty()) {
       AppendInlineStyle(pDecl.get(), styleString);
+    }
     if (!alignString.IsEmpty()) {
       pDecl->AddProperty(
           CFX_CSSData::GetPropertyByEnum(CFX_CSSProperty::TextAlign),
@@ -103,20 +109,25 @@ void CFX_CSSStyleSelector::ApplyDeclarations(
   std::vector<const CFX_CSSPropertyHolder*> normals;
   std::vector<const CFX_CSSCustomProperty*> customs;
 
-  for (auto* decl : declArray)
+  for (auto* decl : declArray) {
     ExtractValues(decl, &importants, &normals, &customs);
+  }
 
-  if (extraDecl)
+  if (extraDecl) {
     ExtractValues(extraDecl, &importants, &normals, &customs);
+  }
 
-  for (auto* prop : normals)
+  for (auto* prop : normals) {
     ApplyProperty(prop->eProperty, prop->pValue, pComputedStyle);
+  }
 
-  for (auto* prop : customs)
+  for (auto* prop : customs) {
     pComputedStyle->AddCustomStyle(*prop);
+  }
 
-  for (auto* prop : importants)
+  for (auto* prop : importants) {
     ApplyProperty(prop->eProperty, prop->pValue, pComputedStyle);
+  }
 }
 
 void CFX_CSSStyleSelector::ExtractValues(
@@ -125,13 +136,15 @@ void CFX_CSSStyleSelector::ExtractValues(
     std::vector<const CFX_CSSPropertyHolder*>* normals,
     std::vector<const CFX_CSSCustomProperty*>* custom) {
   for (const auto& holder : *decl) {
-    if (holder->bImportant)
+    if (holder->bImportant) {
       importants->push_back(holder.get());
-    else
+    } else {
       normals->push_back(holder.get());
+    }
   }
-  for (auto it = decl->custom_begin(); it != decl->custom_end(); it++)
+  for (auto it = decl->custom_begin(); it != decl->custom_end(); it++) {
     custom->push_back(it->get());
+  }
 }
 
 void CFX_CSSStyleSelector::AppendInlineStyle(CFX_CSSDeclaration* pDecl,
@@ -150,16 +163,18 @@ void CFX_CSSStyleSelector::AppendInlineStyle(CFX_CSSDeclaration* pDecl,
     if (eStatus == CFX_CSSSyntaxParser::Status::kPropertyName) {
       WideStringView strValue = pSyntax->GetCurrentString();
       property = CFX_CSSData::GetPropertyByName(strValue);
-      if (!property)
+      if (!property) {
         wsName = WideString(strValue);
+      }
     } else if (eStatus == CFX_CSSSyntaxParser::Status::kPropertyValue) {
       if (property || iLen2 > 0) {
         WideStringView strValue = pSyntax->GetCurrentString();
         if (!strValue.IsEmpty()) {
-          if (property)
+          if (property) {
             pDecl->AddProperty(property, strValue);
-          else if (iLen2 > 0)
+          } else if (iLen2 > 0) {
             pDecl->AddProperty(wsName, WideString(strValue));
+          }
         }
       }
     } else {
@@ -557,8 +572,9 @@ Mask<CFX_CSSTEXTDECORATION> CFX_CSSStyleSelector::ToTextDecoration(
   Mask<CFX_CSSTEXTDECORATION> dwDecoration;
   for (const RetainPtr<CFX_CSSValue>& val :
        pdfium::Reversed(pValue->values())) {
-    if (val->GetType() != CFX_CSSValue::PrimitiveType::kEnum)
+    if (val->GetType() != CFX_CSSValue::PrimitiveType::kEnum) {
       continue;
+    }
 
     switch (val.AsRaw<CFX_CSSEnumValue>()->Value()) {
       case CFX_CSSPropertyValue::Underline:

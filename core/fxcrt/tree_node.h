@@ -41,8 +41,9 @@ class TreeNodeBase {
   }
 
   T* GetNthChild(int32_t n) {
-    if (n < 0)
+    if (n < 0) {
       return nullptr;
+    }
     T* result = GetFirstChild();
     while (n-- && result) {
       result = result->GetNextSibling();
@@ -134,13 +135,15 @@ class TreeNodeBase {
   }
 
   void RemoveAllChildren() {
-    while (T* child = GetFirstChild())
+    while (T* child = GetFirstChild()) {
       RemoveChild(child);
+    }
   }
 
   void RemoveSelfIfParented() {
-    if (T* parent = GetParent())
+    if (T* parent = GetParent()) {
       parent->RemoveChild(static_cast<T*>(this));
+    }
   }
 
  private:
@@ -165,8 +168,9 @@ class TreeNodeBase {
   // Child left in state where sibling members need subsequent adjustment.
   void BecomeParent(T* child) {
     CHECK(child != this);  // Detect attempts at self-insertion.
-    if (child->m_pParent)
+    if (child->m_pParent) {
       child->m_pParent->TreeNodeBase<T>::RemoveChild(child);
+    }
     child->m_pParent = static_cast<T*>(this);
     CHECK(!child->m_pNextSibling);
     CHECK(!child->m_pPrevSibling);

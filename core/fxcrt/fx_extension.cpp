@@ -120,8 +120,9 @@ void FXSYS_SetLocaltimeFunction(struct tm* (*func)(const time_t*)) {
 
 time_t FXSYS_time(time_t* tloc) {
   time_t ret_val = g_time_func();
-  if (tloc)
+  if (tloc) {
     *tloc = ret_val;
+  }
   return ret_val;
 }
 

@@ -36,8 +36,9 @@ struct CheckedMulFastAsmOp {
     Promotion presult;
 
     presult = static_cast<Promotion>(x) * static_cast<Promotion>(y);
-    if (!IsValueInRangeForNumericType<V>(presult))
+    if (!IsValueInRangeForNumericType<V>(presult)) {
       return false;
+    }
     *result = static_cast<V>(presult);
     return true;
   }
@@ -55,8 +56,9 @@ struct ClampedAddFastAsmOp {
   __attribute__((always_inline)) static V Do(T x, U y) {
     // This will get promoted to an int, so let the compiler do whatever is
     // clever and rely on the saturated cast to bounds check.
-    if (IsIntegerArithmeticSafe<int, T, U>::value)
+    if (IsIntegerArithmeticSafe<int, T, U>::value) {
       return saturated_cast<V>(static_cast<int>(x) + static_cast<int>(y));
+    }
 
     int32_t result;
     int32_t x_i32 = checked_cast<int32_t>(x);
@@ -81,8 +83,9 @@ struct ClampedSubFastAsmOp {
   __attribute__((always_inline)) static V Do(T x, U y) {
     // This will get promoted to an int, so let the compiler do whatever is
     // clever and rely on the saturated cast to bounds check.
-    if (IsIntegerArithmeticSafe<int, T, U>::value)
+    if (IsIntegerArithmeticSafe<int, T, U>::value) {
       return saturated_cast<V>(static_cast<int>(x) - static_cast<int>(y));
+    }
 
     int32_t result;
     int32_t x_i32 = checked_cast<int32_t>(x);

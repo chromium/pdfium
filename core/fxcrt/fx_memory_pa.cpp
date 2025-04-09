@@ -51,8 +51,9 @@ namespace pdfium::internal {
 void* Alloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
-  if (!total.IsValid())
+  if (!total.IsValid()) {
     return nullptr;
+  }
 
   return GetGeneralPartitionAllocator()
       .root()
@@ -63,8 +64,9 @@ void* Alloc(size_t num_members, size_t member_size) {
 void* Calloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
-  if (!total.IsValid())
+  if (!total.IsValid()) {
     return nullptr;
+  }
 
   return GetGeneralPartitionAllocator()
       .root()
@@ -76,8 +78,9 @@ void* Calloc(size_t num_members, size_t member_size) {
 void* Realloc(void* ptr, size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T size = num_members;
   size *= member_size;
-  if (!size.IsValid())
+  if (!size.IsValid()) {
     return nullptr;
+  }
 
   return GetGeneralPartitionAllocator()
       .root()
@@ -102,8 +105,9 @@ void Dealloc(void* ptr) {
 void* StringAlloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
-  if (!total.IsValid())
+  if (!total.IsValid()) {
     return nullptr;
+  }
 
   return GetStringPartitionAllocator()
       .root()

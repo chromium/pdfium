@@ -72,8 +72,9 @@ uint32_t GenerateSeedFromEnvironment() {
 void* ContextFromNextGlobalSeed() {
   if (!g_bHaveGlobalSeed) {
 #if BUILDFLAG(IS_WIN)
-    if (!GenerateSeedFromCryptoRandom(&g_nGlobalSeed))
+    if (!GenerateSeedFromCryptoRandom(&g_nGlobalSeed)) {
       g_nGlobalSeed = GenerateSeedFromEnvironment();
+    }
 #else
     g_nGlobalSeed = GenerateSeedFromEnvironment();
 #endif

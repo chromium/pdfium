@@ -36,8 +36,9 @@ CFX_Timer::CFX_Timer(HandlerIface* pHandlerIface,
   DCHECK(callback_iface_);
   if (handler_iface_) {
     timer_id_ = handler_iface_->SetTimer(nInterval, TimerProc);
-    if (HasValidID())
+    if (HasValidID()) {
       (*g_pwl_timer_map)[timer_id_] = this;
+    }
   }
 }
 

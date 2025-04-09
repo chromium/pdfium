@@ -57,8 +57,9 @@ uint32_t CFX_BitStream::GetBits(uint32_t nBits) {
     bit_left -= 8;
     result |= data_[byte_pos++] << bit_left;
   }
-  if (bit_left)
+  if (bit_left) {
     result |= data_[byte_pos] >> (8 - bit_left);
+  }
   bit_pos_ += nBits;
   return result;
 }

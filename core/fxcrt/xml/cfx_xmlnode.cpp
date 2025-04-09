@@ -16,8 +16,9 @@ void CFX_XMLNode::InsertChildNode(CFX_XMLNode* pNode, int32_t index) {
 
 CFX_XMLNode* CFX_XMLNode::GetRoot() {
   CFX_XMLNode* pParent = this;
-  while (pParent->GetParent())
+  while (pParent->GetParent()) {
     pParent = pParent->GetParent();
+  }
 
   return pParent;
 }

@@ -16,8 +16,9 @@ namespace {
 size_t GetCSSNameLen(WideStringView str) {
   for (size_t i = 0; i < str.GetLength(); ++i) {
     wchar_t wch = str[i];
-    if (!isascii(wch) || (!isalnum(wch) && wch != '_' && wch != '-'))
+    if (!isascii(wch) || (!isalnum(wch) && wch != '_' && wch != '-')) {
       return i;
+    }
   }
   return str.GetLength();
 }
@@ -54,11 +55,13 @@ std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
 
     const bool is_star = wch == '*';
     const bool is_valid_char = is_star || (isascii(wch) && isalpha(wch));
-    if (!is_valid_char)
+    if (!is_valid_char) {
       return nullptr;
+    }
 
-    if (head)
+    if (head) {
       head->set_is_descendant();
+    }
     size_t len = is_star ? 1 : GetCSSNameLen(str.Last(str.GetLength() - i));
     auto new_head =
         std::make_unique<CFX_CSSSelector>(str.Substr(i, len), std::move(head));

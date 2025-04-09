@@ -451,8 +451,9 @@ RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseBorderProperty(
           case CFX_CSSPropertyValue::Thin:
           case CFX_CSSPropertyValue::Thick:
           case CFX_CSSPropertyValue::Medium:
-            if (!pWidth)
+            if (!pWidth) {
               pWidth = pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
+            }
             break;
           default:
             break;
@@ -499,36 +500,41 @@ void CFX_CSSDeclaration::ParseFontProperty(WideStringView value,
             case CFX_CSSPropertyValue::XxLarge:
             case CFX_CSSPropertyValue::Smaller:
             case CFX_CSSPropertyValue::Larger:
-              if (!pFontSize)
+              if (!pFontSize) {
                 pFontSize = pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
+              }
               continue;
             case CFX_CSSPropertyValue::Bold:
             case CFX_CSSPropertyValue::Bolder:
             case CFX_CSSPropertyValue::Lighter:
-              if (!pWeight)
+              if (!pWeight) {
                 pWeight = pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
+              }
               continue;
             case CFX_CSSPropertyValue::Italic:
             case CFX_CSSPropertyValue::Oblique:
-              if (!pStyle)
+              if (!pStyle) {
                 pStyle = pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
+              }
               continue;
             case CFX_CSSPropertyValue::SmallCaps:
-              if (!pVariant)
+              if (!pVariant) {
                 pVariant = pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
+              }
               continue;
             case CFX_CSSPropertyValue::Normal:
-              if (!pStyle)
+              if (!pStyle) {
                 pStyle = pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
-              else if (!pVariant)
+              } else if (!pVariant) {
                 pVariant = pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
-              else if (!pWeight)
+              } else if (!pWeight) {
                 pWeight = pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
-              else if (!pFontSize)
+              } else if (!pFontSize) {
                 pFontSize = pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
-              else if (!pLineHeight)
+              } else if (!pLineHeight) {
                 pLineHeight =
                     pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName);
+              }
               continue;
             default:
               break;

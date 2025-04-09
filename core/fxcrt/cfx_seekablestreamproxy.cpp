@@ -41,14 +41,16 @@ std::pair<size_t, size_t> UTF8Decode(pdfium::span<const uint8_t> pSrc,
       iPending = 0;
       pDst[iDstNum++] = byte;
     } else if (byte < 0xc0) {
-      if (iPending < 1)
+      if (iPending < 1) {
         continue;
+      }
 
       dwCode = dwCode << 6;
       dwCode |= (byte & 0x3f);
       --iPending;
-      if (iPending == 0)
+      if (iPending == 0) {
         pDst[iDstNum++] = dwCode;
+      }
     } else if (byte < 0xe0) {
       iPending = 1;
       dwCode = (byte & 0x1f);

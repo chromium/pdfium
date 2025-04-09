@@ -132,34 +132,40 @@ class StringViewTemplate {
 
   bool IsASCII() const {
     for (auto c : *this) {
-      if (c <= 0 || c > 127)  // Questionable signedness of |c|.
+      if (c <= 0 || c > 127) {  // Questionable signedness of |c|.
         return false;
+      }
     }
     return true;
   }
 
   bool EqualsASCII(const StringViewTemplate<char>& that) const {
     size_t length = GetLength();
-    if (length != that.GetLength())
+    if (length != that.GetLength()) {
       return false;
+    }
 
     for (size_t i = 0; i < length; ++i) {
       auto c = (*this)[i];
-      if (c <= 0 || c > 127 || c != that[i])  // Questionable signedness of |c|.
+      if (c <= 0 || c > 127 ||
+          c != that[i]) {  // Questionable signedness of |c|.
         return false;
+      }
     }
     return true;
   }
 
   bool EqualsASCIINoCase(const StringViewTemplate<char>& that) const {
     size_t length = GetLength();
-    if (length != that.GetLength())
+    if (length != that.GetLength()) {
       return false;
+    }
 
     for (size_t i = 0; i < length; ++i) {
       auto c = (*this)[i];
-      if (c <= 0 || c > 127 || tolower(c) != tolower(that[i]))
+      if (c <= 0 || c > 127 || tolower(c) != tolower(that[i])) {
         return false;
+      }
     }
     return true;
   }
@@ -171,8 +177,9 @@ class StringViewTemplate {
 
     uint32_t strid = 0;
     size_t size = std::min(static_cast<size_t>(4), span_.size());
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++) {
       strid = strid * 256 + span_[i];
+    }
 
     return strid << ((4 - size) * 8);
   }
@@ -230,22 +237,23 @@ class StringViewTemplate {
       return StringViewTemplate();
     }
 
-    if (!IsValidIndex(first))
+    if (!IsValidIndex(first)) {
       return StringViewTemplate();
+    }
 
-    if (count == 0 || !IsValidLength(count))
+    if (count == 0 || !IsValidLength(count)) {
       return StringViewTemplate();
+    }
 
-    if (!IsValidIndex(first + count - 1))
+    if (!IsValidIndex(first + count - 1)) {
       return StringViewTemplate();
+    }
 
     // SAFETY: performance-sensitive, checks above equivalent to subspan()'s.
     return UNSAFE_BUFFERS(StringViewTemplate(span_.data() + first, count));
   }
 
-  StringViewTemplate First(size_t count) const {
-    return Substr(0, count);
-  }
+  StringViewTemplate First(size_t count) const { return Substr(0, count); }
 
   StringViewTemplate Last(size_t count) const {
     // Unsigned underflow is well-defined and out-of-range is handled by
@@ -254,15 +262,18 @@ class StringViewTemplate {
   }
 
   StringViewTemplate TrimmedRight(CharType ch) const {
-    if (IsEmpty())
+    if (IsEmpty()) {
       return StringViewTemplate();
+    }
 
     size_t pos = GetLength();
-    while (pos && CharAt(pos - 1) == ch)
+    while (pos && CharAt(pos - 1) == ch) {
       pos--;
+    }
 
-    if (pos == 0)
+    if (pos == 0) {
       return StringViewTemplate();
+    }
 
     // SAFETY: Loop above keeps `pos` at length of string or less.
     return UNSAFE_BUFFERS(StringViewTemplate(span_.data(), pos));

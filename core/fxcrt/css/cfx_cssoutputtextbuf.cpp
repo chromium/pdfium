@@ -22,8 +22,9 @@ void CFX_CSSOutputTextBuf::AppendCharIfNotLeadingBlank(wchar_t wch) {
 
 WideStringView CFX_CSSOutputTextBuf::GetTrailingBlankTrimmedString() const {
   WideStringView result(buffer_);
-  while (!result.IsEmpty() && result.Back() <= ' ')
+  while (!result.IsEmpty() && result.Back() <= ' ') {
     result = result.First(result.GetLength() - 1);
+  }
 
   return result;
 }

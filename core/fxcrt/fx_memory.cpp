@@ -141,45 +141,51 @@ void* Alloc2D(size_t w, size_t h, size_t member_size) {
 
 void* AllocOrDie(size_t num_members, size_t member_size) {
   void* result = Alloc(num_members, member_size);
-  if (!result)
+  if (!result) {
     FX_OutOfMemoryTerminate(0);  // Never returns.
+  }
 
   return result;
 }
 
 void* AllocOrDie2D(size_t w, size_t h, size_t member_size) {
-  if (w >= std::numeric_limits<size_t>::max() / h)
+  if (w >= std::numeric_limits<size_t>::max() / h) {
     FX_OutOfMemoryTerminate(0);  // Never returns.
+  }
 
   return AllocOrDie(w * h, member_size);
 }
 void* CallocOrDie(size_t num_members, size_t member_size) {
   void* result = Calloc(num_members, member_size);
-  if (!result)
+  if (!result) {
     FX_OutOfMemoryTerminate(0);  // Never returns.
+  }
 
   return result;
 }
 
 void* CallocOrDie2D(size_t w, size_t h, size_t member_size) {
-  if (w >= std::numeric_limits<size_t>::max() / h)
+  if (w >= std::numeric_limits<size_t>::max() / h) {
     FX_OutOfMemoryTerminate(0);  // Never returns.
+  }
 
   return CallocOrDie(w * h, member_size);
 }
 
 void* ReallocOrDie(void* ptr, size_t num_members, size_t member_size) {
   void* result = Realloc(ptr, num_members, member_size);
-  if (!result)
+  if (!result) {
     FX_OutOfMemoryTerminate(0);  // Never returns.
+  }
 
   return result;
 }
 
 void* StringAllocOrDie(size_t num_members, size_t member_size) {
   void* result = StringAlloc(num_members, member_size);
-  if (!result)
+  if (!result) {
     FX_OutOfMemoryTerminate(0);  // Never returns.
+  }
 
   return result;
 }

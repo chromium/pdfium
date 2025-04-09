@@ -265,8 +265,9 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
 std::optional<WideString> TryVSWPrintf(size_t size,
                                        const wchar_t* pFormat,
                                        va_list argList) {
-  if (!size)
+  if (!size) {
     return std::nullopt;
+  }
 
   WideString str;
   {
@@ -283,8 +284,9 @@ std::optional<WideString> TryVSWPrintf(size_t size,
         FXSYS_memset(buffer.data(), 0, (size + 1) * sizeof(wchar_t)));
     int ret = UNSAFE_TODO(vswprintf(buffer.data(), size + 1, pFormat, argList));
     bool bSufficientBuffer = ret >= 0 || buffer[size - 1] == 0;
-    if (!bSufficientBuffer)
+    if (!bSufficientBuffer) {
       return std::nullopt;
+    }
   }
   str.ReleaseBuffer(str.GetStringLength());
   return str;
@@ -382,8 +384,9 @@ WideString WideString::FormatV(const wchar_t* format, va_list argList) {
     std::optional<WideString> ret =
         TryVSWPrintf(static_cast<size_t>(maxLen), format, argListCopy);
     va_end(argListCopy);
-    if (ret.has_value())
+    if (ret.has_value()) {
       return ret.value();
+    }
 
     maxLen *= 2;
   }
@@ -426,8 +429,9 @@ WideString::WideString(WideStringView str1, WideStringView str2) {
   nSafeLen += str2.GetLength();
 
   size_t nNewLen = nSafeLen.ValueOrDie();
-  if (nNewLen == 0)
+  if (nNewLen == 0) {
     return;
+  }
 
   data_ = StringData::Create(nNewLen);
   data_->CopyContents(str1.span());
@@ -436,12 +440,14 @@ WideString::WideString(WideStringView str1, WideStringView str2) {
 
 WideString::WideString(const std::initializer_list<WideStringView>& list) {
   FX_SAFE_SIZE_T nSafeLen = 0;
-  for (const auto& item : list)
+  for (const auto& item : list) {
     nSafeLen += item.GetLength();
+  }
 
   size_t nNewLen = nSafeLen.ValueOrDie();
-  if (nNewLen == 0)
+  if (nNewLen == 0) {
     return;
+  }
 
   data_ = StringData::Create(nNewLen);
 
@@ -464,10 +470,11 @@ WideString& WideString::operator=(const wchar_t* str) {
 }
 
 WideString& WideString::operator=(WideStringView str) {
-  if (str.IsEmpty())
+  if (str.IsEmpty()) {
     clear();
-  else
+  } else {
     AssignCopy(str.unterminated_c_str(), str.GetLength());
+  }
 
   return *this;
 }
@@ -511,8 +518,9 @@ WideString& WideString::operator+=(const WideString& str) {
 }
 
 WideString& WideString::operator+=(WideStringView str) {
-  if (!str.IsEmpty())
+  if (!str.IsEmpty()) {
     Concat(str.unterminated_c_str(), str.GetLength());
+  }
 
   return *this;
 }
@@ -551,11 +559,13 @@ bool WideString::operator==(const WideString& other) const {
     return true;
   }
 
-  if (IsEmpty())
+  if (IsEmpty()) {
     return other.IsEmpty();
+  }
 
-  if (other.IsEmpty())
+  if (other.IsEmpty()) {
     return false;
+  }
 
   // SAFETY: data_length_ bytes available at string_.
   return other.data_->data_length_ == data_->data_length_ &&
@@ -571,8 +581,9 @@ bool WideString::operator<(WideStringView str) const {
   if (!data_ && !str.unterminated_c_str()) {
     return false;
   }
-  if (c_str() == str.unterminated_c_str())
+  if (c_str() == str.unterminated_c_str()) {
     return false;
+  }
 
   size_t len = GetLength();
   size_t other_len = str.GetLength();
@@ -594,24 +605,27 @@ intptr_t WideString::ReferenceCountForTesting() const {
 ByteString WideString::ToASCII() const {
   ByteString result;
   result.Reserve(GetLength());
-  for (wchar_t wc : *this)
+  for (wchar_t wc : *this) {
     result.InsertAtBack(static_cast<char>(wc & 0x7f));
+  }
   return result;
 }
 
 ByteString WideString::ToLatin1() const {
   ByteString result;
   result.Reserve(GetLength());
-  for (wchar_t wc : *this)
+  for (wchar_t wc : *this) {
     result.InsertAtBack(static_cast<char>(wc & 0xff));
+  }
   return result;
 }
 
 ByteString WideString::ToDefANSI() const {
   size_t dest_len =
       FX_WideCharToMultiByte(FX_CodePage::kDefANSI, AsStringView(), {});
-  if (!dest_len)
+  if (!dest_len) {
     return ByteString();
+  }
 
   ByteString bstr;
   {
@@ -706,16 +720,18 @@ WideString WideString::Last(size_t count) const {
 }
 
 void WideString::MakeLower() {
-  if (IsEmpty())
+  if (IsEmpty()) {
     return;
+  }
 
   ReallocBeforeWrite(data_->data_length_);
   FXSYS_wcslwr(data_->string_);
 }
 
 void WideString::MakeUpper() {
-  if (IsEmpty())
+  if (IsEmpty()) {
     return;
+  }
 
   ReallocBeforeWrite(data_->data_length_);
   FXSYS_wcsupr(data_->string_);
@@ -725,8 +741,9 @@ void WideString::MakeUpper() {
 WideString WideString::FromASCII(ByteStringView bstr) {
   WideString result;
   result.Reserve(bstr.GetLength());
-  for (char c : bstr)
+  for (char c : bstr) {
     result.InsertAtBack(static_cast<wchar_t>(c & 0x7f));
+  }
   return result;
 }
 
@@ -734,16 +751,18 @@ WideString WideString::FromASCII(ByteStringView bstr) {
 WideString WideString::FromLatin1(ByteStringView bstr) {
   WideString result;
   result.Reserve(bstr.GetLength());
-  for (char c : bstr)
+  for (char c : bstr) {
     result.InsertAtBack(static_cast<wchar_t>(c & 0xff));
+  }
   return result;
 }
 
 // static
 WideString WideString::FromDefANSI(ByteStringView bstr) {
   size_t dest_len = FX_MultiByteToWideChar(FX_CodePage::kDefANSI, bstr, {});
-  if (!dest_len)
+  if (!dest_len) {
     return WideString();
+  }
 
   WideString wstr;
   {
@@ -829,10 +848,12 @@ int WideString::Compare(const WideString& str) const {
   // SAFTEY: Comparison limited to minimum length of either argument.
   int result = UNSAFE_BUFFERS(
       FXSYS_wmemcmp(data_->string_, str.data_->string_, min_len));
-  if (result != 0)
+  if (result != 0) {
     return result;
-  if (this_len == that_len)
+  }
+  if (this_len == that_len) {
     return 0;
+  }
   return this_len < that_len ? -1 : 1;
 }
 
@@ -881,14 +902,16 @@ std::ostream& operator<<(std::ostream& os, WideStringView str) {
 
 uint32_t FX_HashCode_GetW(WideStringView str) {
   uint32_t dwHashCode = 0;
-  for (WideStringView::UnsignedType c : str)
+  for (WideStringView::UnsignedType c : str) {
     dwHashCode = 1313 * dwHashCode + c;
+  }
   return dwHashCode;
 }
 
 uint32_t FX_HashCode_GetLoweredW(WideStringView str) {
   uint32_t dwHashCode = 0;
-  for (wchar_t c : str)  // match FXSYS_towlower() arg type.
+  for (wchar_t c : str) {  // match FXSYS_towlower() arg type.
     dwHashCode = 1313 * dwHashCode + FXSYS_towlower(c);
+  }
   return dwHashCode;
 }

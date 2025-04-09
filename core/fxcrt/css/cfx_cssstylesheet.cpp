@@ -30,12 +30,15 @@ bool CFX_CSSStyleSheet::LoadBuffer(WideStringView buffer) {
   auto pSyntax = std::make_unique<CFX_CSSSyntaxParser>(buffer);
   while (true) {
     CFX_CSSSyntaxParser::Status eStatus = pSyntax->DoSyntaxParse();
-    if (eStatus == CFX_CSSSyntaxParser::Status::kStyleRule)
+    if (eStatus == CFX_CSSSyntaxParser::Status::kStyleRule) {
       eStatus = LoadStyleRule(pSyntax.get());
-    if (eStatus == CFX_CSSSyntaxParser::Status::kEOS)
+    }
+    if (eStatus == CFX_CSSSyntaxParser::Status::kEOS) {
       return true;
-    if (eStatus == CFX_CSSSyntaxParser::Status::kError)
+    }
+    if (eStatus == CFX_CSSSyntaxParser::Status::kError) {
       return false;
+    }
   }
 }
 
@@ -51,15 +54,17 @@ CFX_CSSSyntaxParser::Status CFX_CSSStyleSheet::LoadStyleRule(
       case CFX_CSSSyntaxParser::Status::kSelector: {
         WideStringView strValue = pSyntax->GetCurrentString();
         auto pSelector = CFX_CSSSelector::FromString(strValue);
-        if (pSelector)
+        if (pSelector) {
           selectors.push_back(std::move(pSelector));
+        }
         break;
       }
       case CFX_CSSSyntaxParser::Status::kPropertyName: {
         WideStringView strValue = pSyntax->GetCurrentString();
         property = CFX_CSSData::GetPropertyByName(strValue);
-        if (!property)
+        if (!property) {
           wsName = WideString(strValue);
+        }
         break;
       }
       case CFX_CSSSyntaxParser::Status::kPropertyValue: {

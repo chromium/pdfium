@@ -38,8 +38,9 @@ pdfium::span<const uint8_t> CFX_MemoryStream::GetSpan() const {
 
 bool CFX_MemoryStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                                          FX_FILESIZE offset) {
-  if (buffer.empty() || offset < 0)
+  if (buffer.empty() || offset < 0) {
     return false;
+  }
 
   FX_SAFE_SIZE_T new_pos = buffer.size();
   new_pos += offset;
@@ -57,8 +58,9 @@ bool CFX_MemoryStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
 }
 
 bool CFX_MemoryStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
-  if (buffer.empty())
+  if (buffer.empty()) {
     return true;
+  }
 
   FX_SAFE_SIZE_T safe_new_pos = buffer.size();
   safe_new_pos += cur_size_;
@@ -74,8 +76,9 @@ bool CFX_MemoryStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
     new_size += (kBlockSize - 1);
     new_size /= kBlockSize;
     new_size *= kBlockSize;
-    if (!new_size.IsValid())
+    if (!new_size.IsValid()) {
       return false;
+    }
 
     data_.resize(new_size.ValueOrDie());
   }

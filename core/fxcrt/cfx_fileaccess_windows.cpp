@@ -121,11 +121,13 @@ size_t CFX_FileAccess_Windows::ReadPos(pdfium::span<uint8_t> buffer,
     return 0;
   }
 
-  if (pos >= GetSize())
+  if (pos >= GetSize()) {
     return 0;
+  }
 
-  if (SetPosition(pos) == (FX_FILESIZE)-1)
+  if (SetPosition(pos) == (FX_FILESIZE)-1) {
     return 0;
+  }
 
   return Read(buffer);
 }
@@ -139,8 +141,9 @@ bool CFX_FileAccess_Windows::Flush() {
 }
 
 bool CFX_FileAccess_Windows::Truncate(FX_FILESIZE szFile) {
-  if (SetPosition(szFile) == (FX_FILESIZE)-1)
+  if (SetPosition(szFile) == (FX_FILESIZE)-1) {
     return false;
+  }
 
   return !!::SetEndOfFile(file_);
 }

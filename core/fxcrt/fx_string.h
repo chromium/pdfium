@@ -41,8 +41,9 @@ std::vector<StrType> Split(const StrType& that, typename StrType::CharType ch) {
   StringViewTemplate<typename StrType::CharType> remaining(that.span());
   while (true) {
     std::optional<size_t> index = remaining.Find(ch);
-    if (!index.has_value())
+    if (!index.has_value()) {
       break;
+    }
     result.emplace_back(remaining.First(index.value()));
     remaining = remaining.Last(remaining.GetLength() - index.value() - 1);
   }

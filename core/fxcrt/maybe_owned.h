@@ -43,8 +43,9 @@ class MaybeOwned {
 
   // Helpful for untangling a collection of intertwined MaybeOwned<>.
   void ResetIfUnowned() {
-    if (!IsOwned())
+    if (!IsOwned()) {
       Reset();
+    }
   }
 
   T* Get() const& {

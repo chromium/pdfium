@@ -61,7 +61,6 @@ class IFX_SeekableReadStream : virtual public Retainable,
 };
 
 class IFX_SeekableStream : public IFX_SeekableReadStream,
-                           public IFX_SeekableWriteStream {
-};
+                           public IFX_SeekableWriteStream {};
 
 #endif  // CORE_FXCRT_FX_STREAM_H_

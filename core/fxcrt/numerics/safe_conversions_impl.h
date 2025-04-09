@@ -266,8 +266,7 @@ struct NarrowingRange {
 
 template <typename Dst,
           typename Src,
-          template <typename>
-          class Bounds,
+          template <typename> class Bounds,
           IntegerRepresentation DstSign = std::is_signed<Dst>::value
                                               ? INTEGER_REPRESENTATION_SIGNED
                                               : INTEGER_REPRESENTATION_UNSIGNED,
@@ -285,8 +284,7 @@ struct DstRangeRelationToSrcRangeImpl;
 // Same sign narrowing: The range is contained for normal limits.
 template <typename Dst,
           typename Src,
-          template <typename>
-          class Bounds,
+          template <typename> class Bounds,
           IntegerRepresentation DstSign,
           IntegerRepresentation SrcSign>
 struct DstRangeRelationToSrcRangeImpl<Dst,
@@ -495,16 +493,16 @@ template <
     typename Lhs,
     typename Rhs = Lhs,
     bool is_intmax_type =
-        std::is_integral<typename MaxExponentPromotion<Lhs, Rhs>::type>::value&&
-            IntegerBitsPlusSign<typename MaxExponentPromotion<Lhs, Rhs>::type>::
+        std::is_integral<
+            typename MaxExponentPromotion<Lhs, Rhs>::type>::value &&
+        IntegerBitsPlusSign<typename MaxExponentPromotion<Lhs, Rhs>::type>::
                 value == IntegerBitsPlusSign<intmax_t>::value,
-    bool is_max_exponent =
-        StaticDstRangeRelationToSrcRange<
-            typename MaxExponentPromotion<Lhs, Rhs>::type,
-            Lhs>::value ==
-        NUMERIC_RANGE_CONTAINED&& StaticDstRangeRelationToSrcRange<
-            typename MaxExponentPromotion<Lhs, Rhs>::type,
-            Rhs>::value == NUMERIC_RANGE_CONTAINED>
+    bool is_max_exponent = StaticDstRangeRelationToSrcRange<
+                               typename MaxExponentPromotion<Lhs, Rhs>::type,
+                               Lhs>::value == NUMERIC_RANGE_CONTAINED &&
+                           StaticDstRangeRelationToSrcRange<
+                               typename MaxExponentPromotion<Lhs, Rhs>::type,
+                               Rhs>::value == NUMERIC_RANGE_CONTAINED>
 struct BigEnoughPromotion;
 
 // The side with the max exponent is big enough.

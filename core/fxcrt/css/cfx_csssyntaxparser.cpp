@@ -102,8 +102,9 @@ CFX_CSSSyntaxParser::Status CFX_CSSSyntaxParser::DoSyntaxParse() {
             return Status::kPropertyName;
           case '}':
             input_.MoveNext();
-            if (!RestoreMode())
+            if (!RestoreMode()) {
               return Status::kError;
+            }
 
             return Status::kDeclClose;
           case '/':
@@ -148,8 +149,9 @@ CFX_CSSSyntaxParser::Status CFX_CSSSyntaxParser::DoSyntaxParse() {
         break;
       case Mode::kComment:
         if (wch == '*' && input_.GetNextChar() == '/') {
-          if (!RestoreMode())
+          if (!RestoreMode()) {
             return Status::kError;
+          }
           input_.MoveNext();
         }
         input_.MoveNext();

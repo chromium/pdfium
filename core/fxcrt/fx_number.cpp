@@ -21,8 +21,9 @@ FX_Number::FX_Number(int32_t value) : value_(value) {}
 FX_Number::FX_Number(float value) : value_(value) {}
 
 FX_Number::FX_Number(ByteStringView strc) {
-  if (strc.IsEmpty())
+  if (strc.IsEmpty()) {
     return;
+  }
 
   if (strc.Contains('.')) {
     value_ = StringToFloat(strc);
@@ -65,8 +66,9 @@ FX_Number::FX_Number(ByteStringView strc) {
   static constexpr uint32_t uLimit =
       static_cast<uint32_t>(std::numeric_limits<int>::max());
 
-  if (uValue > (bNegative ? uLimit + 1 : uLimit))
+  if (uValue > (bNegative ? uLimit + 1 : uLimit)) {
     uValue = 0;
+  }
 
   // Switch back to the int space so we can flip to a negative if we need.
   int32_t value = static_cast<int32_t>(uValue);

@@ -11,11 +11,11 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/immediate_crash.h"
 
-#define CHECK(condition)              \
-  do {                                \
-    if (UNLIKELY(!(condition))) {     \
-      pdfium::ImmediateCrash();       \
-    }                                 \
+#define CHECK(condition)          \
+  do {                            \
+    if (UNLIKELY(!(condition))) { \
+      pdfium::ImmediateCrash();   \
+    }                             \
   } while (0)
 
 #if defined(NDEBUG) && !defined(DCHECK_ALWAYS_ON)

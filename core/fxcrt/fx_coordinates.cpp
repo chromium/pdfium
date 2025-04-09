@@ -68,8 +68,9 @@ float CFX_VTemplate<float>::Length() const {
 template <>
 void CFX_VTemplate<float>::Normalize() {
   float fLen = Length();
-  if (fLen < 0.0001f)
+  if (fLen < 0.0001f) {
     return;
+  }
 
   x /= fLen;
   y /= fLen;
@@ -84,10 +85,12 @@ bool FX_RECT::Valid() const {
 }
 
 void FX_RECT::Normalize() {
-  if (left > right)
+  if (left > right) {
     std::swap(left, right);
-  if (top > bottom)
+  }
+  if (top > bottom) {
     std::swap(top, bottom);
+  }
 }
 
 void FX_RECT::Intersect(const FX_RECT& src) {
@@ -135,8 +138,9 @@ CFX_FloatRect::CFX_FloatRect(const CFX_PointF& point)
 
 // static
 CFX_FloatRect CFX_FloatRect::GetBBox(pdfium::span<const CFX_PointF> pPoints) {
-  if (pPoints.empty())
+  if (pPoints.empty()) {
     return CFX_FloatRect();
+  }
 
   float min_x = pPoints.front().x;
   float max_x = pPoints.front().x;
@@ -152,10 +156,12 @@ CFX_FloatRect CFX_FloatRect::GetBBox(pdfium::span<const CFX_PointF> pPoints) {
 }
 
 void CFX_FloatRect::Normalize() {
-  if (left > right)
+  if (left > right) {
     std::swap(left, right);
-  if (bottom > top)
+  }
+  if (bottom > top) {
     std::swap(top, bottom);
+  }
 }
 
 void CFX_FloatRect::Intersect(const CFX_FloatRect& other_rect) {
@@ -166,8 +172,9 @@ void CFX_FloatRect::Intersect(const CFX_FloatRect& other_rect) {
   bottom = std::max(bottom, other.bottom);
   right = std::min(right, other.right);
   top = std::min(top, other.top);
-  if (left > right || bottom > top)
+  if (left > right || bottom > top) {
     *this = CFX_FloatRect();
+  }
 }
 
 void CFX_FloatRect::Union(const CFX_FloatRect& other_rect) {
@@ -277,8 +284,9 @@ void CFX_FloatRect::Deflate(const CFX_FloatRect& rt) {
 }
 
 CFX_FloatRect CFX_FloatRect::GetDeflated(float x, float y) const {
-  if (IsEmpty())
+  if (IsEmpty()) {
     return CFX_FloatRect();
+  }
 
   CFX_FloatRect that = *this;
   that.Deflate(x, y);
@@ -372,8 +380,9 @@ FX_RECT CFX_RectF::GetOuterRect() const {
 CFX_Matrix CFX_Matrix::GetInverse() const {
   CFX_Matrix inverse;
   float i = a * d - b * c;
-  if (fabs(i) == 0)
+  if (fabs(i) == 0) {
     return inverse;
+  }
 
   float j = -i;
   inverse.a = d / i;
@@ -432,18 +441,22 @@ void CFX_Matrix::MatchRect(const CFX_FloatRect& dest,
 }
 
 float CFX_Matrix::GetXUnit() const {
-  if (b == 0)
+  if (b == 0) {
     return (a > 0 ? a : -a);
-  if (a == 0)
+  }
+  if (a == 0) {
     return (b > 0 ? b : -b);
+  }
   return hypotf(a, b);
 }
 
 float CFX_Matrix::GetYUnit() const {
-  if (c == 0)
+  if (c == 0) {
     return (d > 0 ? d : -d);
-  if (d == 0)
+  }
+  if (d == 0) {
     return (c > 0 ? c : -c);
+  }
   return hypotf(c, d);
 }
 

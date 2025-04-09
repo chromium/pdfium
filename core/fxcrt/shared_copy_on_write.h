@@ -31,8 +31,9 @@ class SharedCopyOnWrite {
   }
 
   SharedCopyOnWrite& operator=(const SharedCopyOnWrite& that) {
-    if (*this != that)
+    if (*this != that) {
       object_ = that.object_;
+    }
     return *this;
   }
 

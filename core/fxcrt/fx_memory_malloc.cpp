@@ -26,24 +26,27 @@ constexpr size_t kMallocSizeLimit = std::numeric_limits<int>::max() - (1 << 12);
 void* Alloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
-  if (!total.IsValid() || total.ValueOrDie() >= kMallocSizeLimit)
+  if (!total.IsValid() || total.ValueOrDie() >= kMallocSizeLimit) {
     return nullptr;
+  }
   return malloc(total.ValueOrDie());
 }
 
 void* Calloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
-  if (!total.IsValid() || total.ValueOrDie() >= kMallocSizeLimit)
+  if (!total.IsValid() || total.ValueOrDie() >= kMallocSizeLimit) {
     return nullptr;
+  }
   return calloc(num_members, member_size);
 }
 
 void* Realloc(void* ptr, size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = num_members;
   total *= member_size;
-  if (!total.IsValid() || total.ValueOrDie() >= kMallocSizeLimit)
+  if (!total.IsValid() || total.ValueOrDie() >= kMallocSizeLimit) {
     return nullptr;
+  }
   return realloc(ptr, total.ValueOrDie());
 }
 
@@ -54,8 +57,9 @@ void Dealloc(void* ptr) {
 void* StringAlloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
-  if (!total.IsValid())
+  if (!total.IsValid()) {
     return nullptr;
+  }
   return malloc(total.ValueOrDie());
 }
 
@@ -72,15 +76,17 @@ void FX_DestroyMemoryAllocators() {}
 
 void* FX_ArrayBufferAllocate(size_t length) {
   void* result = calloc(length, 1);
-  if (!result)
+  if (!result) {
     FX_OutOfMemoryTerminate(length);
+  }
   return result;
 }
 
 void* FX_ArrayBufferAllocateUninitialized(size_t length) {
   void* result = malloc(length);
-  if (!result)
+  if (!result) {
     FX_OutOfMemoryTerminate(length);
+  }
   return result;
 }
 

@@ -40,8 +40,9 @@ bool CFX_BidiChar::AppendChar(wchar_t wch) {
   }
 
   bool bChangeDirection = (direction != current_segment_.direction);
-  if (bChangeDirection)
+  if (bChangeDirection) {
     StartNewSegment(direction);
+  }
 
   current_segment_.count++;
   return bChangeDirection;
@@ -62,11 +63,13 @@ void CFX_BidiChar::StartNewSegment(CFX_BidiChar::Direction direction) {
 CFX_BidiString::CFX_BidiString(const WideString& str) : str_(str) {
   CFX_BidiChar bidi;
   for (wchar_t c : str_) {
-    if (bidi.AppendChar(c))
+    if (bidi.AppendChar(c)) {
       order_.push_back(bidi.GetSegmentInfo());
+    }
   }
-  if (bidi.EndChar())
+  if (bidi.EndChar()) {
     order_.push_back(bidi.GetSegmentInfo());
+  }
 
   size_t nR2L = std::count_if(
       order_.begin(), order_.end(), [](const CFX_BidiChar::Segment& seg) {
@@ -78,8 +81,9 @@ CFX_BidiString::CFX_BidiString(const WideString& str) : str_(str) {
         return seg.direction == CFX_BidiChar::Direction::kLeft;
       });
 
-  if (nR2L > 0 && nR2L >= nL2R)
+  if (nR2L > 0 && nR2L >= nL2R) {
     SetOverallDirectionRight();
+  }
 }
 
 CFX_BidiString::~CFX_BidiString() = default;

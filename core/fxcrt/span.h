@@ -57,8 +57,8 @@ using IsLegalSpanConversion = std::is_convertible<From*, To*>;
 
 template <typename Container, typename T>
 using ContainerHasConvertibleData =
-    IsLegalSpanConversion<typename std::remove_pointer<decltype(
-                              std::declval<Container>().data())>::type,
+    IsLegalSpanConversion<typename std::remove_pointer<
+                              decltype(std::declval<Container>().data())>::type,
                           T>;
 template <typename Container>
 using ContainerHasIntegralSize =
