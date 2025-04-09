@@ -33,8 +33,9 @@ constexpr Mask<XFA_WidgetStatus> kIteratorFilter = {
 CXFA_FFWidget::IteratorIface* GCedWidgetIteratorForPage(
     CXFA_FFPageView* pFFPageView,
     CPDFSDK_PageView* pPageView) {
-  if (!pFFPageView)
+  if (!pFFPageView) {
     return nullptr;
+  }
 
   ObservedPtr<CPDFSDK_PageView> pWatchedPageView(pPageView);
   CXFA_FFWidget::IteratorIface* pIterator =
@@ -47,23 +48,27 @@ CXFA_FFWidget::IteratorIface* GCedWidgetIteratorForPage(
 CXFA_FFWidget::IteratorIface* GCedWidgetIteratorForAnnot(
     CXFA_FFPageView* pFFPageView,
     CPDFSDK_Annot* pSDKAnnot) {
-  if (!pFFPageView)
+  if (!pFFPageView) {
     return nullptr;
+  }
 
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pSDKAnnot);
-  if (!pXFAWidget)
+  if (!pXFAWidget) {
     return nullptr;
+  }
 
   ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pSDKAnnot);
   CXFA_FFWidget::IteratorIface* pWidgetIterator =
       pFFPageView->CreateGCedTraverseWidgetIterator(kIteratorFilter);
 
   // Check |pSDKAnnot| again because JS may have destroyed it.
-  if (!pObservedAnnot)
+  if (!pObservedAnnot) {
     return nullptr;
+  }
 
-  if (pWidgetIterator->GetCurrentWidget() != pXFAWidget->GetXFAFFWidget())
+  if (pWidgetIterator->GetCurrentWidget() != pXFAWidget->GetXFAFFWidget()) {
     pWidgetIterator->SetCurrentWidget(pXFAWidget->GetXFAFFWidget());
+  }
 
   return pWidgetIterator;
 }
@@ -93,8 +98,9 @@ CPDF_Document* CPDFXFA_Page::GetDocument() const {
 bool CPDFXFA_Page::LoadPDFPage() {
   RetainPtr<CPDF_Dictionary> pDict =
       GetDocument()->GetMutablePageDictionary(page_index_);
-  if (!pDict)
+  if (!pDict) {
     return false;
+  }
 
   if (!pdfpage_ || pdfpage_->GetDict() != pDict) {
     LoadPDFPageFromDict(std::move(pDict));
@@ -144,8 +150,9 @@ float CPDFXFA_Page::GetPageWidth() const {
       }
       [[fallthrough]];
     case FormType::kXFAFull:
-      if (pPageView)
+      if (pPageView) {
         return pPageView->GetPageViewRect().width;
+      }
       break;
   }
 
@@ -168,8 +175,9 @@ float CPDFXFA_Page::GetPageHeight() const {
       }
       [[fallthrough]];
     case FormType::kXFAFull:
-      if (pPageView)
+      if (pPageView) {
         return pPageView->GetPageViewRect().height;
+      }
       break;
   }
 
@@ -219,8 +227,9 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
       }
       [[fallthrough]];
     case FormType::kXFAFull:
-      if (pPageView)
+      if (pPageView) {
         return pPageView->GetDisplayMatrix(rect, iRotate);
+      }
       break;
   }
 
@@ -230,8 +239,9 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
 CPDFSDK_Annot* CPDFXFA_Page::GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot) const {
   CXFA_FFWidget::IteratorIface* pWidgetIterator =
       GCedWidgetIteratorForAnnot(GetXFAPageView(), pSDKAnnot);
-  if (!pWidgetIterator)
+  if (!pWidgetIterator) {
     return nullptr;
+  }
 
   return pSDKAnnot->GetPageView()->GetAnnotForFFWidget(
       pWidgetIterator->MoveToNext());
@@ -240,8 +250,9 @@ CPDFSDK_Annot* CPDFXFA_Page::GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot) const {
 CPDFSDK_Annot* CPDFXFA_Page::GetPrevXFAAnnot(CPDFSDK_Annot* pSDKAnnot) const {
   CXFA_FFWidget::IteratorIface* pWidgetIterator =
       GCedWidgetIteratorForAnnot(GetXFAPageView(), pSDKAnnot);
-  if (!pWidgetIterator)
+  if (!pWidgetIterator) {
     return nullptr;
+  }
 
   return pSDKAnnot->GetPageView()->GetAnnotForFFWidget(
       pWidgetIterator->MoveToPrevious());
@@ -251,8 +262,9 @@ CPDFSDK_Annot* CPDFXFA_Page::GetFirstXFAAnnot(
     CPDFSDK_PageView* page_view) const {
   CXFA_FFWidget::IteratorIface* pWidgetIterator =
       GCedWidgetIteratorForPage(GetXFAPageView(), page_view);
-  if (!pWidgetIterator)
+  if (!pWidgetIterator) {
     return nullptr;
+  }
 
   return page_view->GetAnnotForFFWidget(pWidgetIterator->MoveToFirst());
 }
@@ -261,36 +273,42 @@ CPDFSDK_Annot* CPDFXFA_Page::GetLastXFAAnnot(
     CPDFSDK_PageView* page_view) const {
   CXFA_FFWidget::IteratorIface* pWidgetIterator =
       GCedWidgetIteratorForPage(GetXFAPageView(), page_view);
-  if (!pWidgetIterator)
+  if (!pWidgetIterator) {
     return nullptr;
+  }
 
   return page_view->GetAnnotForFFWidget(pWidgetIterator->MoveToLast());
 }
 
 int CPDFXFA_Page::HasFormFieldAtPoint(const CFX_PointF& point) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
-  if (!pPageView)
+  if (!pPageView) {
     return -1;
+  }
 
   CXFA_FFDocView* pDocView = pPageView->GetDocView();
-  if (!pDocView)
+  if (!pDocView) {
     return -1;
+  }
 
   CXFA_FFWidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
-  if (!pWidgetHandler)
+  if (!pWidgetHandler) {
     return -1;
+  }
   CXFA_FFPageWidgetIterator pWidgetIterator(pPageView,
                                             XFA_WidgetStatus::kViewable);
 
   CXFA_FFWidget* pXFAAnnot;
   while ((pXFAAnnot = pWidgetIterator.MoveToNext()) != nullptr) {
-    if (pXFAAnnot->GetFormFieldType() == FormFieldType::kXFA)
+    if (pXFAAnnot->GetFormFieldType() == FormFieldType::kXFA) {
       continue;
+    }
 
     CFX_FloatRect rcWidget = pXFAAnnot->GetWidgetRect().ToFloatRect();
     rcWidget.Inflate(1.0f, 1.0f);
-    if (rcWidget.Contains(point))
+    if (rcWidget.Contains(point)) {
       return static_cast<int>(pXFAAnnot->GetFormFieldType());
+    }
   }
 
   return -1;
@@ -311,23 +329,27 @@ void CPDFXFA_Page::DrawFocusAnnot(CFX_RenderDevice* pDevice,
 
   while (true) {
     CXFA_FFWidget* pWidget = pWidgetIterator.MoveToNext();
-    if (!pWidget)
+    if (!pWidget) {
       break;
+    }
 
     CFX_RectF rtWidgetBox = pWidget->GetBBox(CXFA_FFWidget::kDoNotDrawFocus);
     ++rtWidgetBox.width;
     ++rtWidgetBox.height;
-    if (rtWidgetBox.IntersectWith(rectClip))
+    if (rtWidgetBox.IntersectWith(rectClip)) {
       pWidget->RenderWidget(&gs, mtUser2Device, CXFA_FFWidget::kHighlight);
+    }
   }
 
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
-  if (!pXFAWidget)
+  if (!pXFAWidget) {
     return;
+  }
 
   CXFA_FFDocView* docView = xfaView->GetDocView();
-  if (!docView)
+  if (!docView) {
     return;
+  }
 
   docView->GetWidgetHandler()->RenderWidget(pXFAWidget->GetXFAFFWidget(), &gs,
                                             mtUser2Device, false);

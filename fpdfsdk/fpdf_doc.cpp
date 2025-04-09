@@ -42,8 +42,9 @@ CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
                            const WideString& title,
                            std::set<const CPDF_Dictionary*>* visited) {
   // Return if already checked to avoid circular calling.
-  if (pdfium::Contains(*visited, bookmark.GetDict()))
+  if (pdfium::Contains(*visited, bookmark.GetDict())) {
     return CPDF_Bookmark();
+  }
   visited->insert(bookmark.GetDict());
 
   if (bookmark.GetDict() &&
@@ -57,8 +58,9 @@ CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
   while (child.GetDict() && !pdfium::Contains(*visited, child.GetDict())) {
     // Check this item and its children.
     CPDF_Bookmark found = FindBookmark(tree, child, title, visited);
-    if (found.GetDict())
+    if (found.GetDict()) {
       return found;
+    }
     child = tree.GetNextSibling(child);
   }
   return CPDF_Bookmark();
@@ -67,8 +69,9 @@ CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
 CPDF_LinkList* GetLinkList(CPDF_Page* page) {
   CPDF_Document* pDoc = page->GetDocument();
   auto* pList = static_cast<CPDF_LinkList*>(pDoc->GetLinksContext());
-  if (pList)
+  if (pList) {
     return pList;
+  }
 
   auto pNewList = std::make_unique<CPDF_LinkList>();
   pList = pNewList.get();
@@ -81,8 +84,9 @@ CPDF_LinkList* GetLinkList(CPDF_Page* page) {
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
 FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return nullptr;
+  }
   CPDF_BookmarkTree tree(pDoc);
   CPDF_Bookmark cBookmark(
       pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
@@ -93,11 +97,13 @@ FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
 FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return nullptr;
+  }
 
-  if (!bookmark)
+  if (!bookmark) {
     return nullptr;
+  }
 
   CPDF_BookmarkTree tree(pDoc);
   CPDF_Bookmark cBookmark(
@@ -110,8 +116,9 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
                       void* buffer,
                       unsigned long buflen) {
-  if (!bookmark)
+  if (!bookmark) {
     return 0;
+  }
   CPDF_Bookmark cBookmark(
       pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   WideString title = cBookmark.GetTitle();
@@ -121,8 +128,9 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFBookmark_GetCount(FPDF_BOOKMARK bookmark) {
-  if (!bookmark)
+  if (!bookmark) {
     return 0;
+  }
   CPDF_Bookmark cBookmark(
       pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   return cBookmark.GetCount();
@@ -131,13 +139,15 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFBookmark_GetCount(FPDF_BOOKMARK bookmark) {
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
 FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return nullptr;
+  }
 
   // SAFETY: required from caller.
   WideString encodedTitle = UNSAFE_BUFFERS(WideStringFromFPDFWideString(title));
-  if (encodedTitle.IsEmpty())
+  if (encodedTitle.IsEmpty()) {
     return nullptr;
+  }
 
   CPDF_BookmarkTree tree(pDoc);
   std::set<const CPDF_Dictionary*> visited;
@@ -148,29 +158,34 @@ FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title) {
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV
 FPDFBookmark_GetDest(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return nullptr;
+  }
 
-  if (!bookmark)
+  if (!bookmark) {
     return nullptr;
+  }
 
   CPDF_Bookmark cBookmark(
       pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   CPDF_Dest dest = cBookmark.GetDest(pDoc);
-  if (dest.GetArray())
+  if (dest.GetArray()) {
     return FPDFDestFromCPDFArray(dest.GetArray());
+  }
   // If this bookmark is not directly associated with a dest, we try to get
   // action
   CPDF_Action action = cBookmark.GetAction();
-  if (!action.HasDict())
+  if (!action.HasDict()) {
     return nullptr;
+  }
   return FPDFDestFromCPDFArray(action.GetDest(pDoc).GetArray());
 }
 
 FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV
 FPDFBookmark_GetAction(FPDF_BOOKMARK bookmark) {
-  if (!bookmark)
+  if (!bookmark) {
     return nullptr;
+  }
 
   CPDF_Bookmark cBookmark(
       pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
@@ -178,8 +193,9 @@ FPDFBookmark_GetAction(FPDF_BOOKMARK bookmark) {
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION action) {
-  if (!action)
+  if (!action) {
     return PDFACTION_UNSUPPORTED;
+  }
 
   CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   switch (cAction.GetType()) {
@@ -201,8 +217,9 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION action) {
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFAction_GetDest(FPDF_DOCUMENT document,
                                                        FPDF_ACTION action) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return nullptr;
+  }
 
   unsigned long type = FPDFAction_GetType(action);
   if (type != PDFACTION_GOTO && type != PDFACTION_REMOTEGOTO &&
@@ -251,11 +268,13 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
 FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
                                                         FPDF_DEST dest) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return -1;
+  }
 
-  if (!dest)
+  if (!dest) {
     return -1;
+  }
 
   CPDF_Dest destination(pdfium::WrapRetain(CPDFArrayFromFPDFDest(dest)));
   return destination.GetDestPageIndex(pDoc);
@@ -286,8 +305,9 @@ FPDFDest_GetLocationInPage(FPDF_DEST dest,
                            FS_FLOAT* x,
                            FS_FLOAT* y,
                            FS_FLOAT* zoom) {
-  if (!dest)
+  if (!dest) {
     return false;
+  }
 
   CPDF_Dest destination(pdfium::WrapRetain(CPDFArrayFromFPDFDest(dest)));
 
@@ -295,8 +315,9 @@ FPDFDest_GetLocationInPage(FPDF_DEST dest,
   bool bHasX;
   bool bHasY;
   bool bHasZoom;
-  if (!destination.GetXYZ(&bHasX, &bHasY, &bHasZoom, x, y, zoom))
+  if (!destination.GetXYZ(&bHasX, &bHasY, &bHasZoom, x, y, zoom)) {
     return false;
+  }
 
   *hasXVal = bHasX;
   *hasYVal = bHasY;
@@ -308,12 +329,14 @@ FPDF_EXPORT FPDF_LINK FPDF_CALLCONV FPDFLink_GetLinkAtPoint(FPDF_PAGE page,
                                                             double x,
                                                             double y) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  if (!pPage) {
     return nullptr;
+  }
 
   CPDF_LinkList* pLinkList = GetLinkList(pPage);
-  if (!pLinkList)
+  if (!pLinkList) {
     return nullptr;
+  }
 
   CPDF_Link link = pLinkList->GetLinkAtPoint(
       pPage, CFX_PointF(static_cast<float>(x), static_cast<float>(y)), nullptr);
@@ -326,12 +349,14 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page,
                                                             double x,
                                                             double y) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  if (!pPage) {
     return -1;
+  }
 
   CPDF_LinkList* pLinkList = GetLinkList(pPage);
-  if (!pLinkList)
+  if (!pLinkList) {
     return -1;
+  }
 
   int z_order = -1;
   pLinkList->GetLinkAtPoint(
@@ -342,25 +367,30 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page,
 
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFLink_GetDest(FPDF_DOCUMENT document,
                                                      FPDF_LINK link) {
-  if (!link)
+  if (!link) {
     return nullptr;
+  }
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return nullptr;
+  }
   CPDF_Link cLink(pdfium::WrapRetain(CPDFDictionaryFromFPDFLink(link)));
   FPDF_DEST dest = FPDFDestFromCPDFArray(cLink.GetDest(pDoc).GetArray());
-  if (dest)
+  if (dest) {
     return dest;
+  }
   // If this link is not directly associated with a dest, we try to get action
   CPDF_Action action = cLink.GetAction();
-  if (!action.HasDict())
+  if (!action.HasDict()) {
     return nullptr;
+  }
   return FPDFDestFromCPDFArray(action.GetDest(pDoc).GetArray());
 }
 
 FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDFLink_GetAction(FPDF_LINK link) {
-  if (!link)
+  if (!link) {
     return nullptr;
+  }
 
   CPDF_Link cLink(pdfium::WrapRetain(CPDFDictionaryFromFPDFLink(link)));
   return FPDFActionFromCPDFDictionary(cLink.GetAction().GetDict());
@@ -369,19 +399,23 @@ FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDFLink_GetAction(FPDF_LINK link) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
                                                        int* start_pos,
                                                        FPDF_LINK* link_annot) {
-  if (!start_pos || !link_annot)
+  if (!start_pos || !link_annot) {
     return false;
+  }
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  if (!pPage) {
     return false;
+  }
   RetainPtr<CPDF_Array> pAnnots = pPage->GetMutableAnnotsArray();
-  if (!pAnnots)
+  if (!pAnnots) {
     return false;
+  }
   for (size_t i = *start_pos; i < pAnnots->size(); i++) {
     RetainPtr<CPDF_Dictionary> pDict =
         ToDictionary(pAnnots->GetMutableDirectObjectAt(i));
-    if (!pDict)
+    if (!pDict) {
       continue;
+    }
     if (pDict->GetByteStringFor("Subtype") == "Link") {
       *start_pos = static_cast<int>(i + 1);
       *link_annot = FPDFLinkFromCPDFDictionary(pDict.Get());
@@ -395,8 +429,9 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
 FPDFLink_GetAnnot(FPDF_PAGE page, FPDF_LINK link_annot) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   RetainPtr<CPDF_Dictionary> pAnnotDict(CPDFDictionaryFromFPDFLink(link_annot));
-  if (!pPage || !pAnnotDict)
+  if (!pPage || !pAnnotDict) {
     return nullptr;
+  }
 
   auto pAnnotContext = std::make_unique<CPDF_AnnotContext>(
       std::move(pAnnotDict), IPDFPageFromFPDFPage(page));
@@ -407,8 +442,9 @@ FPDFLink_GetAnnot(FPDF_PAGE page, FPDF_LINK link_annot) {
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK link_annot,
                                                           FS_RECTF* rect) {
-  if (!link_annot || !rect)
+  if (!link_annot || !rect) {
     return false;
+  }
 
   CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFLink(link_annot);
   *rect = FSRectFFromCFXFloatRect(pAnnotDict->GetRectFor("Rect"));
@@ -425,17 +461,20 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
                        int quad_index,
                        FS_QUADPOINTSF* quad_points) {
-  if (!quad_points || quad_index < 0)
+  if (!quad_points || quad_index < 0) {
     return false;
+  }
 
   const CPDF_Dictionary* pLinkDict = CPDFDictionaryFromFPDFLink(link_annot);
-  if (!pLinkDict)
+  if (!pLinkDict) {
     return false;
+  }
 
   RetainPtr<const CPDF_Array> pArray =
       GetQuadPointsArrayFromDictionary(pLinkDict);
-  if (!pArray)
+  if (!pArray) {
     return false;
+  }
 
   return GetQuadPointsAtIndex(std::move(pArray),
                               static_cast<size_t>(quad_index), quad_points);
@@ -444,20 +483,23 @@ FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
 FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDF_GetPageAAction(FPDF_PAGE page,
                                                           int aa_type) {
   CPDF_Page* pdf_page = CPDFPageFromFPDFPage(page);
-  if (!pdf_page)
+  if (!pdf_page) {
     return nullptr;
+  }
 
   CPDF_AAction aa(pdf_page->GetDict()->GetDictFor(pdfium::form_fields::kAA));
   CPDF_AAction::AActionType type;
-  if (aa_type == FPDFPAGE_AACTION_OPEN)
+  if (aa_type == FPDFPAGE_AACTION_OPEN) {
     type = CPDF_AAction::kOpenPage;
-  else if (aa_type == FPDFPAGE_AACTION_CLOSE)
+  } else if (aa_type == FPDFPAGE_AACTION_CLOSE) {
     type = CPDF_AAction::kClosePage;
-  else
+  } else {
     return nullptr;
+  }
 
-  if (!aa.ActionExist(type))
+  if (!aa.ActionExist(type)) {
     return nullptr;
+  }
 
   CPDF_Action action = aa.GetAction(type);
   return FPDFActionFromCPDFDictionary(action.GetDict());
@@ -469,22 +511,26 @@ FPDF_GetFileIdentifier(FPDF_DOCUMENT document,
                        void* buffer,
                        unsigned long buflen) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return 0;
+  }
 
   // Check if |id_type| is valid.
-  if (id_type != FILEIDTYPE_PERMANENT && id_type != FILEIDTYPE_CHANGING)
+  if (id_type != FILEIDTYPE_PERMANENT && id_type != FILEIDTYPE_CHANGING) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Array> pFileId = pDoc->GetFileIdentifier();
-  if (!pFileId)
+  if (!pFileId) {
     return 0;
+  }
 
   size_t nIndex = id_type == FILEIDTYPE_PERMANENT ? 0 : 1;
   RetainPtr<const CPDF_String> pValue =
       ToString(pFileId->GetDirectObjectAt(nIndex));
-  if (!pValue)
+  if (!pValue) {
     return 0;
+  }
 
   // SAFETY: required from caller.
   return NulTerminateMaybeCopyAndReturnLength(
@@ -495,15 +541,18 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,
                                                          FPDF_BYTESTRING tag,
                                                          void* buffer,
                                                          unsigned long buflen) {
-  if (!tag)
+  if (!tag) {
     return 0;
+  }
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Dictionary> pInfo = pDoc->GetInfo();
-  if (!pInfo)
+  if (!pInfo) {
     return 0;
+  }
 
   // SAFETY: required from caller.
   return Utf16EncodeMaybeCopyAndReturnLength(
@@ -516,8 +565,9 @@ FPDF_GetPageLabel(FPDF_DOCUMENT document,
                   int page_index,
                   void* buffer,
                   unsigned long buflen) {
-  if (page_index < 0)
+  if (page_index < 0) {
     return 0;
+  }
 
   // CPDF_PageLabel can deal with NULL |document|.
   CPDF_PageLabel label(CPDFDocumentFromFPDFDocument(document));

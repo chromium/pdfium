@@ -92,7 +92,6 @@ TEST_F(FPDFFlattenEmbedderTest, Bug861842) {
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-
   // TODO(crbug.com/861842): This should not render blank.
   static constexpr char kBlankPageHash[] = "48400809c3862dae64b0cd00d51057a4";
   VerifySavedDocument(100, 120, kBlankPageHash);
@@ -143,7 +142,6 @@ TEST_F(FPDFFlattenEmbedderTest, Bug889099) {
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-
   VerifySavedDocument(300, 400, flattened_page_checksum);
 }
 
@@ -164,7 +162,6 @@ TEST_F(FPDFFlattenEmbedderTest, Bug890322) {
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-
   VerifySavedDocument(200, 200, checksum);
 }
 
@@ -184,7 +181,6 @@ TEST_F(FPDFFlattenEmbedderTest, Bug896366) {
 
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
 
   VerifySavedDocument(612, 792, checksum);
 }

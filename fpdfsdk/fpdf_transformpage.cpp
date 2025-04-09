@@ -34,8 +34,9 @@ namespace {
 void SetBoundingBox(CPDF_Page* page,
                     const ByteString& key,
                     const CFX_FloatRect& rect) {
-  if (!page)
+  if (!page) {
     return;
+  }
 
   page->GetMutableDict()->SetRectFor(key, rect);
   page->UpdateDimensions();
@@ -47,12 +48,14 @@ bool GetBoundingBox(const CPDF_Page* page,
                     float* bottom,
                     float* right,
                     float* top) {
-  if (!page || !left || !bottom || !right || !top)
+  if (!page || !left || !bottom || !right || !top) {
     return false;
+  }
 
   RetainPtr<const CPDF_Array> pArray = page->GetDict()->GetArrayFor(key);
-  if (!pArray)
+  if (!pArray) {
     return false;
+  }
 
   *left = pArray->GetFloatAt(0);
   *bottom = pArray->GetFloatAt(1);
@@ -67,8 +70,9 @@ RetainPtr<CPDF_Object> GetPageContent(CPDF_Dictionary* pPageDict) {
 
 void OutputPath(fxcrt::ostringstream& buf, CPDF_Path path) {
   const CFX_Path* pPath = path.GetObject();
-  if (!pPath)
+  if (!pPath) {
     return;
+  }
 
   pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
   if (path.IsRect()) {
@@ -87,15 +91,17 @@ void OutputPath(fxcrt::ostringstream& buf, CPDF_Path path) {
       buf << " " << points[i + 1].m_Point.x << " " << points[i + 1].m_Point.y
           << " " << points[i + 2].m_Point.x << " " << points[i + 2].m_Point.y;
       buf << " c";
-      if (points[i + 2].m_CloseFigure)
+      if (points[i + 2].m_CloseFigure) {
         buf << " h";
+      }
       buf << "\n";
 
       i += 2;
     } else if (point_type == CFX_Path::Point::Type::kLine) {
       buf << " l";
-      if (points[i].m_CloseFigure)
+      if (points[i].m_CloseFigure) {
         buf << " h";
+      }
       buf << "\n";
     }
   }
@@ -201,21 +207,25 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPage_TransFormWithClip(FPDF_PAGE page,
                            const FS_MATRIX* matrix,
                            const FS_RECTF* clipRect) {
-  if (!matrix && !clipRect)
+  if (!matrix && !clipRect) {
     return false;
+  }
 
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  if (!pPage) {
     return false;
+  }
 
   RetainPtr<CPDF_Dictionary> pPageDict = pPage->GetMutableDict();
   RetainPtr<CPDF_Object> pContentObj = GetPageContent(pPageDict.Get());
-  if (!pContentObj)
+  if (!pContentObj) {
     return false;
+  }
 
   CPDF_Document* pDoc = pPage->GetDocument();
-  if (!pDoc)
+  if (!pDoc) {
     return false;
+  }
 
   fxcrt::ostringstream text_buf;
   text_buf << "q ";
@@ -225,8 +235,9 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
     rect.Normalize();
     WriteRect(text_buf, rect) << " re W* n ";
   }
-  if (matrix)
+  if (matrix) {
     WriteMatrix(text_buf, CFXMatrixFromFSMatrix(*matrix)) << " cm ";
+  }
 
   auto pStream = pDoc->NewIndirect<CPDF_Stream>(pDoc->New<CPDF_Dictionary>());
   pStream->SetDataFromStringstream(&text_buf);
@@ -251,26 +262,30 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   // Need to transform the patterns as well.
   RetainPtr<const CPDF_Dictionary> pRes =
       pPageDict->GetDictFor(pdfium::page_object::kResources);
-  if (!pRes)
+  if (!pRes) {
     return true;
+  }
 
   RetainPtr<const CPDF_Dictionary> pPatternDict = pRes->GetDictFor("Pattern");
-  if (!pPatternDict)
+  if (!pPatternDict) {
     return true;
+  }
 
   CPDF_DictionaryLocker locker(pPatternDict);
   for (const auto& it : locker) {
     RetainPtr<CPDF_Object> pObj = it.second;
-    if (pObj->IsReference())
+    if (pObj->IsReference()) {
       pObj = pObj->GetMutableDirect();
+    }
 
     RetainPtr<CPDF_Dictionary> pDict;
-    if (pObj->IsDictionary())
+    if (pObj->IsDictionary()) {
       pDict.Reset(pObj->AsMutableDictionary());
-    else if (CPDF_Stream* pObjStream = pObj->AsMutableStream())
+    } else if (CPDF_Stream* pObjStream = pObj->AsMutableStream()) {
       pDict = pObjStream->GetMutableDict();
-    else
+    } else {
       continue;
+    }
 
     if (matrix) {
       CFX_Matrix m = CFXMatrixFromFSMatrix(*matrix);
@@ -290,30 +305,34 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
                               double e,
                               double f) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj)
+  if (!pPageObj) {
     return;
+  }
 
   CFX_Matrix matrix((float)a, (float)b, (float)c, (float)d, (float)e, (float)f);
 
   // Special treatment to shading object, because the ClipPath for shading
   // object is already transformed.
-  if (!pPageObj->IsShading())
+  if (!pPageObj->IsShading()) {
     pPageObj->TransformClipPath(matrix);
+  }
 }
 
 FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV
 FPDFPageObj_GetClipPath(FPDF_PAGEOBJECT page_object) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj)
+  if (!pPageObj) {
     return nullptr;
+  }
 
   return FPDFClipPathFromCPDFClipPath(&pPageObj->mutable_clip_path());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFClipPath_CountPaths(FPDF_CLIPPATH clip_path) {
   CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
-  if (!pClipPath || !pClipPath->HasRef())
+  if (!pClipPath || !pClipPath->HasRef()) {
     return -1;
+  }
 
   return pdfium::checked_cast<int>(pClipPath->GetPathCount());
 }
@@ -321,8 +340,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFClipPath_CountPaths(FPDF_CLIPPATH clip_path) {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFClipPath_CountPathSegments(FPDF_CLIPPATH clip_path, int path_index) {
   CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
-  if (!pClipPath || !pClipPath->HasRef())
+  if (!pClipPath || !pClipPath->HasRef()) {
     return -1;
+  }
 
   if (path_index < 0 ||
       static_cast<size_t>(path_index) >= pClipPath->GetPathCount()) {
@@ -337,8 +357,9 @@ FPDFClipPath_GetPathSegment(FPDF_CLIPPATH clip_path,
                             int path_index,
                             int segment_index) {
   CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
-  if (!pClipPath || !pClipPath->HasRef())
+  if (!pClipPath || !pClipPath->HasRef()) {
     return nullptr;
+  }
 
   if (path_index < 0 ||
       static_cast<size_t>(path_index) >= pClipPath->GetPathCount()) {
@@ -347,8 +368,9 @@ FPDFClipPath_GetPathSegment(FPDF_CLIPPATH clip_path,
 
   pdfium::span<const CFX_Path::Point> points =
       pClipPath->GetPath(path_index).GetPoints();
-  if (!fxcrt::IndexInBounds(points, segment_index))
+  if (!fxcrt::IndexInBounds(points, segment_index)) {
     return nullptr;
+  }
 
   return FPDFPathSegmentFromFXPathPoint(&points[segment_index]);
 }
@@ -375,13 +397,15 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath) {
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
                                                        FPDF_CLIPPATH clipPath) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  if (!pPage) {
     return;
+  }
 
   RetainPtr<CPDF_Dictionary> pPageDict = pPage->GetMutableDict();
   RetainPtr<CPDF_Object> pContentObj = GetPageContent(pPageDict.Get());
-  if (!pContentObj)
+  if (!pContentObj) {
     return;
+  }
 
   fxcrt::ostringstream strClip;
   CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clipPath);
@@ -401,8 +425,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
     }
   }
   CPDF_Document* pDoc = pPage->GetDocument();
-  if (!pDoc)
+  if (!pDoc) {
     return;
+  }
 
   auto pStream = pDoc->NewIndirect<CPDF_Stream>(pDoc->New<CPDF_Dictionary>());
   pStream->SetDataFromStringstream(&strClip);

@@ -930,8 +930,9 @@ TEST_F(FPDFFormFillEmbedderTest, XFAFormFillContinuousTab) {
   ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
 
   // Subsequent tabs should move focus over annotations.
-  for (size_t i = 0; i < 9; ++i)
+  for (size_t i = 0; i < 9; ++i) {
     ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
+  }
 
   // Tab should not be handled as the last annotation of the page is in focus.
   ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
@@ -1405,7 +1406,6 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455RenderOnly) {
     CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
   }
   VerifySavedDocument(300, 300, checksum);
 }
@@ -1445,7 +1445,6 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditFirstForm) {
     CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
   }
   VerifySavedDocument(300, 300, checksum);
 }
@@ -1485,7 +1484,6 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditSecondForm) {
     CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
   }
   VerifySavedDocument(300, 300, checksum);
 }
@@ -1533,7 +1531,6 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditBothForms) {
     CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
   }
   VerifySavedDocument(300, 300, checksum);
 }
@@ -3442,8 +3439,9 @@ class FPDFFormFillActionUriTest : public EmbedderTest {
     FORM_OnMouseMove(form_handle(), page(), /*modifier=*/0, 100, 680);
     FORM_OnLButtonDown(form_handle(), page(), /*modifier=*/0, 100, 680);
     FORM_OnLButtonUp(form_handle(), page(), /*modifier=*/0, 100, 680);
-    for (size_t i = 1; i < n; i++)
+    for (size_t i = 1; i < n; i++) {
       ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Tab, 0));
+    }
   }
 
   FPDF_PAGE page() { return page_; }

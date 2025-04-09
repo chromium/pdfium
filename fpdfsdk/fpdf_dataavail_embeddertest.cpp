@@ -108,12 +108,14 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
   }
 
   int GetBlockImpl(unsigned long pos, unsigned char* pBuf, unsigned long size) {
-    if (!IsDataAvailImpl(pos, size))
+    if (!IsDataAvailImpl(pos, size)) {
       return 0;
+    }
     const unsigned long end = std::min(
         pdfium::checked_cast<unsigned long>(file_contents_.size()), pos + size);
-    if (end <= pos)
+    if (end <= pos) {
       return 0;
+    }
     const unsigned long bytes_to_copy = end - pos;
     fxcrt::Copy(file_contents().subspan(pos, bytes_to_copy),
                 UNSAFE_TODO(pdfium::make_span(pBuf, size)));

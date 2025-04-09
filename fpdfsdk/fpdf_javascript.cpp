@@ -23,8 +23,9 @@ struct CPDF_JavaScript {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFDoc_GetJavaScriptActionCount(FPDF_DOCUMENT document) {
   CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
-  if (!doc)
+  if (!doc) {
     return -1;
+  }
 
   auto name_tree = CPDF_NameTree::Create(doc, "JavaScript");
   return name_tree ? pdfium::checked_cast<int>(name_tree->GetCount()) : 0;
@@ -33,27 +34,32 @@ FPDFDoc_GetJavaScriptActionCount(FPDF_DOCUMENT document) {
 FPDF_EXPORT FPDF_JAVASCRIPT_ACTION FPDF_CALLCONV
 FPDFDoc_GetJavaScriptAction(FPDF_DOCUMENT document, int index) {
   CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
-  if (!doc || index < 0)
+  if (!doc || index < 0) {
     return nullptr;
+  }
 
   auto name_tree = CPDF_NameTree::Create(doc, "JavaScript");
-  if (!name_tree || static_cast<size_t>(index) >= name_tree->GetCount())
+  if (!name_tree || static_cast<size_t>(index) >= name_tree->GetCount()) {
     return nullptr;
+  }
 
   WideString name;
   RetainPtr<CPDF_Dictionary> obj =
       ToDictionary(name_tree->LookupValueAndName(index, &name));
-  if (!obj)
+  if (!obj) {
     return nullptr;
+  }
 
   // Validate |obj|. Type is optional, but must be valid if present.
   CPDF_Action action(std::move(obj));
-  if (action.GetType() != CPDF_Action::Type::kJavaScript)
+  if (action.GetType() != CPDF_Action::Type::kJavaScript) {
     return nullptr;
+  }
 
   std::optional<WideString> script = action.MaybeGetJavaScript();
-  if (!script.has_value())
+  if (!script.has_value()) {
     return nullptr;
+  }
 
   auto js = std::make_unique<CPDF_JavaScript>();
   js->name = name;

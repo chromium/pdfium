@@ -31,8 +31,9 @@ bool CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Widget* pWidget,
                                 Mask<FWL_EVENTFLAG> nFlags,
                                 const CFX_PointF& point) {
-  if (!pWidget->GetRect().Contains(point))
+  if (!pWidget->GetRect().Contains(point)) {
     return false;
+  }
 
   mouse_down_ = true;
   valid_ = true;
@@ -44,8 +45,9 @@ bool CFFL_Button::OnLButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Widget* pWidget,
                               Mask<FWL_EVENTFLAG> nFlags,
                               const CFX_PointF& point) {
-  if (!pWidget->GetRect().Contains(point))
+  if (!pWidget->GetRect().Contains(point)) {
     return false;
+  }
 
   mouse_down_ = false;
   InvalidateRect(GetViewBBox(pPageView));

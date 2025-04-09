@@ -56,8 +56,9 @@ void VerifyFocusableAnnotSubtypes(
       expected_subtypes.size());
   ASSERT_TRUE(FPDFAnnot_GetFocusableSubtypes(
       form_handle, actual_subtypes.data(), actual_subtypes.size()));
-  for (size_t i = 0; i < expected_subtypes.size(); ++i)
+  for (size_t i = 0; i < expected_subtypes.size(); ++i) {
     ASSERT_EQ(expected_subtypes[i], actual_subtypes[i]);
+  }
 }
 
 void SetAndVerifyFocusableAnnotSubtypes(
@@ -2238,7 +2239,6 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
                               buf.data(), kBufSize));
     EXPECT_EQ(kData, GetPlatformWString(buf.data()));
   }
-
 
   {
     // Save a copy, open the copy, and check the annotation again.

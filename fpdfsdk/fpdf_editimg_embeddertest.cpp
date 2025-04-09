@@ -220,7 +220,6 @@ TEST_F(PDFEditImgTest, Bug2132) {
                   kExpectedChecksum);
   }
 
-
   VerifySavedDocument(kExpectedWidth, kExpectedHeight, kExpectedChecksum);
 }
 
@@ -287,7 +286,6 @@ TEST_F(PDFEditImgTest, GetAndSetMatrixForFormWithImage) {
     CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
                   kExpectedChecksum);
   }
-
 
   VerifySavedDocument(kExpectedWidth, kExpectedHeight, kExpectedChecksum);
 }

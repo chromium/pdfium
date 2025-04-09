@@ -78,20 +78,23 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewRect(float x,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountSegments(FPDF_PAGEOBJECT path) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
+  if (!pPathObj) {
     return -1;
+  }
   return fxcrt::CollectionSize<int>(pPathObj->path().GetPoints());
 }
 
 FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
 FPDFPath_GetPathSegment(FPDF_PAGEOBJECT path, int index) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
+  if (!pPathObj) {
     return nullptr;
+  }
 
   pdfium::span<const CFX_Path::Point> points = pPathObj->path().GetPoints();
-  if (!fxcrt::IndexInBounds(points, index))
+  if (!fxcrt::IndexInBounds(points, index)) {
     return nullptr;
+  }
 
   return FPDFPathSegmentFromFXPathPoint(&points[index]);
 }
@@ -100,8 +103,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
                                                     float x,
                                                     float y) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
+  if (!pPathObj) {
     return false;
+  }
 
   pPathObj->path().AppendPoint(CFX_PointF(x, y), CFX_Path::Point::Type::kMove);
   pPathObj->SetDirty(true);
@@ -112,8 +116,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_LineTo(FPDF_PAGEOBJECT path,
                                                     float x,
                                                     float y) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
+  if (!pPathObj) {
     return false;
+  }
 
   pPathObj->path().AppendPoint(CFX_PointF(x, y), CFX_Path::Point::Type::kLine);
   pPathObj->SetDirty(true);
@@ -128,8 +133,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
                                                       float x3,
                                                       float y3) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
+  if (!pPathObj) {
     return false;
+  }
 
   CPDF_Path& cpath = pPathObj->path();
   cpath.AppendPoint(CFX_PointF(x1, y1), CFX_Path::Point::Type::kBezier);
@@ -141,12 +147,14 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_Close(FPDF_PAGEOBJECT path) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
+  if (!pPathObj) {
     return false;
+  }
 
   CPDF_Path& cpath = pPathObj->path();
-  if (cpath.GetPoints().empty())
+  if (cpath.GetPoints().empty()) {
     return false;
+  }
 
   cpath.ClosePath();
   pPathObj->SetDirty(true);
@@ -157,16 +165,18 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
                                                          int fillmode,
                                                          FPDF_BOOL stroke) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
+  if (!pPathObj) {
     return false;
+  }
 
   pPathObj->set_stroke(!!stroke);
-  if (fillmode == FPDF_FILLMODE_ALTERNATE)
+  if (fillmode == FPDF_FILLMODE_ALTERNATE) {
     pPathObj->set_alternate_filltype();
-  else if (fillmode == FPDF_FILLMODE_WINDING)
+  } else if (fillmode == FPDF_FILLMODE_WINDING) {
     pPathObj->set_winding_filltype();
-  else
+  } else {
     pPathObj->set_no_filltype();
+  }
   pPathObj->SetDirty(true);
   return true;
 }
@@ -175,15 +185,17 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
                                                          int* fillmode,
                                                          FPDF_BOOL* stroke) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj || !fillmode || !stroke)
+  if (!pPathObj || !fillmode || !stroke) {
     return false;
+  }
 
-  if (pPathObj->has_alternate_filltype())
+  if (pPathObj->has_alternate_filltype()) {
     *fillmode = FPDF_FILLMODE_ALTERNATE;
-  else if (pPathObj->has_winding_filltype())
+  } else if (pPathObj->has_winding_filltype()) {
     *fillmode = FPDF_FILLMODE_WINDING;
-  else
+  } else {
     *fillmode = FPDF_FILLMODE_NONE;
+  }
 
   *stroke = pPathObj->stroke();
   return true;
@@ -192,8 +204,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPathSegment_GetPoint(FPDF_PATHSEGMENT segment, float* x, float* y) {
   auto* pPathPoint = FXPathPointFromFPDFPathSegment(segment);
-  if (!pPathPoint || !x || !y)
+  if (!pPathPoint || !x || !y) {
     return false;
+  }
 
   *x = pPathPoint->m_Point.x;
   *y = pPathPoint->m_Point.y;

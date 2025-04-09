@@ -59,10 +59,12 @@ void PWL_SCROLL_PRIVATEDATA::Default() {
 void PWL_SCROLL_PRIVATEDATA::SetScrollRange(float min, float max) {
   ScrollRange.Set(min, max);
 
-  if (FXSYS_IsFloatSmaller(fScrollPos, ScrollRange.fMin))
+  if (FXSYS_IsFloatSmaller(fScrollPos, ScrollRange.fMin)) {
     fScrollPos = ScrollRange.fMin;
-  if (FXSYS_IsFloatBigger(fScrollPos, ScrollRange.fMax))
+  }
+  if (FXSYS_IsFloatBigger(fScrollPos, ScrollRange.fMax)) {
     fScrollPos = ScrollRange.fMax;
+  }
 }
 
 void PWL_SCROLL_PRIVATEDATA::SetClientWidth(float width) {
@@ -86,23 +88,27 @@ bool PWL_SCROLL_PRIVATEDATA::SetPos(float pos) {
 }
 
 void PWL_SCROLL_PRIVATEDATA::AddSmall() {
-  if (!SetPos(fScrollPos + fSmallStep))
+  if (!SetPos(fScrollPos + fSmallStep)) {
     SetPos(ScrollRange.fMax);
+  }
 }
 
 void PWL_SCROLL_PRIVATEDATA::SubSmall() {
-  if (!SetPos(fScrollPos - fSmallStep))
+  if (!SetPos(fScrollPos - fSmallStep)) {
     SetPos(ScrollRange.fMin);
+  }
 }
 
 void PWL_SCROLL_PRIVATEDATA::AddBig() {
-  if (!SetPos(fScrollPos + fBigStep))
+  if (!SetPos(fScrollPos + fBigStep)) {
     SetPos(ScrollRange.fMax);
+  }
 }
 
 void PWL_SCROLL_PRIVATEDATA::SubBig() {
-  if (!SetPos(fScrollPos - fBigStep))
+  if (!SetPos(fScrollPos - fBigStep)) {
     SetPos(ScrollRange.fMin);
+  }
 }
 
 CPWL_ScrollBar::CPWL_ScrollBar(
@@ -192,8 +198,9 @@ bool CPWL_ScrollBar::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
     if (GetTransparency() != 255) {
       SetTransparency(255);
-      if (!InvalidateRect(nullptr))
+      if (!InvalidateRect(nullptr)) {
         return true;
+      }
     }
   }
 
@@ -212,15 +219,17 @@ bool CPWL_ScrollBar::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
 
     if (rcMinArea.Contains(point)) {
       private_data_.SubBig();
-      if (!MovePosButton(true))
+      if (!MovePosButton(true)) {
         return true;
+      }
       NotifyScrollWindow();
     }
 
     if (rcMaxArea.Contains(point)) {
       private_data_.AddBig();
-      if (!MovePosButton(true))
+      if (!MovePosButton(true)) {
         return true;
+      }
       NotifyScrollWindow();
     }
   }
@@ -235,8 +244,9 @@ bool CPWL_ScrollBar::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
     if (GetTransparency() != kTransparency) {
       SetTransparency(kTransparency);
-      if (!InvalidateRect(nullptr))
+      if (!InvalidateRect(nullptr)) {
         return true;
+      }
     }
   }
 
@@ -406,8 +416,9 @@ bool CPWL_ScrollBar::MovePosButton(bool bRefresh) {
 
 void CPWL_ScrollBar::OnMinButtonLBDown(const CFX_PointF& point) {
   private_data_.SubSmall();
-  if (!MovePosButton(true))
+  if (!MovePosButton(true)) {
     return;
+  }
 
   NotifyScrollWindow();
   min_or_max_ = true;
@@ -420,8 +431,9 @@ void CPWL_ScrollBar::OnMinButtonMouseMove(const CFX_PointF& point) {}
 
 void CPWL_ScrollBar::OnMaxButtonLBDown(const CFX_PointF& point) {
   private_data_.AddSmall();
-  if (!MovePosButton(true))
+  if (!MovePosButton(true)) {
     return;
+  }
 
   NotifyScrollWindow();
   min_or_max_ = false;
@@ -465,8 +477,9 @@ void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_PointF& point) {
     private_data_.SetPos(fNewPos);
 
     if (!FXSYS_IsFloatEqual(fOldScrollPos, private_data_.fScrollPos)) {
-      if (!MovePosButton(true))
+      if (!MovePosButton(true)) {
         return;
+      }
 
       NotifyScrollWindow();
     }
@@ -475,8 +488,9 @@ void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_PointF& point) {
 
 void CPWL_ScrollBar::NotifyScrollWindow() {
   CPWL_Wnd* pParent = GetParentWindow();
-  if (!pParent)
+  if (!pParent) {
     return;
+  }
 
   pParent->ScrollWindowVertically(origin_info_.fContentMax -
                                   private_data_.fScrollPos);
@@ -540,8 +554,9 @@ void CPWL_ScrollBar::OnTimerFired() {
     return;
   }
 
-  if (!MovePosButton(true))
+  if (!MovePosButton(true)) {
     return;
+  }
 
   NotifyScrollWindow();
 }

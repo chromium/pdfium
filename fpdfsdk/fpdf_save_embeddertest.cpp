@@ -90,7 +90,6 @@ TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
   EXPECT_TRUE(output_doc);
   EXPECT_TRUE(FPDF_ImportPages(output_doc.get(), document(), "1", 0));
   EXPECT_TRUE(FPDF_SaveAsCopy(output_doc.get(), this, 0));
-
 }
 
 TEST_F(FPDFSaveEmbedderTest, Bug42271133) {

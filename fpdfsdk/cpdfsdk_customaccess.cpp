@@ -20,8 +20,9 @@ FX_FILESIZE CPDFSDK_CustomAccess::GetSize() {
 
 bool CPDFSDK_CustomAccess::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                                              FX_FILESIZE offset) {
-  if (buffer.empty() || offset < 0)
+  if (buffer.empty() || offset < 0) {
     return false;
+  }
 
   if (!pdfium::IsValueInRangeForNumericType<FX_FILESIZE>(buffer.size())) {
     return false;

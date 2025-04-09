@@ -41,11 +41,13 @@ namespace {
 
 bool IsValidRect(const CFX_FloatRect& rect, const CFX_FloatRect& rcPage) {
   static constexpr float kMinSize = 0.000001f;
-  if (rect.IsEmpty() || rect.Width() < kMinSize || rect.Height() < kMinSize)
+  if (rect.IsEmpty() || rect.Width() < kMinSize || rect.Height() < kMinSize) {
     return false;
+  }
 
-  if (rcPage.IsEmpty())
+  if (rcPage.IsEmpty()) {
     return true;
+  }
 
   static constexpr float kMinBorderSize = 10.000001f;
   return rect.left - rcPage.left >= -kMinBorderSize &&
@@ -66,8 +68,9 @@ void GetContentsRect(CPDF_Document* pDoc,
     }
 
     const CFX_FloatRect& rc = pPageObject->GetRect();
-    if (IsValidRect(rc, pDict->GetRectFor(pdfium::page_object::kMediaBox)))
+    if (IsValidRect(rc, pDict->GetRectFor(pdfium::page_object::kMediaBox))) {
       pRectArray->push_back(rc);
+    }
   }
 }
 
@@ -75,16 +78,19 @@ void ParserStream(const CPDF_Dictionary* pPageDic,
                   CPDF_Dictionary* pStream,
                   std::vector<CFX_FloatRect>* pRectArray,
                   std::vector<CPDF_Dictionary*>* pObjectArray) {
-  if (!pStream)
+  if (!pStream) {
     return;
+  }
   CFX_FloatRect rect;
-  if (pStream->KeyExist("Rect"))
+  if (pStream->KeyExist("Rect")) {
     rect = pStream->GetRectFor("Rect");
-  else if (pStream->KeyExist("BBox"))
+  } else if (pStream->KeyExist("BBox")) {
     rect = pStream->GetRectFor("BBox");
+  }
 
-  if (IsValidRect(rect, pPageDic->GetRectFor(pdfium::page_object::kMediaBox)))
+  if (IsValidRect(rect, pPageDic->GetRectFor(pdfium::page_object::kMediaBox))) {
     pRectArray->push_back(rect);
+  }
 
   pObjectArray->push_back(pStream);
 }
@@ -94,37 +100,44 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
                  std::vector<CFX_FloatRect>* pRectArray,
                  std::vector<CPDF_Dictionary*>* pObjectArray,
                  int nUsage) {
-  if (!pSourceDoc)
+  if (!pSourceDoc) {
     return FLATTEN_FAIL;
+  }
 
   GetContentsRect(pSourceDoc, pPageDic, pRectArray);
   RetainPtr<const CPDF_Array> pAnnots = pPageDic->GetArrayFor("Annots");
-  if (!pAnnots)
+  if (!pAnnots) {
     return FLATTEN_NOTHINGTODO;
+  }
 
   CPDF_ArrayLocker locker(pAnnots);
   for (const auto& pAnnot : locker) {
     RetainPtr<CPDF_Dictionary> pAnnotDict =
         ToDictionary(pAnnot->GetMutableDirect());
-    if (!pAnnotDict)
+    if (!pAnnotDict) {
       continue;
+    }
 
     ByteString sSubtype =
         pAnnotDict->GetByteStringFor(pdfium::annotation::kSubtype);
-    if (sSubtype == "Popup")
+    if (sSubtype == "Popup") {
       continue;
+    }
 
     int nAnnotFlag = pAnnotDict->GetIntegerFor("F");
-    if (nAnnotFlag & pdfium::annotation_flags::kHidden)
+    if (nAnnotFlag & pdfium::annotation_flags::kHidden) {
       continue;
+    }
 
     bool bParseStream;
-    if (nUsage == FLAT_NORMALDISPLAY)
+    if (nUsage == FLAT_NORMALDISPLAY) {
       bParseStream = !(nAnnotFlag & pdfium::annotation_flags::kInvisible);
-    else
+    } else {
       bParseStream = !!(nAnnotFlag & pdfium::annotation_flags::kPrint);
-    if (bParseStream)
+    }
+    if (bParseStream) {
       ParserStream(pPageDic.Get(), pAnnotDict.Get(), pRectArray, pObjectArray);
+    }
   }
   return FLATTEN_SUCCESS;
 }
@@ -132,37 +145,44 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
 float GetMinMaxValue(const std::vector<CFX_FloatRect>& array,
                      FPDF_TYPE type,
                      FPDF_VALUE value) {
-  if (array.empty())
+  if (array.empty()) {
     return 0.0f;
+  }
 
   size_t nRects = array.size();
   std::vector<float> pArray(nRects);
   switch (value) {
     case LEFT:
-      for (size_t i = 0; i < nRects; i++)
+      for (size_t i = 0; i < nRects; i++) {
         pArray[i] = array[i].left;
+      }
       break;
     case TOP:
-      for (size_t i = 0; i < nRects; i++)
+      for (size_t i = 0; i < nRects; i++) {
         pArray[i] = array[i].top;
+      }
       break;
     case RIGHT:
-      for (size_t i = 0; i < nRects; i++)
+      for (size_t i = 0; i < nRects; i++) {
         pArray[i] = array[i].right;
+      }
       break;
     case BOTTOM:
-      for (size_t i = 0; i < nRects; i++)
+      for (size_t i = 0; i < nRects; i++) {
         pArray[i] = array[i].bottom;
+      }
       break;
   }
 
   float fRet = pArray[0];
   if (type == MAX) {
-    for (size_t i = 1; i < nRects; i++)
+    for (size_t i = 1; i < nRects; i++) {
       fRet = std::max(fRet, pArray[i]);
+    }
   } else {
-    for (size_t i = 1; i < nRects; i++)
+    for (size_t i = 1; i < nRects; i++) {
       fRet = std::min(fRet, pArray[i]);
+    }
   }
   return fRet;
 }
@@ -236,8 +256,9 @@ void SetPageContents(const ByteString& key,
 CFX_Matrix GetMatrix(const CFX_FloatRect& rcAnnot,
                      const CFX_FloatRect& rcStream,
                      const CFX_Matrix& matrix) {
-  if (rcStream.IsEmpty())
+  if (rcStream.IsEmpty()) {
     return CFX_Matrix();
+  }
 
   CFX_FloatRect rcTransformed = matrix.TransformRect(rcStream);
   rcTransformed.Normalize();
@@ -298,38 +319,44 @@ void SanitizeResources(RetainPtr<CPDF_Dictionary> resources_dict) {
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!page)
+  if (!page) {
     return FLATTEN_FAIL;
+  }
 
   CPDF_Document* pDocument = pPage->GetDocument();
   RetainPtr<CPDF_Dictionary> pPageDict = pPage->GetMutableDict();
-  if (!pDocument)
+  if (!pDocument) {
     return FLATTEN_FAIL;
+  }
 
   std::vector<CPDF_Dictionary*> ObjectArray;
   std::vector<CFX_FloatRect> RectArray;
   int iRet =
       ParserAnnots(pDocument, pPageDict, &RectArray, &ObjectArray, nFlag);
-  if (iRet == FLATTEN_NOTHINGTODO || iRet == FLATTEN_FAIL)
+  if (iRet == FLATTEN_NOTHINGTODO || iRet == FLATTEN_FAIL) {
     return iRet;
+  }
 
   CFX_FloatRect rcMerger = CalculateRect(&RectArray);
   CFX_FloatRect rcOriginalMB =
       pPageDict->GetRectFor(pdfium::page_object::kMediaBox);
-  if (pPageDict->KeyExist(pdfium::page_object::kCropBox))
+  if (pPageDict->KeyExist(pdfium::page_object::kCropBox)) {
     rcOriginalMB = pPageDict->GetRectFor(pdfium::page_object::kCropBox);
+  }
 
   rcOriginalMB.Normalize();
-  if (rcOriginalMB.IsEmpty())
+  if (rcOriginalMB.IsEmpty()) {
     rcOriginalMB = CFX_FloatRect(0.0f, 0.0f, 612.0f, 792.0f);
+  }
 
   CFX_FloatRect rcOriginalCB;
   if (pPageDict->KeyExist(pdfium::page_object::kCropBox)) {
     rcOriginalCB = pPageDict->GetRectFor(pdfium::page_object::kCropBox);
     rcOriginalCB.Normalize();
   }
-  if (rcOriginalCB.IsEmpty())
+  if (rcOriginalCB.IsEmpty()) {
     rcOriginalCB = rcOriginalMB;
+  }
 
   rcMerger.left = std::max(rcMerger.left, rcOriginalMB.left);
   rcMerger.right = std::min(rcMerger.right, rcOriginalMB.right);
@@ -375,8 +402,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
   for (size_t i = 0; i < ObjectArray.size(); ++i) {
     CPDF_Dictionary* pAnnotDict = ObjectArray[i];
-    if (!pAnnotDict)
+    if (!pAnnotDict) {
       continue;
+    }
 
     CFX_FloatRect rcAnnot = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
     rcAnnot.Normalize();
@@ -384,8 +412,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     ByteString sAnnotState = pAnnotDict->GetByteStringFor("AS");
     RetainPtr<CPDF_Dictionary> pAnnotAP =
         pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
-    if (!pAnnotAP)
+    if (!pAnnotAP) {
       continue;
+    }
 
     RetainPtr<CPDF_Stream> original_ap_stream =
         pAnnotAP->GetMutableStreamFor("N");
@@ -403,10 +432,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
           CPDF_DictionaryLocker locker(original_ap_dict);
           RetainPtr<CPDF_Object> pFirstObj = locker.begin()->second;
           if (pFirstObj) {
-            if (pFirstObj->IsReference())
+            if (pFirstObj->IsReference()) {
               pFirstObj = pFirstObj->GetMutableDirect();
-            if (!pFirstObj->IsStream())
+            }
+            if (!pFirstObj->IsStream()) {
               continue;
+            }
             original_ap_stream.Reset(pFirstObj->AsMutableStream());
           }
         }
@@ -426,8 +457,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     }
     rcStream.Normalize();
 
-    if (rcStream.IsEmpty())
+    if (rcStream.IsEmpty()) {
       continue;
+    }
 
     RetainPtr<CPDF_Stream> ap_stream;
     if (original_ap_stream->IsInline()) {

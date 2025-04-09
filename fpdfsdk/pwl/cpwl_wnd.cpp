@@ -84,8 +84,9 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
     ObservedPtr<SharedCaptureFocusState> this_observed(this);
     if (!this_observed->keyboard_paths_.empty()) {
       CPWL_Wnd* pWnd = this_observed->keyboard_paths_.front();
-      if (pWnd)
+      if (pWnd) {
         pWnd->OnKillFocus();
+      }
     }
     if (!this_observed) {
       return;
@@ -211,8 +212,9 @@ void CPWL_Wnd::Destroy() {
 }
 
 bool CPWL_Wnd::Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh) {
-  if (!IsValid())
+  if (!IsValid()) {
     return true;
+  }
 
   CFX_FloatRect rcOld = GetWindowRect();
   window_rect_ = rcNew;
@@ -226,8 +228,9 @@ bool CPWL_Wnd::Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh) {
       }
     }
   }
-  if (bRefresh && !InvalidateRectMove(rcOld, rcNew))
+  if (bRefresh && !InvalidateRectMove(rcOld, rcNew)) {
     return false;
+  }
 
   creation_params_.rcRectWnd = window_rect_;
   return true;
@@ -252,8 +255,9 @@ void CPWL_Wnd::DrawAppearance(CFX_RenderDevice* pDevice,
 void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   const CFX_Matrix& mtUser2Device) {
   CFX_FloatRect rectWnd = GetWindowRect();
-  if (rectWnd.IsEmpty())
+  if (rectWnd.IsEmpty()) {
     return;
+  }
 
   if (HasFlag(PWS_BACKGROUND)) {
     float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
@@ -285,8 +289,9 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   CFX_FloatRect rcRefresh = pRect ? *pRect : this_observed->GetWindowRect();
   if (!this_observed->HasFlag(PWS_NOREFRESHCLIP)) {
     CFX_FloatRect rcClip = this_observed->GetClipRect();
-    if (!rcClip.IsEmpty())
+    if (!rcClip.IsEmpty()) {
       rcRefresh.Intersect(rcClip);
+    }
   }
 
   CFX_FloatRect rcWin = this_observed->PWLtoWnd(rcRefresh);
@@ -298,25 +303,31 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
 }
 
 bool CPWL_Wnd::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
-  if (!IsValid() || !IsVisible())
+  if (!IsValid() || !IsVisible()) {
     return false;
-  if (!IsWndCaptureKeyboard(this))
+  }
+  if (!IsWndCaptureKeyboard(this)) {
     return false;
+  }
   for (const auto& pChild : children_) {
-    if (IsWndCaptureKeyboard(pChild.get()))
+    if (IsWndCaptureKeyboard(pChild.get())) {
       return pChild->OnKeyDown(nKeyCode, nFlag);
+    }
   }
   return false;
 }
 
 bool CPWL_Wnd::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
-  if (!IsValid() || !IsVisible())
+  if (!IsValid() || !IsVisible()) {
     return false;
-  if (!IsWndCaptureKeyboard(this))
+  }
+  if (!IsWndCaptureKeyboard(this)) {
     return false;
+  }
   for (const auto& pChild : children_) {
-    if (IsWndCaptureKeyboard(pChild.get()))
+    if (IsWndCaptureKeyboard(pChild.get())) {
       return pChild->OnChar(nChar, nFlag);
+    }
   }
   return false;
 }
@@ -396,16 +407,19 @@ bool CPWL_Wnd::Redo() {
 bool CPWL_Wnd::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
                             const CFX_PointF& point,
                             const CFX_Vector& delta) {
-  if (!IsValid() || !IsVisible())
+  if (!IsValid() || !IsVisible()) {
     return false;
+  }
 
   SetCursor();
-  if (!IsWndCaptureKeyboard(this))
+  if (!IsWndCaptureKeyboard(this)) {
     return false;
+  }
 
   for (const auto& pChild : children_) {
-    if (IsWndCaptureKeyboard(pChild.get()))
+    if (IsWndCaptureKeyboard(pChild.get())) {
       return pChild->OnMouseWheel(nFlag, point, delta);
+    }
   }
   return false;
 }
@@ -450,8 +464,9 @@ CFX_FloatRect CPWL_Wnd::GetClientRect() const {
 
   float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
   CFX_FloatRect rcClient = rcWindow.GetDeflated(width, width);
-  if (CPWL_ScrollBar* pVSB = GetVScrollBar())
+  if (CPWL_ScrollBar* pVSB = GetVScrollBar()) {
     rcClient.right -= pVSB->GetScrollBarWidth();
+  }
 
   rcClient.Normalize();
   return rcWindow.Contains(rcClient) ? rcClient : CFX_FloatRect();
@@ -640,8 +655,9 @@ bool CPWL_Wnd::RepositionChildWnd() {
 void CPWL_Wnd::CreateChildWnd(const CreateParams& cp) {}
 
 void CPWL_Wnd::SetCursor() {
-  if (IsValid())
+  if (IsValid()) {
     GetFillerNotify()->SetCursor(GetCreationParams()->eCursorType);
+  }
 }
 
 void CPWL_Wnd::CreateSharedCaptureFocusState() {
@@ -741,8 +757,9 @@ void CPWL_Wnd::SetTransparency(int32_t nTransparency) {
 
 CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
   CFX_Matrix mt;
-  if (ProviderIface* pProvider = GetProvider())
+  if (ProviderIface* pProvider = GetProvider()) {
     mt.Concat(pProvider->GetWindowMatrix(GetAttachedData()));
+  }
   return mt;
 }
 

@@ -59,8 +59,9 @@ bool CFFL_RadioButton::OnChar(CPDFSDK_Widget* pWidget,
 
       CFFL_FormField::OnChar(pWidget, nChar, nFlags);
       CPWL_RadioButton* pWnd = CreateOrUpdatePWLRadioButton(pPageView);
-      if (pWnd && !pWnd->IsReadOnly())
+      if (pWnd && !pWnd->IsReadOnly()) {
         pWnd->SetCheck(true);
+      }
       return CommitData(pPageView, nFlags);
     }
     default:
@@ -74,12 +75,14 @@ bool CFFL_RadioButton::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                    const CFX_PointF& point) {
   CFFL_Button::OnLButtonUp(pPageView, pWidget, nFlags, point);
 
-  if (!IsValid())
+  if (!IsValid()) {
     return true;
+  }
 
   CPWL_RadioButton* pWnd = CreateOrUpdatePWLRadioButton(pPageView);
-  if (pWnd)
+  if (pWnd) {
     pWnd->SetCheck(true);
+  }
 
   return CommitData(pPageView, nFlags);
 }

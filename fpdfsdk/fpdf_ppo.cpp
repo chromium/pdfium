@@ -43,7 +43,6 @@ std::vector<uint32_t> GetPageIndices(const CPDF_Document& doc,
   return page_indices;
 }
 
-
 // Make sure arrays only contain objects of basic types.
 bool IsValidViewerPreferencesArray(const CPDF_Array* array) {
   CPDF_ArrayLocker locker(array);
@@ -126,8 +125,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
   }
 
   std::vector<uint32_t> page_indices = GetPageIndices(*csrc_doc, pagerange);
-  if (page_indices.empty())
+  if (page_indices.empty()) {
     return false;
+  }
 
   CPDF_PageExporter exporter(cdest_doc, csrc_doc);
   return exporter.ExportPages(page_indices, index);
@@ -150,15 +150,17 @@ FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
   }
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
-  if (!output_doc)
+  if (!output_doc) {
     return nullptr;
+  }
 
   CPDF_Document* dest_doc = CPDFDocumentFromFPDFDocument(output_doc.get());
   DCHECK(dest_doc);
 
   std::vector<uint32_t> page_indices = GetPageIndices(*csrc_doc, ByteString());
-  if (page_indices.empty())
+  if (page_indices.empty()) {
     return nullptr;
+  }
 
   if (pages_on_x_axis == 1 && pages_on_y_axis == 1) {
     CPDF_PageExporter exporter(dest_doc, csrc_doc);
@@ -182,12 +184,14 @@ FPDF_NewXObjectFromPage(FPDF_DOCUMENT dest_doc,
                         FPDF_DOCUMENT src_doc,
                         int src_page_index) {
   CPDF_Document* dest = CPDFDocumentFromFPDFDocument(dest_doc);
-  if (!dest)
+  if (!dest) {
     return nullptr;
+  }
 
   CPDF_Document* src = CPDFDocumentFromFPDFDocument(src_doc);
-  if (!src)
+  if (!src) {
     return nullptr;
+  }
 
   CPDF_NPageToOneExporter exporter(dest, src);
   std::unique_ptr<XObjectContext> xobject =
@@ -203,8 +207,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_CloseXObject(FPDF_XOBJECT xobject) {
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDF_NewFormObjectFromXObject(FPDF_XOBJECT xobject) {
   XObjectContext* xobj = XObjectContextFromFPDFXObject(xobject);
-  if (!xobj)
+  if (!xobj) {
     return nullptr;
+  }
 
   auto form = std::make_unique<CPDF_Form>(xobj->dest_doc, nullptr,
                                           xobj->xobject, nullptr);

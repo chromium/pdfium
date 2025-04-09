@@ -65,8 +65,9 @@ static_assert(static_cast<int>(UnsupportedFeature::kAnnotationSignature) ==
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {
-  if (!unsp_info || unsp_info->version != 1)
+  if (!unsp_info || unsp_info->version != 1) {
     return false;
+  }
 
   SetPDFUnsupportInfo(unsp_info);
   return true;
@@ -83,30 +84,39 @@ FSDK_SetLocaltimeFunction(struct tm* (*func)(const time_t* tp)) {
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return PAGEMODE_UNKNOWN;
+  }
 
   const CPDF_Dictionary* pRoot = pDoc->GetRoot();
-  if (!pRoot)
+  if (!pRoot) {
     return PAGEMODE_UNKNOWN;
+  }
 
   RetainPtr<const CPDF_Object> pName = pRoot->GetObjectFor("PageMode");
-  if (!pName)
+  if (!pName) {
     return PAGEMODE_USENONE;
+  }
 
   ByteString strPageMode = pName->GetString();
-  if (strPageMode.IsEmpty() || strPageMode.EqualNoCase("UseNone"))
+  if (strPageMode.IsEmpty() || strPageMode.EqualNoCase("UseNone")) {
     return PAGEMODE_USENONE;
-  if (strPageMode.EqualNoCase("UseOutlines"))
+  }
+  if (strPageMode.EqualNoCase("UseOutlines")) {
     return PAGEMODE_USEOUTLINES;
-  if (strPageMode.EqualNoCase("UseThumbs"))
+  }
+  if (strPageMode.EqualNoCase("UseThumbs")) {
     return PAGEMODE_USETHUMBS;
-  if (strPageMode.EqualNoCase("FullScreen"))
+  }
+  if (strPageMode.EqualNoCase("FullScreen")) {
     return PAGEMODE_FULLSCREEN;
-  if (strPageMode.EqualNoCase("UseOC"))
+  }
+  if (strPageMode.EqualNoCase("UseOC")) {
     return PAGEMODE_USEOC;
-  if (strPageMode.EqualNoCase("UseAttachments"))
+  }
+  if (strPageMode.EqualNoCase("UseAttachments")) {
     return PAGEMODE_USEATTACHMENTS;
+  }
 
   return PAGEMODE_UNKNOWN;
 }

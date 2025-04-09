@@ -115,8 +115,9 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
       return false;
     }
     unsigned long size = info_->GetFaceName(info_, hFont, nullptr, 0);
-    if (size == 0)
+    if (size == 0) {
       return false;
+    }
     ByteString result;
     auto result_span = result.GetBuffer(size);
     size = info_->GetFaceName(info_, hFont, result_span.data(), size);
@@ -160,8 +161,9 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
     return;
   }
 
-  if (pFontInfoExt->version != 1)
+  if (pFontInfoExt->version != 1) {
     return;
+  }
 
   mapper->SetSystemFontInfo(
       std::make_unique<CFX_ExternalFontInfo>(pFontInfoExt));
@@ -270,8 +272,9 @@ static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
 FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo() {
   std::unique_ptr<SystemFontInfoIface> pFontInfo =
       CFX_GEModule::Get()->GetPlatform()->CreateDefaultSystemFontInfo();
-  if (!pFontInfo)
+  if (!pFontInfo) {
     return nullptr;
+  }
 
   FPDF_SYSFONTINFO_DEFAULT* pFontInfoExt =
       FX_Alloc(FPDF_SYSFONTINFO_DEFAULT, 1);

@@ -42,24 +42,29 @@ CFFL_TextField::~CFFL_TextField() {
 CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
   CPWL_Wnd::CreateParams cp = CFFL_TextObject::GetCreateParam();
   int nFlags = widget_->GetFieldFlags();
-  if (nFlags & pdfium::form_flags::kTextPassword)
+  if (nFlags & pdfium::form_flags::kTextPassword) {
     cp.dwFlags |= PES_PASSWORD;
+  }
 
   if (nFlags & pdfium::form_flags::kTextMultiline) {
     cp.dwFlags |= PES_MULTILINE | PES_AUTORETURN | PES_TOP;
-    if (!(nFlags & pdfium::form_flags::kTextDoNotScroll))
+    if (!(nFlags & pdfium::form_flags::kTextDoNotScroll)) {
       cp.dwFlags |= PWS_VSCROLL | PES_AUTOSCROLL;
+    }
   } else {
     cp.dwFlags |= PES_CENTER;
-    if (!(nFlags & pdfium::form_flags::kTextDoNotScroll))
+    if (!(nFlags & pdfium::form_flags::kTextDoNotScroll)) {
       cp.dwFlags |= PES_AUTOSCROLL;
+    }
   }
 
-  if (nFlags & pdfium::form_flags::kTextComb)
+  if (nFlags & pdfium::form_flags::kTextComb) {
     cp.dwFlags |= PES_CHARARRAY;
+  }
 
-  if (nFlags & pdfium::form_flags::kTextRichText)
+  if (nFlags & pdfium::form_flags::kTextRichText) {
     cp.dwFlags |= PES_RICH;
+  }
 
   cp.dwFlags |= PES_UNDO;
 
@@ -115,13 +120,15 @@ bool CFFL_TextField::OnChar(CPDFSDK_Widget* pWidget,
       form_filler_->Invalidate(pWidget->GetPage(),
                                pWidget->GetRect().GetOuterRect());
       if (valid_) {
-        if (CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView))
+        if (CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView)) {
           pWnd->SetFocus();
+        }
         break;
       }
 
-      if (!CommitData(pPageView, nFlags))
+      if (!CommitData(pPageView, nFlags)) {
         return false;
+      }
 
       DestroyPWLWindow(pPageView);
       return true;
@@ -215,8 +222,9 @@ void CFFL_TextField::SetActionData(const CPDFSDK_PageView* pPageView,
 
 void CFFL_TextField::SavePWLWindowState(const CPDFSDK_PageView* pPageView) {
   CPWL_Edit* pWnd = GetPWLEdit(pPageView);
-  if (!pWnd)
+  if (!pWnd) {
     return;
+  }
 
   std::tie(state_.nStart, state_.nEnd) = pWnd->GetSelection();
   state_.sValue = pWnd->GetText();
@@ -225,8 +233,9 @@ void CFFL_TextField::SavePWLWindowState(const CPDFSDK_PageView* pPageView) {
 void CFFL_TextField::RecreatePWLWindowFromSavedState(
     const CPDFSDK_PageView* pPageView) {
   CPWL_Edit* pWnd = CreateOrUpdatePWLEdit(pPageView);
-  if (!pWnd)
+  if (!pWnd) {
     return;
+  }
 
   pWnd->SetText(state_.sValue);
   pWnd->SetSelection(state_.nStart, state_.nEnd);

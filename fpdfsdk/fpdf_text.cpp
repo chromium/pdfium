@@ -31,8 +31,9 @@
 namespace {
 
 CPDF_TextPage* GetTextPageForValidIndex(FPDF_TEXTPAGE text_page, int index) {
-  if (!text_page || index < 0)
+  if (!text_page || index < 0) {
     return nullptr;
+  }
 
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
   return static_cast<size_t>(index) < textpage->size() ? textpage : nullptr;
@@ -42,8 +43,9 @@ CPDF_TextPage* GetTextPageForValidIndex(FPDF_TEXTPAGE text_page, int index) {
 
 FPDF_EXPORT FPDF_TEXTPAGE FPDF_CALLCONV FPDFText_LoadPage(FPDF_PAGE page) {
   CPDF_Page* pPDFPage = CPDFPageFromFPDFPage(page);
-  if (!pPDFPage)
+  if (!pPDFPage) {
     return nullptr;
+  }
 
   CPDF_ViewerPreferences viewRef(pPDFPage->GetDocument());
   auto textpage =
@@ -67,8 +69,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountChars(FPDF_TEXTPAGE text_page) {
 FPDF_EXPORT unsigned int FPDF_CALLCONV
 FPDFText_GetUnicode(FPDF_TEXTPAGE text_page, int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return 0;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   return charinfo.unicode();
@@ -88,8 +91,9 @@ FPDFText_GetTextObject(FPDF_TEXTPAGE text_page, int index) {
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_IsGenerated(FPDF_TEXTPAGE text_page,
                                                    int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return -1;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   return charinfo.char_type() == CPDF_TextPage::CharType::kGenerated ? 1 : 0;
@@ -109,8 +113,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_IsHyphen(FPDF_TEXTPAGE text_page,
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_HasUnicodeMapError(FPDF_TEXTPAGE text_page, int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return -1;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   return charinfo.char_type() == CPDF_TextPage::CharType::kNotUnicode;
@@ -119,8 +124,9 @@ FPDFText_HasUnicodeMapError(FPDF_TEXTPAGE text_page, int index) {
 FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
                                                       int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return 0;
+  }
 
   return textpage->GetCharFontSize(index);
 }
@@ -132,8 +138,9 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
                      unsigned long buflen,
                      int* flags) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return 0;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   if (!charinfo.text_object()) {
@@ -141,8 +148,9 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
   }
 
   RetainPtr<CPDF_Font> font = charinfo.text_object()->GetFont();
-  if (flags)
+  if (flags) {
     *flags = font->GetFontFlags();
+  }
 
   // SAFETY: required from caller.
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
@@ -175,8 +183,9 @@ FPDFText_GetFillColor(FPDF_TEXTPAGE text_page,
                       unsigned int* B,
                       unsigned int* A) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage || !R || !G || !B || !A)
+  if (!textpage || !R || !G || !B || !A) {
     return false;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   if (!charinfo.text_object()) {
@@ -201,8 +210,9 @@ FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
                         unsigned int* B,
                         unsigned int* A) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage || !R || !G || !B || !A)
+  if (!textpage || !R || !G || !B || !A) {
     return false;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   if (!charinfo.text_object()) {
@@ -222,8 +232,9 @@ FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
 FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
                                                       int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return -1.0f;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   // On the left is our current Matrix and on the right a generic rotation
@@ -233,8 +244,9 @@ FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
   // | e  f  1 |    |   0        0     1 |
   // Calculate the angle of the vector
   float angle = atan2f(charinfo.matrix().c, charinfo.matrix().a);
-  if (angle < 0)
+  if (angle < 0) {
     angle = 2 * FXSYS_PI + angle;
+  }
 
   return angle;
 }
@@ -245,12 +257,14 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
                                                         double* right,
                                                         double* bottom,
                                                         double* top) {
-  if (!left || !right || !bottom || !top)
+  if (!left || !right || !bottom || !top) {
     return false;
+  }
 
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return false;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   *left = charinfo.char_box().left;
@@ -262,12 +276,14 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect) {
-  if (!rect)
+  if (!rect) {
     return false;
+  }
 
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return false;
+  }
 
   *rect = FSRectFFromCFXFloatRect(textpage->GetCharLooseBounds(index));
   return true;
@@ -276,12 +292,14 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_TEXTPAGE text_page,
                                                        int index,
                                                        FS_MATRIX* matrix) {
-  if (!matrix)
+  if (!matrix) {
     return false;
+  }
 
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return false;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   *matrix = FSMatrixFromCFXMatrix(charinfo.matrix());
@@ -294,8 +312,9 @@ FPDFText_GetCharOrigin(FPDF_TEXTPAGE text_page,
                        double* x,
                        double* y) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return false;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   *x = charinfo.origin().x;
@@ -310,8 +329,9 @@ FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
                            double xTolerance,
                            double yTolerance) {
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
-  if (!textpage)
+  if (!textpage) {
     return -3;
+  }
 
   return textpage->GetIndexAtPos(
       CFX_PointF(static_cast<float>(x), static_cast<float>(y)),
@@ -367,8 +387,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetRect(FPDF_TEXTPAGE text_page,
                                                      double* right,
                                                      double* bottom) {
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
-  if (!textpage)
+  if (!textpage) {
     return false;
+  }
 
   CFX_FloatRect rect;
   bool result = textpage->GetRect(rect_index, &rect);
@@ -417,8 +438,9 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
                    unsigned long flags,
                    int start_index) {
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
-  if (!textpage)
+  if (!textpage) {
     return nullptr;
+  }
 
   CPDF_TextPageFind::Options options;
   options.bMatchCase = !!(flags & FPDF_MATCHCASE);
@@ -435,16 +457,18 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_FindNext(FPDF_SCHHANDLE handle) {
-  if (!handle)
+  if (!handle) {
     return false;
+  }
 
   CPDF_TextPageFind* textpageFind = CPDFTextPageFindFromFPDFSchHandle(handle);
   return textpageFind->FindNext();
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_FindPrev(FPDF_SCHHANDLE handle) {
-  if (!handle)
+  if (!handle) {
     return false;
+  }
 
   CPDF_TextPageFind* textpageFind = CPDFTextPageFindFromFPDFSchHandle(handle);
   return textpageFind->FindPrev();
@@ -452,24 +476,27 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_FindPrev(FPDF_SCHHANDLE handle) {
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_GetSchResultIndex(FPDF_SCHHANDLE handle) {
-  if (!handle)
+  if (!handle) {
     return 0;
+  }
 
   CPDF_TextPageFind* textpageFind = CPDFTextPageFindFromFPDFSchHandle(handle);
   return textpageFind->GetCurOrder();
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetSchCount(FPDF_SCHHANDLE handle) {
-  if (!handle)
+  if (!handle) {
     return 0;
+  }
 
   CPDF_TextPageFind* textpageFind = CPDFTextPageFindFromFPDFSchHandle(handle);
   return textpageFind->GetMatchedCount();
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFText_FindClose(FPDF_SCHHANDLE handle) {
-  if (!handle)
+  if (!handle) {
     return;
+  }
 
   // Take ownership back from caller and destroy.
   std::unique_ptr<CPDF_TextPageFind> textpageFind(
@@ -480,8 +507,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFText_FindClose(FPDF_SCHHANDLE handle) {
 FPDF_EXPORT FPDF_PAGELINK FPDF_CALLCONV
 FPDFLink_LoadWebLinks(FPDF_TEXTPAGE text_page) {
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
-  if (!textpage)
+  if (!textpage) {
     return nullptr;
+  }
 
   auto pagelink = std::make_unique<CPDF_LinkExtract>(textpage);
   pagelink->ExtractLinks();
@@ -491,8 +519,9 @@ FPDFLink_LoadWebLinks(FPDF_TEXTPAGE text_page) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountWebLinks(FPDF_PAGELINK link_page) {
-  if (!link_page)
+  if (!link_page) {
     return 0;
+  }
 
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
   return pdfium::checked_cast<int>(pageLink->CountLinks());
@@ -525,8 +554,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetURL(FPDF_PAGELINK link_page,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountRects(FPDF_PAGELINK link_page,
                                                   int link_index) {
-  if (!link_page || link_index < 0)
+  if (!link_page || link_index < 0) {
     return 0;
+  }
 
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
   return fxcrt::CollectionSize<int>(pageLink->GetRects(link_index));
@@ -539,13 +569,15 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetRect(FPDF_PAGELINK link_page,
                                                      double* top,
                                                      double* right,
                                                      double* bottom) {
-  if (!link_page || link_index < 0 || rect_index < 0)
+  if (!link_page || link_index < 0 || rect_index < 0) {
     return false;
+  }
 
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
   std::vector<CFX_FloatRect> rectArray = pageLink->GetRects(link_index);
-  if (rect_index >= fxcrt::CollectionSize<int>(rectArray))
+  if (rect_index >= fxcrt::CollectionSize<int>(rectArray)) {
     return false;
+  }
 
   *left = rectArray[rect_index].left;
   *right = rectArray[rect_index].right;
@@ -559,13 +591,15 @@ FPDFLink_GetTextRange(FPDF_PAGELINK link_page,
                       int link_index,
                       int* start_char_index,
                       int* char_count) {
-  if (!link_page || link_index < 0)
+  if (!link_page || link_index < 0) {
     return false;
+  }
 
   CPDF_LinkExtract* page_link = CPDFLinkExtractFromFPDFPageLink(link_page);
   auto maybe_range = page_link->GetTextRange(link_index);
-  if (!maybe_range.has_value())
+  if (!maybe_range.has_value()) {
     return false;
+  }
 
   *start_char_index = pdfium::checked_cast<int>(maybe_range.value().m_Start);
   *char_count = pdfium::checked_cast<int>(maybe_range.value().m_Count);

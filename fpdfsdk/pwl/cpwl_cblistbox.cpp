@@ -31,10 +31,12 @@ bool CPWL_CBListBox::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
   ReleaseCapture();
   mouse_down_ = false;
 
-  if (!ClientHitTest(point))
+  if (!ClientHitTest(point)) {
     return true;
-  if (CPWL_Wnd* pParent = GetParentWindow())
+  }
+  if (CPWL_Wnd* pParent = GetParentWindow()) {
     pParent->NotifyLButtonUp(this, point);
+  }
 
   return !OnNotifySelectionChanged(false, nFlag);
 }
@@ -85,8 +87,9 @@ bool CPWL_CBListBox::IsChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) const {
 }
 
 bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
-  if (auto* pComboBox = static_cast<CPWL_ComboBox*>(GetParentWindow()))
+  if (auto* pComboBox = static_cast<CPWL_ComboBox*>(GetParentWindow())) {
     pComboBox->SetSelectText();
+  }
 
   return OnNotifySelectionChanged(true, nFlag);
 }

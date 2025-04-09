@@ -244,35 +244,36 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
     }
   }
 
-    for (int i = 0; i < kExpectedPageCount; ++i) {
-      float left;
-      float bottom;
-      float right;
-      float top;
-      ASSERT_TRUE(
-          FPDFPageObj_GetBounds(xobjects[i], &left, &bottom, &right, &top));
-      EXPECT_FLOAT_EQ(-1.0f, left);
-      EXPECT_FLOAT_EQ(-1.0f, bottom);
-      EXPECT_FLOAT_EQ(201.0f, right);
-      EXPECT_FLOAT_EQ(301.0f, top);
-    }
+  for (int i = 0; i < kExpectedPageCount; ++i) {
+    float left;
+    float bottom;
+    float right;
+    float top;
+    ASSERT_TRUE(
+        FPDFPageObj_GetBounds(xobjects[i], &left, &bottom, &right, &top));
+    EXPECT_FLOAT_EQ(-1.0f, left);
+    EXPECT_FLOAT_EQ(-1.0f, bottom);
+    EXPECT_FLOAT_EQ(201.0f, right);
+    EXPECT_FLOAT_EQ(301.0f, top);
+  }
 
-    // Peek at object internals to make sure the two XObjects use the same
-    // stream.
-    EXPECT_NE(xobjects[0], xobjects[1]);
-    CPDF_PageObject* obj1 = CPDFPageObjectFromFPDFPageObject(xobjects[0]);
-    ASSERT_TRUE(obj1->AsForm());
-    ASSERT_TRUE(obj1->AsForm()->form());
-    ASSERT_TRUE(obj1->AsForm()->form()->GetStream());
-    CPDF_PageObject* obj2 = CPDFPageObjectFromFPDFPageObject(xobjects[1]);
-    ASSERT_TRUE(obj2->AsForm());
-    ASSERT_TRUE(obj2->AsForm()->form());
-    ASSERT_TRUE(obj2->AsForm()->form()->GetStream());
-    EXPECT_EQ(obj1->AsForm()->form()->GetStream(),
-              obj2->AsForm()->form()->GetStream());
+  // Peek at object internals to make sure the two XObjects use the same
+  // stream.
+  EXPECT_NE(xobjects[0], xobjects[1]);
+  CPDF_PageObject* obj1 = CPDFPageObjectFromFPDFPageObject(xobjects[0]);
+  ASSERT_TRUE(obj1->AsForm());
+  ASSERT_TRUE(obj1->AsForm()->form());
+  ASSERT_TRUE(obj1->AsForm()->form()->GetStream());
+  CPDF_PageObject* obj2 = CPDFPageObjectFromFPDFPageObject(xobjects[1]);
+  ASSERT_TRUE(obj2->AsForm());
+  ASSERT_TRUE(obj2->AsForm()->form());
+  ASSERT_TRUE(obj2->AsForm()->form()->GetStream());
+  EXPECT_EQ(obj1->AsForm()->form()->GetStream(),
+            obj2->AsForm()->form()->GetStream());
 
-  for (FPDF_PAGE saved_page : saved_pages)
+  for (FPDF_PAGE saved_page : saved_pages) {
     CloseSavedPage(saved_page);
+  }
 
   CloseSavedDocument();
 }

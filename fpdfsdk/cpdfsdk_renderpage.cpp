@@ -29,8 +29,9 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
                     const FPDF_COLORSCHEME* color_scheme,
                     bool need_to_restore,
                     CPDFSDK_PauseAdapter* pause) {
-  if (!pContext->m_pOptions)
+  if (!pContext->m_pOptions) {
     pContext->m_pOptions = std::make_unique<CPDF_RenderOptions>();
+  }
 
   auto& options = pContext->m_pOptions->GetOptions();
   options.bClearType = !!(flags & FPDF_LCD_TEXT);
@@ -42,8 +43,9 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
   options.bNoPathSmooth = !!(flags & FPDF_RENDER_NO_SMOOTHPATH);
 
   // Grayscale output
-  if (flags & FPDF_GRAYSCALE)
+  if (flags & FPDF_GRAYSCALE) {
     pContext->m_pOptions->SetColorMode(CPDF_RenderOptions::kGray);
+  }
 
   if (color_scheme) {
     pContext->m_pOptions->SetColorMode(CPDF_RenderOptions::kForcedColor);
@@ -84,8 +86,9 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
       pContext->m_pContext.get(), pContext->m_pDevice.get(),
       pContext->m_pOptions.get());
   pContext->m_pRenderer->Start(pause);
-  if (need_to_restore)
+  if (need_to_restore) {
     pContext->m_pDevice->RestoreState(false);
+  }
 }
 
 }  // namespace

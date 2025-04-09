@@ -23,12 +23,14 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix& mtUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, mtUser2Device);
 
-  if (!IsVisible())
+  if (!IsVisible()) {
     return;
+  }
 
   CFX_FloatRect window = CPWL_Wnd::GetWindowRect();
-  if (window.IsEmpty())
+  if (window.IsEmpty()) {
     return;
+  }
 
   static constexpr float kComboBoxTriangleLength = 6.0f;
   static constexpr float kComboBoxTriangleHalfLength =
@@ -66,8 +68,9 @@ bool CPWL_CBButton::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
 
   SetCapture();
   CPWL_Wnd* pParent = GetParentWindow();
-  if (pParent)
+  if (pParent) {
     pParent->NotifyLButtonDown(this, point);
+  }
 
   return true;
 }

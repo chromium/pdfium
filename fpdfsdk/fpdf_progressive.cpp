@@ -132,17 +132,20 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
                                                        IFSDK_PAUSE* pause) {
-  if (!pause || pause->version != 1)
+  if (!pause || pause->version != 1) {
     return FPDF_RENDER_FAILED;
+  }
 
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  if (!pPage) {
     return FPDF_RENDER_FAILED;
+  }
 
   auto* pContext =
       static_cast<CPDF_PageRenderContext*>(pPage->GetRenderContext());
-  if (!pContext || !pContext->m_pRenderer)
+  if (!pContext || !pContext->m_pRenderer) {
     return FPDF_RENDER_FAILED;
+  }
 
   CPDFSDK_PauseAdapter pause_adapter(pause);
   pContext->m_pRenderer->Continue(&pause_adapter);
@@ -162,6 +165,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage_Close(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (pPage)
+  if (pPage) {
     pPage->ClearRenderContext();
+  }
 }

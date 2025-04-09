@@ -25,16 +25,19 @@ std::vector<RetainPtr<const CPDF_Dictionary>> CollectSignatures(
     CPDF_Document* doc) {
   std::vector<RetainPtr<const CPDF_Dictionary>> signatures;
   const CPDF_Dictionary* root = doc->GetRoot();
-  if (!root)
+  if (!root) {
     return signatures;
+  }
 
   RetainPtr<const CPDF_Dictionary> acro_form = root->GetDictFor("AcroForm");
-  if (!acro_form)
+  if (!acro_form) {
     return signatures;
+  }
 
   RetainPtr<const CPDF_Array> fields = acro_form->GetArrayFor("Fields");
-  if (!fields)
+  if (!fields) {
     return signatures;
+  }
 
   CPDF_ArrayLocker locker(std::move(fields));
   for (auto& field : locker) {
@@ -51,8 +54,9 @@ std::vector<RetainPtr<const CPDF_Dictionary>> CollectSignatures(
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetSignatureCount(FPDF_DOCUMENT document) {
   auto* doc = CPDFDocumentFromFPDFDocument(document);
-  if (!doc)
+  if (!doc) {
     return -1;
+  }
 
   return fxcrt::CollectionSize<int>(CollectSignatures(doc));
 }
@@ -60,13 +64,15 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetSignatureCount(FPDF_DOCUMENT document) {
 FPDF_EXPORT FPDF_SIGNATURE FPDF_CALLCONV
 FPDF_GetSignatureObject(FPDF_DOCUMENT document, int index) {
   auto* doc = CPDFDocumentFromFPDFDocument(document);
-  if (!doc)
+  if (!doc) {
     return nullptr;
+  }
 
   std::vector<RetainPtr<const CPDF_Dictionary>> signatures =
       CollectSignatures(doc);
-  if (!fxcrt::IndexInBounds(signatures, index))
+  if (!fxcrt::IndexInBounds(signatures, index)) {
     return nullptr;
+  }
 
   return FPDFSignatureFromCPDFDictionary(signatures[index].Get());
 }
@@ -98,17 +104,20 @@ FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
                               unsigned long length) {
   const CPDF_Dictionary* signature_dict =
       CPDFDictionaryFromFPDFSignature(signature);
-  if (!signature_dict)
+  if (!signature_dict) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Dictionary> value_dict =
       signature_dict->GetDictFor(pdfium::form_fields::kV);
-  if (!value_dict)
+  if (!value_dict) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Array> byte_range = value_dict->GetArrayFor("ByteRange");
-  if (!byte_range)
+  if (!byte_range) {
     return 0;
+  }
 
   const unsigned long byte_range_len =
       fxcrt::CollectionSize<unsigned long>(*byte_range);
@@ -128,13 +137,15 @@ FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
                               unsigned long length) {
   const CPDF_Dictionary* signature_dict =
       CPDFDictionaryFromFPDFSignature(signature);
-  if (!signature_dict)
+  if (!signature_dict) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Dictionary> value_dict =
       signature_dict->GetDictFor(pdfium::form_fields::kV);
-  if (!value_dict || !value_dict->KeyExist("SubFilter"))
+  if (!value_dict || !value_dict->KeyExist("SubFilter")) {
     return 0;
+  }
 
   ByteString sub_filter = value_dict->GetNameFor("SubFilter");
 
@@ -149,17 +160,20 @@ FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
                            unsigned long length) {
   const CPDF_Dictionary* signature_dict =
       CPDFDictionaryFromFPDFSignature(signature);
-  if (!signature_dict)
+  if (!signature_dict) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Dictionary> value_dict =
       signature_dict->GetDictFor(pdfium::form_fields::kV);
-  if (!value_dict)
+  if (!value_dict) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Object> obj = value_dict->GetObjectFor("Reason");
-  if (!obj || !obj->IsString())
+  if (!obj || !obj->IsString()) {
     return 0;
+  }
 
   // SAFETY: required from caller.
   return Utf16EncodeMaybeCopyAndReturnLength(
@@ -173,17 +187,20 @@ FPDFSignatureObj_GetTime(FPDF_SIGNATURE signature,
                          unsigned long length) {
   const CPDF_Dictionary* signature_dict =
       CPDFDictionaryFromFPDFSignature(signature);
-  if (!signature_dict)
+  if (!signature_dict) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Dictionary> value_dict =
       signature_dict->GetDictFor(pdfium::form_fields::kV);
-  if (!value_dict)
+  if (!value_dict) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Object> obj = value_dict->GetObjectFor("M");
-  if (!obj || !obj->IsString())
+  if (!obj || !obj->IsString()) {
     return 0;
+  }
 
   // SAFETY: required from caller.
   return NulTerminateMaybeCopyAndReturnLength(
@@ -195,37 +212,44 @@ FPDFSignatureObj_GetDocMDPPermission(FPDF_SIGNATURE signature) {
   int permission = 0;
   const CPDF_Dictionary* signature_dict =
       CPDFDictionaryFromFPDFSignature(signature);
-  if (!signature_dict)
+  if (!signature_dict) {
     return permission;
+  }
 
   RetainPtr<const CPDF_Dictionary> value_dict =
       signature_dict->GetDictFor(pdfium::form_fields::kV);
-  if (!value_dict)
+  if (!value_dict) {
     return permission;
+  }
 
   RetainPtr<const CPDF_Array> references = value_dict->GetArrayFor("Reference");
-  if (!references)
+  if (!references) {
     return permission;
+  }
 
   CPDF_ArrayLocker locker(std::move(references));
   for (auto& reference : locker) {
     RetainPtr<const CPDF_Dictionary> reference_dict = reference->GetDict();
-    if (!reference_dict)
+    if (!reference_dict) {
       continue;
+    }
 
     ByteString transform_method = reference_dict->GetNameFor("TransformMethod");
-    if (transform_method != "DocMDP")
+    if (transform_method != "DocMDP") {
       continue;
+    }
 
     RetainPtr<const CPDF_Dictionary> transform_params =
         reference_dict->GetDictFor("TransformParams");
-    if (!transform_params)
+    if (!transform_params) {
       continue;
+    }
 
     // Valid values are 1, 2 and 3; 2 is the default.
     permission = transform_params->GetIntegerFor("P", 2);
-    if (permission < 1 || permission > 3)
+    if (permission < 1 || permission > 3) {
       permission = 0;
+    }
 
     return permission;
   }

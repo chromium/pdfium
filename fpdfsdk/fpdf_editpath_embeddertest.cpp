@@ -130,7 +130,6 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
-
   VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
                       RectanglesChecksum());
 }
@@ -194,7 +193,6 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
-
   VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
                       RectanglesChecksum());
 }
@@ -229,7 +227,6 @@ TEST_F(FPDFEditPathEmbedderTest, AddPathToRectangles) {
                   kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
   }
 
-
   VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
                       RectanglesAndTriangleChecksum());
 }
@@ -263,7 +260,6 @@ TEST_F(FPDFEditPathEmbedderTest, AddPathToRectanglesWithLeakyCTM) {
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
   }
-
 
   VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
                       RectanglesAndTriangleChecksum());

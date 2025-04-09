@@ -69,31 +69,36 @@ bool IsValidAlertIcon(int type) {
 RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
     const CPDF_Document* pPDFDoc) {
   const CPDF_Dictionary* pRoot = pPDFDoc->GetRoot();
-  if (!pRoot)
+  if (!pRoot) {
     return nullptr;
+  }
 
   RetainPtr<const CPDF_Dictionary> pAcroForm = pRoot->GetDictFor("AcroForm");
-  if (!pAcroForm)
+  if (!pAcroForm) {
     return nullptr;
+  }
 
   RetainPtr<const CPDF_Object> pElementXFA =
       pAcroForm->GetDirectObjectFor("XFA");
-  if (!pElementXFA)
+  if (!pElementXFA) {
     return nullptr;
+  }
 
   std::vector<RetainPtr<const CPDF_Stream>> xfa_streams;
   if (pElementXFA->IsArray()) {
     const CPDF_Array* pXFAArray = pElementXFA->AsArray();
     for (size_t i = 0; i < pXFAArray->size() / 2; i++) {
       RetainPtr<const CPDF_Stream> pStream = pXFAArray->GetStreamAt(i * 2 + 1);
-      if (pStream)
+      if (pStream) {
         xfa_streams.push_back(std::move(pStream));
+      }
     }
   } else if (pElementXFA->IsStream()) {
     xfa_streams.push_back(ToStream(pElementXFA));
   }
-  if (xfa_streams.empty())
+  if (xfa_streams.empty()) {
     return nullptr;
+  }
 
   return pdfium::MakeRetain<CPDF_SeekableMultiStream>(std::move(xfa_streams));
 }
@@ -235,8 +240,9 @@ int CPDFXFA_Context::GetPageCount() const {
 }
 
 RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetOrCreateXFAPage(int page_index) {
-  if (page_index < 0)
+  if (page_index < 0) {
     return nullptr;
+  }
 
   if (fxcrt::IndexInBounds(xfa_page_list_, page_index)) {
     if (xfa_page_list_[page_index]) {
@@ -248,8 +254,9 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetOrCreateXFAPage(int page_index) {
   }
 
   auto pPage = pdfium::MakeRetain<CPDFXFA_Page>(GetPDFDoc(), page_index);
-  if (!pPage->LoadPage())
+  if (!pPage->LoadPage()) {
     return nullptr;
+  }
 
   if (fxcrt::IndexInBounds(xfa_page_list_, page_index)) {
     xfa_page_list_[page_index] = pPage;
@@ -268,8 +275,9 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
 
 RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(
     CXFA_FFPageView* pPage) const {
-  if (!pPage)
+  if (!pPage) {
     return nullptr;
+  }
 
   if (!xfadoc_) {
     return nullptr;
@@ -280,8 +288,9 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(
   }
 
   for (auto& pTempPage : xfa_page_list_) {
-    if (pTempPage && pTempPage->GetXFAPageView() == pPage)
+    if (pTempPage && pTempPage->GetXFAPageView() == pPage) {
       return pTempPage;
+    }
   }
   return nullptr;
 }
@@ -384,8 +393,9 @@ WideString CPDFXFA_Context::Response(const WideString& wsQuestion,
   pdfium::span<uint8_t> buffer_span = buffer.span();
   int byte_length = form_fill_env_->JS_appResponse(
       wsQuestion, wsTitle, wsDefaultAnswer, WideString(), bMark, buffer_span);
-  if (byte_length <= 0)
+  if (byte_length <= 0) {
     return WideString();
+  }
 
   buffer_span = buffer_span.first(std::min<size_t>(kMaxBytes, byte_length));
   return WideString::FromUTF16LE(buffer_span);
@@ -439,8 +449,9 @@ bool CPDFXFA_Context::SaveFormPackage(
 bool CPDFXFA_Context::SavePackage(const RetainPtr<IFX_SeekableStream>& pStream,
                                   XFA_HashCode code) {
   CXFA_FFDocView* pXFADocView = GetXFADocView();
-  if (!pXFADocView)
+  if (!pXFADocView) {
     return false;
+  }
 
   CXFA_FFDoc* ffdoc = pXFADocView->GetDoc();
   return ffdoc->SavePackage(ToNode(ffdoc->GetXFADoc()->GetXFAObject(code)),
@@ -448,12 +459,14 @@ bool CPDFXFA_Context::SavePackage(const RetainPtr<IFX_SeekableStream>& pStream,
 }
 
 void CPDFXFA_Context::SendPostSaveToXFADoc() {
-  if (!ContainsExtensionForm())
+  if (!ContainsExtensionForm()) {
     return;
+  }
 
   CXFA_FFDocView* pXFADocView = GetXFADocView();
-  if (!pXFADocView)
+  if (!pXFADocView) {
     return;
+  }
 
   CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
   CXFA_ReadyNodeIterator it(pXFADocView->GetRootSubform());
@@ -468,12 +481,14 @@ void CPDFXFA_Context::SendPostSaveToXFADoc() {
 
 void CPDFXFA_Context::SendPreSaveToXFADoc(
     std::vector<RetainPtr<IFX_SeekableStream>>* fileList) {
-  if (!ContainsExtensionForm())
+  if (!ContainsExtensionForm()) {
     return;
+  }
 
   CXFA_FFDocView* pXFADocView = GetXFADocView();
-  if (!pXFADocView)
+  if (!pXFADocView) {
     return;
+  }
 
   CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
   CXFA_ReadyNodeIterator it(pXFADocView->GetRootSubform());

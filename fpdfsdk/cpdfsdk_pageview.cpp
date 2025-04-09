@@ -41,8 +41,9 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
     CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
     pPDFForm->FixPageFields(pPDFPage);
-    if (!page->AsXFAPage())
+    if (!page->AsXFAPage()) {
       pPDFPage->SetView(this);
+    }
   }
 }
 
@@ -65,8 +66,9 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
 }
 
 void CPDFSDK_PageView::ClearPage(CPDF_Page* pPage) {
-  if (!IsBeingDestroyed())
+  if (!IsBeingDestroyed()) {
     GetFormFillEnv()->RemovePageView(pPage);
+  }
 }
 
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
@@ -100,19 +102,22 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_PageView::NewAnnot(CPDF_Annot* annot) {
     CPDF_InteractiveForm* pdf_form = form->GetInteractiveForm();
     CPDF_FormControl* form_control =
         pdf_form->GetControlByDict(annot->GetAnnotDict());
-    if (!form_control)
+    if (!form_control) {
       return nullptr;
+    }
 
     auto ret = std::make_unique<CPDFSDK_Widget>(annot, this, form);
     form->AddMap(form_control, ret.get());
-    if (pdf_form->NeedConstructAP())
+    if (pdf_form->NeedConstructAP()) {
       ret->ResetAppearance(std::nullopt, CPDFSDK_Widget::kValueUnchanged);
+    }
     return ret;
   }
 
 #ifdef PDF_ENABLE_XFA
-  if (sub_type == CPDF_Annot::Subtype::XFAWIDGET)
+  if (sub_type == CPDF_Annot::Subtype::XFAWIDGET) {
     return nullptr;
+  }
 #endif  // PDF_ENABLE_XFA
 
   return std::make_unique<CPDFSDK_BAAnnot>(annot, this);
@@ -122,10 +127,12 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(const CFX_PointF& point) {
   CPDFSDK_AnnotIteration annot_iteration(this);
   for (const auto& pSDKAnnot : annot_iteration) {
     CFX_FloatRect rc = pSDKAnnot->GetViewBBox();
-    if (pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP)
+    if (pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP) {
       continue;
-    if (rc.Contains(point))
+    }
+    if (rc.Contains(point)) {
       return pSDKAnnot.Get();
+    }
   }
   return nullptr;
 }
@@ -138,8 +145,9 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(const CFX_PointF& point) {
 #ifdef PDF_ENABLE_XFA
     do_hit_test = do_hit_test || sub_type == CPDF_Annot::Subtype::XFAWIDGET;
 #endif  // PDF_ENABLE_XFA
-    if (do_hit_test && pSDKAnnot->DoHitTest(point))
+    if (do_hit_test && pSDKAnnot->DoHitTest(point)) {
       return pSDKAnnot.Get();
+    }
   }
   return nullptr;
 }
@@ -147,8 +155,9 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(const CFX_PointF& point) {
 #ifdef PDF_ENABLE_XFA
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnotForFFWidget(CXFA_FFWidget* pWidget) {
   CPDFSDK_Annot* pSDKAnnot = GetAnnotForFFWidget(pWidget);
-  if (pSDKAnnot)
+  if (pSDKAnnot) {
     return pSDKAnnot;
+  }
 
   sdkannot_array_.push_back(std::make_unique<CPDFXFA_Widget>(pWidget, this));
   return sdkannot_array_.back().get();
@@ -213,21 +222,24 @@ std::vector<CPDFSDK_Annot*> CPDFSDK_PageView::GetAnnotList() const {
 CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(const CPDF_Dictionary* pDict) {
   for (std::unique_ptr<CPDFSDK_Annot>& pAnnot : sdkannot_array_) {
     CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
-    if (pPDFAnnot && pPDFAnnot->GetAnnotDict() == pDict)
+    if (pPDFAnnot && pPDFAnnot->GetAnnotDict() == pDict) {
       return pAnnot.get();
+    }
   }
   return nullptr;
 }
 
 #ifdef PDF_ENABLE_XFA
 CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotForFFWidget(CXFA_FFWidget* pWidget) {
-  if (!pWidget)
+  if (!pWidget) {
     return nullptr;
+  }
 
   for (std::unique_ptr<CPDFSDK_Annot>& pAnnot : sdkannot_array_) {
     CPDFXFA_Widget* pCurrentWidget = pAnnot->AsXFAWidget();
-    if (pCurrentWidget && pCurrentWidget->GetXFAFFWidget() == pWidget)
+    if (pCurrentWidget && pCurrentWidget->GetXFAFFWidget() == pWidget) {
       return pAnnot.get();
+    }
   }
   return nullptr;
 }
@@ -245,8 +257,9 @@ WideString CPDFSDK_PageView::GetFocusedFormText() {
 CPDFSDK_Annot* CPDFSDK_PageView::GetNextAnnot(CPDFSDK_Annot* pAnnot) {
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pXFAPage = XFAPageIfNotBackedByPDFPage();
-  if (pXFAPage)
+  if (pXFAPage) {
     return pXFAPage->GetNextXFAAnnot(pAnnot);
+  }
 #endif  // PDF_ENABLE_XFA
   CPDFSDK_AnnotIterator ai(this, GetFormFillEnv()->GetFocusableAnnotSubtypes());
   return ai.GetNextAnnot(pAnnot);
@@ -255,8 +268,9 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetNextAnnot(CPDFSDK_Annot* pAnnot) {
 CPDFSDK_Annot* CPDFSDK_PageView::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pXFAPage = XFAPageIfNotBackedByPDFPage();
-  if (pXFAPage)
+  if (pXFAPage) {
     return pXFAPage->GetPrevXFAAnnot(pAnnot);
+  }
 #endif  // PDF_ENABLE_XFA
   CPDFSDK_AnnotIterator ai(this, GetFormFillEnv()->GetFocusableAnnotSubtypes());
   return ai.GetPrevAnnot(pAnnot);
@@ -265,8 +279,9 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
 CPDFSDK_Annot* CPDFSDK_PageView::GetFirstFocusableAnnot() {
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pXFAPage = XFAPageIfNotBackedByPDFPage();
-  if (pXFAPage)
+  if (pXFAPage) {
     return pXFAPage->GetFirstXFAAnnot(this);
+  }
 #endif  // PDF_ENABLE_XFA
   CPDFSDK_AnnotIterator ai(this, GetFormFillEnv()->GetFocusableAnnotSubtypes());
   return ai.GetFirstAnnot();
@@ -275,8 +290,9 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFirstFocusableAnnot() {
 CPDFSDK_Annot* CPDFSDK_PageView::GetLastFocusableAnnot() {
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pXFAPage = XFAPageIfNotBackedByPDFPage();
-  if (pXFAPage)
+  if (pXFAPage) {
     return pXFAPage->GetLastXFAAnnot(this);
+  }
 #endif  // PDF_ENABLE_XFA
   CPDFSDK_AnnotIterator ai(this, GetFormFillEnv()->GetFocusableAnnotSubtypes());
   return ai.GetLastAnnot();
@@ -284,21 +300,24 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetLastFocusableAnnot() {
 
 WideString CPDFSDK_PageView::GetSelectedText() {
   CPDFSDK_Annot* annot = GetFocusAnnot();
-  if (!annot)
+  if (!annot) {
     return WideString();
+  }
   return annot->GetSelectedText();
 }
 
 void CPDFSDK_PageView::ReplaceAndKeepSelection(const WideString& text) {
   CPDFSDK_Annot* annot = GetFocusAnnot();
-  if (annot)
+  if (annot) {
     annot->ReplaceAndKeepSelection(text);
+  }
 }
 
 void CPDFSDK_PageView::ReplaceSelection(const WideString& text) {
   CPDFSDK_Annot* annot = GetFocusAnnot();
-  if (annot)
+  if (annot) {
     annot->ReplaceSelection(text);
+  }
 }
 
 bool CPDFSDK_PageView::SelectAllText() {
@@ -346,11 +365,13 @@ bool CPDFSDK_PageView::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlags,
     return false;
   }
 
-  if (!CPDFSDK_Annot::OnLButtonDown(pAnnot, nFlags, point))
+  if (!CPDFSDK_Annot::OnLButtonDown(pAnnot, nFlags, point)) {
     return false;
+  }
 
-  if (!pAnnot)
+  if (!pAnnot) {
     return false;
+  }
 
   form_fill_env_->SetFocusAnnot(pAnnot);
   return true;
@@ -362,8 +383,9 @@ bool CPDFSDK_PageView::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlags,
   ObservedPtr<CPDFSDK_Annot> pFocusAnnot(GetFocusAnnot());
   if (pFocusAnnot && pFocusAnnot != pFXAnnot) {
     // Last focus Annot gets a chance to handle the event.
-    if (CPDFSDK_Annot::OnLButtonUp(pFocusAnnot, nFlags, point))
+    if (CPDFSDK_Annot::OnLButtonUp(pFocusAnnot, nFlags, point)) {
       return true;
+    }
   }
   return pFXAnnot && CPDFSDK_Annot::OnLButtonUp(pFXAnnot, nFlags, point);
 }
@@ -376,11 +398,13 @@ bool CPDFSDK_PageView::OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
     return false;
   }
 
-  if (!CPDFSDK_Annot::OnLButtonDblClk(pAnnot, nFlags, point))
+  if (!CPDFSDK_Annot::OnLButtonDblClk(pAnnot, nFlags, point)) {
     return false;
+  }
 
-  if (!pAnnot)
+  if (!pAnnot) {
     return false;
+  }
 
   form_fill_env_->SetFocusAnnot(pAnnot);
   return true;
@@ -389,15 +413,18 @@ bool CPDFSDK_PageView::OnLButtonDblClk(Mask<FWL_EVENTFLAG> nFlags,
 bool CPDFSDK_PageView::OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
                                      const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
-  if (!pAnnot)
+  if (!pAnnot) {
     return false;
+  }
 
   bool ok = CPDFSDK_Annot::OnRButtonDown(pAnnot, nFlags, point);
-  if (!pAnnot)
+  if (!pAnnot) {
     return false;
+  }
 
-  if (ok)
+  if (ok) {
     form_fill_env_->SetFocusAnnot(pAnnot);
+  }
 
   return true;
 }
@@ -405,15 +432,18 @@ bool CPDFSDK_PageView::OnRButtonDown(Mask<FWL_EVENTFLAG> nFlags,
 bool CPDFSDK_PageView::OnRButtonUp(Mask<FWL_EVENTFLAG> nFlags,
                                    const CFX_PointF& point) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
-  if (!pAnnot)
+  if (!pAnnot) {
     return false;
+  }
 
   bool ok = CPDFSDK_Annot::OnRButtonUp(pAnnot, nFlags, point);
-  if (!pAnnot)
+  if (!pAnnot) {
     return false;
+  }
 
-  if (ok)
+  if (ok) {
     form_fill_env_->SetFocusAnnot(pAnnot);
+  }
 
   return true;
 }
@@ -428,15 +458,17 @@ bool CPDFSDK_PageView::OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
   }
 
   // ExitWidget() may have invalidated objects.
-  if (!pThis || !pFXAnnot)
+  if (!pThis || !pFXAnnot) {
     return false;
+  }
 
   if (!pThis->on_widget_) {
     pThis->EnterWidget(pFXAnnot, nFlags);
 
     // EnterWidget() may have invalidated objects.
-    if (!pThis)
+    if (!pThis) {
       return false;
+    }
 
     if (!pFXAnnot) {
       pThis->ExitWidget(false, nFlags);
@@ -477,8 +509,9 @@ bool CPDFSDK_PageView::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,
                                     const CFX_PointF& point,
                                     const CFX_Vector& delta) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
-  if (!pAnnot)
+  if (!pAnnot) {
     return false;
+  }
 
   return CPDFSDK_Annot::OnMouseWheel(pAnnot, nFlags, point, delta);
 }
@@ -503,12 +536,14 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFocusAnnot());
   if (!pAnnot) {
     // If pressed key is not tab then no action is needed.
-    if (nKeyCode != FWL_VKEY_Tab)
+    if (nKeyCode != FWL_VKEY_Tab) {
       return false;
+    }
 
     // If ctrl key or alt key is pressed, then no action is needed.
-    if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsALTKeyDown(nFlags))
+    if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsALTKeyDown(nFlags)) {
       return false;
+    }
 
     ObservedPtr<CPDFSDK_Annot> end_annot(CPWL_Wnd::IsSHIFTKeyDown(nFlags)
                                              ? GetLastFocusableAnnot()
@@ -516,16 +551,18 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
     return end_annot && form_fill_env_->SetFocusAnnot(end_annot);
   }
 
-  if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsALTKeyDown(nFlags))
+  if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsALTKeyDown(nFlags)) {
     return CPDFSDK_Annot::OnKeyDown(pAnnot, nKeyCode, nFlags);
+  }
 
   CPDFSDK_Annot* pFocusAnnot = GetFocusAnnot();
   if (pFocusAnnot && (nKeyCode == FWL_VKEY_Tab)) {
     ObservedPtr<CPDFSDK_Annot> pNext(CPWL_Wnd::IsSHIFTKeyDown(nFlags)
                                          ? GetPrevAnnot(pFocusAnnot)
                                          : GetNextAnnot(pFocusAnnot));
-    if (!pNext)
+    if (!pNext) {
       return false;
+    }
     if (pNext.Get() != pFocusAnnot) {
       GetFormFillEnv()->SetFocusAnnot(pNext);
       return true;
@@ -533,8 +570,9 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
   }
 
   // Check |pAnnot| again because JS may have destroyed it in GetNextAnnot().
-  if (!pAnnot)
+  if (!pAnnot) {
     return false;
+  }
 
   return CPDFSDK_Annot::OnKeyDown(pAnnot, nKeyCode, nFlags);
 }
@@ -574,16 +612,18 @@ void CPDFSDK_PageView::LoadFXAnnots() {
     CPDF_Annot* pPDFAnnot = annot_list_->GetAt(i);
     CheckForUnsupportedAnnot(pPDFAnnot);
     std::unique_ptr<CPDFSDK_Annot> pAnnot = NewAnnot(pPDFAnnot);
-    if (!pAnnot)
+    if (!pAnnot) {
       continue;
+    }
     sdkannot_array_.push_back(std::move(pAnnot));
     sdkannot_array_.back()->OnLoad();
   }
 }
 
 void CPDFSDK_PageView::UpdateRects(const std::vector<CFX_FloatRect>& rects) {
-  for (const auto& rc : rects)
+  for (const auto& rc : rects) {
     form_fill_env_->Invalidate(page_, rc.GetOuterRect());
+  }
 }
 
 void CPDFSDK_PageView::UpdateView(CPDFSDK_Annot* pAnnot) {

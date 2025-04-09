@@ -45,19 +45,22 @@ uint32_t g_sandbox_policy = 0xFFFFFFFF;
 UNSUPPORT_INFO* g_unsupport_info = nullptr;
 
 bool RaiseUnsupportedError(int nError) {
-  if (!g_unsupport_info)
+  if (!g_unsupport_info) {
     return false;
+  }
 
-  if (g_unsupport_info->FSDK_UnSupport_Handler)
+  if (g_unsupport_info->FSDK_UnSupport_Handler) {
     g_unsupport_info->FSDK_UnSupport_Handler(g_unsupport_info, nError);
+  }
   return true;
 }
 
 // Use the existence of the XFA array as a signal for XFA forms.
 bool DocHasXFA(const CPDF_Document* doc) {
   const CPDF_Dictionary* root = doc->GetRoot();
-  if (!root)
+  if (!root) {
     return false;
+  }
 
   RetainPtr<const CPDF_Dictionary> form = root->GetDictFor("AcroForm");
   return form && form->GetArrayFor("XFA");
@@ -69,10 +72,11 @@ unsigned long GetStreamMaybeCopyAndReturnLengthImpl(
     bool decode) {
   DCHECK(stream);
   auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(stream));
-  if (decode)
+  if (decode) {
     stream_acc->LoadAllDataFiltered();
-  else
+  } else {
     stream_acc->LoadAllDataRaw();
+  }
 
   pdfium::span<const uint8_t> stream_data_span = stream_acc->GetSpan();
   if (!buffer.empty() && buffer.size() <= stream_data_span.size()) {
@@ -314,8 +318,9 @@ bool GetQuadPointsAtIndex(RetainPtr<const CPDF_Array> array,
   DCHECK(quad_points);
   DCHECK(array);
 
-  if (!IsValidQuadPointsIndex(array, quad_index))
+  if (!IsValidQuadPointsIndex(array, quad_index)) {
     return false;
+  }
 
   quad_index *= 8;
   quad_points->x1 = array->GetFloatAt(quad_index);
@@ -384,10 +389,11 @@ void SetPDFSandboxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
   switch (policy) {
     case FPDF_POLICY_MACHINETIME_ACCESS: {
       uint32_t mask = 1 << policy;
-      if (enable)
+      if (enable) {
         g_sandbox_policy |= mask;
-      else
+      } else {
         g_sandbox_policy &= ~mask;
+      }
     } break;
     default:
       break;
@@ -411,17 +417,20 @@ void SetPDFUnsupportInfo(UNSUPPORT_INFO* unsp_info) {
 
 void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
   const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
-  if (!pRootDict)
+  if (!pRootDict) {
     return;
+  }
 
   // Portfolios and Packages
-  if (pRootDict->KeyExist("Collection"))
+  if (pRootDict->KeyExist("Collection")) {
     RaiseUnsupportedError(FPDF_UNSP_DOC_PORTABLECOLLECTION);
+  }
 
   RetainPtr<const CPDF_Dictionary> pNameDict = pRootDict->GetDictFor("Names");
   if (pNameDict) {
-    if (pNameDict->KeyExist("EmbeddedFiles"))
+    if (pNameDict->KeyExist("EmbeddedFiles")) {
       RaiseUnsupportedError(FPDF_UNSP_DOC_ATTACHMENT);
+    }
 
     RetainPtr<const CPDF_Dictionary> pJSDict =
         pNameDict->GetDictFor("JavaScript");
@@ -443,14 +452,16 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
   RetainPtr<const CPDF_Stream> pStream = pRootDict->GetStreamFor("Metadata");
   if (pStream) {
     CPDF_Metadata metadata(std::move(pStream));
-    for (const UnsupportedFeature& feature : metadata.CheckForSharedForm())
+    for (const UnsupportedFeature& feature : metadata.CheckForSharedForm()) {
       RaiseUnsupportedError(static_cast<int>(feature));
+    }
   }
 }
 
 void ReportUnsupportedXFA(const CPDF_Document* pDoc) {
-  if (!pDoc->GetExtension() && DocHasXFA(pDoc))
+  if (!pDoc->GetExtension() && DocHasXFA(pDoc)) {
     RaiseUnsupportedError(FPDF_UNSP_DOC_XFAFORM);
+  }
 }
 
 void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
@@ -467,8 +478,9 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
     case CPDF_Annot::Subtype::SCREEN: {
       const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
       ByteString cbString = pAnnotDict->GetByteStringFor("IT");
-      if (cbString != "Img")
+      if (cbString != "Img") {
         RaiseUnsupportedError(FPDF_UNSP_ANNOT_SCREEN_MEDIA);
+      }
       break;
     }
     case CPDF_Annot::Subtype::SOUND:
@@ -481,8 +493,9 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
       const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
       ByteString cbString =
           pAnnotDict->GetByteStringFor(pdfium::form_fields::kFT);
-      if (cbString == pdfium::form_fields::kSig)
+      if (cbString == pdfium::form_fields::kSig) {
         RaiseUnsupportedError(FPDF_UNSP_ANNOT_SIG);
+      }
       break;
     }
     default:
@@ -531,8 +544,9 @@ std::vector<uint32_t> ParsePageRangeString(const ByteString& bsPageRange,
                                            uint32_t nCount) {
   ByteStringView alphabet(" 0123456789-,");
   for (const auto& ch : bsPageRange) {
-    if (!alphabet.Contains(ch))
+    if (!alphabet.Contains(ch)) {
       return std::vector<uint32_t>();
+    }
   }
 
   ByteString bsStrippedPageRange = bsPageRange;
@@ -545,22 +559,26 @@ std::vector<uint32_t> ParsePageRangeString(const ByteString& bsPageRange,
       // SAFETY: ByteStrings are always NUL-terminated.
       uint32_t page_num =
           pdfium::checked_cast<uint32_t>(UNSAFE_BUFFERS(atoi(args[0].c_str())));
-      if (page_num == 0 || page_num > nCount)
+      if (page_num == 0 || page_num > nCount) {
         return std::vector<uint32_t>();
+      }
       results.push_back(page_num - 1);
     } else if (args.size() == 2) {
       // SAFETY: ByteStrings are always NUL-terminated.
       uint32_t first_num =
           pdfium::checked_cast<uint32_t>(UNSAFE_BUFFERS(atoi(args[0].c_str())));
-      if (first_num == 0)
+      if (first_num == 0) {
         return std::vector<uint32_t>();
+      }
       // SAFETY: ByteStrings are always NUL-terminated.
       uint32_t last_num =
           pdfium::checked_cast<uint32_t>(UNSAFE_BUFFERS(atoi(args[1].c_str())));
-      if (last_num == 0 || first_num > last_num || last_num > nCount)
+      if (last_num == 0 || first_num > last_num || last_num > nCount) {
         return std::vector<uint32_t>();
-      for (uint32_t i = first_num; i <= last_num; ++i)
+      }
+      for (uint32_t i = first_num; i <= last_num; ++i) {
         results.push_back(i - 1);
+      }
     } else {
       return std::vector<uint32_t>();
     }

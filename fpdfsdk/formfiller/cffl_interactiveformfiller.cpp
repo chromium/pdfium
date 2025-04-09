@@ -41,8 +41,9 @@ bool CFFL_InteractiveFormFiller::Annot_HitTest(const CPDFSDK_Widget* pWidget,
 FX_RECT CFFL_InteractiveFormFiller::GetViewBBox(
     const CPDFSDK_PageView* pPageView,
     CPDFSDK_Widget* pWidget) {
-  if (CFFL_FormField* pFormField = GetFormField(pWidget))
+  if (CFFL_FormField* pFormField = GetFormField(pWidget)) {
     return pFormField->GetViewBBox(pPageView);
+  }
 
   DCHECK(pPageView);
 
@@ -60,8 +61,9 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                                         CFX_RenderDevice* pDevice,
                                         const CFX_Matrix& mtUser2Device) {
   DCHECK(pPageView);
-  if (!IsVisible(pWidget))
+  if (!IsVisible(pWidget)) {
     return;
+  }
 
   CFFL_FormField* pFormField = GetFormField(pWidget);
   if (pFormField && pFormField->IsValid()) {
@@ -71,8 +73,9 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
     }
 
     CFX_FloatRect rcFocus = pFormField->GetFocusBox(pPageView);
-    if (rcFocus.IsEmpty())
+    if (rcFocus.IsEmpty()) {
       return;
+    }
 
     CFX_DrawUtils::DrawFocusRect(pDevice, mtUser2Device, rcFocus);
 
@@ -86,8 +89,9 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                             CPDF_Annot::AppearanceMode::kNormal);
   }
 
-  if (!IsReadOnly(pWidget) && IsFillingAllowed(pWidget))
+  if (!IsReadOnly(pWidget) && IsFillingAllowed(pWidget)) {
     pWidget->DrawShadow(pDevice, pPageView);
+  }
 }
 
 void CFFL_InteractiveFormFiller::OnDelete(CPDFSDK_Widget* pWidget) {
@@ -112,19 +116,22 @@ void CFFL_InteractiveFormFiller::OnMouseEnter(
         fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
         pWidget->OnAAction(CPDF_AAction::kCursorEnter, &fa, pPageView);
       }
-      if (!pWidget)
+      if (!pWidget) {
         return;
+      }
 
       if (pWidget->IsAppModified()) {
         CFFL_FormField* pFormField = GetFormField(pWidget.Get());
-        if (pFormField)
+        if (pFormField) {
           pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(),
                                                 nValueAge);
+        }
       }
     }
   }
-  if (CFFL_FormField* pFormField = GetOrCreateFormField(pWidget.Get()))
+  if (CFFL_FormField* pFormField = GetOrCreateFormField(pWidget.Get())) {
     pFormField->OnMouseEnter(pPageView);
+  }
 }
 
 void CFFL_InteractiveFormFiller::OnMouseExit(
@@ -145,8 +152,9 @@ void CFFL_InteractiveFormFiller::OnMouseExit(
         fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
         pWidget->OnAAction(CPDF_AAction::kCursorExit, &fa, pPageView);
       }
-      if (!pWidget)
+      if (!pWidget) {
         return;
+      }
 
       if (pWidget->IsAppModified()) {
         CFFL_FormField* pFormField = GetFormField(pWidget.Get());
@@ -157,8 +165,9 @@ void CFFL_InteractiveFormFiller::OnMouseExit(
       }
     }
   }
-  if (CFFL_FormField* pFormField = GetFormField(pWidget.Get()))
+  if (CFFL_FormField* pFormField = GetFormField(pWidget.Get())) {
     pFormField->OnMouseExit(pPageView);
+  }
 }
 
 bool CFFL_InteractiveFormFiller::OnLButtonDown(
@@ -181,11 +190,13 @@ bool CFFL_InteractiveFormFiller::OnLButtonDown(
         fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlags);
         pWidget->OnAAction(CPDF_AAction::kButtonDown, &fa, pPageView);
       }
-      if (!pWidget)
+      if (!pWidget) {
         return true;
+      }
 
-      if (!IsValidAnnot(pPageView, pWidget.Get()))
+      if (!IsValidAnnot(pPageView, pWidget.Get())) {
         return true;
+      }
 
       if (pWidget->IsAppModified()) {
         CFFL_FormField* pFormField = GetFormField(pWidget.Get());
@@ -231,11 +242,13 @@ bool CFFL_InteractiveFormFiller::OnLButtonUp(
   if (callback_iface_->GetFocusAnnot() != pWidget.Get()) {
     return bRet;
   }
-  if (OnButtonUp(pWidget, pPageView, nFlags) || !pWidget)
+  if (OnButtonUp(pWidget, pPageView, nFlags) || !pWidget) {
     return true;
+  }
 #ifdef PDF_ENABLE_XFA
-  if (OnClick(pWidget, pPageView, nFlags) || !pWidget)
+  if (OnClick(pWidget, pPageView, nFlags) || !pWidget) {
     return true;
+  }
 #endif  // PDF_ENABLE_XFA
   return bRet;
 }
@@ -248,8 +261,9 @@ bool CFFL_InteractiveFormFiller::OnButtonUp(
     return false;
   }
 
-  if (!pWidget->GetAAction(CPDF_AAction::kButtonUp).HasDict())
+  if (!pWidget->GetAAction(CPDF_AAction::kButtonUp).HasDict()) {
     return false;
+  }
 
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
@@ -263,14 +277,17 @@ bool CFFL_InteractiveFormFiller::OnButtonUp(
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
     pWidget->OnAAction(CPDF_AAction::kButtonUp, &fa, pPageView);
   }
-  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
+  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get())) {
     return true;
-  if (nAge == pWidget->GetAppearanceAge())
+  }
+  if (nAge == pWidget->GetAppearanceAge()) {
     return false;
+  }
 
   CFFL_FormField* pFormField = GetFormField(pWidget.Get());
-  if (pFormField)
+  if (pFormField) {
     pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(), nValueAge);
+  }
   return true;
 }
 
@@ -346,8 +363,9 @@ bool CFFL_InteractiveFormFiller::OnKeyDown(CPDFSDK_Widget* pWidget,
 bool CFFL_InteractiveFormFiller::OnChar(CPDFSDK_Widget* pWidget,
                                         uint32_t nChar,
                                         Mask<FWL_EVENTFLAG> nFlags) {
-  if (nChar == pdfium::ascii::kTab)
+  if (nChar == pdfium::ascii::kTab) {
     return true;
+  }
 
   CFFL_FormField* pFormField = GetFormField(pWidget);
   return pFormField && pFormField->OnChar(pWidget, nChar, nFlags);
@@ -356,8 +374,9 @@ bool CFFL_InteractiveFormFiller::OnChar(CPDFSDK_Widget* pWidget,
 bool CFFL_InteractiveFormFiller::OnSetFocus(
     ObservedPtr<CPDFSDK_Widget>& pWidget,
     Mask<FWL_EVENTFLAG> nFlag) {
-  if (!pWidget)
+  if (!pWidget) {
     return false;
+  }
 
   if (!notifying_) {
     if (pWidget->GetAAction(CPDF_AAction::kGetFocus).HasDict()) {
@@ -365,8 +384,9 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(
       pWidget->ClearAppModified();
 
       CFFL_FormField* pFormField = GetOrCreateFormField(pWidget.Get());
-      if (!pFormField)
+      if (!pFormField) {
         return false;
+      }
 
       CPDFSDK_PageView* pPageView = pWidget->GetPageView();
       DCHECK(pPageView);
@@ -380,8 +400,9 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(
         pFormField->GetActionData(pPageView, CPDF_AAction::kGetFocus, fa);
         pWidget->OnAAction(CPDF_AAction::kGetFocus, &fa, pPageView);
       }
-      if (!pWidget)
+      if (!pWidget) {
         return false;
+      }
 
       if (pWidget->IsAppModified()) {
         CFFL_FormField* pFiller = GetFormField(pWidget.Get());
@@ -393,8 +414,9 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(
     }
   }
 
-  if (CFFL_FormField* pFormField = GetOrCreateFormField(pWidget.Get()))
+  if (CFFL_FormField* pFormField = GetOrCreateFormField(pWidget.Get())) {
     pFormField->SetFocusForAnnot(pWidget.Get(), nFlag);
+  }
 
   return true;
 }
@@ -402,23 +424,27 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(
 bool CFFL_InteractiveFormFiller::OnKillFocus(
     ObservedPtr<CPDFSDK_Widget>& pWidget,
     Mask<FWL_EVENTFLAG> nFlag) {
-  if (!pWidget)
+  if (!pWidget) {
     return false;
+  }
 
   CFFL_FormField* pFormField = GetFormField(pWidget.Get());
-  if (!pFormField)
+  if (!pFormField) {
     return true;
+  }
 
   pFormField->KillFocusForAnnot(nFlag);
-  if (!pWidget)
+  if (!pWidget) {
     return false;
+  }
 
   if (notifying_) {
     return true;
   }
 
-  if (!pWidget->GetAAction(CPDF_AAction::kLoseFocus).HasDict())
+  if (!pWidget->GetAAction(CPDF_AAction::kLoseFocus).HasDict()) {
     return true;
+  }
 
   pWidget->ClearAppModified();
 
@@ -474,8 +500,9 @@ bool CFFL_InteractiveFormFiller::IsReadOnly(CPDFSDK_Widget* pWidget) {
 
 bool CFFL_InteractiveFormFiller::IsFillingAllowed(
     CPDFSDK_Widget* pWidget) const {
-  if (pWidget->GetFieldType() == FormFieldType::kPushButton)
+  if (pWidget->GetFieldType() == FormFieldType::kPushButton) {
     return false;
+  }
 
   return callback_iface_->HasPermissions(
       pdfium::access_permissions::kFillForm |
@@ -492,8 +519,9 @@ CFFL_FormField* CFFL_InteractiveFormFiller::GetFormField(
 CFFL_FormField* CFFL_InteractiveFormFiller::GetOrCreateFormField(
     CPDFSDK_Widget* pWidget) {
   CFFL_FormField* result = GetFormField(pWidget);
-  if (result)
+  if (result) {
     return result;
+  }
 
   std::unique_ptr<CFFL_FormField> pFormField;
   switch (pWidget->GetFieldType()) {
@@ -540,8 +568,9 @@ void CFFL_InteractiveFormFiller::ReplaceAndKeepSelection(
     CPDFSDK_Widget* pWidget,
     const WideString& text) {
   CFFL_FormField* pFormField = GetFormField(pWidget);
-  if (!pFormField)
+  if (!pFormField) {
     return;
+  }
 
   pFormField->ReplaceAndKeepSelection(text);
 }
@@ -549,8 +578,9 @@ void CFFL_InteractiveFormFiller::ReplaceAndKeepSelection(
 void CFFL_InteractiveFormFiller::ReplaceSelection(CPDFSDK_Widget* pWidget,
                                                   const WideString& text) {
   CFFL_FormField* pFormField = GetFormField(pWidget);
-  if (!pFormField)
+  if (!pFormField) {
     return;
+  }
 
   pFormField->ReplaceSelection(text);
 }
@@ -593,8 +623,9 @@ void CFFL_InteractiveFormFiller::InvalidateRect(PerWindowData* pWidgetData,
                                                 const CFX_FloatRect& rect) {
   auto* pPrivateData = static_cast<CFFL_PerWindowData*>(pWidgetData);
   CPDFSDK_Widget* pWidget = pPrivateData->GetWidget();
-  if (!pWidget)
+  if (!pWidget) {
     return;
+  }
 
   callback_iface_->InvalidateRect(pWidget, rect);
 }
@@ -602,12 +633,14 @@ void CFFL_InteractiveFormFiller::InvalidateRect(PerWindowData* pWidgetData,
 void CFFL_InteractiveFormFiller::OutputSelectedRect(PerWindowData* pWidgetData,
                                                     const CFX_FloatRect& rect) {
   auto* pPrivateData = static_cast<CFFL_PerWindowData*>(pWidgetData);
-  if (!pPrivateData)
+  if (!pPrivateData) {
     return;
+  }
 
   CFFL_FormField* pFormField = pPrivateData->GetFormField();
-  if (!pFormField)
+  if (!pFormField) {
     return;
+  }
 
   callback_iface_->OutputSelectedRect(pFormField, rect);
 }
@@ -689,8 +722,9 @@ bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
     return true;
   }
 
-  if (!pWidget->GetAAction(CPDF_AAction::kKeyStroke).HasDict())
+  if (!pWidget->GetAAction(CPDF_AAction::kKeyStroke).HasDict()) {
     return true;
+  }
 
   DCHECK(pPageView);
   pWidget->ClearAppModified();
@@ -710,8 +744,9 @@ bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
   pFormField->SavePWLWindowState(pPageView);
   pWidget->OnAAction(CPDF_AAction::kKeyStroke, &fa, pPageView);
 
-  if (!pWidget)
+  if (!pWidget) {
     return true;
+  }
 
   return fa.bRC;
 }
@@ -724,8 +759,9 @@ bool CFFL_InteractiveFormFiller::OnValidate(
     return true;
   }
 
-  if (!pWidget->GetAAction(CPDF_AAction::kValidate).HasDict())
+  if (!pWidget->GetAAction(CPDF_AAction::kValidate).HasDict()) {
     return true;
+  }
 
   DCHECK(pPageView);
   pWidget->ClearAppModified();
@@ -744,8 +780,9 @@ bool CFFL_InteractiveFormFiller::OnValidate(
   pFormField->SavePWLWindowState(pPageView);
   pWidget->OnAAction(CPDF_AAction::kValidate, &fa, pPageView);
 
-  if (!pWidget)
+  if (!pWidget) {
     return true;
+  }
 
   return fa.bRC;
 }
@@ -778,8 +815,9 @@ bool CFFL_InteractiveFormFiller::OnClick(ObservedPtr<CPDFSDK_Widget>& pWidget,
     return false;
   }
 
-  if (!pWidget->HasXFAAAction(PDFSDK_XFA_Click))
+  if (!pWidget->HasXFAAAction(PDFSDK_XFA_Click)) {
     return false;
+  }
 
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
@@ -793,14 +831,17 @@ bool CFFL_InteractiveFormFiller::OnClick(ObservedPtr<CPDFSDK_Widget>& pWidget,
 
     pWidget->OnXFAAAction(PDFSDK_XFA_Click, &fa, pPageView);
   }
-  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
+  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get())) {
     return true;
-  if (nAge == pWidget->GetAppearanceAge())
+  }
+  if (nAge == pWidget->GetAppearanceAge()) {
     return false;
+  }
 
   CFFL_FormField* pFormField = GetFormField(pWidget.Get());
-  if (pFormField)
+  if (pFormField) {
     pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(), nValueAge);
+  }
   return false;
 }
 
@@ -811,8 +852,9 @@ bool CFFL_InteractiveFormFiller::OnFull(ObservedPtr<CPDFSDK_Widget>& pWidget,
     return false;
   }
 
-  if (!pWidget->HasXFAAAction(PDFSDK_XFA_Full))
+  if (!pWidget->HasXFAAAction(PDFSDK_XFA_Full)) {
     return false;
+  }
 
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
@@ -825,14 +867,17 @@ bool CFFL_InteractiveFormFiller::OnFull(ObservedPtr<CPDFSDK_Widget>& pWidget,
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
     pWidget->OnXFAAAction(PDFSDK_XFA_Full, &fa, pPageView);
   }
-  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
+  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get())) {
     return true;
-  if (nAge == pWidget->GetAppearanceAge())
+  }
+  if (nAge == pWidget->GetAppearanceAge()) {
     return false;
+  }
 
   CFFL_FormField* pFormField = GetFormField(pWidget.Get());
-  if (pFormField)
+  if (pFormField) {
     pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(), nValueAge);
+  }
   return true;
 }
 
@@ -843,8 +888,9 @@ bool CFFL_InteractiveFormFiller::OnPreOpen(ObservedPtr<CPDFSDK_Widget>& pWidget,
     return false;
   }
 
-  if (!pWidget->HasXFAAAction(PDFSDK_XFA_PreOpen))
+  if (!pWidget->HasXFAAAction(PDFSDK_XFA_PreOpen)) {
     return false;
+  }
 
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
@@ -857,14 +903,17 @@ bool CFFL_InteractiveFormFiller::OnPreOpen(ObservedPtr<CPDFSDK_Widget>& pWidget,
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
     pWidget->OnXFAAAction(PDFSDK_XFA_PreOpen, &fa, pPageView);
   }
-  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
+  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get())) {
     return true;
-  if (nAge == pWidget->GetAppearanceAge())
+  }
+  if (nAge == pWidget->GetAppearanceAge()) {
     return false;
+  }
 
   CFFL_FormField* pFormField = GetFormField(pWidget.Get());
-  if (pFormField)
+  if (pFormField) {
     pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(), nValueAge);
+  }
   return true;
 }
 
@@ -876,8 +925,9 @@ bool CFFL_InteractiveFormFiller::OnPostOpen(
     return false;
   }
 
-  if (!pWidget->HasXFAAAction(PDFSDK_XFA_PostOpen))
+  if (!pWidget->HasXFAAAction(PDFSDK_XFA_PostOpen)) {
     return false;
+  }
 
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
@@ -890,15 +940,18 @@ bool CFFL_InteractiveFormFiller::OnPostOpen(
     fa.bShift = CPWL_Wnd::IsSHIFTKeyDown(nFlag);
     pWidget->OnXFAAAction(PDFSDK_XFA_PostOpen, &fa, pPageView);
   }
-  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get()))
+  if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get())) {
     return true;
+  }
 
-  if (nAge == pWidget->GetAppearanceAge())
+  if (nAge == pWidget->GetAppearanceAge()) {
     return false;
+  }
 
   CFFL_FormField* pFormField = GetFormField(pWidget.Get());
-  if (pFormField)
+  if (pFormField) {
     pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(), nValueAge);
+  }
   return true;
 }
 #endif  // PDF_ENABLE_XFA
@@ -928,8 +981,9 @@ CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
 
 #ifdef PDF_ENABLE_XFA
   if (pFormField->IsFieldFull(pPageView)) {
-    if (OnFull(pWidget, pPageView, nFlag) || !pWidget)
+    if (OnFull(pWidget, pPageView, nFlag) || !pWidget) {
       return {true, true};
+    }
   }
 #endif  // PDF_ENABLE_XFA
 
@@ -962,15 +1016,17 @@ CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   if (!pWidget || !IsValidAnnot(pPageView, pWidget.Get())) {
     return {true, true};
   }
-  if (!action_status)
+  if (!action_status) {
     return {true, false};
+  }
 
   bool bExit = false;
   if (nAge != pWidget->GetAppearanceAge()) {
     pFormField->ResetPWLWindowForValueAge(pPageView, pWidget.Get(), nValueAge);
     pPrivateData = pFormField->GetPerPWLWindowData(pPageView);
-    if (!pPrivateData)
+    if (!pPrivateData) {
       return {true, true};
+    }
 
     pWidget.Reset(pPrivateData->GetWidget());
     pPageView = pPrivateData->GetPageView();

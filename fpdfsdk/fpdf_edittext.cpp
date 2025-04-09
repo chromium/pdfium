@@ -139,8 +139,9 @@ RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* doc,
   if (font->GetFace()->IsFixedWidth()) {
     flags |= pdfium::kFontStyleFixedPitch;
   }
-  if (font_name.Contains("Serif"))
+  if (font_name.Contains("Serif")) {
     flags |= pdfium::kFontStyleSerif;
+  }
   if (font->GetFace()->IsItalic()) {
     flags |= pdfium::kFontStyleItalic;
   }
@@ -602,13 +603,15 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
                        FPDF_BYTESTRING font,
                        float font_size) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_Font> pFont =
       CPDF_Font::GetStockFont(pDoc, ByteStringView(font));
-  if (!pFont)
+  if (!pFont) {
     return nullptr;
+  }
 
   auto pTextObj = std::make_unique<CPDF_TextObject>();
   pTextObj->mutable_text_state().SetFont(std::move(pFont));
@@ -676,8 +679,9 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
   // TODO(npm): Maybe use FT_Get_X11_Font_Format to check format? Otherwise, we
   // are allowing giving any font that can be loaded on freetype and setting it
   // as any font type.
-  if (!pFont->LoadEmbedded(span, /*force_vertical=*/false, /*object_tag=*/0))
+  if (!pFont->LoadEmbedded(span, /*force_vertical=*/false, /*object_tag=*/0)) {
     return nullptr;
+  }
 
   // Caller takes ownership.
   return FPDFFontFromCPDFFont(
@@ -688,8 +692,9 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
 FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return nullptr;
+  }
 
   // Caller takes ownership.
   return FPDFFontFromCPDFFont(
@@ -736,12 +741,14 @@ FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text, float* size) {
-  if (!size)
+  if (!size) {
     return false;
+  }
 
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
-  if (!pTextObj)
+  if (!pTextObj) {
     return false;
+  }
 
   *size = pTextObj->GetFontSize();
   return true;
@@ -753,12 +760,14 @@ FPDFTextObj_GetText(FPDF_PAGEOBJECT text_object,
                     FPDF_WCHAR* buffer,
                     unsigned long length) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text_object);
-  if (!pTextObj)
+  if (!pTextObj) {
     return 0;
+  }
 
   CPDF_TextPage* pTextPage = CPDFTextPageFromFPDFTextPage(text_page);
-  if (!pTextPage)
+  if (!pTextPage) {
     return 0;
+  }
 
   // SAFETY: required from caller.
   return Utf16EncodeMaybeCopyAndReturnLength(
@@ -772,19 +781,23 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
                               FPDF_PAGEOBJECT text_object,
                               float scale) {
   CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
-  if (!doc)
+  if (!doc) {
     return nullptr;
+  }
 
   CPDF_Page* optional_page = CPDFPageFromFPDFPage(page);
-  if (optional_page && optional_page->GetDocument() != doc)
+  if (optional_page && optional_page->GetDocument() != doc) {
     return nullptr;
+  }
 
   CPDF_TextObject* text = CPDFTextObjectFromFPDFPageObject(text_object);
-  if (!text)
+  if (!text) {
     return nullptr;
+  }
 
-  if (scale <= 0)
+  if (scale <= 0) {
     return nullptr;
+  }
 
   const CFX_Matrix scale_matrix(scale, 0, 0, scale, 0, 0);
   const CFX_FloatRect& text_rect = text->GetRect();
@@ -792,8 +805,9 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
 
   // `rect` has to use integer values. Round up as needed.
   const FX_RECT rect = scaled_text_rect.GetOuterRect();
-  if (rect.IsEmpty())
+  if (rect.IsEmpty()) {
     return nullptr;
+  }
 
   // TODO(crbug.com/42271020): Consider adding support for
   // `FXDIB_Format::kBgraPremul`
@@ -806,8 +820,9 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   auto render_context = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* render_context_ptr = render_context.get();
   CPDF_Page::RenderContextClearer clearer(optional_page);
-  if (optional_page)
+  if (optional_page) {
     optional_page->SetRenderContext(std::move(render_context));
+  }
 
   RetainPtr<CPDF_Dictionary> page_resources =
       optional_page ? optional_page->GetMutablePageResources() : nullptr;
@@ -847,8 +862,9 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
                           float font_size) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   CPDF_Font* pFont = CPDFFontFromFPDFFont(font);
-  if (!pDoc || !pFont)
+  if (!pDoc || !pFont) {
     return nullptr;
+  }
 
   auto pTextObj = std::make_unique<CPDF_TextObject>();
   pTextObj->mutable_text_state().SetFont(
@@ -862,8 +878,9 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
 FPDF_EXPORT FPDF_TEXT_RENDERMODE FPDF_CALLCONV
 FPDFTextObj_GetTextRenderMode(FPDF_PAGEOBJECT text) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
-  if (!pTextObj)
+  if (!pTextObj) {
     return FPDF_TEXTRENDERMODE_UNKNOWN;
+  }
   return static_cast<FPDF_TEXT_RENDERMODE>(pTextObj->GetTextRenderMode());
 }
 
@@ -876,8 +893,9 @@ FPDFTextObj_SetTextRenderMode(FPDF_PAGEOBJECT text,
   }
 
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
-  if (!pTextObj)
+  if (!pTextObj) {
     return false;
+  }
 
   pTextObj->SetTextRenderMode(static_cast<TextRenderingMode>(render_mode));
   return true;
@@ -885,8 +903,9 @@ FPDFTextObj_SetTextRenderMode(FPDF_PAGEOBJECT text,
 
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFTextObj_GetFont(FPDF_PAGEOBJECT text) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
-  if (!pTextObj)
+  if (!pTextObj) {
     return nullptr;
+  }
 
   // Unretained reference in public API. NOLINTNEXTLINE
   return FPDFFontFromCPDFFont(pTextObj->GetFont());
@@ -929,8 +948,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
                                                          size_t buflen,
                                                          size_t* out_buflen) {
   auto* cfont = CPDFFontFromFPDFFont(font);
-  if (!cfont || !out_buflen)
+  if (!cfont || !out_buflen) {
     return false;
+  }
 
   // SAFETY: required from caller.
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
@@ -942,15 +962,17 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetIsEmbedded(FPDF_FONT font) {
   auto* cfont = CPDFFontFromFPDFFont(font);
-  if (!cfont)
+  if (!cfont) {
     return -1;
+  }
   return cfont->IsEmbedded() ? 1 : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetFlags(FPDF_FONT font) {
   auto* pFont = CPDFFontFromFPDFFont(font);
-  if (!pFont)
+  if (!pFont) {
     return -1;
+  }
 
   // Return only flags from ISO 32000-1:2008, table 123.
   return pFont->GetFontFlags() & 0x7ffff;
@@ -967,8 +989,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetWeight(FPDF_FONT font) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetItalicAngle(FPDF_FONT font,
                                                             int* angle) {
   auto* pFont = CPDFFontFromFPDFFont(font);
-  if (!pFont || !angle)
+  if (!pFont || !angle) {
     return false;
+  }
 
   *angle = pFont->GetItalicAngle();
   return true;
@@ -978,8 +1001,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetAscent(FPDF_FONT font,
                                                        float font_size,
                                                        float* ascent) {
   auto* pFont = CPDFFontFromFPDFFont(font);
-  if (!pFont || !ascent)
+  if (!pFont || !ascent) {
     return false;
+  }
 
   *ascent = pFont->GetTypeAscent() * font_size / 1000.f;
   return true;
@@ -989,8 +1013,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetDescent(FPDF_FONT font,
                                                         float font_size,
                                                         float* descent) {
   auto* pFont = CPDFFontFromFPDFFont(font);
-  if (!pFont || !descent)
+  if (!pFont || !descent) {
     return false;
+  }
 
   *descent = pFont->GetTypeDescent() * font_size / 1000.f;
   return true;
@@ -1001,8 +1026,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetGlyphWidth(FPDF_FONT font,
                                                            float font_size,
                                                            float* width) {
   auto* pFont = CPDFFontFromFPDFFont(font);
-  if (!pFont || !width)
+  if (!pFont || !width) {
     return false;
+  }
 
   uint32_t charcode = pFont->CharCodeFromUnicode(static_cast<wchar_t>(glyph));
 
@@ -1020,8 +1046,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetGlyphWidth(FPDF_FONT font,
 FPDF_EXPORT FPDF_GLYPHPATH FPDF_CALLCONV
 FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
   auto* pFont = CPDFFontFromFPDFFont(font);
-  if (!pFont)
+  if (!pFont) {
     return nullptr;
+  }
 
   if (!pdfium::IsValueInRangeForNumericType<wchar_t>(glyph)) {
     return nullptr;
@@ -1031,8 +1058,9 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
   std::vector<TextCharPos> pos =
       GetCharPosList(pdfium::span_from_ref(charcode),
                      pdfium::span<const float>(), pFont, font_size);
-  if (pos.empty())
+  if (pos.empty()) {
     return nullptr;
+  }
 
   CFX_Font* pCfxFont;
   if (pos[0].m_FallbackFontPosition == -1) {
@@ -1040,8 +1068,9 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
     DCHECK(pCfxFont);  // Never null.
   } else {
     pCfxFont = pFont->GetFontFallback(pos[0].m_FallbackFontPosition);
-    if (!pCfxFont)
+    if (!pCfxFont) {
       return nullptr;
+    }
   }
 
   const CFX_Path* pPath =
@@ -1053,8 +1082,9 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFGlyphPath_CountGlyphSegments(FPDF_GLYPHPATH glyphpath) {
   auto* pPath = CFXPathFromFPDFGlyphPath(glyphpath);
-  if (!pPath)
+  if (!pPath) {
     return -1;
+  }
 
   return fxcrt::CollectionSize<int>(pPath->GetPoints());
 }
@@ -1062,12 +1092,14 @@ FPDFGlyphPath_CountGlyphSegments(FPDF_GLYPHPATH glyphpath) {
 FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
 FPDFGlyphPath_GetGlyphPathSegment(FPDF_GLYPHPATH glyphpath, int index) {
   auto* pPath = CFXPathFromFPDFGlyphPath(glyphpath);
-  if (!pPath)
+  if (!pPath) {
     return nullptr;
+  }
 
   pdfium::span<const CFX_Path::Point> points = pPath->GetPoints();
-  if (!fxcrt::IndexInBounds(points, index))
+  if (!fxcrt::IndexInBounds(points, index)) {
     return nullptr;
+  }
 
   return FPDFPathSegmentFromFXPathPoint(&points[index]);
 }

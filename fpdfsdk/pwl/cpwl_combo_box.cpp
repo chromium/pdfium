@@ -50,8 +50,9 @@ void CPWL_ComboBox::SetFocus() {
 }
 
 void CPWL_ComboBox::KillFocus() {
-  if (!SetPopup(false))
+  if (!SetPopup(false)) {
     return;
+  }
 
   CPWL_Wnd::KillFocus();
 }
@@ -152,11 +153,13 @@ void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
   ecp.dwFlags =
       PWS_VISIBLE | PWS_BORDER | PES_CENTER | PES_AUTOSCROLL | PES_UNDO;
 
-  if (HasFlag(PWS_AUTOFONTSIZE))
+  if (HasFlag(PWS_AUTOFONTSIZE)) {
     ecp.dwFlags |= PWS_AUTOFONTSIZE;
+  }
 
-  if (!HasFlag(PCBS_ALLOWCUSTOMTEXT))
+  if (!HasFlag(PCBS_ALLOWCUSTOMTEXT)) {
     ecp.dwFlags |= PWS_READONLY;
+  }
 
   ecp.rcRectWnd = CFX_FloatRect();
   ecp.dwBorderWidth = 0;
@@ -202,11 +205,13 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   lcp.fFontSize =
       (cp.dwFlags & PWS_AUTOFONTSIZE) ? kComboBoxDefaultFontSize : cp.fFontSize;
 
-  if (cp.sBorderColor.nColorType == CFX_Color::Type::kTransparent)
+  if (cp.sBorderColor.nColorType == CFX_Color::Type::kTransparent) {
     lcp.sBorderColor = kDefaultBlackColor;
+  }
 
-  if (cp.sBackgroundColor.nColorType == CFX_Color::Type::kTransparent)
+  if (cp.sBackgroundColor.nColorType == CFX_Color::Type::kTransparent) {
     lcp.sBackgroundColor = kDefaultWhiteColor;
+  }
 
   auto pList = std::make_unique<CPWL_CBListBox>(lcp, CloneAttachedData());
   list_ = pList.get();

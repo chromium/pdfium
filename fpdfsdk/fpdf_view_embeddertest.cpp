@@ -459,8 +459,9 @@ TEST_F(FPDFViewEmbedderTest, MultipleInitDestroy) {
 
 TEST_F(FPDFViewEmbedderTest, RepeatedInitDestroy) {
   for (int i = 0; i < 3; ++i) {
-    if (!OpenDocument("about_blank.pdf"))
+    if (!OpenDocument("about_blank.pdf")) {
       ADD_FAILURE();
+    }
     CloseDocument();
 
     FPDF_DestroyLibrary();
@@ -945,8 +946,9 @@ TEST_F(FPDFViewEmbedderTest, CrossRefV4Loop) {
   // Make sure calling FPDFAvail_IsDocAvail() on this file does not infinite
   // loop either. See bug 875.
   int ret = PDF_DATA_NOTAVAIL;
-  while (ret == PDF_DATA_NOTAVAIL)
+  while (ret == PDF_DATA_NOTAVAIL) {
     ret = FPDFAvail_IsDocAvail(avail(), &hints);
+  }
   EXPECT_EQ(PDF_DATA_AVAIL, ret);
 }
 

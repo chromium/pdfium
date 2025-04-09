@@ -35,8 +35,9 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
   float fCaretBottom = rcRect.bottom;
   if (!rcClip.IsEmpty()) {
     rcRect.Intersect(rcClip);
-    if (rcRect.IsEmpty())
+    if (rcRect.IsEmpty()) {
       return;
+    }
 
     fCaretTop = rcRect.top;
     fCaretBottom = rcRect.bottom;
@@ -73,8 +74,9 @@ void CPWL_Caret::SetCaret(bool bVisible,
     head_point_ = CFX_PointF();
     foot_point_ = CFX_PointF();
     flash_ = false;
-    if (!IsVisible())
+    if (!IsVisible()) {
       return;
+    }
 
     timer_.reset();
     (void)CPWL_Wnd::SetVisible(false);
@@ -91,8 +93,9 @@ void CPWL_Caret::SetCaret(bool bVisible,
     timer_ = std::make_unique<CFX_Timer>(GetTimerHandler(), this,
                                          kCaretFlashIntervalMs);
 
-    if (!CPWL_Wnd::SetVisible(true))
+    if (!CPWL_Wnd::SetVisible(true)) {
       return;
+    }
 
     flash_ = true;
     Move(invalid_rect_, false, true);
@@ -114,8 +117,9 @@ void CPWL_Caret::SetCaret(bool bVisible,
 }
 
 bool CPWL_Caret::InvalidateRect(const CFX_FloatRect* pRect) {
-  if (!pRect)
+  if (!pRect) {
     return CPWL_Wnd::InvalidateRect(nullptr);
+  }
 
   CFX_FloatRect rcRefresh = *pRect;
   if (!rcRefresh.IsEmpty()) {

@@ -18,9 +18,7 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
     ASSERT_TRUE(OpenDocument("click_form.pdf"));
   }
 
-  void TearDown() override {
-    EmbedderTest::TearDown();
-  }
+  void TearDown() override { EmbedderTest::TearDown(); }
 
   void CreateAndInitializeFormPDF() {
     formfill_env_ = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());

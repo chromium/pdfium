@@ -52,8 +52,9 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   for (int32_t i = 0, sz = list_ctrl_->GetCount(); i < sz; i++) {
     CFX_FloatRect rcItem = list_ctrl_->GetItemRect(i);
-    if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom)
+    if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom) {
       continue;
+    }
 
     CFX_PointF ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
     if (CPWL_EditImpl* pEdit = list_ctrl_->GetItemEdit(i)) {
@@ -182,13 +183,15 @@ bool CPWL_ListBox::OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
 }
 
 void CPWL_ListBox::SetScrollInfo(const PWL_SCROLL_INFO& info) {
-  if (CPWL_Wnd* pChild = GetVScrollBar())
+  if (CPWL_Wnd* pChild = GetVScrollBar()) {
     pChild->SetScrollInfo(info);
+  }
 }
 
 void CPWL_ListBox::SetScrollPosition(float pos) {
-  if (CPWL_Wnd* pChild = GetVScrollBar())
+  if (CPWL_Wnd* pChild = GetVScrollBar()) {
     pChild->SetScrollPosition(pos);
+  }
 }
 
 void CPWL_ListBox::ScrollWindowVertically(float pos) {
@@ -262,8 +265,9 @@ void CPWL_ListBox::OnSetScrollInfoY(float fPlateMin,
   SetScrollInfo(Info);
 
   CPWL_ScrollBar* pScroll = GetVScrollBar();
-  if (!pScroll)
+  if (!pScroll) {
     return;
+  }
 
   if (FXSYS_IsFloatBigger(Info.fPlateWidth,
                           Info.fContentMax - Info.fContentMin) ||
@@ -348,10 +352,11 @@ CFX_FloatRect CPWL_ListBox::GetListRect() const {
 bool CPWL_ListBox::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point,
                                 const CFX_Vector& delta) {
-  if (delta.y < 0)
+  if (delta.y < 0) {
     list_ctrl_->OnVK_DOWN(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
-  else
+  } else {
     list_ctrl_->OnVK_UP(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
+  }
 
   OnNotifySelectionChanged(false, nFlag);
   return true;

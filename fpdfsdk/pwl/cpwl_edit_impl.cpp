@@ -38,8 +38,9 @@ void DrawTextString(CFX_RenderDevice* pDevice,
                     const CFX_Matrix& mtUser2Device,
                     const ByteString& str,
                     FX_ARGB crTextFill) {
-  if (!pFont)
+  if (!pFont) {
     return;
+  }
 
   CFX_PointF pos = mtUser2Device.Transform(pt);
   CPDF_RenderOptions ro;
@@ -112,14 +113,16 @@ CPWL_EditImpl::Provider::~Provider() = default;
 
 int CPWL_EditImpl::Provider::GetCharWidth(int32_t nFontIndex, uint16_t word) {
   RetainPtr<CPDF_Font> pPDFFont = GetFontMap()->GetPDFFont(nFontIndex);
-  if (!pPDFFont)
+  if (!pPDFFont) {
     return 0;
+  }
 
   uint32_t charcode = pPDFFont->IsUnicodeCompatible()
                           ? pPDFFont->CharCodeFromUnicode(word)
                           : GetFontMap()->CharCodeFromUnicode(nFontIndex, word);
-  if (charcode == CPDF_Font::kInvalidCharCode)
+  if (charcode == CPDF_Font::kInvalidCharCode) {
     return 0;
+  }
 
   return pPDFFont->GetCharWidthF(charcode);
 }
@@ -166,8 +169,9 @@ void CPWL_EditImpl::RefreshState::EndRefresh() {
 void CPWL_EditImpl::RefreshState::Add(const CFX_FloatRect& new_rect) {
   // Check for overlapped area.
   for (const auto& rect : refresh_rects_) {
-    if (rect.Contains(new_rect))
+    if (rect.Contains(new_rect)) {
       return;
+    }
   }
   refresh_rects_.push_back(new_rect);
 }
@@ -220,8 +224,9 @@ void CPWL_EditImpl::UndoStack::Redo() {
 void CPWL_EditImpl::UndoStack::AddItem(std::unique_ptr<UndoItemIface> pItem) {
   DCHECK(!working_);
   DCHECK(pItem);
-  if (CanRedo())
+  if (CanRedo()) {
     RemoveTails();
+  }
 
   if (undo_item_stack_.size() >= kEditUndoMaxItems) {
     RemoveHeads();
@@ -237,8 +242,9 @@ void CPWL_EditImpl::UndoStack::RemoveHeads() {
 }
 
 void CPWL_EditImpl::UndoStack::RemoveTails() {
-  while (CanRedo())
+  while (CanRedo()) {
     undo_item_stack_.pop_back();
+  }
 }
 
 class CPWL_EditImpl::UndoInsertWord final
@@ -614,25 +620,29 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
   int32_t nFontIndex = -1;
   CFX_PointF ptBT;
   CFX_RenderDevice::StateRestorer restorer(pDevice);
-  if (!rcClip.IsEmpty())
+  if (!rcClip.IsEmpty()) {
     pDevice->SetClip_Rect(mtUser2Device.TransformRect(rcClip).ToFxRect());
+  }
 
   Iterator* pIterator = GetIterator();
   IPVT_FontMap* pFontMap = GetFontMap();
-  if (!pFontMap)
+  if (!pFontMap) {
     return;
+  }
 
-  if (pRange)
+  if (pRange) {
     pIterator->SetAt(pRange->BeginPos);
-  else
+  } else {
     pIterator->SetAt(0);
+  }
 
   ByteString sTextBuf;
   CPVT_WordPlace oldplace;
   while (pIterator->NextWord()) {
     CPVT_WordPlace place = pIterator->GetAt();
-    if (pRange && place > pRange->EndPos)
+    if (pRange && place > pRange->EndPos) {
       break;
+    }
 
     if (!wrSelect.IsEmpty()) {
       bSelect = place > wrSelect.BeginPos && place <= wrSelect.EndPos;
@@ -853,10 +863,12 @@ WideString CPWL_EditImpl::GetText() const {
   CPVT_WordPlace oldplace = pIterator->GetWordPlace();
   while (pIterator->NextWord()) {
     CPVT_WordPlace place = pIterator->GetWordPlace();
-    if (pIterator->GetWord(wordinfo))
+    if (pIterator->GetWord(wordinfo)) {
       swRet += wordinfo.Word;
-    if (oldplace.nSecIndex != place.nSecIndex)
+    }
+    if (oldplace.nSecIndex != place.nSecIndex) {
       swRet += L"\r\n";
+    }
     oldplace = place;
   }
   return swRet;
@@ -878,12 +890,15 @@ WideString CPWL_EditImpl::GetRangeText(const CPVT_WordRange& range) const {
   CPVT_WordPlace oldplace = wrTemp.BeginPos;
   while (pIterator->NextWord()) {
     CPVT_WordPlace place = pIterator->GetWordPlace();
-    if (place > wrTemp.EndPos)
+    if (place > wrTemp.EndPos) {
       break;
-    if (pIterator->GetWord(wordinfo))
+    }
+    if (pIterator->GetWord(wordinfo)) {
       swRet += wordinfo.Word;
-    if (oldplace.nSecIndex != place.nSecIndex)
+    }
+    if (oldplace.nSecIndex != place.nSecIndex) {
       swRet += L"\r\n";
+    }
     oldplace = place;
   }
   return swRet;
@@ -898,8 +913,9 @@ int32_t CPWL_EditImpl::GetTotalLines() const {
 
   CPVT_VariableText::Iterator* pIterator = vt_->GetIterator();
   pIterator->SetAt(0);
-  while (pIterator->NextLine())
+  while (pIterator->NextLine()) {
     ++nLines;
+  }
 
   return nLines;
 }
@@ -1293,10 +1309,12 @@ void CPWL_EditImpl::RefreshPushLineRects(const CPVT_WordRange& wr) {
 
   CPVT_Line lineinfo;
   do {
-    if (!pIterator->GetLine(lineinfo))
+    if (!pIterator->GetLine(lineinfo)) {
       break;
-    if (lineinfo.lineplace.LineCmp(wpEnd) > 0)
+    }
+    if (lineinfo.lineplace.LineCmp(wpEnd) > 0) {
       break;
+    }
 
     CFX_FloatRect rcLine(lineinfo.ptLine.x,
                          lineinfo.ptLine.y + lineinfo.fLineDescent,
@@ -1322,8 +1340,9 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
 
   while (pIterator->NextWord()) {
     place = pIterator->GetWordPlace();
-    if (place > wrTemp.EndPos)
+    if (place > wrTemp.EndPos) {
       break;
+    }
 
     pIterator->GetWord(wordinfo);
     pIterator->GetLine(lineinfo);
@@ -1584,10 +1603,11 @@ void CPWL_EditImpl::OnVK_HOME(bool bShift, bool bCtrl) {
   }
 
   if (bShift) {
-    if (bCtrl)
+    if (bCtrl) {
       SetCaret(vt_->GetBeginWordPlace());
-    else
+    } else {
       SetCaret(vt_->GetLineBeginPlace(wp_caret_));
+    }
 
     if (sel_state_.IsEmpty()) {
       sel_state_.Set(wp_old_caret_, wp_caret_);
@@ -1605,10 +1625,11 @@ void CPWL_EditImpl::OnVK_HOME(bool bShift, bool bCtrl) {
       ScrollToCaret();
       SetCaretInfo();
     } else {
-      if (bCtrl)
+      if (bCtrl) {
         SetCaret(vt_->GetBeginWordPlace());
-      else
+      } else {
         SetCaret(vt_->GetLineBeginPlace(wp_caret_));
+      }
 
       ScrollToCaret();
       SetCaretOrigin();
@@ -1623,10 +1644,11 @@ void CPWL_EditImpl::OnVK_END(bool bShift, bool bCtrl) {
   }
 
   if (bShift) {
-    if (bCtrl)
+    if (bCtrl) {
       SetCaret(vt_->GetEndWordPlace());
-    else
+    } else {
       SetCaret(vt_->GetLineEndPlace(wp_caret_));
+    }
 
     if (sel_state_.IsEmpty()) {
       sel_state_.Set(wp_old_caret_, wp_caret_);
@@ -1644,10 +1666,11 @@ void CPWL_EditImpl::OnVK_END(bool bShift, bool bCtrl) {
       ScrollToCaret();
       SetCaretInfo();
     } else {
-      if (bCtrl)
+      if (bCtrl) {
         SetCaret(vt_->GetEndWordPlace());
-      else
+      } else {
         SetCaret(vt_->GetLineEndPlace(wp_caret_));
+      }
 
       ScrollToCaret();
       SetCaretOrigin();
@@ -1798,8 +1821,9 @@ bool CPWL_EditImpl::Clear(bool bAddUndo) {
 void CPWL_EditImpl::InsertText(const WideString& sText,
                                FX_Charset charset,
                                bool bAddUndo) {
-  if (IsTextOverflow())
+  if (IsTextOverflow()) {
     return;
+  }
 
   vt_->UpdateWordPlace(wp_caret_);
   SetCaret(DoInsertText(wp_caret_, sText, charset));
@@ -1928,8 +1952,9 @@ bool CPWL_EditImpl::IsTextOverflow() const {
       return true;
     }
 
-    if (FXSYS_IsFloatBigger(rcContent.Width(), rcPlate.Width()))
+    if (FXSYS_IsFloatBigger(rcContent.Width(), rcPlate.Width())) {
       return true;
+    }
   }
 
   return false;
@@ -1972,8 +1997,9 @@ CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
     switch (word) {
       case '\r':
         wp = vt_->InsertSection(wp);
-        if (i + 1 < sText.GetLength() && sText[i + 1] == '\n')
+        if (i + 1 < sText.GetLength() && sText[i + 1] == '\n') {
           i++;
+        }
         break;
       case '\n':
         wp = vt_->InsertSection(wp);
@@ -1991,8 +2017,9 @@ CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
 
 FX_Charset CPWL_EditImpl::GetCharSetFromUnicode(uint16_t word,
                                                 FX_Charset nOldCharset) {
-  if (IPVT_FontMap* pFontMap = GetFontMap())
+  if (IPVT_FontMap* pFontMap = GetFontMap()) {
     return pFontMap->CharSetFromUnicode(word, nOldCharset);
+  }
   return nOldCharset;
 }
 
@@ -2006,8 +2033,9 @@ ByteString CPWL_EditImpl::GetPDFWordString(int32_t nFontIndex,
                                            uint16_t SubWord) {
   IPVT_FontMap* pFontMap = GetFontMap();
   RetainPtr<CPDF_Font> pPDFFont = pFontMap->GetPDFFont(nFontIndex);
-  if (!pPDFFont)
+  if (!pPDFFont) {
     return ByteString();
+  }
 
   ByteString sWord;
   if (SubWord > 0) {

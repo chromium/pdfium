@@ -58,7 +58,6 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
       ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
       CompareBitmap(bitmap.get(), page_width, page_height, rotated_checksum);
     }
-
   }
 
   {

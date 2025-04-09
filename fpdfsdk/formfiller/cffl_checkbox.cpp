@@ -53,8 +53,9 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Widget* pWidget,
 
       ObservedPtr<CPDFSDK_Widget> pObserved(widget_);
       if (form_filler_->OnButtonUp(pObserved, pPageView, nFlags)) {
-        if (!pObserved)
+        if (!pObserved) {
           widget_ = nullptr;
+        }
         return true;
       }
       if (!pObserved) {

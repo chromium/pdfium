@@ -32,16 +32,18 @@ CPWL_CheckBox::~CPWL_CheckBox() = default;
 
 bool CPWL_CheckBox::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point) {
-  if (IsReadOnly())
+  if (IsReadOnly()) {
     return false;
+  }
 
   SetCheck(!IsChecked());
   return true;
 }
 
 bool CPWL_CheckBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
-  if (IsReadOnly())
+  if (IsReadOnly()) {
     return false;
+  }
 
   SetCheck(!IsChecked());
   return true;
@@ -56,16 +58,18 @@ CPWL_RadioButton::~CPWL_RadioButton() = default;
 
 bool CPWL_RadioButton::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                    const CFX_PointF& point) {
-  if (IsReadOnly())
+  if (IsReadOnly()) {
     return false;
+  }
 
   SetCheck(true);
   return true;
 }
 
 bool CPWL_RadioButton::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
-  if (IsReadOnly())
+  if (IsReadOnly()) {
     return false;
+  }
 
   SetCheck(true);
   return true;

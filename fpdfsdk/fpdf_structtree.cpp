@@ -34,8 +34,9 @@ UNSAFE_BUFFER_USAGE unsigned long WideStringToBuffer(const WideString& str,
 int GetMcidFromDict(const CPDF_Dictionary* dict) {
   if (dict && dict->GetNameFor("Type") == "MCR") {
     RetainPtr<const CPDF_Object> obj = dict->GetObjectFor("MCID");
-    if (obj && obj->IsNumber())
+    if (obj && obj->IsNumber()) {
       return obj->GetInteger();
+    }
   }
   return -1;
 }
@@ -45,8 +46,9 @@ int GetMcidFromDict(const CPDF_Dictionary* dict) {
 FPDF_EXPORT FPDF_STRUCTTREE FPDF_CALLCONV
 FPDF_StructTree_GetForPage(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  if (!pPage) {
     return nullptr;
+  }
 
   // Caller takes onwership.
   return FPDFStructTreeFromCPDFStructTree(
@@ -63,8 +65,9 @@ FPDF_StructTree_Close(FPDF_STRUCTTREE struct_tree) {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructTree_CountChildren(FPDF_STRUCTTREE struct_tree) {
   CPDF_StructTree* tree = CPDFStructTreeFromFPDFStructTree(struct_tree);
-  if (!tree)
+  if (!tree) {
     return -1;
+  }
 
   FX_SAFE_INT32 tmp_size = tree->CountTopElements();
   return tmp_size.ValueOrDefault(-1);
@@ -148,17 +151,20 @@ FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_GetAttributeCount(FPDF_STRUCTELEMENT struct_element) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  if (!elem)
+  if (!elem) {
     return -1;
+  }
   RetainPtr<const CPDF_Object> attr_obj = elem->GetA();
   if (!attr_obj) {
     return -1;
   }
   attr_obj = attr_obj->GetDirect();
-  if (!attr_obj)
+  if (!attr_obj) {
     return -1;
-  if (attr_obj->IsArray())
+  }
+  if (attr_obj->IsArray()) {
     return fxcrt::CollectionSize<int>(*attr_obj->AsArray());
+  }
   return attr_obj->IsDictionary() ? 1 : -1;
 }
 
@@ -167,12 +173,14 @@ FPDF_StructElement_GetAttributeAtIndex(FPDF_STRUCTELEMENT struct_element,
                                        int index) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  if (!elem)
+  if (!elem) {
     return nullptr;
+  }
 
   RetainPtr<const CPDF_Object> attr_obj = elem->GetA();
-  if (!attr_obj)
+  if (!attr_obj) {
     return nullptr;
+  }
 
   attr_obj = attr_obj->GetDirect();
   if (!attr_obj) {
@@ -185,8 +193,9 @@ FPDF_StructElement_GetAttributeAtIndex(FPDF_STRUCTELEMENT struct_element,
   }
   if (attr_obj->IsArray()) {
     const CPDF_Array* array = attr_obj->AsArray();
-    if (index < 0 || static_cast<size_t>(index) >= array->size())
+    if (index < 0 || static_cast<size_t>(index) >= array->size()) {
       return nullptr;
+    }
 
     // TODO(tsepez): should embedder take a reference here?
     // Unretained reference in public API. NOLINTNEXTLINE
@@ -202,11 +211,13 @@ FPDF_StructElement_GetStringAttribute(FPDF_STRUCTELEMENT struct_element,
                                       unsigned long buflen) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  if (!elem)
+  if (!elem) {
     return 0;
+  }
   RetainPtr<const CPDF_Array> array = ToArray(elem->GetA());
-  if (!array)
+  if (!array) {
     return 0;
+  }
   CPDF_ArrayLocker locker(array);
   for (const RetainPtr<CPDF_Object>& obj : locker) {
     const CPDF_Dictionary* obj_dict = obj->AsDictionary();
@@ -229,8 +240,9 @@ FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_GetMarkedContentID(FPDF_STRUCTELEMENT struct_element) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  if (!elem)
+  if (!elem) {
     return -1;
+  }
   RetainPtr<const CPDF_Object> p = elem->GetK();
   return p && p->IsNumber() ? p->GetInteger() : -1;
 }
@@ -280,8 +292,9 @@ FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_CountChildren(FPDF_STRUCTELEMENT struct_element) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  if (!elem)
+  if (!elem) {
     return -1;
+  }
 
   FX_SAFE_INT32 tmp_size = elem->CountKids();
   return tmp_size.ValueOrDefault(-1);
@@ -292,8 +305,9 @@ FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
                                    int index) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  if (!elem || index < 0 || static_cast<size_t>(index) >= elem->CountKids())
+  if (!elem || index < 0 || static_cast<size_t>(index) >= elem->CountKids()) {
     return nullptr;
+  }
 
   return FPDFStructElementFromCPDFStructElement(elem->GetKidIfElement(index));
 }
@@ -325,8 +339,9 @@ FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_Attr_GetCount(FPDF_STRUCTELEMENT_ATTR struct_attribute) {
   const CPDF_Dictionary* dict =
       CPDFDictionaryFromFPDFStructElementAttr(struct_attribute);
-  if (!dict)
+  if (!dict) {
     return -1;
+  }
   return fxcrt::CollectionSize<int>(*dict);
 }
 
@@ -342,8 +357,9 @@ FPDF_StructElement_Attr_GetName(FPDF_STRUCTELEMENT_ATTR struct_attribute,
 
   const CPDF_Dictionary* dict =
       CPDFDictionaryFromFPDFStructElementAttr(struct_attribute);
-  if (!dict)
+  if (!dict) {
     return false;
+  }
 
   CPDF_DictionaryLocker locker(dict);
   for (auto& it : locker) {
@@ -477,14 +493,17 @@ FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_GetMarkedContentIdCount(FPDF_STRUCTELEMENT struct_element) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  if (!elem)
+  if (!elem) {
     return -1;
+  }
   RetainPtr<const CPDF_Object> p = elem->GetK();
-  if (!p)
+  if (!p) {
     return -1;
+  }
 
-  if (p->IsNumber() || p->IsDictionary())
+  if (p->IsNumber() || p->IsDictionary()) {
     return 1;
+  }
 
   return p->IsArray() ? fxcrt::CollectionSize<int>(*p->AsArray()) : -1;
 }
@@ -494,25 +513,31 @@ FPDF_StructElement_GetMarkedContentIdAtIndex(FPDF_STRUCTELEMENT struct_element,
                                              int index) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  if (!elem)
+  if (!elem) {
     return -1;
+  }
   RetainPtr<const CPDF_Object> p = elem->GetK();
-  if (!p)
+  if (!p) {
     return -1;
+  }
 
-  if (p->IsNumber())
+  if (p->IsNumber()) {
     return index == 0 ? p->GetInteger() : -1;
+  }
 
-  if (p->IsDictionary())
+  if (p->IsDictionary()) {
     return GetMcidFromDict(p->GetDict().Get());
+  }
 
   if (p->IsArray()) {
     const CPDF_Array* array = p->AsArray();
-    if (index < 0 || static_cast<size_t>(index) >= array->size())
+    if (index < 0 || static_cast<size_t>(index) >= array->size()) {
       return -1;
+    }
     RetainPtr<const CPDF_Object> array_elem = array->GetObjectAt(index);
-    if (array_elem->IsNumber())
+    if (array_elem->IsNumber()) {
       return array_elem->GetInteger();
+    }
     if (array_elem->IsDictionary()) {
       return GetMcidFromDict(array_elem->GetDict().Get());
     }

@@ -42,8 +42,9 @@ CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* page_view,
   }
 
   list_.reserve(copied_list.size());
-  for (auto* pAnnot : copied_list)
+  for (auto* pAnnot : copied_list) {
     list_.emplace_back(pAnnot);
+  }
 }
 
 CPDFSDK_AnnotIteration::~CPDFSDK_AnnotIteration() = default;

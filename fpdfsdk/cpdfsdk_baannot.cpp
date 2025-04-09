@@ -131,12 +131,14 @@ void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
 int CPDFSDK_BAAnnot::GetBorderWidth() const {
   RetainPtr<const CPDF_Array> pBorder =
       GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder);
-  if (pBorder)
+  if (pBorder) {
     return pBorder->GetIntegerAt(2);
+  }
 
   RetainPtr<const CPDF_Dictionary> pBSDict = GetAnnotDict()->GetDictFor("BS");
-  if (pBSDict)
+  if (pBSDict) {
     return pBSDict->GetIntegerFor("W", 1);
+  }
 
   return 1;
 }
@@ -169,16 +171,21 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
   RetainPtr<const CPDF_Dictionary> pBSDict = GetAnnotDict()->GetDictFor("BS");
   if (pBSDict) {
     ByteString sBorderStyle = pBSDict->GetByteStringFor("S", "S");
-    if (sBorderStyle == "S")
+    if (sBorderStyle == "S") {
       return BorderStyle::kSolid;
-    if (sBorderStyle == "D")
+    }
+    if (sBorderStyle == "D") {
       return BorderStyle::kDash;
-    if (sBorderStyle == "B")
+    }
+    if (sBorderStyle == "B") {
       return BorderStyle::kBeveled;
-    if (sBorderStyle == "I")
+    }
+    if (sBorderStyle == "I") {
       return BorderStyle::kInset;
-    if (sBorderStyle == "U")
+    }
+    if (sBorderStyle == "U") {
       return BorderStyle::kUnderline;
+    }
   }
 
   RetainPtr<const CPDF_Array> pBorder =
@@ -186,8 +193,9 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
   if (pBorder) {
     if (pBorder->size() >= 4) {
       RetainPtr<const CPDF_Array> pDP = pBorder->GetArrayAt(3);
-      if (pDP && pDP->size() > 0)
+      if (pDP && pDP->size() > 0) {
         return BorderStyle::kDash;
+      }
     }
   }
 
@@ -211,11 +219,13 @@ CPDF_AAction CPDFSDK_BAAnnot::GetAAction() const {
 
 CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
   CPDF_AAction AAction = GetAAction();
-  if (AAction.ActionExist(eAAT))
+  if (AAction.ActionExist(eAAT)) {
     return AAction.GetAction(eAAT);
+  }
 
-  if (eAAT == CPDF_AAction::kButtonUp || eAAT == CPDF_AAction::kKeyStroke)
+  if (eAAT == CPDF_AAction::kButtonUp || eAAT == CPDF_AAction::kKeyStroke) {
     return GetAction();
+  }
 
   return CPDF_Action(nullptr);
 }
@@ -229,20 +239,23 @@ void CPDFSDK_BAAnnot::UpdateAnnotRects() {
   rects.push_back(GetRect());
 
   std::optional<CFX_FloatRect> annot_rect = annot_->GetPopupAnnotRect();
-  if (annot_rect.has_value())
+  if (annot_rect.has_value()) {
     rects.push_back(annot_rect.value());
+  }
 
   // Make the rects round up to avoid https://crbug.com/662804
-  for (CFX_FloatRect& rect : rects)
+  for (CFX_FloatRect& rect : rects) {
     rect.Inflate(1, 1);
+  }
 
   GetPageView()->UpdateRects(rects);
 }
 
 void CPDFSDK_BAAnnot::InvalidateRect() {
   CFX_FloatRect view_bounding_box = GetViewBBox();
-  if (view_bounding_box.IsEmpty())
+  if (view_bounding_box.IsEmpty()) {
     return;
+  }
 
   view_bounding_box.Inflate(1, 1);
   view_bounding_box.Normalize();
@@ -261,8 +274,9 @@ int CPDFSDK_BAAnnot::GetLayoutOrder() const {
 void CPDFSDK_BAAnnot::OnDraw(CFX_RenderDevice* pDevice,
                              const CFX_Matrix& mtUser2Device,
                              bool bDrawAnnots) {
-  if (!IsVisible())
+  if (!IsVisible()) {
     return;
+  }
 
   const CPDF_Annot::Subtype annot_type = GetAnnotSubtype();
   if (bDrawAnnots && annot_type == CPDF_Annot::Subtype::POPUP) {
@@ -276,8 +290,9 @@ void CPDFSDK_BAAnnot::OnDraw(CFX_RenderDevice* pDevice,
   }
 
   CFX_FloatRect view_bounding_box = GetViewBBox();
-  if (view_bounding_box.IsEmpty())
+  if (view_bounding_box.IsEmpty()) {
     return;
+  }
 
   view_bounding_box.Normalize();
   CFX_DrawUtils::DrawFocusRect(pDevice, mtUser2Device, view_bounding_box);
@@ -361,8 +376,9 @@ bool CPDFSDK_BAAnnot::OnKeyDown(FWL_VKEYCODE nKeyCode,
 }
 
 bool CPDFSDK_BAAnnot::OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) {
-  if (!IsFocusableAnnot(GetAnnotSubtype()))
+  if (!IsFocusableAnnot(GetAnnotSubtype())) {
     return false;
+  }
 
   is_focused_ = true;
   InvalidateRect();
@@ -370,8 +386,9 @@ bool CPDFSDK_BAAnnot::OnSetFocus(Mask<FWL_EVENTFLAG> nFlags) {
 }
 
 bool CPDFSDK_BAAnnot::OnKillFocus(Mask<FWL_EVENTFLAG> nFlags) {
-  if (!IsFocusableAnnot(GetAnnotSubtype()))
+  if (!IsFocusableAnnot(GetAnnotSubtype())) {
     return false;
+  }
 
   is_focused_ = false;
   InvalidateRect();

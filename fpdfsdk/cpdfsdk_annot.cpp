@@ -131,8 +131,9 @@ CPDF_Annot* CPDFSDK_Annot::GetPDFAnnot() const {
 IPDF_Page* CPDFSDK_Annot::GetPage() {
 #ifdef PDF_ENABLE_XFA
   IPDF_Page* pXFAPage = GetXFAPage();
-  if (pXFAPage)
+  if (pXFAPage) {
     return pXFAPage;
+  }
 #endif  // PDF_ENABLE_XFA
   return GetPDFPage();
 }

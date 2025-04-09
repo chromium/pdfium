@@ -23,12 +23,14 @@ CPWL_SBButton::~CPWL_SBButton() = default;
 
 void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix& mtUser2Device) {
-  if (!IsVisible())
+  if (!IsVisible()) {
     return;
+  }
 
   CFX_FloatRect rectWnd = GetWindowRect();
-  if (rectWnd.IsEmpty())
+  if (rectWnd.IsEmpty()) {
     return;
+  }
 
   CFX_PointF ptCenter = GetCenterPoint();
   int32_t nTransparency = GetTransparency();
@@ -93,8 +95,9 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 
   // draw friction
-  if (rectWnd.Height() <= 8.0f)
+  if (rectWnd.Height() <= 8.0f) {
     return;
+  }
 
   FX_COLORREF crStroke = ArgbEncode(nTransparency, 120, 120, 120);
   float nFrictionWidth = 5.0f;
@@ -115,8 +118,9 @@ bool CPWL_SBButton::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
                                   const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonDown(nFlag, point);
 
-  if (CPWL_Wnd* pParent = GetParentWindow())
+  if (CPWL_Wnd* pParent = GetParentWindow()) {
     pParent->NotifyLButtonDown(this, point);
+  }
 
   mouse_down_ = true;
   SetCapture();
@@ -128,8 +132,9 @@ bool CPWL_SBButton::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point) {
   CPWL_Wnd::OnLButtonUp(nFlag, point);
 
-  if (CPWL_Wnd* pParent = GetParentWindow())
+  if (CPWL_Wnd* pParent = GetParentWindow()) {
     pParent->NotifyLButtonUp(this, point);
+  }
 
   mouse_down_ = false;
   ReleaseCapture();
@@ -141,8 +146,9 @@ bool CPWL_SBButton::OnMouseMove(Mask<FWL_EVENTFLAG> nFlag,
                                 const CFX_PointF& point) {
   CPWL_Wnd::OnMouseMove(nFlag, point);
 
-  if (CPWL_Wnd* pParent = GetParentWindow())
+  if (CPWL_Wnd* pParent = GetParentWindow()) {
     pParent->NotifyMouseMove(this, point);
+  }
 
   return true;
 }

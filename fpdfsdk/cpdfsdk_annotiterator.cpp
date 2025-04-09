@@ -78,8 +78,9 @@ void CPDFSDK_AnnotIterator::CollectAnnots(
   for (auto* pAnnot : page_view_->GetAnnotList()) {
     if (pdfium::Contains(subtypes_, pAnnot->GetAnnotSubtype())) {
       CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
-      if (!pWidget || !pWidget->IsSignatureWidget())
+      if (!pWidget || !pWidget->IsSignatureWidget()) {
         pArray->emplace_back(pAnnot);
+      }
     }
   }
 }
@@ -111,10 +112,12 @@ CPDFSDK_AnnotIterator::TabOrder CPDFSDK_AnnotIterator::GetTabOrder(
     CPDFSDK_PageView* pPageView) {
   CPDF_Page* pPDFPage = pPageView->GetPDFPage();
   ByteString sTabs = pPDFPage->GetDict()->GetByteStringFor("Tabs");
-  if (sTabs == "R")
+  if (sTabs == "R") {
     return TabOrder::kRow;
-  if (sTabs == "C")
+  }
+  if (sTabs == "C") {
     return TabOrder::kColumn;
+  }
   return TabOrder::kStructure;
 }
 
@@ -139,8 +142,9 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
             fTop = rcAnnot.top;
           }
         }
-        if (nLeftTopIndex < 0)
+        if (nLeftTopIndex < 0) {
           continue;
+        }
 
         CFX_FloatRect rcLeftTop = AddToAnnotsList(sa, nLeftTopIndex);
 
@@ -148,8 +152,9 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
         for (size_t i = 0; i < sa.size(); ++i) {
           CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
           float fCenterY = (rcAnnot.top + rcAnnot.bottom) / 2.0f;
-          if (fCenterY > rcLeftTop.bottom && fCenterY < rcLeftTop.top)
+          if (fCenterY > rcLeftTop.bottom && fCenterY < rcLeftTop.top) {
             aSelect.push_back(i);
+          }
         }
         AddSelectedToAnnots(sa, aSelect);
       }
@@ -174,8 +179,9 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
             fLeft = rcAnnot.left;
           }
         }
-        if (nLeftTopIndex < 0)
+        if (nLeftTopIndex < 0) {
           continue;
+        }
 
         CFX_FloatRect rcLeftTop = AddToAnnotsList(sa, nLeftTopIndex);
 
@@ -183,8 +189,9 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
         for (size_t i = 0; i < sa.size(); ++i) {
           CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
           float fCenterX = (rcAnnot.left + rcAnnot.right) / 2.0f;
-          if (fCenterX > rcLeftTop.left && fCenterX < rcLeftTop.right)
+          if (fCenterX > rcLeftTop.left && fCenterX < rcLeftTop.right) {
             aSelect.push_back(i);
+          }
         }
         AddSelectedToAnnots(sa, aSelect);
       }
