@@ -35,6 +35,7 @@ RetainPtr<CPDF_Font> CFX_StockFontArray::GetFont(
 
 void CFX_StockFontArray::SetFont(CFX_FontMapper::StandardFont index,
                                  RetainPtr<CPDF_Font> pFont) {
-  if (index < std::size(m_StockFonts))
+  if (index < std::size(m_StockFonts)) {
     m_StockFonts[index] = std::move(pFont);
+  }
 }

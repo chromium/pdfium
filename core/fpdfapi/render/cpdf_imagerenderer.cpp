@@ -67,8 +67,9 @@ CPDF_ImageRenderer::CPDF_ImageRenderer(CPDF_RenderStatus* pStatus)
 CPDF_ImageRenderer::~CPDF_ImageRenderer() = default;
 
 bool CPDF_ImageRenderer::StartLoadDIBBase() {
-  if (!GetUnitRect().has_value())
+  if (!GetUnitRect().has_value()) {
     return false;
+  }
 
   if (!m_pLoader->Start(
           m_pImageObject, m_pRenderStatus->GetContext()->GetPageCache(),
@@ -84,8 +85,9 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
 }
 
 bool CPDF_ImageRenderer::StartRenderDIBBase() {
-  if (!m_pLoader->GetBitmap())
+  if (!m_pLoader->GetBitmap()) {
     return false;
+  }
 
   CPDF_GeneralState& state = m_pImageObject->mutable_general_state();
   m_Alpha = state.GetFillAlpha();
@@ -96,11 +98,13 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   }
   RetainPtr<const CPDF_Object> pTR = state.GetTR();
   if (pTR) {
-    if (!state.GetTransferFunc())
+    if (!state.GetTransferFunc()) {
       state.SetTransferFunc(m_pRenderStatus->GetTransferFunc(std::move(pTR)));
+    }
 
-    if (state.GetTransferFunc() && !state.GetTransferFunc()->GetIdentity())
+    if (state.GetTransferFunc() && !state.GetTransferFunc()->GetIdentity()) {
       m_pDIBBase = m_pLoader->TranslateImage(state.GetTransferFunc());
+    }
   }
   m_FillArgb = 0;
   m_bPatternColor = false;
@@ -109,21 +113,24 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
     const CPDF_Color* pColor = m_pImageObject->color_state().GetFillColor();
     if (pColor && pColor->IsPattern()) {
       m_pPattern = pColor->GetPattern();
-      if (m_pPattern)
+      if (m_pPattern) {
         m_bPatternColor = true;
+      }
     }
     m_FillArgb = m_pRenderStatus->GetFillArgb(m_pImageObject);
   } else if (GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kGray)) {
     RetainPtr<CFX_DIBitmap> pClone = m_pDIBBase->Realize();
-    if (!pClone)
+    if (!pClone) {
       return false;
+    }
 
     pClone->ConvertColorScale(0xffffff, 0);
     m_pDIBBase = pClone;
   }
   m_ResampleOptions = FXDIB_ResampleOptions();
-  if (GetRenderOptions().GetOptions().bForceHalftone)
+  if (GetRenderOptions().GetOptions().bForceHalftone) {
     m_ResampleOptions.bHalftone = true;
+  }
 
 #if BUILDFLAG(IS_WIN)
   if (m_pRenderStatus->GetRenderDevice()->GetDeviceType() ==
@@ -132,16 +139,19 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   }
 #endif
 
-  if (GetRenderOptions().GetOptions().bNoImageSmooth)
+  if (GetRenderOptions().GetOptions().bNoImageSmooth) {
     m_ResampleOptions.bNoSmoothing = true;
-  else if (m_pImageObject->GetImage()->IsInterpol())
+  } else if (m_pImageObject->GetImage()->IsInterpol()) {
     m_ResampleOptions.bInterpolateBilinear = true;
+  }
 
-  if (m_pLoader->GetMask())
+  if (m_pLoader->GetMask()) {
     return DrawMaskedImage();
+  }
 
-  if (m_bPatternColor)
+  if (m_bPatternColor) {
     return DrawPatternImage();
+  }
 
   if (m_Alpha != 1.0f || !state.HasRef() || !state.GetFillOP() ||
       state.GetOPMode() != 0 || state.GetBlendType() != BlendMode::kNormal ||
@@ -185,12 +195,14 @@ bool CPDF_ImageRenderer::Start(CPDF_ImageObject* pImageObject,
   m_BlendType = BlendMode::kNormal;
   m_mtObj2Device = mtObj2Device;
   RetainPtr<const CPDF_Dictionary> pOC = m_pImageObject->GetImage()->GetOC();
-  if (pOC && !GetRenderOptions().CheckOCGDictVisible(pOC))
+  if (pOC && !GetRenderOptions().CheckOCGDictVisible(pOC)) {
     return false;
+  }
 
   m_ImageMatrix = m_pImageObject->matrix() * mtObj2Device;
-  if (StartLoadDIBBase())
+  if (StartLoadDIBBase()) {
     return true;
+  }
 
   return StartRenderDIBBase();
 }
@@ -318,8 +330,9 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
 #endif
 
   FX_RECT rect = GetDrawRect();
-  if (rect.IsEmpty())
+  if (rect.IsEmpty()) {
     return false;
+  }
 
   CFX_Matrix new_matrix = GetDrawMatrix(rect);
   CFX_DefaultRenderDevice bitmap_device;
@@ -366,8 +379,9 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
 #endif
 
   FX_RECT rect = GetDrawRect();
-  if (rect.IsEmpty())
+  if (rect.IsEmpty()) {
     return false;
+  }
 
   CFX_Matrix new_matrix = GetDrawMatrix(rect);
   CFX_DefaultRenderDevice bitmap_device;
@@ -412,8 +426,9 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     image_size /= 8;
     image_size *= m_pDIBBase->GetWidth();
     image_size *= m_pDIBBase->GetHeight();
-    if (!image_size.IsValid())
+    if (!image_size.IsValid()) {
       return false;
+    }
 
     if (image_size.ValueOrDie() > kHugeImageSize &&
         !m_ResampleOptions.bHalftone) {
@@ -454,8 +469,9 @@ bool CPDF_ImageRenderer::StartDIBBaseFallback() {
     }
 
     std::optional<FX_RECT> image_rect = GetUnitRect();
-    if (!image_rect.has_value())
+    if (!image_rect.has_value()) {
       return false;
+    }
 
     FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
     clip_box.Intersect(image_rect.value());
@@ -466,8 +482,9 @@ bool CPDF_ImageRenderer::StartDIBBaseFallback() {
   }
 
   std::optional<FX_RECT> image_rect = GetUnitRect();
-  if (!image_rect.has_value())
+  if (!image_rect.has_value()) {
     return false;
+  }
 
   int dest_left;
   int dest_top;
@@ -550,8 +567,9 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
   }
 
   std::optional<FX_RECT> image_rect = GetUnitRect();
-  if (!image_rect.has_value())
+  if (!image_rect.has_value()) {
     return false;
+  }
 
   int left;
   int top;
@@ -585,14 +603,17 @@ bool CPDF_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
 }
 
 bool CPDF_ImageRenderer::ContinueDefault(PauseIndicatorIface* pPause) {
-  if (m_pLoader->Continue(pPause))
+  if (m_pLoader->Continue(pPause)) {
     return true;
+  }
 
-  if (!StartRenderDIBBase())
+  if (!StartRenderDIBBase()) {
     return false;
+  }
 
-  if (m_Mode == Mode::kDefault)
+  if (m_Mode == Mode::kDefault) {
     return false;
+  }
 
   return Continue(pPause);
 }
@@ -604,8 +625,9 @@ bool CPDF_ImageRenderer::ContinueBlend(PauseIndicatorIface* pPause) {
 
 #if BUILDFLAG(IS_WIN)
 bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
-  if (m_pTransformer->Continue(pPause))
+  if (m_pTransformer->Continue(pPause)) {
     return true;
+  }
 
   RetainPtr<CFX_DIBitmap> bitmap = m_pTransformer->DetachBitmap();
   if (!bitmap) {
@@ -632,8 +654,9 @@ bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
 std::optional<FX_RECT> CPDF_ImageRenderer::GetUnitRect() const {
   CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
   FX_RECT image_rect = image_rect_f.GetOuterRect();
-  if (!image_rect.Valid())
+  if (!image_rect.Valid()) {
     return std::nullopt;
+  }
   return image_rect;
 }
 
@@ -646,19 +669,23 @@ bool CPDF_ImageRenderer::GetDimensionsFromUnitRect(const FX_RECT& rect,
 
   int dest_width = rect.Width();
   int dest_height = rect.Height();
-  if (IsImageValueTooBig(dest_width) || IsImageValueTooBig(dest_height))
+  if (IsImageValueTooBig(dest_width) || IsImageValueTooBig(dest_height)) {
     return false;
+  }
 
-  if (m_ImageMatrix.a < 0)
+  if (m_ImageMatrix.a < 0) {
     dest_width = -dest_width;
+  }
 
-  if (m_ImageMatrix.d > 0)
+  if (m_ImageMatrix.d > 0) {
     dest_height = -dest_height;
+  }
 
   int dest_left = dest_width > 0 ? rect.left : rect.right;
   int dest_top = dest_height > 0 ? rect.top : rect.bottom;
-  if (IsImageValueTooBig(dest_left) || IsImageValueTooBig(dest_top))
+  if (IsImageValueTooBig(dest_left) || IsImageValueTooBig(dest_top)) {
     return false;
+  }
 
   *left = dest_left;
   *top = dest_top;

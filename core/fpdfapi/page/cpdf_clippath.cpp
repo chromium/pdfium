@@ -91,8 +91,9 @@ void CPDF_ClipPath::AppendPathWithAutoMerge(
       CFX_PointF point2 = old_path.GetPoint(2);
       CFX_FloatRect old_rect(point0.x, point0.y, point2.x, point2.y);
       CFX_FloatRect new_rect = path.GetBoundingBox();
-      if (old_rect.Contains(new_rect))
+      if (old_rect.Contains(new_rect)) {
         pData->m_PathAndTypeList.pop_back();
+      }
     }
   }
   AppendPath(path, type);
@@ -103,29 +104,34 @@ void CPDF_ClipPath::AppendTexts(
   static constexpr size_t kMaxTextObjects = 1024;
   PathData* pData = m_Ref.GetPrivateCopy();
   if (pData->m_TextList.size() + pTexts->size() <= kMaxTextObjects) {
-    for (size_t i = 0; i < pTexts->size(); i++)
+    for (size_t i = 0; i < pTexts->size(); i++) {
       pData->m_TextList.push_back(std::move((*pTexts)[i]));
+    }
     pData->m_TextList.push_back(nullptr);
   }
   pTexts->clear();
 }
 
 void CPDF_ClipPath::CopyClipPath(const CPDF_ClipPath& that) {
-  if (*this == that || !that.HasRef())
+  if (*this == that || !that.HasRef()) {
     return;
+  }
 
-  for (size_t i = 0; i < that.GetPathCount(); ++i)
+  for (size_t i = 0; i < that.GetPathCount(); ++i) {
     AppendPath(that.GetPath(i), that.GetClipType(i));
+  }
 }
 
 void CPDF_ClipPath::Transform(const CFX_Matrix& matrix) {
   PathData* pData = m_Ref.GetPrivateCopy();
-  for (auto& obj : pData->m_PathAndTypeList)
+  for (auto& obj : pData->m_PathAndTypeList) {
     obj.first.Transform(matrix);
+  }
 
   for (auto& text : pData->m_TextList) {
-    if (text)
+    if (text) {
       text->Transform(matrix);
+    }
   }
 }
 
@@ -135,8 +141,9 @@ CPDF_ClipPath::PathData::PathData(const PathData& that)
     : m_PathAndTypeList(that.m_PathAndTypeList),
       m_TextList(that.m_TextList.size()) {
   for (size_t i = 0; i < that.m_TextList.size(); ++i) {
-    if (that.m_TextList[i])
+    if (that.m_TextList[i]) {
       m_TextList[i] = that.m_TextList[i]->Clone();
+    }
   }
 }
 

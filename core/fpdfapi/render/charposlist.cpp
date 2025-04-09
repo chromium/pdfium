@@ -106,14 +106,16 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
   bool has_to_unicode = !!font->GetFontDict()->GetStreamFor("ToUnicode");
   for (size_t i = 0; i < char_codes.size(); ++i) {
     uint32_t char_code = char_codes[i];
-    if (char_code == static_cast<uint32_t>(-1))
+    if (char_code == static_cast<uint32_t>(-1)) {
       continue;
+    }
 
     bool is_vertical_glyph = false;
     results.emplace_back();
     TextCharPos& text_char_pos = results.back();
-    if (cid_font)
+    if (cid_font) {
       text_char_pos.font_style_ = true;
+    }
     WideString unicode = font->UnicodeFromCharCode(char_code);
     text_char_pos.unicode_ = !unicode.IsEmpty() ? unicode[0] : char_code;
     text_char_pos.glyph_index_ =
@@ -140,10 +142,11 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
 #endif
     }
 
-    if (!font->IsEmbedded() && !font->IsCIDFont())
+    if (!font->IsEmbedded() && !font->IsCIDFont()) {
       text_char_pos.font_char_width_ = font->GetCharWidthF(char_code);
-    else
+    } else {
       text_char_pos.font_char_width_ = 0;
+    }
 
     text_char_pos.origin_ = CFX_PointF(i > 0 ? char_pos[i - 1] : 0, 0);
     text_char_pos.glyph_adjust_ = false;
@@ -168,8 +171,9 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
         text_char_pos.glyph_adjust_ = true;
       }
     }
-    if (!cid_font)
+    if (!cid_font) {
       continue;
+    }
 
     uint16_t cid = cid_font->CIDFromCharCode(char_code);
     if (is_vertical_writing) {

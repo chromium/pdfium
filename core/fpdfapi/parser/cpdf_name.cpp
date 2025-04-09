@@ -12,8 +12,9 @@
 
 CPDF_Name::CPDF_Name(WeakPtr<ByteStringPool> pPool, const ByteString& str)
     : m_Name(str) {
-  if (pPool)
+  if (pPool) {
     m_Name = pPool->Intern(m_Name);
+  }
 }
 
 CPDF_Name::~CPDF_Name() = default;
@@ -44,8 +45,9 @@ WideString CPDF_Name::GetUnicodeText() const {
 
 bool CPDF_Name::WriteTo(IFX_ArchiveStream* archive,
                         const CPDF_Encryptor* encryptor) const {
-  if (!archive->WriteString("/"))
+  if (!archive->WriteString("/")) {
     return false;
+  }
 
   const ByteString name = PDF_NameEncode(GetString());
   return name.IsEmpty() || archive->WriteString(name.AsStringView());

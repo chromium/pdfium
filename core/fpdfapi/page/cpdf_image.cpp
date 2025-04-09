@@ -98,8 +98,9 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     pdfium::span<uint8_t> src_span) {
   std::optional<JpegModule::ImageInfo> info_opt =
       JpegModule::LoadInfo(src_span);
-  if (!info_opt.has_value())
+  if (!info_opt.has_value()) {
     return nullptr;
+  }
 
   const JpegModule::ImageInfo& info = info_opt.value();
   if (!IsValidJpegComponent(info.num_components) ||
@@ -185,8 +186,9 @@ void CPDF_Image::SetJpegImageInline(RetainPtr<IFX_SeekableReadStream> pFile) {
 void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   int32_t BitmapWidth = pBitmap->GetWidth();
   int32_t BitmapHeight = pBitmap->GetHeight();
-  if (BitmapWidth < 1 || BitmapHeight < 1)
+  if (BitmapWidth < 1 || BitmapHeight < 1) {
     return;
+  }
 
   RetainPtr<CPDF_Dictionary> pDict =
       CreateXObjectImageDict(BitmapWidth, BitmapHeight);
@@ -254,8 +256,9 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   }
 
   RetainPtr<CFX_DIBitmap> pMaskBitmap;
-  if (pBitmap->IsAlphaFormat())
+  if (pBitmap->IsAlphaFormat()) {
     pMaskBitmap = pBitmap->CloneAlphaMask();
+  }
 
   if (pMaskBitmap) {
     const int32_t mask_width = pMaskBitmap->GetWidth();
@@ -330,15 +333,18 @@ RetainPtr<CPDF_DIB> CPDF_Image::CreateNewDIB() const {
 
 RetainPtr<CFX_DIBBase> CPDF_Image::LoadDIBBase() const {
   RetainPtr<CPDF_DIB> source = CreateNewDIB();
-  if (!source->Load())
+  if (!source->Load()) {
     return nullptr;
+  }
 
-  if (!source->IsJBigImage())
+  if (!source->IsJBigImage()) {
     return source;
+  }
 
   CPDF_DIB::LoadState ret = CPDF_DIB::LoadState::kContinue;
-  while (ret == CPDF_DIB::LoadState::kContinue)
+  while (ret == CPDF_DIB::LoadState::kContinue) {
     ret = source->ContinueLoadDIBBase(nullptr);
+  }
   return ret == CPDF_DIB::LoadState::kSuccess ? source : nullptr;
 }
 
@@ -365,8 +371,9 @@ bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
     return false;
   }
   m_pDIBBase = source;
-  if (ret == CPDF_DIB::LoadState::kContinue)
+  if (ret == CPDF_DIB::LoadState::kContinue) {
     return true;
+  }
 
   m_pMask = source->DetachMask();
   m_MatteColor = source->GetMatteColor();
@@ -376,8 +383,9 @@ bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
 bool CPDF_Image::Continue(PauseIndicatorIface* pPause) {
   RetainPtr<CPDF_DIB> pSource = m_pDIBBase.As<CPDF_DIB>();
   CPDF_DIB::LoadState ret = pSource->ContinueLoadDIBBase(pPause);
-  if (ret == CPDF_DIB::LoadState::kContinue)
+  if (ret == CPDF_DIB::LoadState::kContinue) {
     return true;
+  }
 
   if (ret == CPDF_DIB::LoadState::kSuccess) {
     m_pMask = pSource->DetachMask();

@@ -51,8 +51,9 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
   }
 
   const CPDF_Array* pArray = pContent->AsArray();
-  if (pArray && HandlePageContentArray(pArray))
+  if (pArray && HandlePageContentArray(pArray)) {
     return;
+  }
 
   HandlePageContentFailure();
 }
@@ -70,8 +71,9 @@ CPDF_ContentParser::CPDF_ContentParser(
   DCHECK(m_pPageObjectHolder);
   CFX_Matrix form_matrix =
       m_pPageObjectHolder->GetDict()->GetMatrixFor("Matrix");
-  if (pGraphicStates)
+  if (pGraphicStates) {
     form_matrix.Concat(pGraphicStates->current_transformation_matrix());
+  }
 
   RetainPtr<const CPDF_Array> pBBox =
       m_pPageObjectHolder->GetDict()->GetArrayFor("BBox");
@@ -82,12 +84,14 @@ CPDF_ContentParser::CPDF_ContentParser(
     ClipPath.Emplace();
     ClipPath.AppendFloatRect(form_bbox);
     ClipPath.Transform(form_matrix);
-    if (pParentMatrix)
+    if (pParentMatrix) {
       ClipPath.Transform(*pParentMatrix);
+    }
 
     form_bbox = form_matrix.TransformRect(form_bbox);
-    if (pParentMatrix)
+    if (pParentMatrix) {
       form_bbox = pParentMatrix->TransformRect(form_bbox);
+    }
   }
 
   RetainPtr<CPDF_Dictionary> pResources =
@@ -129,21 +133,25 @@ CPDF_PageObjectHolder::CTMMap CPDF_ContentParser::TakeAllCTMs() {
 bool CPDF_ContentParser::Continue(PauseIndicatorIface* pPause) {
   while (m_CurrentStage == Stage::kGetContent) {
     m_CurrentStage = GetContent();
-    if (pPause && pPause->NeedToPauseNow())
+    if (pPause && pPause->NeedToPauseNow()) {
       return true;
+    }
   }
 
-  if (m_CurrentStage == Stage::kPrepareContent)
+  if (m_CurrentStage == Stage::kPrepareContent) {
     m_CurrentStage = PrepareContent();
+  }
 
   while (m_CurrentStage == Stage::kParse) {
     m_CurrentStage = Parse();
-    if (pPause && pPause->NeedToPauseNow())
+    if (pPause && pPause->NeedToPauseNow()) {
       return true;
+    }
   }
 
-  if (m_CurrentStage == Stage::kCheckClip)
+  if (m_CurrentStage == Stage::kCheckClip) {
     m_CurrentStage = CheckClip();
+  }
 
   DCHECK_EQ(m_CurrentStage, Stage::kComplete);
   return false;
@@ -179,8 +187,9 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
     m_StreamSegmentOffsets.push_back(safe_size.ValueOrDie());
     safe_size += stream->GetSize();
     safe_size += 1;
-    if (!safe_size.IsValid())
+    if (!safe_size.IsValid()) {
       return Stage::kComplete;
+    }
   }
 
   const size_t buffer_size = safe_size.ValueOrDie();
@@ -211,11 +220,13 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
         m_pPageObjectHolder->GetBBox(), nullptr, &m_RecursionState);
     m_pParser->GetCurStates()->mutable_color_state().SetDefault();
   }
-  if (m_CurrentOffset >= GetData().size())
+  if (m_CurrentOffset >= GetData().size()) {
     return Stage::kCheckClip;
+  }
 
-  if (m_StreamSegmentOffsets.empty())
+  if (m_StreamSegmentOffsets.empty()) {
     m_StreamSegmentOffsets.push_back(0);
+  }
 
   static constexpr uint32_t kParseStepLimit = 100;
   m_CurrentOffset += m_pParser->Parse(GetData(), m_CurrentOffset,
@@ -252,8 +263,9 @@ CPDF_ContentParser::Stage CPDF_ContentParser::CheckClip() {
     CFX_PointF point0 = path.GetPoint(0);
     CFX_PointF point2 = path.GetPoint(2);
     CFX_FloatRect old_rect(point0.x, point0.y, point2.x, point2.y);
-    if (old_rect.Contains(pObj->GetRect()))
+    if (old_rect.Contains(pObj->GetRect())) {
       clip_path.SetNull();
+    }
   }
   return Stage::kComplete;
 }
@@ -267,8 +279,9 @@ void CPDF_ContentParser::HandlePageContentStream(const CPDF_Stream* pStream) {
 
 bool CPDF_ContentParser::HandlePageContentArray(const CPDF_Array* pArray) {
   m_nStreams = fxcrt::CollectionSize<uint32_t>(*pArray);
-  if (m_nStreams == 0)
+  if (m_nStreams == 0) {
     return false;
+  }
 
   m_StreamArray.resize(m_nStreams);
   return true;

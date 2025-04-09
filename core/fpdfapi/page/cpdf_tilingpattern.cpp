@@ -40,8 +40,9 @@ std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
   m_YStep = fabsf(pDict->GetFloatFor("YStep"));
 
   RetainPtr<CPDF_Stream> pStream = ToStream(pattern_obj());
-  if (!pStream)
+  if (!pStream) {
     return nullptr;
+  }
 
   const CFX_Matrix& matrix = parent_matrix();
   auto form =

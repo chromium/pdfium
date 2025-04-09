@@ -74,10 +74,12 @@ constexpr PDF_PSOpName kPsOpNames[] = {
 // Round half up is a nearest integer round with half-way numbers always rounded
 // up. Example: -5.5 rounds to -5.
 float RoundHalfUp(float f) {
-  if (isnan(f))
+  if (isnan(f)) {
     return 0;
-  if (f > std::numeric_limits<float>::max() - 0.5f)
+  }
+  if (f > std::numeric_limits<float>::max() - 0.5f) {
     return std::numeric_limits<float>::max();
+  }
   return floor(f + 0.5f);
 }
 
@@ -119,21 +121,25 @@ CPDF_PSProc::CPDF_PSProc() = default;
 CPDF_PSProc::~CPDF_PSProc() = default;
 
 bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
-  if (depth > kMaxDepth)
+  if (depth > kMaxDepth) {
     return false;
+  }
 
   while (true) {
     ByteStringView word = parser->GetWord();
-    if (word.IsEmpty())
+    if (word.IsEmpty()) {
       return false;
+    }
 
-    if (word == "}")
+    if (word == "}") {
       return true;
+    }
 
     if (word == "{") {
       m_Operators.push_back(std::make_unique<CPDF_PSOP>());
-      if (!m_Operators.back()->Parse(parser, depth + 1))
+      if (!m_Operators.back()->Parse(parser, depth + 1)) {
         return false;
+      }
       continue;
     }
 
@@ -144,8 +150,9 @@ bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
 bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
   for (size_t i = 0; i < m_Operators.size(); ++i) {
     const PDF_PSOP op = m_Operators[i]->GetOp();
-    if (op == PSOP_PROC)
+    if (op == PSOP_PROC) {
       continue;
+    }
 
     if (op == PSOP_CONST) {
       pEngine->Push(m_Operators[i]->GetFloatValue());
@@ -153,11 +160,13 @@ bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
     }
 
     if (op == PSOP_IF) {
-      if (i == 0 || m_Operators[i - 1]->GetOp() != PSOP_PROC)
+      if (i == 0 || m_Operators[i - 1]->GetOp() != PSOP_PROC) {
         return false;
+      }
 
-      if (pEngine->PopInt())
+      if (pEngine->PopInt()) {
         m_Operators[i - 1]->Execute(pEngine);
+      }
     } else if (op == PSOP_IFELSE) {
       if (i < 2 || m_Operators[i - 1]->GetOp() != PSOP_PROC ||
           m_Operators[i - 2]->GetOp() != PSOP_PROC) {
@@ -182,10 +191,11 @@ void CPDF_PSProc::AddOperator(ByteStringView word) {
                        [](const PDF_PSOpName& name, ByteStringView word) {
                          return name.name < word;
                        });
-  if (pFound != std::end(kPsOpNames) && pFound->name == word)
+  if (pFound != std::end(kPsOpNames) && pFound->name == word) {
     m_Operators.push_back(std::make_unique<CPDF_PSOP>(pFound->op));
-  else
+  } else {
     m_Operators.push_back(std::make_unique<CPDF_PSOP>(StringToFloat(word)));
+  }
 }
 
 CPDF_PSEngine::CPDF_PSEngine() = default;
@@ -193,8 +203,9 @@ CPDF_PSEngine::CPDF_PSEngine() = default;
 CPDF_PSEngine::~CPDF_PSEngine() = default;
 
 void CPDF_PSEngine::Push(float v) {
-  if (m_StackCount < kPSEngineStackSize)
+  if (m_StackCount < kPSEngineStackSize) {
     m_Stack[m_StackCount++] = v;
+  }
 }
 
 float CPDF_PSEngine::Pop() {
@@ -408,31 +419,37 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
     case PSOP_COPY: {
       int n = PopInt();
       if (n < 0 || m_StackCount + n > kPSEngineStackSize ||
-          n > static_cast<int>(m_StackCount))
+          n > static_cast<int>(m_StackCount)) {
         break;
-      for (int i = 0; i < n; i++)
+      }
+      for (int i = 0; i < n; i++) {
         m_Stack[m_StackCount + i] = m_Stack[m_StackCount + i - n];
+      }
       m_StackCount += n;
       break;
     }
     case PSOP_INDEX: {
       int n = PopInt();
-      if (n < 0 || n >= static_cast<int>(m_StackCount))
+      if (n < 0 || n >= static_cast<int>(m_StackCount)) {
         break;
+      }
       Push(m_Stack[m_StackCount - n - 1]);
       break;
     }
     case PSOP_ROLL: {
       int j = PopInt();
       int n = PopInt();
-      if (j == 0 || n == 0 || m_StackCount == 0)
+      if (j == 0 || n == 0 || m_StackCount == 0) {
         break;
-      if (n < 0 || n > static_cast<int>(m_StackCount))
+      }
+      if (n < 0 || n > static_cast<int>(m_StackCount)) {
         break;
+      }
 
       j %= n;
-      if (j > 0)
+      if (j > 0) {
         j -= n;
+      }
       auto begin_it = std::begin(m_Stack) + m_StackCount - n;
       auto middle_it = begin_it - j;
       auto end_it = std::begin(m_Stack) + m_StackCount;

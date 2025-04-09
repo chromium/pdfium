@@ -38,12 +38,14 @@ constexpr char kTypeKey[] = "Type";
 // static
 bool CPDF_CryptoHandler::IsSignatureDictionary(
     const CPDF_Dictionary* dictionary) {
-  if (!dictionary)
+  if (!dictionary) {
     return false;
+  }
   RetainPtr<const CPDF_Object> type_obj =
       dictionary->GetDirectObjectFor(kTypeKey);
-  if (!type_obj)
+  if (!type_obj) {
     type_obj = dictionary->GetDirectObjectFor(pdfium::form_fields::kFT);
+  }
   return type_obj && type_obj->GetString() == pdfium::form_fields::kSig;
 }
 
@@ -110,8 +112,9 @@ struct AESCryptContext {
 };
 
 void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
-  if (m_Cipher == Cipher::kNone)
+  if (m_Cipher == Cipher::kNone) {
     return this;
+  }
 
   if (m_Cipher == Cipher::kAES && m_KeyLen == 32) {
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
@@ -147,8 +150,9 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
 bool CPDF_CryptoHandler::DecryptStream(void* context,
                                        pdfium::span<const uint8_t> source,
                                        BinaryBuffer& dest_buf) {
-  if (!context)
+  if (!context) {
     return false;
+  }
 
   if (m_Cipher == Cipher::kNone) {
     dest_buf.AppendSpan(source);
@@ -196,11 +200,13 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
 }
 
 bool CPDF_CryptoHandler::DecryptFinish(void* context, BinaryBuffer& dest_buf) {
-  if (!context)
+  if (!context) {
     return false;
+  }
 
-  if (m_Cipher == Cipher::kNone)
+  if (m_Cipher == Cipher::kNone) {
     return true;
+  }
 
   if (m_Cipher == Cipher::kRC4) {
     FX_Free(context);
@@ -238,8 +244,9 @@ bool CPDF_CryptoHandler::IsCipherAES() const {
 }
 
 bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
-  if (!object)
+  if (!object) {
     return false;
+  }
 
   struct MayBeSignature {
     RetainPtr<const CPDF_Dictionary> parent;

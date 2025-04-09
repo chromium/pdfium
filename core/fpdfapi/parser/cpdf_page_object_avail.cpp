@@ -10,8 +10,9 @@
 CPDF_PageObjectAvail::~CPDF_PageObjectAvail() = default;
 
 bool CPDF_PageObjectAvail::ExcludeObject(const CPDF_Object* object) const {
-  if (CPDF_ObjectAvail::ExcludeObject(object))
+  if (CPDF_ObjectAvail::ExcludeObject(object)) {
     return true;
+  }
 
   // See ISO 32000-1:2008 spec, table 30.
   return ValidateDictType(ToDictionary(object), "Page");

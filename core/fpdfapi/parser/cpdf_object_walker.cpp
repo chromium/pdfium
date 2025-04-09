@@ -105,8 +105,9 @@ RetainPtr<const CPDF_Object> CPDF_ObjectWalker::SubobjectIterator::Increment() {
   }
   while (!IsFinished()) {
     RetainPtr<const CPDF_Object> result = IncrementImpl();
-    if (result)
+    if (result) {
       return result;
+    }
   }
   return nullptr;
 }
@@ -120,12 +121,15 @@ CPDF_ObjectWalker::SubobjectIterator::SubobjectIterator(
 // static
 std::unique_ptr<CPDF_ObjectWalker::SubobjectIterator>
 CPDF_ObjectWalker::MakeIterator(RetainPtr<const CPDF_Object> object) {
-  if (object->IsStream())
+  if (object->IsStream()) {
     return std::make_unique<StreamIterator>(ToStream(object));
-  if (object->IsDictionary())
+  }
+  if (object->IsDictionary()) {
     return std::make_unique<DictionaryIterator>(ToDictionary(object));
-  if (object->IsArray())
+  }
+  if (object->IsArray()) {
     return std::make_unique<ArrayIterator>(ToArray(object));
+  }
   return nullptr;
 }
 
@@ -163,8 +167,9 @@ RetainPtr<const CPDF_Object> CPDF_ObjectWalker::GetNext() {
 }
 
 void CPDF_ObjectWalker::SkipWalkIntoCurrentObject() {
-  if (stack_.empty() || stack_.top()->IsStarted())
+  if (stack_.empty() || stack_.top()->IsStarted()) {
     return;
+  }
   stack_.pop();
 }
 

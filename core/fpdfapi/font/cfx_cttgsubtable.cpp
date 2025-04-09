@@ -26,8 +26,9 @@ bool IsVerticalFeatureTag(uint32_t tag) {
 }  // namespace
 
 CFX_CTTGSUBTable::CFX_CTTGSUBTable(pdfium::span<const uint8_t> gsub) {
-  if (!LoadGSUBTable(gsub))
+  if (!LoadGSUBTable(gsub)) {
     return;
+  }
 
   for (const auto& script : script_list_) {
     for (const auto& record : script) {
@@ -73,8 +74,9 @@ uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
   for (uint32_t item : feature_set_) {
     std::optional<uint32_t> result =
         GetVerticalGlyphSub(feature_list_[item], glyphnum);
-    if (result.has_value())
+    if (result.has_value()) {
       return result.value();
+    }
   }
   return 0;
 }
@@ -91,8 +93,9 @@ std::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
     }
     std::optional<uint32_t> result =
         GetVerticalGlyphSub2(lookup_list_[index], glyphnum);
-    if (result.has_value())
+    if (result.has_value()) {
       return result.value();
+    }
   }
   return std::nullopt;
 }

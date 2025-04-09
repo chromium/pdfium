@@ -27,8 +27,9 @@ CPDF_Dictionary* CPDF_Form::ChooseResourcesDict(
     CPDF_Dictionary* pResources,
     CPDF_Dictionary* pParentResources,
     CPDF_Dictionary* pPageResources) {
-  if (pResources)
+  if (pResources) {
     return pResources;
+  }
   return pParentResources ? pParentResources : pPageResources;
 }
 
@@ -77,8 +78,9 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
                                      const CFX_Matrix* pParentMatrix,
                                      CPDF_Type3Char* pType3Char,
                                      RecursionState* recursion_state) {
-  if (GetParseState() == ParseState::kParsed)
+  if (GetParseState() == ParseState::kParsed) {
     return;
+  }
 
   if (GetParseState() == ParseState::kNotParsed) {
     StartParse(std::make_unique<CPDF_ContentParser>(

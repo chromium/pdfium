@@ -36,8 +36,9 @@ const CPDF_PathObject* CPDF_PathObject::AsPath() const {
 }
 
 void CPDF_PathObject::CalcBoundingBox() {
-  if (!m_Path.HasRef())
+  if (!m_Path.HasRef()) {
     return;
+  }
   CFX_FloatRect rect;
   float width = graph_state().GetLineWidth();
   if (m_bStroke && width != 0) {
@@ -48,8 +49,9 @@ void CPDF_PathObject::CalcBoundingBox() {
   }
   rect = m_Matrix.TransformRect(rect);
 
-  if (width == 0 && m_bStroke)
+  if (width == 0 && m_bStroke) {
     rect.Inflate(0.5f, 0.5f);
+  }
   SetRect(rect);
 }
 

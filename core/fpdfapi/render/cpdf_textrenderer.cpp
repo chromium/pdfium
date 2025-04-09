@@ -30,16 +30,19 @@ CFX_TextRenderOptions GetTextRenderOptionsHelper(
     const CPDF_RenderOptions& options) {
   CFX_TextRenderOptions text_options;
 
-  if (pFont->IsCIDFont())
+  if (pFont->IsCIDFont()) {
     text_options.font_is_cid = true;
+  }
 
-  if (options.GetOptions().bNoTextSmooth)
+  if (options.GetOptions().bNoTextSmooth) {
     text_options.aliasing_type = CFX_TextRenderOptions::kAliasing;
-  else if (options.GetOptions().bClearType)
+  } else if (options.GetOptions().bClearType) {
     text_options.aliasing_type = CFX_TextRenderOptions::kLcd;
+  }
 
-  if (options.GetOptions().bNoNativeText)
+  if (options.GetOptions().bNoNativeText) {
     text_options.native_text = false;
+  }
 
   return text_options;
 }
@@ -62,16 +65,18 @@ bool CPDF_TextRenderer::DrawTextPath(
     const CFX_FillRenderOptions& fill_options) {
   std::vector<TextCharPos> pos =
       GetCharPosList(char_codes, char_pos, pFont, font_size);
-  if (pos.empty())
+  if (pos.empty()) {
     return true;
+  }
 
   bool bDraw = true;
   int32_t fontPosition = pos[0].fallback_font_position_;
   size_t startIndex = 0;
   for (size_t i = 0; i < pos.size(); ++i) {
     int32_t curFontPosition = pos[i].fallback_font_position_;
-    if (fontPosition == curFontPosition)
+    if (fontPosition == curFontPosition) {
       continue;
+    }
 
     CFX_Font* font = GetFont(pFont, fontPosition);
     if (!pDevice->DrawTextPath(
@@ -103,12 +108,14 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                                        const ByteString& str,
                                        FX_ARGB fill_argb,
                                        const CPDF_RenderOptions& options) {
-  if (pFont->IsType3Font())
+  if (pFont->IsType3Font()) {
     return;
+  }
 
   size_t nChars = pFont->CountChar(str.AsStringView());
-  if (nChars == 0)
+  if (nChars == 0) {
     return;
+  }
 
   size_t offset = 0;
   std::vector<uint32_t> codes;
@@ -118,8 +125,9 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   float cur_pos = 0;
   for (size_t i = 0; i < nChars; i++) {
     codes[i] = pFont->GetNextChar(str.AsStringView(), &offset);
-    if (i)
+    if (i) {
       positions[i - 1] = cur_pos;
+    }
     cur_pos += pFont->GetCharWidthF(codes[i]) * font_size / 1000;
   }
   CFX_Matrix new_matrix = matrix;
@@ -140,8 +148,9 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                        const CPDF_RenderOptions& options) {
   std::vector<TextCharPos> pos =
       GetCharPosList(char_codes, char_pos, pFont, font_size);
-  if (pos.empty())
+  if (pos.empty()) {
     return true;
+  }
 
   CFX_TextRenderOptions text_options =
       GetTextRenderOptionsHelper(pFont, options);
@@ -150,8 +159,9 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
   size_t startIndex = 0;
   for (size_t i = 0; i < pos.size(); ++i) {
     int32_t curFontPosition = pos[i].fallback_font_position_;
-    if (fontPosition == curFontPosition)
+    if (fontPosition == curFontPosition) {
       continue;
+    }
 
     CFX_Font* font = GetFont(pFont, fontPosition);
     if (!pDevice->DrawNormalText(

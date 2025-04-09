@@ -30,14 +30,16 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
     DCHECK(!bImageAcc);
   }
 
-  if (!m_pStream)
+  if (!m_pStream) {
     return;
+  }
 
   bool bProcessRawData = bRawAccess || !m_pStream->HasFilter();
-  if (bProcessRawData)
+  if (bProcessRawData) {
     ProcessRawData();
-  else
+  } else {
     ProcessFilteredData(estimated_size, bImageAcc);
+  }
 }
 
 void CPDF_StreamAcc::LoadAllDataFiltered() {
@@ -74,10 +76,12 @@ uint32_t CPDF_StreamAcc::GetSize() const {
 }
 
 pdfium::span<const uint8_t> CPDF_StreamAcc::GetSpan() const {
-  if (is_owned())
+  if (is_owned()) {
     return std::get<DataVector<uint8_t>>(m_Data);
-  if (m_pStream && m_pStream->IsMemoryBased())
+  }
+  if (m_pStream && m_pStream->IsMemoryBased()) {
     return m_pStream->GetInMemoryRawData();
+  }
   return {};
 }
 
@@ -90,8 +94,9 @@ DataVector<uint8_t> CPDF_StreamAcc::ComputeDigest() const {
 }
 
 DataVector<uint8_t> CPDF_StreamAcc::DetachData() {
-  if (is_owned())
+  if (is_owned()) {
     return std::move(std::get<DataVector<uint8_t>>(m_Data));
+  }
 
   auto span = std::get<pdfium::raw_span<const uint8_t>>(m_Data);
   return DataVector<uint8_t>(span.begin(), span.end());
@@ -99,8 +104,9 @@ DataVector<uint8_t> CPDF_StreamAcc::DetachData() {
 
 void CPDF_StreamAcc::ProcessRawData() {
   uint32_t dwSrcSize = m_pStream->GetRawSize();
-  if (dwSrcSize == 0)
+  if (dwSrcSize == 0) {
     return;
+  }
 
   if (m_pStream->IsMemoryBased()) {
     m_Data = m_pStream->GetInMemoryRawData();
@@ -108,8 +114,9 @@ void CPDF_StreamAcc::ProcessRawData() {
   }
 
   DataVector<uint8_t> data = ReadRawStream();
-  if (data.empty())
+  if (data.empty()) {
     return;
+  }
 
   m_Data = std::move(data);
 }
@@ -117,8 +124,9 @@ void CPDF_StreamAcc::ProcessRawData() {
 void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
                                          bool bImageAcc) {
   uint32_t dwSrcSize = m_pStream->GetRawSize();
-  if (dwSrcSize == 0)
+  if (dwSrcSize == 0) {
     return;
+  }
 
   std::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> src_data;
   pdfium::span<const uint8_t> src_span;
@@ -127,8 +135,9 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
     src_data = src_span;
   } else {
     DataVector<uint8_t> temp_src_data = ReadRawStream();
-    if (temp_src_data.empty())
+    if (temp_src_data.empty()) {
       return;
+    }
 
     src_span = pdfium::make_span(temp_src_data);
     src_data = std::move(temp_src_data);

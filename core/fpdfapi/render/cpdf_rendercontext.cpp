@@ -66,8 +66,9 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
   for (auto& layer : m_Layers) {
     CFX_RenderDevice::StateRestorer restorer(pDevice);
     CPDF_RenderStatus status(this, pDevice);
-    if (pOptions)
+    if (pOptions) {
       status.SetOptions(*pOptions);
+    }
     status.SetStopObject(pStopObj);
     status.SetTransparency(layer.GetObjectHolder()->GetTransparency());
     CFX_Matrix final_matrix = layer.GetMatrix();
@@ -81,8 +82,9 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
       m_pPageCache->CacheOptimization(
           status.GetRenderOptions().GetCacheSizeLimit());
     }
-    if (status.IsStopped())
+    if (status.IsStopped()) {
       break;
+    }
   }
 }
 

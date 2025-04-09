@@ -65,11 +65,13 @@ bool CPDF_Page::IsPage() const {
 }
 
 void CPDF_Page::ParseContent() {
-  if (GetParseState() == ParseState::kParsed)
+  if (GetParseState() == ParseState::kParsed) {
     return;
+  }
 
-  if (GetParseState() == ParseState::kNotParsed)
+  if (GetParseState() == ParseState::kNotParsed) {
     StartParse(std::make_unique<CPDF_ContentParser>(this));
+  }
 
   DCHECK_EQ(GetParseState(), ParseState::kParsing);
   ContinueParse(nullptr);
@@ -85,8 +87,9 @@ RetainPtr<const CPDF_Object> CPDF_Page::GetPageAttr(
   RetainPtr<const CPDF_Dictionary> pPageDict = GetDict();
   while (pPageDict && !pdfium::Contains(visited, pPageDict)) {
     RetainPtr<const CPDF_Object> pObj = pPageDict->GetDirectObjectFor(name);
-    if (pObj)
+    if (pObj) {
       return pObj;
+    }
 
     visited.insert(pPageDict);
     pPageDict = pPageDict->GetDictFor(pdfium::page_object::kParent);
@@ -121,8 +124,9 @@ std::optional<CFX_PointF> CPDF_Page::PageToDevice(
 }
 
 CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
-  if (m_PageSize.width == 0 || m_PageSize.height == 0)
+  if (m_PageSize.width == 0 || m_PageSize.height == 0) {
     return CFX_Matrix();
+  }
 
   float x0 = 0;
   float y0 = 0;
@@ -211,20 +215,23 @@ void CPDF_Page::ClearRenderContext() {
 }
 
 void CPDF_Page::ClearView() {
-  if (m_pView)
+  if (m_pView) {
     m_pView->ClearPage(this);
+  }
 }
 
 void CPDF_Page::UpdateDimensions() {
   CFX_FloatRect mediabox = GetBox(pdfium::page_object::kMediaBox);
-  if (mediabox.IsEmpty())
+  if (mediabox.IsEmpty()) {
     mediabox = CFX_FloatRect(0, 0, 612, 792);
+  }
 
   m_BBox = GetBox(pdfium::page_object::kCropBox);
-  if (m_BBox.IsEmpty())
+  if (m_BBox.IsEmpty()) {
     m_BBox = mediabox;
-  else
+  } else {
     m_BBox.Intersect(mediabox);
+  }
 
   m_PageSize.width = m_BBox.Width();
   m_PageSize.height = m_BBox.Height();
@@ -252,6 +259,7 @@ CPDF_Page::RenderContextClearer::RenderContextClearer(CPDF_Page* pPage)
     : m_pPage(pPage) {}
 
 CPDF_Page::RenderContextClearer::~RenderContextClearer() {
-  if (m_pPage)
+  if (m_pPage) {
     m_pPage->ClearRenderContext();
+  }
 }

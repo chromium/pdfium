@@ -28,8 +28,9 @@ CPDF_SeekableMultiStream::~CPDF_SeekableMultiStream() = default;
 
 FX_FILESIZE CPDF_SeekableMultiStream::GetSize() {
   FX_SAFE_FILESIZE dwSize = 0;
-  for (const auto& acc : m_Data)
+  for (const auto& acc : m_Data) {
     dwSize += acc->GetSize();
+  }
   return dwSize.ValueOrDie();
 }
 
@@ -40,8 +41,9 @@ bool CPDF_SeekableMultiStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
   while (index < iCount) {
     const auto& acc = m_Data[index];
     FX_FILESIZE dwSize = acc->GetSize();
-    if (offset < dwSize)
+    if (offset < dwSize) {
       break;
+    }
 
     offset -= dwSize;
     index++;
@@ -50,8 +52,9 @@ bool CPDF_SeekableMultiStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
     auto acc_span = m_Data[index]->GetSpan();
     size_t dwRead = std::min<size_t>(buffer.size(), acc_span.size() - offset);
     buffer = fxcrt::spancpy(buffer, acc_span.subspan(offset, dwRead));
-    if (buffer.empty())
+    if (buffer.empty()) {
       return true;
+    }
 
     offset = 0;
     index++;

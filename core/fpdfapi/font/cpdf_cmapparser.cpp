@@ -20,8 +20,9 @@
 namespace {
 
 ByteStringView CMap_GetString(ByteStringView word) {
-  if (word.GetLength() <= 2)
+  if (word.GetLength() <= 2) {
     return ByteStringView();
+  }
   return word.Last(word.GetLength() - 2);
 }
 
@@ -84,8 +85,9 @@ void CPDF_CMapParser::HandleCid(ByteStringView word) {
   m_CodePoints[m_CodeSeq] = GetCode(word);
   m_CodeSeq++;
   int nRequiredCodePoints = bChar ? 2 : 3;
-  if (m_CodeSeq < nRequiredCodePoints)
+  if (m_CodeSeq < nRequiredCodePoints) {
     return;
+  }
 
   uint32_t StartCode = m_CodePoints[0];
   uint32_t EndCode;
@@ -107,14 +109,16 @@ void CPDF_CMapParser::HandleCid(ByteStringView word) {
 
 void CPDF_CMapParser::HandleCodeSpaceRange(ByteStringView word) {
   if (word != "endcodespacerange") {
-    if (word.IsEmpty() || word[0] != '<')
+    if (word.IsEmpty() || word[0] != '<') {
       return;
+    }
 
     if (m_CodeSeq % 2) {
       std::optional<CPDF_CMap::CodeRange> range =
           GetCodeRange(m_LastWord.AsStringView(), word);
-      if (range.has_value())
+      if (range.has_value()) {
         m_PendingRanges.push_back(range.value());
+      }
     }
     m_CodeSeq++;
     return;
@@ -138,15 +142,17 @@ void CPDF_CMapParser::HandleCodeSpaceRange(ByteStringView word) {
 
 // static
 uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
-  if (word.IsEmpty())
+  if (word.IsEmpty()) {
     return 0;
+  }
 
   FX_SAFE_UINT32 num = 0;
   if (word[0] == '<') {
     for (size_t i = 1; i < word.GetLength() && FXSYS_IsHexDigit(word[i]); ++i) {
       num = num * 16 + FXSYS_HexCharToInt(word[i]);
-      if (!num.IsValid())
+      if (!num.IsValid()) {
         return 0;
+      }
     }
     return num.ValueOrDie();
   }
@@ -154,8 +160,9 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
   for (size_t i = 0;
        i < word.GetLength() && FXSYS_IsDecimalDigit(word.CharAt(i)); ++i) {
     num = num * 10 + FXSYS_DecimalCharToInt(word.CharAt(i));
-    if (!num.IsValid())
+    if (!num.IsValid()) {
       return 0;
+    }
   }
   return num.ValueOrDie();
 }
@@ -164,17 +171,20 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
 std::optional<CPDF_CMap::CodeRange> CPDF_CMapParser::GetCodeRange(
     ByteStringView first,
     ByteStringView second) {
-  if (first.IsEmpty() || first[0] != '<')
+  if (first.IsEmpty() || first[0] != '<') {
     return std::nullopt;
+  }
 
   size_t i;
   for (i = 1; i < first.GetLength(); ++i) {
-    if (first[i] == '>')
+    if (first[i] == '>') {
       break;
+    }
   }
   size_t char_size = (i - 1) / 2;
-  if (char_size > 4)
+  if (char_size > 4) {
     return std::nullopt;
+  }
 
   CPDF_CMap::CodeRange range;
   range.m_CharSize = char_size;
@@ -203,8 +213,9 @@ CIDSet CPDF_CMapParser::CharsetFromOrdering(ByteStringView ordering) {
       {nullptr, "GB1", "CNS1", "Japan1", "Korea1", "UCS"}};
 
   for (size_t charset = 1; charset < std::size(kCharsetNames); ++charset) {
-    if (ordering == kCharsetNames[charset])
+    if (ordering == kCharsetNames[charset]) {
       return static_cast<CIDSet>(charset);
+    }
   }
   return CIDSET_UNKNOWN;
 }

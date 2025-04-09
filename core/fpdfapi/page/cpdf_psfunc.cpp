@@ -23,12 +23,15 @@ bool CPDF_PSFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
 bool CPDF_PSFunc::v_Call(pdfium::span<const float> inputs,
                          pdfium::span<float> results) const {
   m_PS.Reset();
-  for (uint32_t i = 0; i < m_nInputs; i++)
+  for (uint32_t i = 0; i < m_nInputs; i++) {
     m_PS.Push(inputs[i]);
+  }
   m_PS.Execute();
-  if (m_PS.GetStackSize() < m_nOutputs)
+  if (m_PS.GetStackSize() < m_nOutputs) {
     return false;
-  for (uint32_t i = 0; i < m_nOutputs; i++)
+  }
+  for (uint32_t i = 0; i < m_nOutputs; i++) {
     results[m_nOutputs - i - 1] = m_PS.Pop();
+  }
   return true;
 }

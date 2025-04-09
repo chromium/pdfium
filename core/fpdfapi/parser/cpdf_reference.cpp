@@ -63,8 +63,9 @@ RetainPtr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
 }
 
 const CPDF_Object* CPDF_Reference::FastGetDirect() const {
-  if (!m_pObjList)
+  if (!m_pObjList) {
     return nullptr;
+  }
   const CPDF_Object* obj =
       m_pObjList->GetOrParseIndirectObjectInternal(m_RefObjNum);
   return (obj && !obj->IsReference()) ? obj : nullptr;

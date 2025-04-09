@@ -242,18 +242,21 @@ CPDF_DIB::JpxSMaskInlineData::JpxSMaskInlineData() = default;
 CPDF_DIB::JpxSMaskInlineData::~JpxSMaskInlineData() = default;
 
 bool CPDF_DIB::Load() {
-  if (!LoadInternal(nullptr, nullptr))
+  if (!LoadInternal(nullptr, nullptr)) {
     return false;
+  }
 
-  if (CreateDecoder(0) == LoadState::kFail)
+  if (CreateDecoder(0) == LoadState::kFail) {
     return false;
+  }
 
   return ContinueInternal();
 }
 
 bool CPDF_DIB::ContinueToLoadMask() {
-  if (m_pColorSpace && m_bStdCS)
+  if (m_pColorSpace && m_bStdCS) {
     m_pColorSpace->EnableStdConversion(true);
+  }
 
   return ContinueInternal();
 }
@@ -277,8 +280,9 @@ bool CPDF_DIB::ContinueInternal() {
   }
 
   std::optional<uint32_t> pitch = fxge::CalculatePitch32(GetBPP(), GetWidth());
-  if (!pitch.has_value())
+  if (!pitch.has_value()) {
     return false;
+  }
 
   m_LineBuf = DataVector<uint8_t>(pitch.value());
   LoadPalette();
@@ -287,8 +291,9 @@ bool CPDF_DIB::ContinueInternal() {
     // `FXDIB_Format::kBgraPremul`
     SetFormat(FXDIB_Format::kBgra);
     pitch = fxge::CalculatePitch32(GetBPP(), GetWidth());
-    if (!pitch.has_value())
+    if (!pitch.has_value()) {
       return false;
+    }
     m_MaskBuf = DataVector<uint8_t>(pitch.value());
   }
   SetPitch(pitch.value());
@@ -308,11 +313,13 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
   m_GroupFamily = GroupFamily;
   m_bLoadMask = bLoadMask;
 
-  if (!m_pStream->IsInline())
+  if (!m_pStream->IsInline()) {
     pFormResources = nullptr;
+  }
 
-  if (!LoadInternal(pFormResources, pPageResources))
+  if (!LoadInternal(pFormResources, pPageResources)) {
     return LoadState::kFail;
+  }
 
   uint8_t resolution_levels_to_skip = 0;
   if (max_size_required.width != 0 && max_size_required.height != 0) {
@@ -322,11 +329,13 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
   }
 
   LoadState iCreatedDecoder = CreateDecoder(resolution_levels_to_skip);
-  if (iCreatedDecoder == LoadState::kFail)
+  if (iCreatedDecoder == LoadState::kFail) {
     return LoadState::kFail;
+  }
 
-  if (!ContinueToLoadMask())
+  if (!ContinueToLoadMask()) {
     return LoadState::kFail;
+  }
 
   LoadState iLoadedMask = m_bHasMask ? StartLoadMask() : LoadState::kSuccess;
   if (iCreatedDecoder == LoadState::kContinue ||
@@ -336,24 +345,29 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
 
   DCHECK_EQ(iCreatedDecoder, LoadState::kSuccess);
   DCHECK_EQ(iLoadedMask, LoadState::kSuccess);
-  if (m_pColorSpace && m_bStdCS)
+  if (m_pColorSpace && m_bStdCS) {
     m_pColorSpace->EnableStdConversion(false);
+  }
   return LoadState::kSuccess;
 }
 
 CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
-  if (m_Status == LoadState::kContinue)
+  if (m_Status == LoadState::kContinue) {
     return ContinueLoadMaskDIB(pPause);
+  }
 
   ByteString decoder = m_pStreamAcc->GetImageDecoder();
-  if (decoder == "JPXDecode")
+  if (decoder == "JPXDecode") {
     return LoadState::kFail;
+  }
 
-  if (decoder != "JBIG2Decode")
+  if (decoder != "JBIG2Decode") {
     return LoadState::kSuccess;
+  }
 
-  if (m_Status == LoadState::kFail)
+  if (m_Status == LoadState::kFail) {
     return LoadState::kFail;
+  }
 
   FXCODEC_STATUS iDecodeStatus;
   if (!m_pJbig2Context) {
@@ -393,8 +407,9 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
     m_pGlobalAcc.Reset();
     return LoadState::kFail;
   }
-  if (iDecodeStatus == FXCODEC_STATUS::kDecodeToBeContinued)
+  if (iDecodeStatus == FXCODEC_STATUS::kDecodeToBeContinued) {
     return LoadState::kContinue;
+  }
 
   LoadState iContinueStatus = LoadState::kSuccess;
   if (m_bHasMask) {
@@ -403,23 +418,27 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
       m_Status = LoadState::kContinue;
     }
   }
-  if (iContinueStatus == LoadState::kContinue)
+  if (iContinueStatus == LoadState::kContinue) {
     return LoadState::kContinue;
+  }
 
-  if (m_pColorSpace && m_bStdCS)
+  if (m_pColorSpace && m_bStdCS) {
     m_pColorSpace->EnableStdConversion(false);
+  }
   return iContinueStatus;
 }
 
 bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
                              const CPDF_Dictionary* pPageResources) {
   std::optional<DecoderArray> decoder_array = GetDecoderArray(m_pDict);
-  if (!decoder_array.has_value())
+  if (!decoder_array.has_value()) {
     return false;
+  }
 
   m_bpc_orig = m_pDict->GetIntegerFor("BitsPerComponent");
-  if (!IsMaybeValidBitsPerComponent(m_bpc_orig))
+  if (!IsMaybeValidBitsPerComponent(m_bpc_orig)) {
     return false;
+  }
 
   m_bImageMask = m_pDict->GetBooleanFor("ImageMask", /*bDefault=*/false);
 
@@ -440,16 +459,20 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
 
   RetainPtr<const CPDF_Object> pCSObj =
       m_pDict->GetDirectObjectFor("ColorSpace");
-  if (!pCSObj)
+  if (!pCSObj) {
     return false;
+  }
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(m_pDocument);
-  if (pFormResources)
+  if (pFormResources) {
     m_pColorSpace = pDocPageData->GetColorSpace(pCSObj.Get(), pFormResources);
-  if (!m_pColorSpace)
+  }
+  if (!m_pColorSpace) {
     m_pColorSpace = pDocPageData->GetColorSpace(pCSObj.Get(), pPageResources);
-  if (!m_pColorSpace)
+  }
+  if (!m_pColorSpace) {
     return false;
+  }
 
   // If the checks above failed to find a colorspace, and the next line to set
   // |m_nComponents| does not get reached, then a decoder can try to set
@@ -459,27 +482,31 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   m_Family = m_pColorSpace->GetFamily();
   if (m_Family == CPDF_ColorSpace::Family::kICCBased && pCSObj->IsName()) {
     ByteString cs = pCSObj->GetString();
-    if (cs == "DeviceGray")
+    if (cs == "DeviceGray") {
       m_nComponents = 1;
-    else if (cs == "DeviceRGB")
+    } else if (cs == "DeviceRGB") {
       m_nComponents = 3;
-    else if (cs == "DeviceCMYK")
+    } else if (cs == "DeviceCMYK") {
       m_nComponents = 4;
+    }
   }
 
   ByteString filter;
-  if (!decoder_array.value().empty())
+  if (!decoder_array.value().empty()) {
     filter = decoder_array.value().back().first;
+  }
 
-  if (!ValidateDictParam(filter))
+  if (!ValidateDictParam(filter)) {
     return false;
+  }
 
   return GetDecodeAndMaskArray();
 }
 
 bool CPDF_DIB::GetDecodeAndMaskArray() {
-  if (!m_pColorSpace)
+  if (!m_pColorSpace) {
     return false;
+  }
 
   m_CompData.resize(m_nComponents);
   int max_data = (1 << m_bpc) - 1;
@@ -493,28 +520,33 @@ bool CPDF_DIB::GetDecodeAndMaskArray() {
       float def_min;
       float def_max;
       m_pColorSpace->GetDefaultValue(i, &def_value, &def_min, &def_max);
-      if (m_Family == CPDF_ColorSpace::Family::kIndexed)
+      if (m_Family == CPDF_ColorSpace::Family::kIndexed) {
         def_max = max_data;
-      if (def_min != m_CompData[i].m_DecodeMin || def_max != max)
+      }
+      if (def_min != m_CompData[i].m_DecodeMin || def_max != max) {
         m_bDefaultDecode = false;
+      }
     }
   } else {
     for (uint32_t i = 0; i < m_nComponents; i++) {
       float def_value;
       m_pColorSpace->GetDefaultValue(i, &def_value, &m_CompData[i].m_DecodeMin,
                                      &m_CompData[i].m_DecodeStep);
-      if (m_Family == CPDF_ColorSpace::Family::kIndexed)
+      if (m_Family == CPDF_ColorSpace::Family::kIndexed) {
         m_CompData[i].m_DecodeStep = max_data;
+      }
       m_CompData[i].m_DecodeStep =
           (m_CompData[i].m_DecodeStep - m_CompData[i].m_DecodeMin) / max_data;
     }
   }
-  if (m_pDict->KeyExist("SMask"))
+  if (m_pDict->KeyExist("SMask")) {
     return true;
+  }
 
   RetainPtr<const CPDF_Object> pMask = m_pDict->GetDirectObjectFor("Mask");
-  if (!pMask)
+  if (!pMask) {
     return true;
+  }
 
   if (const CPDF_Array* pArray = pMask->AsArray()) {
     if (pArray->size() >= m_nComponents * 2) {
@@ -532,11 +564,13 @@ bool CPDF_DIB::GetDecodeAndMaskArray() {
 
 CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
   ByteString decoder = m_pStreamAcc->GetImageDecoder();
-  if (decoder.IsEmpty())
+  if (decoder.IsEmpty()) {
     return LoadState::kSuccess;
+  }
 
-  if (m_bDoBpcCheck && m_bpc == 0)
+  if (m_bDoBpcCheck && m_bpc == 0) {
     return LoadState::kFail;
+  }
 
   if (decoder == "JPXDecode") {
     m_pCachedBitmap = LoadJpxBitmap(resolution_levels_to_skip);
@@ -566,22 +600,27 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
     m_pDecoder = BasicModule::CreateRunLengthDecoder(
         src_span, GetWidth(), GetHeight(), m_nComponents, m_bpc);
   } else if (decoder == "DCTDecode") {
-    if (!CreateDCTDecoder(src_span, pParams))
+    if (!CreateDCTDecoder(src_span, pParams)) {
       return LoadState::kFail;
+    }
   }
-  if (!m_pDecoder)
+  if (!m_pDecoder) {
     return LoadState::kFail;
+  }
 
   const std::optional<uint32_t> requested_pitch =
       fxge::CalculatePitch8(m_bpc, m_nComponents, GetWidth());
-  if (!requested_pitch.has_value())
+  if (!requested_pitch.has_value()) {
     return LoadState::kFail;
+  }
   const std::optional<uint32_t> provided_pitch = fxge::CalculatePitch8(
       m_pDecoder->GetBPC(), m_pDecoder->CountComps(), m_pDecoder->GetWidth());
-  if (!provided_pitch.has_value())
+  if (!provided_pitch.has_value()) {
     return LoadState::kFail;
-  if (provided_pitch.value() < requested_pitch.value())
+  }
+  if (provided_pitch.value() < requested_pitch.value()) {
     return LoadState::kFail;
+  }
   return LoadState::kSuccess;
 }
 
@@ -590,13 +629,15 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   m_pDecoder = JpegModule::CreateDecoder(
       src_span, GetWidth(), GetHeight(), m_nComponents,
       !pParams || pParams->GetIntegerFor("ColorTransform", 1));
-  if (m_pDecoder)
+  if (m_pDecoder) {
     return true;
+  }
 
   std::optional<JpegModule::ImageInfo> info_opt =
       JpegModule::LoadInfo(src_span);
-  if (!info_opt.has_value())
+  if (!info_opt.has_value()) {
     return false;
+  }
 
   const JpegModule::ImageInfo& info = info_opt.value();
   SetWidth(info.width);
@@ -623,13 +664,15 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
       case CPDF_ColorSpace::Family::kDeviceRGB:
       case CPDF_ColorSpace::Family::kDeviceCMYK: {
         uint32_t dwMinComps = CPDF_ColorSpace::ComponentsForFamily(m_Family);
-        if (colorspace_comps < dwMinComps || m_nComponents < dwMinComps)
+        if (colorspace_comps < dwMinComps || m_nComponents < dwMinComps) {
           return false;
+        }
         break;
       }
       case CPDF_ColorSpace::Family::kLab: {
-        if (m_nComponents != 3 || colorspace_comps < 3)
+        if (m_nComponents != 3 || colorspace_comps < 3) {
           return false;
+        }
         break;
       }
       case CPDF_ColorSpace::Family::kICCBased: {
@@ -641,17 +684,20 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
         break;
       }
       default: {
-        if (colorspace_comps != m_nComponents)
+        if (colorspace_comps != m_nComponents) {
           return false;
+        }
         break;
       }
     }
   } else {
-    if (m_Family == CPDF_ColorSpace::Family::kLab && m_nComponents != 3)
+    if (m_Family == CPDF_ColorSpace::Family::kLab && m_nComponents != 3) {
       return false;
+    }
   }
-  if (!GetDecodeAndMaskArray())
+  if (!GetDecodeAndMaskArray()) {
     return false;
+  }
 
   m_bpc = info.bits_per_components;
   m_pDecoder = JpegModule::CreateDecoder(src_span, GetWidth(), GetHeight(),
@@ -665,14 +711,16 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
       CJPX_Decoder::Create(m_pStreamAcc->GetSpan(),
                            ColorSpaceOptionFromColorSpace(m_pColorSpace.Get()),
                            resolution_levels_to_skip, /*strict_mode=*/true);
-  if (!decoder)
+  if (!decoder) {
     return nullptr;
+  }
 
   SetWidth(GetWidth() >> resolution_levels_to_skip);
   SetHeight(GetHeight() >> resolution_levels_to_skip);
 
-  if (!decoder->StartDecode())
+  if (!decoder->StartDecode()) {
     return nullptr;
+  }
 
   CJPX_Decoder::JpxImageInfo image_info = decoder->GetInfo();
   if (static_cast<int>(image_info.width) < GetWidth() ||
@@ -746,8 +794,9 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
   }
 
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!result_bitmap->Create(image_info.width, image_info.height, format))
+  if (!result_bitmap->Create(image_info.width, image_info.height, format)) {
     return nullptr;
+  }
 
   result_bitmap->Clear(0xFFFFFFFF);
   if (!decoder->Decode(result_bitmap->GetWritableBuffer(),
@@ -821,8 +870,9 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
 
 bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
                             const CPDF_Dictionary* pPageResources) {
-  if (!m_pStream)
+  if (!m_pStream) {
     return false;
+  }
 
   m_pDict = m_pStream->GetDict();
   SetWidth(m_pDict->GetIntegerFor("Width"));
@@ -831,21 +881,25 @@ bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
     return false;
   }
 
-  if (!LoadColorInfo(pFormResources, pPageResources))
+  if (!LoadColorInfo(pFormResources, pPageResources)) {
     return false;
+  }
 
-  if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
+  if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0)) {
     return false;
+  }
 
   const std::optional<uint32_t> maybe_size =
       fxge::CalculatePitch8(m_bpc, m_nComponents, GetWidth());
-  if (!maybe_size.has_value())
+  if (!maybe_size.has_value()) {
     return false;
+  }
 
   FX_SAFE_UINT32 src_size = maybe_size.value();
   src_size *= GetHeight();
-  if (!src_size.IsValid())
+  if (!src_size.IsValid()) {
     return false;
+  }
 
   m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(m_pStream);
   m_pStreamAcc->LoadAllDataImageAcc(src_size.ValueOrDie());
@@ -891,15 +945,18 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
 }
 
 CPDF_DIB::LoadState CPDF_DIB::ContinueLoadMaskDIB(PauseIndicatorIface* pPause) {
-  if (!m_pMask)
+  if (!m_pMask) {
     return LoadState::kSuccess;
+  }
 
   LoadState ret = m_pMask->ContinueLoadDIBBase(pPause);
-  if (ret == LoadState::kContinue)
+  if (ret == LoadState::kContinue) {
     return LoadState::kContinue;
+  }
 
-  if (m_pColorSpace && m_bStdCS)
+  if (m_pColorSpace && m_bStdCS) {
     m_pColorSpace->EnableStdConversion(false);
+  }
 
   if (ret == LoadState::kFail) {
     m_pMask.Reset();
@@ -923,29 +980,34 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB(
                                             CPDF_ColorSpace::Family::kUnknown,
                                             false, {0, 0});
   if (ret == LoadState::kContinue) {
-    if (m_Status == LoadState::kFail)
+    if (m_Status == LoadState::kFail) {
       m_Status = LoadState::kContinue;
+    }
     return LoadState::kContinue;
   }
-  if (ret == LoadState::kFail)
+  if (ret == LoadState::kFail) {
     m_pMask.Reset();
+  }
   return LoadState::kSuccess;
 }
 
 void CPDF_DIB::LoadPalette() {
-  if (!m_pColorSpace || m_Family == CPDF_ColorSpace::Family::kPattern)
+  if (!m_pColorSpace || m_Family == CPDF_ColorSpace::Family::kPattern) {
     return;
+  }
 
-  if (m_bpc == 0)
+  if (m_bpc == 0) {
     return;
+  }
 
   // Use FX_SAFE_UINT32 just to be on the safe side, in case |m_bpc| or
   // |m_nComponents| somehow gets a bad value.
   FX_SAFE_UINT32 safe_bits = m_bpc;
   safe_bits *= m_nComponents;
   uint32_t bits = safe_bits.ValueOrDefault(255);
-  if (bits > 8)
+  if (bits > 8) {
     return;
+  }
 
   if (bits == 1) {
     if (m_bDefaultDecode && (m_Family == CPDF_ColorSpace::Family::kDeviceGray ||
@@ -1046,11 +1108,13 @@ bool CPDF_DIB::ValidateDictParam(const ByteString& filter) {
 void CPDF_DIB::TranslateScanline24bpp(
     pdfium::span<uint8_t> dest_scan,
     pdfium::span<const uint8_t> src_scan) const {
-  if (m_bpc == 0)
+  if (m_bpc == 0) {
     return;
+  }
 
-  if (TranslateScanline24bppDefaultDecode(dest_scan, src_scan))
+  if (TranslateScanline24bppDefaultDecode(dest_scan, src_scan)) {
     return;
+  }
 
   // Using at least 16 elements due to the call m_pColorSpace->GetRGB().
   std::vector<float> color_values(std::max(m_nComponents, 16u));
@@ -1093,13 +1157,15 @@ void CPDF_DIB::TranslateScanline24bpp(
 bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
     pdfium::span<uint8_t> dest_scan,
     pdfium::span<const uint8_t> src_scan) const {
-  if (!m_bDefaultDecode)
+  if (!m_bDefaultDecode) {
     return false;
+  }
 
   if (m_Family != CPDF_ColorSpace::Family::kDeviceRGB &&
       m_Family != CPDF_ColorSpace::Family::kCalRGB) {
-    if (m_bpc != 8)
+    if (m_bpc != 8) {
       return false;
+    }
 
     if (m_nComponents == m_pColorSpace->ComponentCount()) {
       m_pColorSpace->TranslateImageLine(dest_scan, src_scan, GetWidth(),
@@ -1108,8 +1174,9 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
     return true;
   }
 
-  if (m_nComponents != 3)
+  if (m_nComponents != 3) {
     return true;
+  }
 
   uint8_t* dest_pos = dest_scan.data();
   const uint8_t* src_pos = src_scan.data();
@@ -1161,13 +1228,15 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
 }
 
 pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
-  if (m_bpc == 0)
+  if (m_bpc == 0) {
     return pdfium::span<const uint8_t>();
+  }
 
   const std::optional<uint32_t> src_pitch =
       fxge::CalculatePitch8(m_bpc, m_nComponents, GetWidth());
-  if (!src_pitch.has_value())
+  if (!src_pitch.has_value()) {
     return pdfium::span<const uint8_t>();
+  }
 
   uint32_t src_pitch_value = src_pitch.value();
   // This is used as the buffer of `pSrcLine` when the stream is truncated,
@@ -1176,8 +1245,9 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
   pdfium::span<const uint8_t> pSrcLine;
 
   if (m_pCachedBitmap && src_pitch_value <= m_pCachedBitmap->GetPitch()) {
-    if (line >= m_pCachedBitmap->GetHeight())
+    if (line >= m_pCachedBitmap->GetHeight()) {
       line = m_pCachedBitmap->GetHeight() - 1;
+    }
     pSrcLine = m_pCachedBitmap->GetScanline(line);
   } else if (m_pDecoder) {
     pSrcLine = m_pDecoder->GetScanline(line);
@@ -1237,8 +1307,9 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
       }
       result = result.first(GetWidth());
     }
-    if (!m_bColorKey)
+    if (!m_bColorKey) {
       return result;
+    }
 
     uint8_t* pDestPixel = m_MaskBuf.data();
     const uint8_t* pSrcPixel = m_LineBuf.data();
@@ -1285,8 +1356,9 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
     src_pitch_value = 3 * GetWidth();
     pSrcLine = pdfium::make_span(m_LineBuf).first(src_pitch_value);
   }
-  if (!m_bColorKey)
+  if (!m_bColorKey) {
     return pSrcLine;
+  }
 
   // TODO(tsepez): Bounds check if cost is acceptable.
   const uint8_t* pSrcPixel = pSrcLine.data();
@@ -1322,13 +1394,15 @@ void CPDF_DIB::SetMaskProperties() {
 }
 
 uint32_t CPDF_DIB::Get1BitSetValue() const {
-  if (m_CompData[0].m_ColorKeyMax == 1)
+  if (m_CompData[0].m_ColorKeyMax == 1) {
     return 0x00000000;
+  }
   return HasPalette() ? GetPaletteSpan()[1] : 0xFFFFFFFF;
 }
 
 uint32_t CPDF_DIB::Get1BitResetValue() const {
-  if (m_CompData[0].m_ColorKeyMin == 0)
+  if (m_CompData[0].m_ColorKeyMin == 0) {
     return 0x00000000;
+  }
   return HasPalette() ? GetPaletteSpan()[0] : 0xFF000000;
 }

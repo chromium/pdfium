@@ -23,8 +23,9 @@ CPDF_ObjectAvail::CPDF_ObjectAvail(RetainPtr<CPDF_ReadValidator> validator,
   DCHECK(validator_);
   DCHECK(holder);
   DCHECK(root_);
-  if (!root_->IsInline())
+  if (!root_->IsInline()) {
     parsed_objnums_.insert(root_->GetObjNum());
+  }
 }
 
 CPDF_ObjectAvail::CPDF_ObjectAvail(RetainPtr<CPDF_ReadValidator> validator,
@@ -40,8 +41,9 @@ CPDF_ObjectAvail::CPDF_ObjectAvail(RetainPtr<CPDF_ReadValidator> validator,
 CPDF_ObjectAvail::~CPDF_ObjectAvail() = default;
 
 CPDF_DataAvail::DocAvailStatus CPDF_ObjectAvail::CheckAvail() {
-  if (!LoadRootObject())
+  if (!LoadRootObject()) {
     return CPDF_DataAvail::kDataNotAvailable;
+  }
 
   if (CheckObjects()) {
     CleanMemory();
@@ -51,8 +53,9 @@ CPDF_DataAvail::DocAvailStatus CPDF_ObjectAvail::CheckAvail() {
 }
 
 bool CPDF_ObjectAvail::LoadRootObject() {
-  if (!non_parsed_objects_.empty())
+  if (!non_parsed_objects_.empty()) {
     return true;
+  }
 
   while (root_ && root_->IsReference()) {
     const uint32_t ref_obj_num = root_->AsReference()->GetRefObjNum();
@@ -64,8 +67,9 @@ bool CPDF_ObjectAvail::LoadRootObject() {
     CPDF_ReadValidator::ScopedSession parse_session(validator_);
     RetainPtr<CPDF_Object> direct =
         holder_->GetOrParseIndirectObject(ref_obj_num);
-    if (validator_->has_read_problems())
+    if (validator_->has_read_problems()) {
       return false;
+    }
 
     parsed_objnums_.insert(ref_obj_num);
     root_ = std::move(direct);
@@ -86,17 +90,20 @@ bool CPDF_ObjectAvail::CheckObjects() {
     const uint32_t obj_num = objects_to_check.top();
     objects_to_check.pop();
 
-    if (HasObjectParsed(obj_num))
+    if (HasObjectParsed(obj_num)) {
       continue;
+    }
 
-    if (!checked_objects.insert(obj_num).second)
+    if (!checked_objects.insert(obj_num).second) {
       continue;
+    }
 
     CPDF_ReadValidator::ScopedSession parse_session(validator_);
     RetainPtr<const CPDF_Object> direct =
         holder_->GetOrParseIndirectObject(obj_num);
-    if (direct == root_)
+    if (direct == root_) {
       continue;
+    }
 
     if (validator_->has_read_problems() ||
         !AppendObjectSubRefs(std::move(direct), &objects_to_check)) {
@@ -111,8 +118,9 @@ bool CPDF_ObjectAvail::CheckObjects() {
 bool CPDF_ObjectAvail::AppendObjectSubRefs(RetainPtr<const CPDF_Object> object,
                                            std::stack<uint32_t>* refs) const {
   DCHECK(refs);
-  if (!object)
+  if (!object) {
     return true;
+  }
 
   CPDF_ObjectWalker walker(std::move(object));
   while (RetainPtr<const CPDF_Object> obj = walker.GetNext()) {
@@ -127,16 +135,18 @@ bool CPDF_ObjectAvail::AppendObjectSubRefs(RetainPtr<const CPDF_Object> object,
     // We need to parse the object before we can do the exclusion check.
     // This is because the exclusion check may check against a referenced
     // field of the object which we need to make sure is loaded.
-    if (validator_->has_read_problems())
+    if (validator_->has_read_problems()) {
       return false;
+    }
 
     if (skip) {
       walker.SkipWalkIntoCurrentObject();
       continue;
     }
 
-    if (obj->IsReference())
+    if (obj->IsReference()) {
       refs->push(obj->AsReference()->GetRefObjNum());
+    }
   }
   return true;
 }

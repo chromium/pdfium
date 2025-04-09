@@ -33,15 +33,18 @@ void CPDF_Type3Char::TextUnitRectToGlyphUnitRect(CFX_FloatRect* pRect) {
 }
 
 bool CPDF_Type3Char::LoadBitmapFromSoleImageOfForm() {
-  if (m_pBitmap || !m_pForm)
+  if (m_pBitmap || !m_pForm) {
     return true;
+  }
 
-  if (m_bColored)
+  if (m_bColored) {
     return false;
+  }
 
   auto result = m_pForm->GetBitmapAndMatrixFromSoleImageOfForm();
-  if (!result.has_value())
+  if (!result.has_value()) {
     return false;
+  }
 
   std::tie(m_pBitmap, m_ImageMatrix) = result.value();
   m_pForm.reset();

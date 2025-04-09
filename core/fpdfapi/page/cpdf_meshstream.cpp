@@ -119,24 +119,29 @@ bool CPDF_MeshStream::Load() {
   m_nCoordBits = pDict->GetIntegerFor("BitsPerCoordinate");
   m_nComponentBits = pDict->GetIntegerFor("BitsPerComponent");
   if (ShouldCheckBPC(m_type)) {
-    if (!IsValidBitsPerCoordinate(m_nCoordBits))
+    if (!IsValidBitsPerCoordinate(m_nCoordBits)) {
       return false;
-    if (!IsValidBitsPerComponent(m_nComponentBits))
+    }
+    if (!IsValidBitsPerComponent(m_nComponentBits)) {
       return false;
+    }
   }
 
   m_nFlagBits = pDict->GetIntegerFor("BitsPerFlag");
-  if (ShouldCheckBitsPerFlag(m_type) && !IsValidBitsPerFlag(m_nFlagBits))
+  if (ShouldCheckBitsPerFlag(m_type) && !IsValidBitsPerFlag(m_nFlagBits)) {
     return false;
+  }
 
   uint32_t nComponents = m_pCS->ComponentCount();
-  if (nComponents > kMaxComponents)
+  if (nComponents > kMaxComponents) {
     return false;
+  }
 
   m_nComponents = m_funcs.empty() ? nComponents : 1;
   RetainPtr<const CPDF_Array> pDecode = pDict->GetArrayFor("Decode");
-  if (!pDecode || pDecode->size() != 4 + m_nComponents * 2)
+  if (!pDecode || pDecode->size() != 4 + m_nComponents * 2) {
     return false;
+  }
 
   m_xmin = pDecode->GetFloatAt(0);
   m_xmax = pDecode->GetFloatAt(1);
@@ -205,9 +210,9 @@ FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
 
   std::array<float, kMaxComponents> color_value;
   for (uint32_t i = 0; i < m_nComponents; ++i) {
-      color_value[i] = m_ColorMin[i] + m_BitStream->GetBits(m_nComponentBits) *
-                                           (m_ColorMax[i] - m_ColorMin[i]) /
-                                           m_ComponentMax;
+    color_value[i] = m_ColorMin[i] + m_BitStream->GetBits(m_nComponentBits) *
+                                         (m_ColorMax[i] - m_ColorMin[i]) /
+                                         m_ComponentMax;
   }
   if (m_funcs.empty()) {
     return m_pCS->GetRGBOrZerosOnError(color_value);
@@ -224,16 +229,19 @@ FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
 bool CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
                                  CPDF_MeshVertex* vertex,
                                  uint32_t* flag) {
-  if (!CanReadFlag())
+  if (!CanReadFlag()) {
     return false;
+  }
   *flag = ReadFlag();
 
-  if (!CanReadCoords())
+  if (!CanReadCoords()) {
     return false;
+  }
   vertex->position = pObject2Bitmap.Transform(ReadCoords());
 
-  if (!CanReadColor())
+  if (!CanReadColor()) {
     return false;
+  }
   vertex->rgb = ReadColor();
   m_BitStream->ByteAlign();
   return true;
@@ -244,14 +252,16 @@ std::vector<CPDF_MeshVertex> CPDF_MeshStream::ReadVertexRow(
     int count) {
   std::vector<CPDF_MeshVertex> vertices;
   for (int i = 0; i < count; ++i) {
-    if (m_BitStream->IsEOF() || !CanReadCoords())
+    if (m_BitStream->IsEOF() || !CanReadCoords()) {
       return std::vector<CPDF_MeshVertex>();
+    }
 
     vertices.emplace_back();
     CPDF_MeshVertex& vertex = vertices.back();
     vertex.position = pObject2Bitmap.Transform(ReadCoords());
-    if (!CanReadColor())
+    if (!CanReadColor()) {
       return std::vector<CPDF_MeshVertex>();
+    }
 
     vertex.rgb = ReadColor();
     m_BitStream->ByteAlign();

@@ -43,8 +43,9 @@ const GlyphNameMap kGlyphNameSubsts[] = {{"ff", "uniFB00"},
 
 const char* GlyphNameRemap(const char* pStrAdobe) {
   for (const auto& element : kGlyphNameSubsts) {
-    if (!FXSYS_stricmp(element.m_pStrAdobe, pStrAdobe))
+    if (!FXSYS_stricmp(element.m_pStrAdobe, pStrAdobe)) {
       return element.m_pStrUnicode;
+    }
   }
   return nullptr;
 }
@@ -94,8 +95,9 @@ CPDF_Type1Font* CPDF_Type1Font::AsType1Font() {
 
 bool CPDF_Type1Font::Load() {
   m_Base14Font = CFX_FontMapper::GetStandardFontName(&m_BaseFontName);
-  if (!IsBase14Font())
+  if (!IsBase14Font()) {
     return LoadCommon();
+  }
 
   RetainPtr<const CPDF_Dictionary> pFontDesc =
       m_pFontDict->GetDictFor("FontDescriptor");
@@ -109,19 +111,21 @@ bool CPDF_Type1Font::Load() {
   if (IsFixedFont()) {
     std::fill(std::begin(m_CharWidth), std::end(m_CharWidth), 600);
   }
-  if (m_Base14Font == CFX_FontMapper::kSymbol)
+  if (m_Base14Font == CFX_FontMapper::kSymbol) {
     m_BaseEncoding = FontEncoding::kAdobeSymbol;
-  else if (m_Base14Font == CFX_FontMapper::kDingbats)
+  } else if (m_Base14Font == CFX_FontMapper::kDingbats) {
     m_BaseEncoding = FontEncoding::kZapfDingbats;
-  else if (FontStyleIsNonSymbolic(m_Flags))
+  } else if (FontStyleIsNonSymbolic(m_Flags)) {
     m_BaseEncoding = FontEncoding::kStandard;
+  }
   return LoadCommon();
 }
 
 #if BUILDFLAG(IS_APPLE)
 int CPDF_Type1Font::GlyphFromCharCodeExt(uint32_t charcode) {
-  if (charcode > 0xff)
+  if (charcode > 0xff) {
     return -1;
+  }
 
   int index = m_ExtGID[static_cast<uint8_t>(charcode)];
   return index != 0xffff ? index : -1;
@@ -137,14 +141,16 @@ void CPDF_Type1Font::LoadGlyphMap() {
 #if BUILDFLAG(IS_APPLE)
   bool bCoreText = true;
   if (!m_Font.GetPlatformFont()) {
-    if (m_Font.GetPsName() == "DFHeiStd-W5")
+    if (m_Font.GetPsName() == "DFHeiStd-W5") {
       bCoreText = false;
+    }
 
     auto* pPlatform = CFX_GEModule::Get()->GetPlatform();
     pdfium::span<const uint8_t> span = m_Font.GetFontSpan();
     m_Font.SetPlatformFont(pPlatform->CreatePlatformFont(span));
-    if (!m_Font.GetPlatformFont())
+    if (!m_Font.GetPlatformFont()) {
       bCoreText = false;
+    }
   }
 #endif
   if (!IsEmbedded() && !IsSymbolicFont() && m_Font.IsTTFont()) {
@@ -175,14 +181,16 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
     }
     face->SelectCharMap(fxge::FontEncoding::kUnicode);
-    if (m_BaseEncoding == FontEncoding::kBuiltin)
+    if (m_BaseEncoding == FontEncoding::kBuiltin) {
       m_BaseEncoding = FontEncoding::kStandard;
+    }
 
     for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
       const char* name =
           GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
-      if (!name)
+      if (!name) {
         continue;
+      }
 
       m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
       m_GlyphIndex[charcode] =
@@ -234,8 +242,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
     for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
       const char* name =
           GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
-      if (!name)
+      if (!name) {
         continue;
+      }
 
       m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
       const char* pStrUnicode = GlyphNameRemap(name);
@@ -245,8 +254,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
       m_GlyphIndex[charcode] = name_index;
       SetExtGID(name, charcode);
-      if (m_GlyphIndex[charcode] != 0)
+      if (m_GlyphIndex[charcode] != 0) {
         continue;
+      }
 
       if (UNSAFE_TODO(strcmp(name, kNotDef)) != 0 &&
           UNSAFE_TODO(strcmp(name, kSpace)) != 0) {
@@ -293,13 +303,15 @@ void CPDF_Type1Font::LoadGlyphMap() {
   for (size_t charcode = 0; charcode < kInternalTableSize; charcode++) {
     const char* name = GetAdobeCharName(m_BaseEncoding, m_CharNames,
                                         static_cast<uint32_t>(charcode));
-    if (!name)
+    if (!name) {
       continue;
+    }
 
     m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
     m_GlyphIndex[charcode] = m_Font.GetFace()->GetNameIndex(name);
-    if (m_GlyphIndex[charcode] != 0)
+    if (m_GlyphIndex[charcode] != 0) {
       continue;
+    }
 
     if (UNSAFE_TODO(strcmp(name, kNotDef)) != 0 &&
         UNSAFE_TODO(strcmp(name, kSpace)) != 0) {
@@ -334,8 +346,9 @@ void CPDF_Type1Font::SetExtGID(const char* name, uint32_t charcode) {
       kCFAllocatorDefault, name, kCFStringEncodingASCII, kCFAllocatorNull);
   m_ExtGID[charcode] =
       CGFontGetGlyphWithGlyphName((CGFontRef)m_Font.GetPlatformFont(), name_ct);
-  if (name_ct)
+  if (name_ct) {
     CFRelease(name_ct);
+  }
 }
 
 void CPDF_Type1Font::CalcExtGID(uint32_t charcode) {

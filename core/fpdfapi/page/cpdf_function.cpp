@@ -50,33 +50,38 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
 std::unique_ptr<CPDF_Function> CPDF_Function::Load(
     RetainPtr<const CPDF_Object> pFuncObj,
     VisitedSet* pVisited) {
-  if (!pFuncObj)
+  if (!pFuncObj) {
     return nullptr;
+  }
 
-  if (pdfium::Contains(*pVisited, pFuncObj))
+  if (pdfium::Contains(*pVisited, pFuncObj)) {
     return nullptr;
+  }
 
   ScopedSetInsertion<VisitedSet::value_type> insertion(pVisited, pFuncObj);
 
   int iType = -1;
-  if (const CPDF_Stream* pStream = pFuncObj->AsStream())
+  if (const CPDF_Stream* pStream = pFuncObj->AsStream()) {
     iType = pStream->GetDict()->GetIntegerFor("FunctionType");
-  else if (const CPDF_Dictionary* pDict = pFuncObj->AsDictionary())
+  } else if (const CPDF_Dictionary* pDict = pFuncObj->AsDictionary()) {
     iType = pDict->GetIntegerFor("FunctionType");
+  }
 
   std::unique_ptr<CPDF_Function> pFunc;
   Type type = IntegerToFunctionType(iType);
-  if (type == Type::kType0Sampled)
+  if (type == Type::kType0Sampled) {
     pFunc = std::make_unique<CPDF_SampledFunc>();
-  else if (type == Type::kType2ExponentialInterpolation)
+  } else if (type == Type::kType2ExponentialInterpolation) {
     pFunc = std::make_unique<CPDF_ExpIntFunc>();
-  else if (type == Type::kType3Stitching)
+  } else if (type == Type::kType3Stitching) {
     pFunc = std::make_unique<CPDF_StitchFunc>();
-  else if (type == Type::kType4PostScript)
+  } else if (type == Type::kType4PostScript) {
     pFunc = std::make_unique<CPDF_PSFunc>();
+  }
 
-  if (!pFunc || !pFunc->Init(pFuncObj, pVisited))
+  if (!pFunc || !pFunc->Init(pFuncObj, pVisited)) {
     return nullptr;
+  }
 
   return pFunc;
 }
@@ -91,12 +96,14 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
       pStream ? pStream->GetDict() : pdfium::WrapRetain(pObj->AsDictionary());
 
   RetainPtr<const CPDF_Array> pDomains = pDict->GetArrayFor("Domain");
-  if (!pDomains)
+  if (!pDomains) {
     return false;
+  }
 
   m_nInputs = fxcrt::CollectionSize<uint32_t>(*pDomains) / 2;
-  if (m_nInputs == 0)
+  if (m_nInputs == 0) {
     return false;
+  }
 
   size_t nInputs = m_nInputs * 2;
   m_Domains = ReadArrayElementsToVector(pDomains.Get(), nInputs);
@@ -108,8 +115,9 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   // |m_nOutputs| here implied Ranges meets the requirements.
   bool bRangeRequired =
       m_Type == Type::kType0Sampled || m_Type == Type::kType4PostScript;
-  if (bRangeRequired && m_nOutputs == 0)
+  if (bRangeRequired && m_nOutputs == 0) {
     return false;
+  }
 
   if (m_nOutputs > 0) {
     size_t nOutputs = m_nOutputs * 2;
@@ -117,8 +125,9 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   }
 
   uint32_t old_outputs = m_nOutputs;
-  if (!v_Init(pObj, pVisited))
+  if (!v_Init(pObj, pVisited)) {
     return false;
+  }
 
   if (!m_Ranges.empty() && m_nOutputs > old_outputs) {
     FX_SAFE_SIZE_T nOutputs = m_nOutputs;
@@ -130,29 +139,34 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
 
 std::optional<uint32_t> CPDF_Function::Call(pdfium::span<const float> inputs,
                                             pdfium::span<float> results) const {
-  if (m_nInputs != inputs.size())
+  if (m_nInputs != inputs.size()) {
     return std::nullopt;
+  }
 
   std::vector<float> clamped_inputs(m_nInputs);
   for (uint32_t i = 0; i < m_nInputs; i++) {
     float domain1 = m_Domains[i * 2];
     float domain2 = m_Domains[i * 2 + 1];
-    if (domain1 > domain2)
+    if (domain1 > domain2) {
       return std::nullopt;
+    }
 
     clamped_inputs[i] = std::clamp(inputs[i], domain1, domain2);
   }
-  if (!v_Call(clamped_inputs, results))
+  if (!v_Call(clamped_inputs, results)) {
     return std::nullopt;
+  }
 
-  if (m_Ranges.empty())
+  if (m_Ranges.empty()) {
     return m_nOutputs;
+  }
 
   for (uint32_t i = 0; i < m_nOutputs; i++) {
     float range1 = m_Ranges[i * 2];
     float range2 = m_Ranges[i * 2 + 1];
-    if (range1 > range2)
+    if (range1 > range2) {
       return std::nullopt;
+    }
 
     results[i] = std::clamp(results[i], range1, range2);
   }

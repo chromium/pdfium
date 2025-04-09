@@ -25,17 +25,20 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
                                 const CPDF_Array* pArray,
                                 std::set<const CPDF_Object*>* pVisited) {
   RetainPtr<const CPDF_Object> pBaseCS = pArray->GetDirectObjectAt(1);
-  if (HasSameArray(pBaseCS.Get()))
+  if (HasSameArray(pBaseCS.Get())) {
     return 0;
+  }
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
   m_pBaseCS =
       pDocPageData->GetColorSpaceGuarded(pBaseCS.Get(), nullptr, pVisited);
-  if (!m_pBaseCS)
+  if (!m_pBaseCS) {
     return 1;
+  }
 
-  if (m_pBaseCS->GetFamily() == Family::kPattern)
+  if (m_pBaseCS->GetFamily() == Family::kPattern) {
     return 0;
+  }
 
   if (m_pBaseCS->ComponentCount() > kMaxPatternColorComps) {
     return 0;

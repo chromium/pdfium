@@ -126,8 +126,9 @@ float CPDF_TextState::TextData::GetFontSizeH() const {
 }
 
 bool SetTextRenderingModeFromInt(int iMode, TextRenderingMode* mode) {
-  if (iMode < 0 || iMode > 7)
+  if (iMode < 0 || iMode > 7) {
     return false;
+  }
   *mode = static_cast<TextRenderingMode>(iMode);
   return true;
 }

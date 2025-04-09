@@ -22,13 +22,15 @@
 namespace {
 
 bool IsObjectStream(const CPDF_Stream* stream) {
-  if (!stream)
+  if (!stream) {
     return false;
+  }
 
   // See ISO 32000-1:2008 spec, table 16.
   RetainPtr<const CPDF_Dictionary> stream_dict = stream->GetDict();
-  if (!ValidateDictType(stream_dict.Get(), "ObjStm"))
+  if (!ValidateDictType(stream_dict.Get(), "ObjStm")) {
     return false;
+  }
 
   RetainPtr<const CPDF_Number> number_of_objects =
       stream_dict->GetNumberFor("N");
@@ -54,8 +56,9 @@ bool IsObjectStream(const CPDF_Stream* stream) {
 //  static
 std::unique_ptr<CPDF_ObjectStream> CPDF_ObjectStream::Create(
     RetainPtr<const CPDF_Stream> stream) {
-  if (!IsObjectStream(stream.Get()))
+  if (!IsObjectStream(stream.Get())) {
     return nullptr;
+  }
 
   // Protected constructor.
   return pdfium::WrapUnique(new CPDF_ObjectStream(std::move(stream)));
@@ -74,17 +77,20 @@ RetainPtr<CPDF_Object> CPDF_ObjectStream::ParseObject(
     CPDF_IndirectObjectHolder* pObjList,
     uint32_t obj_number,
     uint32_t archive_obj_index) const {
-  if (archive_obj_index >= object_info_.size())
+  if (archive_obj_index >= object_info_.size()) {
     return nullptr;
+  }
 
   const auto& info = object_info_[archive_obj_index];
-  if (info.obj_num != obj_number)
+  if (info.obj_num != obj_number) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_Object> result =
       ParseObjectAtOffset(pObjList, info.obj_offset);
-  if (result)
+  if (result) {
     result->SetObjNum(obj_number);
+  }
   return result;
 }
 
@@ -96,13 +102,15 @@ void CPDF_ObjectStream::Init(const CPDF_Stream* stream) {
   CPDF_SyntaxParser syntax(data_stream_);
   const int object_count = stream->GetDict()->GetIntegerFor("N");
   for (int32_t i = object_count; i > 0; --i) {
-    if (syntax.GetPos() >= data_stream_->GetSize())
+    if (syntax.GetPos() >= data_stream_->GetSize()) {
       break;
+    }
 
     const uint32_t obj_num = syntax.GetDirectNum();
     const uint32_t obj_offset = syntax.GetDirectNum();
-    if (!obj_num)
+    if (!obj_num) {
       continue;
+    }
 
     object_info_.emplace_back(obj_num, obj_offset);
   }
@@ -114,11 +122,13 @@ RetainPtr<CPDF_Object> CPDF_ObjectStream::ParseObjectAtOffset(
   FX_SAFE_FILESIZE offset_in_stream = first_object_offset_;
   offset_in_stream += object_offset;
 
-  if (!offset_in_stream.IsValid())
+  if (!offset_in_stream.IsValid()) {
     return nullptr;
+  }
 
-  if (offset_in_stream.ValueOrDie() >= data_stream_->GetSize())
+  if (offset_in_stream.ValueOrDie() >= data_stream_->GetSize()) {
     return nullptr;
+  }
 
   CPDF_SyntaxParser syntax(data_stream_);
   syntax.SetPos(offset_in_stream.ValueOrDie());

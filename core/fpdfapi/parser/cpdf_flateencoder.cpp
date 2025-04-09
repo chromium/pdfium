@@ -55,8 +55,9 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
 CPDF_FlateEncoder::~CPDF_FlateEncoder() = default;
 
 void CPDF_FlateEncoder::UpdateLength(size_t size) {
-  if (static_cast<size_t>(GetDict()->GetIntegerFor("Length")) == size)
+  if (static_cast<size_t>(GetDict()->GetIntegerFor("Length")) == size) {
     return;
+  }
 
   if (!m_pClonedDict) {
     m_pClonedDict = ToDictionary(m_pDict->Clone());
@@ -81,7 +82,8 @@ const CPDF_Dictionary* CPDF_FlateEncoder::GetDict() const {
 }
 
 pdfium::span<const uint8_t> CPDF_FlateEncoder::GetSpan() const {
-  if (is_owned())
+  if (is_owned()) {
     return std::get<DataVector<uint8_t>>(m_Data);
+  }
   return std::get<pdfium::raw_span<const uint8_t>>(m_Data);
 }

@@ -48,13 +48,15 @@ CPDF_TextObject::Item CPDF_TextObject::GetItemInfo(size_t index) const {
   Item info;
   info.m_CharCode = m_CharCodes[index];
   info.m_Origin = CFX_PointF(index > 0 ? m_CharPos[index - 1] : 0, 0);
-  if (info.m_CharCode == CPDF_Font::kInvalidCharCode)
+  if (info.m_CharCode == CPDF_Font::kInvalidCharCode) {
     return info;
+  }
 
   RetainPtr<CPDF_Font> pFont = GetFont();
   const CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
-  if (!IsVertWritingCIDFont(pCIDFont))
+  if (!IsVertWritingCIDFont(pCIDFont)) {
     return info;
+  }
 
   uint16_t cid = pCIDFont->CIDFromCharCode(info.m_CharCode);
   info.m_Origin = CFX_PointF(0, info.m_Origin.x);
@@ -69,8 +71,9 @@ CPDF_TextObject::Item CPDF_TextObject::GetItemInfo(size_t index) const {
 size_t CPDF_TextObject::CountChars() const {
   size_t count = 0;
   for (uint32_t charcode : m_CharCodes) {
-    if (charcode != CPDF_Font::kInvalidCharCode)
+    if (charcode != CPDF_Font::kInvalidCharCode) {
       ++count;
+    }
   }
   return count;
 }
@@ -78,10 +81,12 @@ size_t CPDF_TextObject::CountChars() const {
 uint32_t CPDF_TextObject::GetCharCode(size_t index) const {
   size_t count = 0;
   for (uint32_t code : m_CharCodes) {
-    if (code == CPDF_Font::kInvalidCharCode)
+    if (code == CPDF_Font::kInvalidCharCode) {
       continue;
-    if (count++ != index)
+    }
+    if (count++ != index) {
       continue;
+    }
     return code;
   }
   return CPDF_Font::kInvalidCharCode;
@@ -91,10 +96,12 @@ CPDF_TextObject::Item CPDF_TextObject::GetCharInfo(size_t index) const {
   size_t count = 0;
   for (size_t i = 0; i < m_CharCodes.size(); ++i) {
     uint32_t charcode = m_CharCodes[i];
-    if (charcode == CPDF_Font::kInvalidCharCode)
+    if (charcode == CPDF_Font::kInvalidCharCode) {
       continue;
-    if (count++ == index)
+    }
+    if (count++ == index) {
       return GetItemInfo(i);
+    }
   }
   return Item();
 }
@@ -108,16 +115,19 @@ int CPDF_TextObject::CountWords() const {
 
     WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
     uint16_t unicode = 0;
-    if (swUnicode.GetLength() > 0)
+    if (swUnicode.GetLength() > 0) {
       unicode = swUnicode[0];
+    }
 
     bool bIsLatin = ISLATINWORD(unicode);
-    if (bIsLatin && bInLatinWord)
+    if (bIsLatin && bInLatinWord) {
       continue;
+    }
 
     bInLatinWord = bIsLatin;
-    if (unicode != 0x20)
+    if (unicode != 0x20) {
       nWords++;
+    }
   }
 
   return nWords;
@@ -133,17 +143,20 @@ WideString CPDF_TextObject::GetWordString(int nWordIndex) const {
 
     WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
     uint16_t unicode = 0;
-    if (swUnicode.GetLength() > 0)
+    if (swUnicode.GetLength() > 0) {
       unicode = swUnicode[0];
+    }
 
     bool bIsLatin = ISLATINWORD(unicode);
     if (!bIsLatin || !bInLatinWord) {
       bInLatinWord = bIsLatin;
-      if (unicode != 0x20)
+      if (unicode != 0x20) {
         nWords++;
+      }
     }
-    if (nWords - 1 == nWordIndex)
+    if (nWords - 1 == nWordIndex) {
       swRet += unicode;
+    }
   }
   return swRet;
 }
@@ -233,8 +246,9 @@ float CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
   const float fontsize = GetFontSize() / 1000;
   RetainPtr<CPDF_Font> pFont = GetFont();
   const CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
-  if (!IsVertWritingCIDFont(pCIDFont))
+  if (!IsVertWritingCIDFont(pCIDFont)) {
     return pFont->GetCharWidthF(charcode) * fontsize;
+  }
 
   uint16_t cid = pCIDFont->CIDFromCharCode(charcode);
   return pCIDFont->GetVertWidth(cid) * fontsize;
@@ -260,8 +274,9 @@ void CPDF_TextObject::SetTextRenderMode(TextRenderingMode mode) {
 CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
   RetainPtr<CPDF_Font> pFont = GetFont();
   const float curpos = CalcPositionDataInternal(pFont);
-  if (IsVertWritingCIDFont(pFont->AsCIDFont()))
+  if (IsVertWritingCIDFont(pFont->AsCIDFont())) {
     return {0, curpos};
+  }
   return {curpos * horz_scale, 0};
 }
 
@@ -313,8 +328,9 @@ float CPDF_TextObject::CalcPositionDataInternal(
       charwidth = pFont->GetCharWidthF(charcode) * fontsize / 1000;
     }
     curpos += charwidth;
-    if (charcode == ' ' && (!pCIDFont || pCIDFont->GetCharSize(' ') == 1))
+    if (charcode == ' ' && (!pCIDFont || pCIDFont->GetCharSize(' ') == 1)) {
       curpos += text_state().GetWordSpace();
+    }
 
     curpos += text_state().GetCharSpace();
   }

@@ -1659,8 +1659,9 @@ uint32_t PDF_FindCode(pdfium::span<const uint16_t> pCodes, uint16_t unicode) {
 
 int CPDF_FontEncoding::CharCodeFromUnicode(wchar_t unicode) const {
   for (size_t i = 0; i < std::size(m_Unicodes); i++) {
-    if (m_Unicodes[i] == unicode)
+    if (m_Unicodes[i] == unicode) {
       return static_cast<int>(i);
+    }
   }
   return -1;
 }
@@ -1706,14 +1707,15 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
   }
   if (predefined.has_value()) {
     const char* pName;
-    if (predefined.value() == FontEncoding::kWinAnsi)
+    if (predefined.value() == FontEncoding::kWinAnsi) {
       pName = pdfium::font_encodings::kWinAnsiEncoding;
-    else if (predefined.value() == FontEncoding::kMacRoman)
+    } else if (predefined.value() == FontEncoding::kMacRoman) {
       pName = pdfium::font_encodings::kMacRomanEncoding;
-    else if (predefined.value() == FontEncoding::kMacExpert)
+    } else if (predefined.value() == FontEncoding::kMacExpert) {
       pName = pdfium::font_encodings::kMacExpertEncoding;
-    else
+    } else {
       return nullptr;
+    }
 
     return pdfium::MakeRetain<CPDF_Name>(pPool, pName);
   }
@@ -1789,13 +1791,15 @@ pdfium::span<const uint16_t> UnicodesForPredefinedCharSet(
 const char* CharNameFromPredefinedCharSet(FontEncoding encoding,
                                           uint8_t charcode) {
   if (encoding == FontEncoding::kPdfDoc) {
-    if (charcode < kPDFDocEncodingTableFirstChar)
+    if (charcode < kPDFDocEncodingTableFirstChar) {
       return nullptr;
+    }
 
     charcode -= kPDFDocEncodingTableFirstChar;
   } else {
-    if (charcode < kEncodingTableFirstChar)
+    if (charcode < kEncodingTableFirstChar) {
       return nullptr;
+    }
 
     charcode -= kEncodingTableFirstChar;
   }

@@ -46,8 +46,9 @@ CPDF_PageContentManager::CPDF_PageContentManager(
   if (contents_reference) {
     RetainPtr<CPDF_Object> indirect_obj =
         contents_reference->GetMutableDirect();
-    if (!indirect_obj)
+    if (!indirect_obj) {
       return;
+    }
 
     contents_array.Reset(indirect_obj->AsMutableArray());
     if (contents_array) {
@@ -88,8 +89,9 @@ RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetStreamByIndex(
 
   RetainPtr<CPDF_Reference> stream_reference =
       ToReference(contents_array->GetMutableObjectAt(stream_index));
-  if (!stream_reference)
+  if (!stream_reference) {
     return nullptr;
+  }
 
   return ToStream(stream_reference->GetMutableDirect());
 }

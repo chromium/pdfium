@@ -25,8 +25,9 @@ CPDF_AnnotContext::CPDF_AnnotContext(RetainPtr<CPDF_Dictionary> pAnnotDict,
 CPDF_AnnotContext::~CPDF_AnnotContext() = default;
 
 void CPDF_AnnotContext::SetForm(RetainPtr<CPDF_Stream> pStream) {
-  if (!pStream)
+  if (!pStream) {
     return;
+  }
 
   // Reset the annotation matrix to be the identity matrix, since the
   // appearance stream already takes matrix into account.

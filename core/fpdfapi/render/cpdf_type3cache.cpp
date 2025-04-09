@@ -44,10 +44,12 @@ bool IsScanLine8bpp(const uint8_t* pBuf, int width) {
 }
 
 bool IsScanLineBpp(int bpp, const uint8_t* pBuf, int width) {
-  if (bpp == 1)
+  if (bpp == 1) {
     return IsScanLine1bpp(pBuf, width);
-  if (bpp > 8)
+  }
+  if (bpp > 8) {
     width *= bpp / 8;
+  }
   return IsScanLine8bpp(pBuf, width);
 }
 
@@ -57,8 +59,9 @@ int DetectFirstScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   const int bpp = pBitmap->GetBPP();
   for (int line = 0; line < height; ++line) {
     const uint8_t* pBuf = pBitmap->GetScanline(line).data();
-    if (IsScanLineBpp(bpp, pBuf, width))
+    if (IsScanLineBpp(bpp, pBuf, width)) {
       return line;
+    }
   }
   return -1;
 }
@@ -69,8 +72,9 @@ int DetectLastScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   const int width = pBitmap->GetWidth();
   for (int line = height - 1; line >= 0; --line) {
     const uint8_t* pBuf = pBitmap->GetScanline(line).data();
-    if (IsScanLineBpp(bpp, pBuf, width))
+    if (IsScanLineBpp(bpp, pBuf, width)) {
       return line;
+    }
   }
   return -1;
 }
@@ -99,8 +103,9 @@ const CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
     pSizeCache = it->second.get();
   }
   const CFX_GlyphBitmap* pExisting = pSizeCache->GetBitmap(charcode);
-  if (pExisting)
+  if (pExisting) {
     return pExisting;
+  }
 
   std::unique_ptr<CFX_GlyphBitmap> pNewBitmap =
       RenderGlyph(pSizeCache, charcode, mtMatrix);
@@ -114,12 +119,14 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
     uint32_t charcode,
     const CFX_Matrix& mtMatrix) {
   CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
-  if (!pChar)
+  if (!pChar) {
     return nullptr;
+  }
 
   RetainPtr<CFX_DIBitmap> pBitmap = pChar->GetBitmap();
-  if (!pBitmap)
+  if (!pBitmap) {
     return nullptr;
+  }
 
   CFX_Matrix text_matrix(mtMatrix.a, mtMatrix.b, mtMatrix.c, mtMatrix.d, 0, 0);
   CFX_Matrix image_matrix = pChar->matrix() * text_matrix;
@@ -135,28 +142,33 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
       float top_y = image_matrix.d + image_matrix.f;
       float bottom_y = image_matrix.f;
       bool bFlipped = top_y > bottom_y;
-      if (bFlipped)
+      if (bFlipped) {
         std::swap(top_y, bottom_y);
+      }
       std::tie(top_line, bottom_line) = pSize->AdjustBlue(top_y, bottom_y);
       FX_SAFE_INT32 safe_height = bFlipped ? top_line : bottom_line;
       safe_height -= bFlipped ? bottom_line : top_line;
-      if (!safe_height.IsValid())
+      if (!safe_height.IsValid()) {
         return nullptr;
+      }
 
       pResBitmap = pBitmap->StretchTo(static_cast<int>(image_matrix.a),
                                       safe_height.ValueOrDie(),
                                       FXDIB_ResampleOptions(), nullptr);
       top = top_line;
-      if (image_matrix.a < 0)
+      if (image_matrix.a < 0) {
         left = FXSYS_roundf(image_matrix.e + image_matrix.a);
-      else
+      } else {
         left = FXSYS_roundf(image_matrix.e);
+      }
     }
   }
-  if (!pResBitmap)
+  if (!pResBitmap) {
     pResBitmap = pBitmap->TransformTo(image_matrix, &left, &top);
-  if (!pResBitmap)
+  }
+  if (!pResBitmap) {
     return nullptr;
+  }
 
   auto pGlyph = std::make_unique<CFX_GlyphBitmap>(left, -top);
   pGlyph->GetBitmap()->TakeOver(std::move(pResBitmap));

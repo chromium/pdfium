@@ -61,8 +61,9 @@ RetainPtr<CFX_DIBBase> CPDF_ImageLoader::TranslateImage(
   DCHECK(pTransferFunc);
   DCHECK(!pTransferFunc->GetIdentity());
   m_pBitmap = pTransferFunc->TranslateImage(std::move(m_pBitmap));
-  if (m_bCached && m_pMask)
+  if (m_bCached && m_pMask) {
     m_pMask = m_pMask->Realize();
+  }
   m_bCached = false;
   return m_pBitmap;
 }

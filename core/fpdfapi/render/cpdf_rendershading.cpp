@@ -48,8 +48,9 @@ uint32_t CountOutputsFromFunctions(
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs) {
   FX_SAFE_UINT32 total = 0;
   for (const auto& func : funcs) {
-    if (func)
+    if (func) {
       total += func->OutputCount();
+    }
   }
   return total.ValueOrDefault(0);
 }
@@ -77,12 +78,14 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
     float input = diff * i / kShadingSteps + t_min;
     pdfium::span<float> result_span = pdfium::make_span(result_array);
     for (const auto& func : funcs) {
-      if (!func)
+      if (!func) {
         continue;
+      }
       std::optional<uint32_t> nresults =
           func->Call(pdfium::span_from_ref(input), result_span);
-      if (nresults.has_value())
+      if (nresults.has_value()) {
         result_span = result_span.subspan(nresults.value());
+      }
     }
     auto rgb = pCS->GetRGBOrZerosOnError(result_array);
     shading_steps[i] =
@@ -101,12 +104,14 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kBgra);
 
   const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
-  if (total_results == 0)
+  if (total_results == 0) {
     return;
+  }
 
   RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
-  if (!pCoords)
+  if (!pCoords) {
     return;
+  }
 
   float start_x = pCoords->GetFloatAt(0);
   float start_y = pCoords->GetFloatAt(1);
@@ -169,12 +174,14 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kBgra);
 
   const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
-  if (total_results == 0)
+  if (total_results == 0) {
     return;
+  }
 
   RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
-  if (!pCoords)
+  if (!pCoords) {
     return;
+  }
 
   float start_x = pCoords->GetFloatAt(0);
   float start_y = pCoords->GetFloatAt(1);
@@ -231,8 +238,9 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
         float root = sqrt(b2_4ac);
         float s1 = (-b - root) / (2 * a);
         float s2 = (-b + root) / (2 * a);
-        if (a <= 0)
+        if (a <= 0) {
           std::swap(s1, s2);
+        }
         if (bDecreasing) {
           s = (s1 >= 0 || bStartExtend) ? s1 : s2;
         } else {
@@ -268,8 +276,9 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kBgra);
 
   const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
-  if (total_results == 0)
+  if (total_results == 0) {
     return;
+  }
 
   RetainPtr<const CPDF_Array> pDomain = pDict->GetArrayFor("Domain");
   float xmin = 0.0f;
@@ -296,17 +305,20 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
           CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
-      if (pos.x < xmin || pos.x > xmax || pos.y < ymin || pos.y > ymax)
+      if (pos.x < xmin || pos.x > xmax || pos.y < ymin || pos.y > ymax) {
         continue;
+      }
 
       float input[2] = {pos.x, pos.y};
       pdfium::span<float> result_span = pdfium::make_span(result_array);
       for (const auto& func : funcs) {
-        if (!func)
+        if (!func) {
           continue;
+        }
         std::optional<uint32_t> nresults = func->Call(input, result_span);
-        if (nresults.has_value())
+        if (nresults.has_value()) {
           result_span = result_span.subspan(nresults.value());
+        }
       }
       auto rgb = pCS->GetRGBOrZerosOnError(result_array);
       dib_buf[column] = ArgbEncode(alpha, static_cast<int32_t>(rgb.red * 255),
@@ -320,12 +332,14 @@ bool GetScanlineIntersect(int y,
                           const CFX_PointF& first,
                           const CFX_PointF& second,
                           float* x) {
-  if (first.y == second.y)
+  if (first.y == second.y) {
     return false;
+  }
 
   if (first.y < second.y) {
-    if (y < first.y || y > second.y)
+    if (y < first.y || y > second.y) {
       return false;
+    }
   } else if (y < second.y || y > first.y) {
     return false;
   }
@@ -342,13 +356,15 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
     min_y = std::min(min_y, triangle[i].position.y);
     max_y = std::max(max_y, triangle[i].position.y);
   }
-  if (min_y == max_y)
+  if (min_y == max_y) {
     return;
+  }
 
   int min_yi = std::max(static_cast<int>(floorf(min_y)), 0);
   int max_yi = static_cast<int>(ceilf(max_y));
-  if (max_yi >= pBitmap->GetHeight())
+  if (max_yi >= pBitmap->GetHeight()) {
     max_yi = pBitmap->GetHeight() - 1;
+  }
 
   for (int y = min_yi; y <= max_yi; y++) {
     int nIntersects = 0;
@@ -363,8 +379,9 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
       const CFX_PointF& position2 = vertex2.position;
       bool bIntersect =
           GetScanlineIntersect(y, position1, position2, &inter_x[nIntersects]);
-      if (!bIntersect)
+      if (!bIntersect) {
         continue;
+      }
 
       float y_dist = (y - position1.y) / (position2.y - position1.y);
       r[nIntersects] =
@@ -375,8 +392,9 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
           vertex1.rgb.blue + ((vertex2.rgb.blue - vertex1.rgb.blue) * y_dist);
       nIntersects++;
     }
-    if (nIntersects != 2)
+    if (nIntersects != 2) {
       continue;
+    }
 
     int min_x;
     int max_x;
@@ -431,26 +449,30 @@ void DrawFreeGouraudShading(
 
   CPDF_MeshStream stream(kFreeFormGouraudTriangleMeshShading, funcs,
                          std::move(pShadingStream), std::move(pCS));
-  if (!stream.Load())
+  if (!stream.Load()) {
     return;
+  }
 
   std::array<CPDF_MeshVertex, 3> triangle;
   while (!stream.IsEOF()) {
     CPDF_MeshVertex vertex;
     uint32_t flag;
-    if (!stream.ReadVertex(mtObject2Bitmap, &vertex, &flag))
+    if (!stream.ReadVertex(mtObject2Bitmap, &vertex, &flag)) {
       return;
+    }
 
     if (flag == 0) {
       triangle[0] = vertex;
       for (int i = 1; i < 3; ++i) {
         uint32_t dummy_flag;
-        if (!stream.ReadVertex(mtObject2Bitmap, &triangle[i], &dummy_flag))
+        if (!stream.ReadVertex(mtObject2Bitmap, &triangle[i], &dummy_flag)) {
           return;
+        }
       }
     } else {
-      if (flag == 1)
+      if (flag == 1) {
         triangle[0] = triangle[1];
+      }
 
       triangle[1] = triangle[2];
       triangle[2] = vertex;
@@ -469,24 +491,28 @@ void DrawLatticeGouraudShading(
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kBgra);
 
   int row_verts = pShadingStream->GetDict()->GetIntegerFor("VerticesPerRow");
-  if (row_verts < 2)
+  if (row_verts < 2) {
     return;
+  }
 
   CPDF_MeshStream stream(kLatticeFormGouraudTriangleMeshShading, funcs,
                          std::move(pShadingStream), std::move(pCS));
-  if (!stream.Load())
+  if (!stream.Load()) {
     return;
+  }
 
   std::array<std::vector<CPDF_MeshVertex>, 2> vertices;
   vertices[0] = stream.ReadVertexRow(mtObject2Bitmap, row_verts);
-  if (vertices[0].empty())
+  if (vertices[0].empty()) {
     return;
+  }
 
   int last_index = 0;
   while (true) {
     vertices[1 - last_index] = stream.ReadVertexRow(mtObject2Bitmap, row_verts);
-    if (vertices[1 - last_index].empty())
+    if (vertices[1 - last_index].empty()) {
       return;
+    }
 
     CPDF_MeshVertex triangle[3];
     for (int i = 1; i < row_verts; ++i) {
@@ -597,8 +623,9 @@ struct CoonBezier {
     std::array<float, kPointsCount> points_y;
     x.GetPoints(points_x);
     y.GetPoints(points_y);
-    for (size_t i = 0; i < kPointsCount; ++i)
+    for (size_t i = 0; i < kPointsCount; ++i) {
       path_points[i].point_ = {points_x[i], points_y[i]};
+    }
   }
 
   void GetPointsReverse(pdfium::span<CFX_Path::Point> path_points) const {
@@ -626,8 +653,9 @@ int Interpolate(int p1, int p2, int delta1, int delta2, bool* overflow) {
   p *= delta1;
   p /= delta2;
   p += p1;
-  if (!p.IsValid())
+  if (!p.IsValid()) {
     *overflow = true;
+  }
   return p.ValueOrDefault(0);
 }
 
@@ -802,8 +830,9 @@ void DrawCoonPatchMeshes(
 
   CPDF_MeshStream stream(type, funcs, std::move(pShadingStream),
                          std::move(pCS));
-  if (!stream.Load())
+  if (!stream.Load()) {
     return;
+  }
 
   PatchDrawer patch;
   patch.alpha = alpha;
@@ -819,8 +848,9 @@ void DrawCoonPatchMeshes(
   std::array<CFX_PointF, 16> coords;
   int point_count = type == kTensorProductPatchMeshShading ? 16 : 12;
   while (!stream.IsEOF()) {
-    if (!stream.CanReadFlag())
+    if (!stream.CanReadFlag()) {
       break;
+    }
     uint32_t flag = stream.ReadFlag();
     int iStartPoint = 0;
     int iStartColor = 0;
@@ -840,14 +870,16 @@ void DrawCoonPatchMeshes(
       fxcrt::Copy(tempColors, patch.patch_colors);
     }
     for (i = iStartPoint; i < point_count; i++) {
-      if (!stream.CanReadCoords())
+      if (!stream.CanReadCoords()) {
         break;
+      }
       coords[i] = mtObject2Bitmap.Transform(stream.ReadCoords());
     }
 
     for (i = iStartColor; i < 4; i++) {
-      if (!stream.CanReadColor())
+      if (!stream.CanReadColor()) {
         break;
+      }
 
       FX_RGB_STRUCT<float> rgb = stream.ReadColor();
       patch.patch_colors[i].comp[0] = static_cast<int32_t>(rgb.red * 255);
@@ -889,8 +921,9 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
                               int alpha,
                               const CPDF_RenderOptions& options) {
   RetainPtr<CPDF_ColorSpace> pColorSpace = pPattern->GetCS();
-  if (!pColorSpace)
+  if (!pColorSpace) {
     return;
+  }
 
   FX_ARGB background = 0;
   RetainPtr<const CPDF_Dictionary> pDict =

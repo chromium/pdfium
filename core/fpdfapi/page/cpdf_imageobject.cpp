@@ -89,12 +89,14 @@ void CPDF_ImageObject::MaybePurgeCache() {
   }
 
   RetainPtr<const CPDF_Stream> pStream = m_pImage->GetStream();
-  if (!pStream)
+  if (!pStream) {
     return;
+  }
 
   uint32_t objnum = pStream->GetObjNum();
-  if (!objnum)
+  if (!objnum) {
     return;
+  }
 
   auto* pDoc = m_pImage->GetDocument();
   CHECK(pDoc);

@@ -35,8 +35,9 @@ CPDF_CrossRefAvail::CPDF_CrossRefAvail(CPDF_SyntaxParser* parser,
 CPDF_CrossRefAvail::~CPDF_CrossRefAvail() = default;
 
 CPDF_DataAvail::DocAvailStatus CPDF_CrossRefAvail::CheckAvail() {
-  if (status_ == CPDF_DataAvail::kDataAvailable)
+  if (status_ == CPDF_DataAvail::kDataAvailable) {
     return CPDF_DataAvail::kDataAvailable;
+  }
 
   CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   while (true) {
@@ -54,8 +55,9 @@ CPDF_DataAvail::DocAvailStatus CPDF_CrossRefAvail::CheckAvail() {
       case State::kDone:
         break;
     }
-    if (!check_result)
+    if (!check_result) {
       break;
+    }
 
     DCHECK(!GetValidator()->has_read_problems());
   }
@@ -80,22 +82,25 @@ bool CPDF_CrossRefAvail::CheckCrossRef() {
   parser_->SetPos(cross_refs_for_check_.front());
 
   const ByteString first_word = parser_->PeekNextWord();
-  if (CheckReadProblems())
+  if (CheckReadProblems()) {
     return false;
+  }
 
   const bool result = (first_word == kCrossRefKeyword) ? CheckCrossRefTable()
                                                        : CheckCrossRefStream();
 
-  if (result)
+  if (result) {
     cross_refs_for_check_.pop();
+  }
 
   return result;
 }
 
 bool CPDF_CrossRefAvail::CheckCrossRefTable() {
   const ByteString keyword = parser_->GetKeyword();
-  if (CheckReadProblems())
+  if (CheckReadProblems()) {
     return false;
+  }
 
   if (keyword != kCrossRefKeyword) {
     status_ = CPDF_DataAvail::kDataError;
@@ -110,16 +115,18 @@ bool CPDF_CrossRefAvail::CheckCrossRefTable() {
 bool CPDF_CrossRefAvail::CheckCrossRefTableItem() {
   parser_->SetPos(offset_);
   const ByteString keyword = parser_->GetKeyword();
-  if (CheckReadProblems())
+  if (CheckReadProblems()) {
     return false;
+  }
 
   if (keyword.IsEmpty()) {
     status_ = CPDF_DataAvail::kDataError;
     return false;
   }
 
-  if (keyword == kTrailerKeyword)
+  if (keyword == kTrailerKeyword) {
     state_ = State::kCrossRefTableTrailerCheck;
+  }
 
   // Go to next item.
   offset_ = parser_->GetPos();
@@ -131,8 +138,9 @@ bool CPDF_CrossRefAvail::CheckCrossRefTableTrailer() {
 
   RetainPtr<CPDF_Dictionary> trailer =
       ToDictionary(parser_->GetObjectBody(nullptr));
-  if (CheckReadProblems())
+  if (CheckReadProblems()) {
     return false;
+  }
 
   if (!trailer) {
     status_ = CPDF_DataAvail::kDataError;
@@ -165,8 +173,9 @@ bool CPDF_CrossRefAvail::CheckCrossRefTableTrailer() {
 bool CPDF_CrossRefAvail::CheckCrossRefStream() {
   auto cross_ref =
       parser_->GetIndirectObject(nullptr, CPDF_SyntaxParser::ParseType::kLoose);
-  if (CheckReadProblems())
+  if (CheckReadProblems()) {
     return false;
+  }
 
   RetainPtr<const CPDF_Dictionary> trailer =
       cross_ref && cross_ref->IsStream() ? cross_ref->GetDict() : nullptr;
@@ -193,8 +202,9 @@ bool CPDF_CrossRefAvail::CheckCrossRefStream() {
 }
 
 void CPDF_CrossRefAvail::AddCrossRefForCheck(FX_FILESIZE crossref_offset) {
-  if (pdfium::Contains(registered_crossrefs_, crossref_offset))
+  if (pdfium::Contains(registered_crossrefs_, crossref_offset)) {
     return;
+  }
 
   cross_refs_for_check_.push(crossref_offset);
   registered_crossrefs_.insert(crossref_offset);

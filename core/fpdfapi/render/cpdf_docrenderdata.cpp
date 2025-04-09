@@ -47,8 +47,9 @@ RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
     CPDF_Type3Font* font) {
   CHECK(font);
   auto it = m_Type3FaceMap.find(font);
-  if (it != m_Type3FaceMap.end() && it->second)
+  if (it != m_Type3FaceMap.end() && it->second) {
     return pdfium::WrapRetain(it->second.Get());
+  }
 
   auto cache = pdfium::MakeRetain<CPDF_Type3Cache>(font);
   m_Type3FaceMap[font].Reset(cache.Get());
@@ -70,8 +71,9 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
 
 #if BUILDFLAG(IS_WIN)
 CFX_PSFontTracker* CPDF_DocRenderData::GetPSFontTracker() {
-  if (!m_PSFontTracker)
+  if (!m_PSFontTracker) {
     m_PSFontTracker = std::make_unique<CFX_PSFontTracker>();
+  }
   return m_PSFontTracker.get();
 }
 #endif
@@ -81,8 +83,9 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
   std::array<std::unique_ptr<CPDF_Function>, 3> pFuncs;
   const CPDF_Array* pArray = pObj->AsArray();
   if (pArray) {
-    if (pArray->size() < 3)
+    if (pArray->size() < 3) {
       return nullptr;
+    }
 
     for (uint32_t i = 0; i < 3; ++i) {
       pFuncs[2 - i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
@@ -92,8 +95,9 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
     }
   } else {
     pFuncs[0] = CPDF_Function::Load(pObj);
-    if (!pFuncs[0])
+    if (!pFuncs[0]) {
       return nullptr;
+    }
   }
 
   float output[kMaxOutputs];
@@ -119,8 +123,9 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
         }
         pFuncs[i]->Call(pdfium::span_from_ref(input), output);
         size_t o = FXSYS_roundf(output[0] * 255);
-        if (o != v)
+        if (o != v) {
           bIdentity = false;
+        }
         samples[i][v] = o;
       }
     }
@@ -131,10 +136,12 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
         pFuncs[0]->Call(pdfium::span_from_ref(input), output);
       }
       size_t o = FXSYS_roundf(output[0] * 255);
-      if (o != v)
+      if (o != v) {
         bIdentity = false;
-      for (auto& channel : samples)
+      }
+      for (auto& channel : samples) {
         channel[v] = o;
+      }
     }
   }
 

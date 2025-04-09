@@ -18,8 +18,9 @@ CPDF_ContentMarks::~CPDF_ContentMarks() = default;
 
 std::unique_ptr<CPDF_ContentMarks> CPDF_ContentMarks::Clone() {
   auto result = std::make_unique<CPDF_ContentMarks>();
-  if (m_pMarkData)
+  if (m_pMarkData) {
     result->m_pMarkData = pdfium::MakeRetain<MarkData>(*m_pMarkData);
+  }
   return result;
 }
 
@@ -69,20 +70,23 @@ bool CPDF_ContentMarks::RemoveMark(CPDF_ContentMarkItem* pMarkItem) {
 }
 
 void CPDF_ContentMarks::EnsureMarkDataExists() {
-  if (!m_pMarkData)
+  if (!m_pMarkData) {
     m_pMarkData = pdfium::MakeRetain<MarkData>();
+  }
 }
 
 size_t CPDF_ContentMarks::FindFirstDifference(
     const CPDF_ContentMarks* other) const {
-  if (m_pMarkData == other->m_pMarkData)
+  if (m_pMarkData == other->m_pMarkData) {
     return CountItems();
+  }
 
   size_t min_len = std::min(CountItems(), other->CountItems());
 
   for (size_t i = 0; i < min_len; ++i) {
-    if (GetItem(i) != other->GetItem(i))
+    if (GetItem(i) != other->GetItem(i)) {
       return i;
+    }
   }
   return min_len;
 }
@@ -101,8 +105,9 @@ size_t CPDF_ContentMarks::MarkData::CountItems() const {
 bool CPDF_ContentMarks::MarkData::ContainsItem(
     const CPDF_ContentMarkItem* pItem) const {
   for (const auto& pMark : m_Marks) {
-    if (pMark == pItem)
+    if (pMark == pItem) {
       return true;
+    }
   }
   return false;
 }
@@ -121,8 +126,9 @@ const CPDF_ContentMarkItem* CPDF_ContentMarks::MarkData::GetItem(
 int CPDF_ContentMarks::MarkData::GetMarkedContentID() const {
   for (const auto& pMark : m_Marks) {
     RetainPtr<const CPDF_Dictionary> pDict = pMark->GetParam();
-    if (pDict && pDict->KeyExist("MCID"))
+    if (pDict && pDict->KeyExist("MCID")) {
       return pDict->GetIntegerFor("MCID");
+    }
   }
   return -1;
 }

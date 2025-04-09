@@ -41,8 +41,9 @@ WideString StringDataAdd(WideString str) {
       value = 0;
     }
   }
-  if (value)
+  if (value) {
     ret.InsertAtFront(value);
+  }
   return ret;
 }
 
@@ -57,16 +58,18 @@ CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() = default;
 WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   auto it = m_Multimap.find(charcode);
   if (it == m_Multimap.end()) {
-    if (!m_pBaseMap)
+    if (!m_pBaseMap) {
       return WideString();
+    }
     return WideString(
         m_pBaseMap->UnicodeFromCID(static_cast<uint16_t>(charcode)));
   }
 
   uint32_t value = *it->second.begin();
   wchar_t unicode = static_cast<wchar_t>(value & 0xffff);
-  if (unicode != 0xffff)
+  if (unicode != 0xffff) {
     return WideString(unicode);
+  }
 
   size_t index = value >> 16;
   return index < m_MultiCharVec.size() ? m_MultiCharVec[index] : WideString();
@@ -74,8 +77,9 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
   for (const auto& pair : m_Multimap) {
-    if (pdfium::Contains(pair.second, static_cast<uint32_t>(unicode)))
+    if (pdfium::Contains(pair.second, static_cast<uint32_t>(unicode))) {
       return pair.first;
+    }
   }
   return 0;
 }
@@ -110,17 +114,20 @@ std::optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView input) {
   }
 
   size_t len = str.GetLength();
-  if (len <= 2 || str[0] != '<' || str[len - 1] != '>')
+  if (len <= 2 || str[0] != '<' || str[len - 1] != '>') {
     return std::nullopt;
+  }
 
   FX_SAFE_UINT32 code = 0;
   for (char c : str.Substr(1, len - 2)) {
-    if (!FXSYS_IsHexDigit(c))
+    if (!FXSYS_IsHexDigit(c)) {
       return std::nullopt;
+    }
 
     code = code * 16 + FXSYS_HexCharToInt(c);
-    if (!code.IsValid())
+    if (!code.IsValid()) {
       return std::nullopt;
+    }
   }
   return std::optional<uint32_t>(code.ValueOrDie());
 }
@@ -128,15 +135,17 @@ std::optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView input) {
 // static
 WideString CPDF_ToUnicodeMap::StringToWideString(ByteStringView str) {
   size_t len = str.GetLength();
-  if (len <= 2 || str[0] != '<' || str[len - 1] != '>')
+  if (len <= 2 || str[0] != '<' || str[len - 1] != '>') {
     return WideString();
+  }
 
   WideString result;
   int byte_pos = 0;
   wchar_t ch = 0;
   for (char c : str.Substr(1, len - 2)) {
-    if (!FXSYS_IsHexDigit(c))
+    if (!FXSYS_IsHexDigit(c)) {
       break;
+    }
 
     ch = ch * 16 + FXSYS_HexCharToInt(c);
     byte_pos++;
@@ -374,8 +383,9 @@ uint32_t CPDF_ToUnicodeMap::GetMultiCharIndexIndicator() const {
 
 void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
   size_t len = destcode.GetLength();
-  if (len == 0)
+  if (len == 0) {
     return;
+  }
 
   if (len == 1) {
     InsertIntoMultimap(srccode, destcode[0]);

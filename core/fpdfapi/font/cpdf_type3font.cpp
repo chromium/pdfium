@@ -95,8 +95,9 @@ bool CPDF_Type3Font::Load() {
     }
   }
   m_pCharProcs = m_pFontDict->GetMutableDictFor("CharProcs");
-  if (m_pFontDict->GetDirectObjectFor("Encoding"))
+  if (m_pFontDict->GetDirectObjectFor("Encoding")) {
     LoadPDFEncoding(false, false);
+  }
   return true;
 }
 
@@ -107,24 +108,29 @@ void CPDF_Type3Font::CheckType3FontMetrics() {
 }
 
 CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
-  if (m_CharLoadingDepth >= kMaxType3FormLevel)
+  if (m_CharLoadingDepth >= kMaxType3FormLevel) {
     return nullptr;
+  }
 
   auto it = m_CacheMap.find(charcode);
-  if (it != m_CacheMap.end())
+  if (it != m_CacheMap.end()) {
     return it->second.get();
+  }
 
   const char* name = GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
-  if (!name)
+  if (!name) {
     return nullptr;
+  }
 
-  if (!m_pCharProcs)
+  if (!m_pCharProcs) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_Stream> pStream =
       ToStream(m_pCharProcs->GetMutableDirectObjectFor(name));
-  if (!pStream)
+  if (!pStream) {
     return nullptr;
+  }
 
   std::unique_ptr<CPDF_Font::FormIface> pForm = m_pFormFactory->CreateForm(
       m_pDocument, m_pFontResources ? m_pFontResources : m_pPageResources,
@@ -141,12 +147,14 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
     pForm->ParseContentForType3Char(pNewChar.get());
   }
   it = m_CacheMap.find(charcode);
-  if (it != m_CacheMap.end())
+  if (it != m_CacheMap.end()) {
     return it->second.get();
+  }
 
   pNewChar->Transform(pForm.get(), m_FontMatrix);
-  if (pForm->HasPageObjects())
+  if (pForm->HasPageObjects()) {
     pNewChar->SetForm(std::move(pForm));
+  }
 
   CPDF_Type3Char* pCachedChar = pNewChar.get();
   m_CacheMap[charcode] = std::move(pNewChar);
@@ -154,11 +162,13 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
 }
 
 int CPDF_Type3Font::GetCharWidthF(uint32_t charcode) {
-  if (charcode >= std::size(m_CharWidthL))
+  if (charcode >= std::size(m_CharWidthL)) {
     charcode = 0;
+  }
 
-  if (m_CharWidthL[charcode])
+  if (m_CharWidthL[charcode]) {
     return m_CharWidthL[charcode];
+  }
 
   const CPDF_Type3Char* pChar = LoadChar(charcode);
   return pChar ? pChar->width() : 0;
@@ -167,7 +177,8 @@ int CPDF_Type3Font::GetCharWidthF(uint32_t charcode) {
 FX_RECT CPDF_Type3Font::GetCharBBox(uint32_t charcode) {
   FX_RECT ret;
   const CPDF_Type3Char* pChar = LoadChar(charcode);
-  if (pChar)
+  if (pChar) {
     ret = pChar->bbox();
+  }
   return ret;
 }

@@ -24,8 +24,9 @@ namespace {
 CPDF_FontGlobals* g_FontGlobals = nullptr;
 
 RetainPtr<const CPDF_CMap> LoadPredefinedCMap(ByteStringView name) {
-  if (!name.IsEmpty() && name[0] == '/')
+  if (!name.IsEmpty() && name[0] == '/') {
     name = name.Last(name.GetLength() - 1);
+  }
   return pdfium::MakeRetain<CPDF_CMap>(name);
 }
 
@@ -65,8 +66,9 @@ RetainPtr<CPDF_Font> CPDF_FontGlobals::Find(
     CPDF_Document* pDoc,
     CFX_FontMapper::StandardFont index) {
   auto it = m_StockMap.find(pDoc);
-  if (it == m_StockMap.end() || !it->second)
+  if (it == m_StockMap.end() || !it->second) {
     return nullptr;
+  }
 
   return it->second->GetFont(index);
 }
@@ -75,8 +77,9 @@ void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
                            CFX_FontMapper::StandardFont index,
                            RetainPtr<CPDF_Font> pFont) {
   UnownedPtr<CPDF_Document> pKey(pDoc);
-  if (!pdfium::Contains(m_StockMap, pKey))
+  if (!pdfium::Contains(m_StockMap, pKey)) {
     m_StockMap[pKey] = std::make_unique<CFX_StockFontArray>();
+  }
   m_StockMap[pKey]->SetFont(index, std::move(pFont));
 }
 
@@ -84,8 +87,9 @@ void CPDF_FontGlobals::Clear(CPDF_Document* pDoc) {
   // Avoid constructing smart-pointer key as erase() doesn't invoke
   // transparent lookup in the same way find() does.
   auto it = m_StockMap.find(pDoc);
-  if (it != m_StockMap.end())
+  if (it != m_StockMap.end()) {
     m_StockMap.erase(it);
+  }
 }
 
 void CPDF_FontGlobals::LoadEmbeddedGB1CMaps() {
@@ -111,12 +115,14 @@ void CPDF_FontGlobals::LoadEmbeddedKorea1CMaps() {
 RetainPtr<const CPDF_CMap> CPDF_FontGlobals::GetPredefinedCMap(
     const ByteString& name) {
   auto it = m_CMaps.find(name);
-  if (it != m_CMaps.end())
+  if (it != m_CMaps.end()) {
     return it->second;
+  }
 
   RetainPtr<const CPDF_CMap> pCMap = LoadPredefinedCMap(name.AsStringView());
-  if (!name.IsEmpty())
+  if (!name.IsEmpty()) {
     m_CMaps[name] = pCMap;
+  }
 
   return pCMap;
 }

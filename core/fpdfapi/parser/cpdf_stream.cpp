@@ -157,8 +157,9 @@ DataVector<uint8_t> CPDF_Stream::ReadAllRawData() const {
   DCHECK(!result.empty());
 
   auto underlying_stream = std::get<RetainPtr<IFX_SeekableReadStream>>(data_);
-  if (!underlying_stream->ReadBlockAtOffset(result, 0))
+  if (!underlying_stream->ReadBlockAtOffset(result, 0)) {
     return DataVector<uint8_t>();
+  }
 
   return result;
 }
@@ -186,14 +187,17 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
   }
 
   encoder.UpdateLength(data.size());
-  if (!encoder.WriteDictTo(archive, encryptor))
+  if (!encoder.WriteDictTo(archive, encryptor)) {
     return false;
+  }
 
-  if (!archive->WriteString("stream\r\n"))
+  if (!archive->WriteString("stream\r\n")) {
     return false;
+  }
 
-  if (!archive->WriteBlock(data))
+  if (!archive->WriteBlock(data)) {
     return false;
+  }
 
   return archive->WriteString("\r\nendstream");
 }

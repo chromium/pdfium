@@ -117,8 +117,9 @@ CPDF_PageImageCache::CPDF_PageImageCache(CPDF_Page* pPage) : m_pPage(pPage) {}
 CPDF_PageImageCache::~CPDF_PageImageCache() = default;
 
 void CPDF_PageImageCache::CacheOptimization(int32_t dwLimitCacheSize) {
-  if (m_nCacheSize <= (uint32_t)dwLimitCacheSize)
+  if (m_nCacheSize <= (uint32_t)dwLimitCacheSize) {
     return;
+  }
 
   uint32_t nCount = fxcrt::CollectionSize<uint32_t>(m_ImageCache);
   std::vector<CacheInfo> cache_info;
@@ -133,23 +134,27 @@ void CPDF_PageImageCache::CacheOptimization(int32_t dwLimitCacheSize) {
   // The comparison is legal because uint32_t is an unsigned type.
   uint32_t nTimeCount = m_nTimeCount;
   if (nTimeCount + 1 < nTimeCount) {
-    for (uint32_t i = 0; i < nCount; i++)
+    for (uint32_t i = 0; i < nCount; i++) {
       m_ImageCache[cache_info[i].pStream]->SetTimeCount(i);
+    }
     m_nTimeCount = nCount;
   }
 
   size_t i = 0;
-  while (i + 15 < nCount)
+  while (i + 15 < nCount) {
     ClearImageCacheEntry(cache_info[i++].pStream);
+  }
 
-  while (i < nCount && m_nCacheSize > (uint32_t)dwLimitCacheSize)
+  while (i < nCount && m_nCacheSize > (uint32_t)dwLimitCacheSize) {
     ClearImageCacheEntry(cache_info[i++].pStream);
+  }
 }
 
 void CPDF_PageImageCache::ClearImageCacheEntry(const CPDF_Stream* pStream) {
   auto it = m_ImageCache.find(pStream);
-  if (it == m_ImageCache.end())
+  if (it == m_ImageCache.end()) {
     return;
+  }
 
   m_nCacheSize -= it->second->EstimateSize();
 
@@ -171,8 +176,9 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
     bool bLoadMask,
     const CFX_Size& max_size_required) {
   // A cross-document image may have come from the embedder.
-  if (m_pPage->GetDocument() != pImage->GetDocument())
+  if (m_pPage->GetDocument() != pImage->GetDocument()) {
     return false;
+  }
 
   RetainPtr<const CPDF_Stream> pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);
@@ -185,23 +191,27 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
   CPDF_DIB::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
       this, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask,
       max_size_required);
-  if (ret == CPDF_DIB::LoadState::kContinue)
+  if (ret == CPDF_DIB::LoadState::kContinue) {
     return true;
+  }
 
   m_nTimeCount++;
-  if (!m_bCurFindCache)
+  if (!m_bCurFindCache) {
     m_ImageCache[pStream] = m_pCurImageCacheEntry.Release();
+  }
 
-  if (ret == CPDF_DIB::LoadState::kFail)
+  if (ret == CPDF_DIB::LoadState::kFail) {
     m_nCacheSize += m_pCurImageCacheEntry->EstimateSize();
+  }
 
   return false;
 }
 
 bool CPDF_PageImageCache::Continue(PauseIndicatorIface* pPause) {
   bool ret = m_pCurImageCacheEntry->Continue(pPause, this);
-  if (ret)
+  if (ret) {
     return true;
+  }
 
   m_nTimeCount++;
   if (!m_bCurFindCache) {
@@ -215,8 +225,9 @@ bool CPDF_PageImageCache::Continue(PauseIndicatorIface* pPause) {
 void CPDF_PageImageCache::ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) {
   RetainPtr<const CPDF_Stream> pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);
-  if (it == m_ImageCache.end())
+  if (it == m_ImageCache.end()) {
     return;
+  }
 
   Entry* pEntry = it->second.get();
   m_nCacheSize -= pEntry->EstimateSize();
@@ -274,13 +285,15 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
       max_size_required);
   m_bCachedSetMaxSizeRequired =
       (max_size_required.width != 0 && max_size_required.height != 0);
-  if (ret == CPDF_DIB::LoadState::kContinue)
+  if (ret == CPDF_DIB::LoadState::kContinue) {
     return CPDF_DIB::LoadState::kContinue;
+  }
 
-  if (ret == CPDF_DIB::LoadState::kSuccess)
+  if (ret == CPDF_DIB::LoadState::kSuccess) {
     ContinueGetCachedBitmap(pPageImageCache);
-  else
+  } else {
     m_pCurBitmap.Reset();
+  }
   return CPDF_DIB::LoadState::kFail;
 }
 
@@ -289,13 +302,15 @@ bool CPDF_PageImageCache::Entry::Continue(
     CPDF_PageImageCache* pPageImageCache) {
   CPDF_DIB::LoadState ret =
       m_pCurBitmap.AsRaw<CPDF_DIB>()->ContinueLoadDIBBase(pPause);
-  if (ret == CPDF_DIB::LoadState::kContinue)
+  if (ret == CPDF_DIB::LoadState::kContinue) {
     return true;
+  }
 
-  if (ret == CPDF_DIB::LoadState::kSuccess)
+  if (ret == CPDF_DIB::LoadState::kSuccess) {
     ContinueGetCachedBitmap(pPageImageCache);
-  else
+  } else {
     m_pCurBitmap.Reset();
+  }
   return false;
 }
 
@@ -321,10 +336,12 @@ void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
 
 void CPDF_PageImageCache::Entry::CalcSize() {
   m_dwCacheSize = 0;
-  if (m_pCachedBitmap)
+  if (m_pCachedBitmap) {
     m_dwCacheSize += m_pCachedBitmap->GetEstimatedImageMemoryBurden();
-  if (m_pCachedMask)
+  }
+  if (m_pCachedMask) {
     m_dwCacheSize += m_pCachedMask->GetEstimatedImageMemoryBurden();
+  }
 }
 
 bool CPDF_PageImageCache::Entry::IsCacheValid(

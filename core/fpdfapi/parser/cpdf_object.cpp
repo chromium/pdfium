@@ -26,8 +26,9 @@ static_assert(CPDF_Parser::kMaxObjectNumber < static_cast<uint32_t>(1) << 31,
               "Need a smaller kMaxObjNumber for cache keys");
 
 uint64_t CPDF_Object::KeyForCache() const {
-  if (IsInline())
+  if (IsInline()) {
     return (static_cast<uint64_t>(1) << 63) | reinterpret_cast<uint64_t>(this);
+  }
 
   return (static_cast<uint64_t>(m_ObjNum) << 32) |
          static_cast<uint64_t>(m_GenNum);

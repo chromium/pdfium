@@ -157,11 +157,13 @@ constexpr PredefinedCMap kPredefinedCMaps[] = {
 };
 
 const PredefinedCMap* GetPredefinedCMap(ByteStringView cmapid) {
-  if (cmapid.GetLength() > 2)
+  if (cmapid.GetLength() > 2) {
     cmapid = cmapid.First(cmapid.GetLength() - 2);
+  }
   for (const auto& map : kPredefinedCMaps) {
-    if (cmapid == map.m_pName)
+    if (cmapid == map.m_pName) {
       return &map;
+    }
   }
   return nullptr;
 }
@@ -208,8 +210,9 @@ int CheckFourByteCodeRange(pdfium::span<uint8_t> codes,
 size_t GetFourByteCharSizeImpl(
     uint32_t charcode,
     pdfium::span<const CPDF_CMap::CodeRange> ranges) {
-  if (ranges.empty())
+  if (ranges.empty()) {
     return 1;
+  }
 
   std::array<uint8_t, 4> codes = {{
       0x00,
@@ -221,8 +224,9 @@ size_t GetFourByteCharSizeImpl(
     size_t size = 4 - offset;
     for (size_t j = 0; j < ranges.size(); j++) {
       size_t iSeg = (ranges.size() - 1) - j;
-      if (ranges[iSeg].m_CharSize < size)
+      if (ranges[iSeg].m_CharSize < size) {
         continue;
+      }
       size_t iChar = 0;
       while (iChar < size) {
         if (codes[offset + iChar] < ranges[iSeg].m_Lower[iChar] ||
@@ -231,8 +235,9 @@ size_t GetFourByteCharSizeImpl(
         }
         ++iChar;
       }
-      if (iChar == ranges[iSeg].m_CharSize)
+      if (iChar == ranges[iSeg].m_CharSize) {
         return size;
+      }
     }
   }
   return 1;
@@ -241,8 +246,9 @@ size_t GetFourByteCharSizeImpl(
 const fxcmap::CMap* FindEmbeddedCMap(pdfium::span<const fxcmap::CMap> pCMaps,
                                      ByteStringView bsName) {
   for (size_t i = 0; i < pCMaps.size(); i++) {
-    if (bsName == pCMaps[i].m_Name)
+    if (bsName == pCMaps[i].m_Name) {
       return &pCMaps[i];
+    }
   }
   return nullptr;
 }
@@ -258,19 +264,22 @@ CPDF_CMap::CPDF_CMap(ByteStringView bsPredefinedName)
   }
 
   const PredefinedCMap* map = GetPredefinedCMap(bsPredefinedName);
-  if (!map)
+  if (!map) {
     return;
+  }
 
   m_Charset = map->m_Charset;
   m_Coding = map->m_Coding;
   m_CodingScheme = map->m_CodingScheme;
-  if (m_CodingScheme == MixedTwoBytes)
+  if (m_CodingScheme == MixedTwoBytes) {
     m_MixedTwoByteLeadingBytes = LoadLeadingSegments(*map);
+  }
   m_pEmbedMap = FindEmbeddedCMap(
       CPDF_FontGlobals::GetInstance()->GetEmbeddedCharset(m_Charset),
       bsPredefinedName);
-  if (!m_pEmbedMap)
+  if (!m_pEmbedMap) {
     return;
+  }
 
   m_bLoaded = true;
 }
@@ -292,18 +301,22 @@ CPDF_CMap::CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData)
 CPDF_CMap::~CPDF_CMap() = default;
 
 uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
-  if (m_Coding == CIDCoding::kCID)
+  if (m_Coding == CIDCoding::kCID) {
     return static_cast<uint16_t>(charcode);
+  }
 
-  if (m_pEmbedMap)
+  if (m_pEmbedMap) {
     return fxcmap::CIDFromCharCode(m_pEmbedMap, charcode);
+  }
 
-  if (m_DirectCharcodeToCIDTable.empty())
+  if (m_DirectCharcodeToCIDTable.empty()) {
     return static_cast<uint16_t>(charcode);
+  }
 
   auto table_span = m_DirectCharcodeToCIDTable.span();
-  if (charcode < table_span.size())
+  if (charcode < table_span.size()) {
     return table_span[charcode];
+  }
 
   auto it = std::lower_bound(m_AdditionalCharcodeToCIDMappings.begin(),
                              m_AdditionalCharcodeToCIDMappings.end(), charcode,
@@ -331,8 +344,9 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
     }
     case MixedTwoBytes: {
       uint8_t byte1 = offset < pBytes.size() ? pBytes[offset++] : 0;
-      if (!m_MixedTwoByteLeadingBytes[byte1])
+      if (!m_MixedTwoByteLeadingBytes[byte1]) {
         return byte1;
+      }
       uint8_t byte2 = offset < pBytes.size() ? pBytes[offset++] : 0;
       return 256 * byte1 + byte2;
     }
@@ -344,16 +358,19 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
         int ret =
             CheckFourByteCodeRange(pdfium::make_span(codes).first(char_size),
                                    m_MixedFourByteLeadingRanges);
-        if (ret == 0)
+        if (ret == 0) {
           return 0;
+        }
         if (ret == 2) {
           uint32_t charcode = 0;
-          for (int i = 0; i < char_size; i++)
+          for (int i = 0; i < char_size; i++) {
             charcode = (charcode << 8) + codes[i];
+          }
           return charcode;
         }
-        if (char_size == 4 || offset == pBytes.size())
+        if (char_size == 4 || offset == pBytes.size()) {
           return 0;
+        }
         codes[char_size++] = pBytes[offset++];
       }
     }
@@ -368,16 +385,20 @@ int CPDF_CMap::GetCharSize(uint32_t charcode) const {
     case TwoBytes:
       return 2;
     case MixedTwoBytes:
-      if (charcode < 0x100)
+      if (charcode < 0x100) {
         return 1;
+      }
       return 2;
     case MixedFourBytes:
-      if (charcode < 0x100)
+      if (charcode < 0x100) {
         return 1;
-      if (charcode < 0x10000)
+      }
+      if (charcode < 0x10000) {
         return 2;
-      if (charcode < 0x1000000)
+      }
+      if (charcode < 0x1000000) {
         return 3;
+      }
       return 4;
   }
   NOTREACHED();
@@ -393,8 +414,9 @@ size_t CPDF_CMap::CountChar(ByteStringView pString) const {
       size_t count = 0;
       for (size_t i = 0; i < pString.GetLength(); i++) {
         count++;
-        if (m_MixedTwoByteLeadingBytes[pString[i]])
+        if (m_MixedTwoByteLeadingBytes[pString[i]]) {
           i++;
+        }
       }
       return count;
     }
@@ -461,8 +483,9 @@ void CPDF_CMap::AppendChar(ByteString* str, uint32_t charcode) const {
 
 void CPDF_CMap::SetAdditionalMappings(std::vector<CIDRange> mappings) {
   DCHECK(m_AdditionalCharcodeToCIDMappings.empty());
-  if (m_CodingScheme != MixedFourBytes || mappings.empty())
+  if (m_CodingScheme != MixedFourBytes || mappings.empty()) {
     return;
+  }
 
   std::sort(
       mappings.begin(), mappings.end(),

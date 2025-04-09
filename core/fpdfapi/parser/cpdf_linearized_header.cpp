@@ -29,11 +29,13 @@ bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
                                    const ByteString& key,
                                    T min_value,
                                    bool must_exist = true) {
-  if (!pDict->KeyExist(key))
+  if (!pDict->KeyExist(key)) {
     return !must_exist;
+  }
   RetainPtr<const CPDF_Number> pNum = pDict->GetNumberFor(key);
-  if (!pNum || !pNum->IsInteger())
+  if (!pNum || !pNum->IsInteger()) {
     return false;
+  }
   const int raw_value = pNum->GetInteger();
   if (!pdfium::IsValueInRangeForNumericType<T>(raw_value)) {
     return false;
@@ -75,14 +77,16 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
   }
   // Move parser to the start of the xref table for the documents first page.
   // (skpping endobj keyword)
-  if (parser->GetNextWord().word != "endobj")
+  if (parser->GetNextWord().word != "endobj") {
     return nullptr;
+  }
 
   auto result = pdfium::WrapUnique(
       new CPDF_LinearizedHeader(pDict.Get(), parser->GetPos()));
 
-  if (!IsLinearizedHeaderValid(result.get(), parser->GetDocumentSize()))
+  if (!IsLinearizedHeaderValid(result.get(), parser->GetDocumentSize())) {
     return nullptr;
+  }
 
   return result;
 }
@@ -102,8 +106,9 @@ CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
   if (nHintStreamSize == 2 || nHintStreamSize == 4) {
     m_szHintStart = std::max(pHintStreamRange->GetIntegerAt(0), 0);
     const FX_SAFE_UINT32 safe_hint_length = pHintStreamRange->GetIntegerAt(1);
-    if (safe_hint_length.IsValid())
+    if (safe_hint_length.IsValid()) {
       m_HintLength = safe_hint_length.ValueOrDie();
+    }
   }
 }
 

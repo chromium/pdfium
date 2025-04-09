@@ -25,16 +25,19 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   CHECK(pObj->IsDictionary() || pObj->IsStream());
   RetainPtr<const CPDF_Dictionary> pDict = pObj->GetDict();
   RetainPtr<const CPDF_Number> pExponent = pDict->GetNumberFor("N");
-  if (!pExponent)
+  if (!pExponent) {
     return false;
+  }
 
   m_Exponent = pExponent->GetNumber();
 
   RetainPtr<const CPDF_Array> pArray0 = pDict->GetArrayFor("C0");
-  if (pArray0 && m_nOutputs == 0)
+  if (pArray0 && m_nOutputs == 0) {
     m_nOutputs = fxcrt::CollectionSize<uint32_t>(*pArray0);
-  if (m_nOutputs == 0)
+  }
+  if (m_nOutputs == 0) {
     m_nOutputs = 1;
+  }
 
   RetainPtr<const CPDF_Array> pArray1 = pDict->GetArrayFor("C1");
   m_BeginValues = DataVector<float>(Fx2DSizeOrDie(m_nOutputs, 2));
@@ -46,8 +49,9 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
 
   FX_SAFE_UINT32 nOutputs = m_nOutputs;
   nOutputs *= m_nInputs;
-  if (!nOutputs.IsValid())
+  if (!nOutputs.IsValid()) {
     return false;
+  }
 
   m_nOrigOutputs = m_nOutputs;
   m_nOutputs = nOutputs.ValueOrDie();

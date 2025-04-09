@@ -21,16 +21,19 @@
 #include "core/fxcrt/stl_util.h"
 
 bool GraphicsData::operator<(const GraphicsData& other) const {
-  if (!FXSYS_SafeEQ(fillAlpha, other.fillAlpha))
+  if (!FXSYS_SafeEQ(fillAlpha, other.fillAlpha)) {
     return FXSYS_SafeLT(fillAlpha, other.fillAlpha);
-  if (!FXSYS_SafeEQ(strokeAlpha, other.strokeAlpha))
+  }
+  if (!FXSYS_SafeEQ(strokeAlpha, other.strokeAlpha)) {
     return FXSYS_SafeLT(strokeAlpha, other.strokeAlpha);
+  }
   return blendType < other.blendType;
 }
 
 bool FontData::operator<(const FontData& other) const {
-  if (baseFont != other.baseFont)
+  if (baseFont != other.baseFont) {
     return baseFont < other.baseFont;
+  }
   return type < other.type;
 }
 
@@ -60,12 +63,14 @@ void CPDF_PageObjectHolder::StartParse(
 }
 
 void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
-  if (m_ParseState == ParseState::kParsed)
+  if (m_ParseState == ParseState::kParsed) {
     return;
+  }
 
   DCHECK_EQ(m_ParseState, ParseState::kParsing);
-  if (m_pParser->Continue(pPause))
+  if (m_pParser->Continue(pPause)) {
     return;
+  }
 
   m_ParseState = ParseState::kParsed;
   m_pDocument->IncrementParsedPageCount();
@@ -87,8 +92,9 @@ std::set<int32_t> CPDF_PageObjectHolder::TakeDirtyStreams() {
 std::optional<ByteString> CPDF_PageObjectHolder::GraphicsMapSearch(
     const GraphicsData& gd) {
   auto it = m_GraphicsMap.find(gd);
-  if (it == m_GraphicsMap.end())
+  if (it == m_GraphicsMap.end()) {
     return std::nullopt;
+  }
 
   return it->second;
 }
@@ -101,8 +107,9 @@ void CPDF_PageObjectHolder::GraphicsMapInsert(const GraphicsData& gd,
 std::optional<ByteString> CPDF_PageObjectHolder::FontsMapSearch(
     const FontData& fd) {
   auto it = m_FontsMap.find(fd);
-  if (it == m_FontsMap.end())
+  if (it == m_FontsMap.end()) {
     return std::nullopt;
+  }
 
   return it->second;
 }
@@ -144,16 +151,18 @@ CFX_Matrix CPDF_PageObjectHolder::GetCTMAtEndOfStream(int32_t stream) {
 
 void CPDF_PageObjectHolder::LoadTransparencyInfo() {
   RetainPtr<const CPDF_Dictionary> pGroup = m_pDict->GetDictFor("Group");
-  if (!pGroup)
+  if (!pGroup) {
     return;
+  }
 
   if (pGroup->GetByteStringFor(pdfium::transparency::kGroupSubType) !=
       pdfium::transparency::kTransparency) {
     return;
   }
   m_Transparency.SetGroup();
-  if (pGroup->GetIntegerFor(pdfium::transparency::kI))
+  if (pGroup->GetIntegerFor(pdfium::transparency::kI)) {
     m_Transparency.SetIsolated();
+  }
 }
 
 size_t CPDF_PageObjectHolder::GetActivePageObjectCount() const {
@@ -183,22 +192,25 @@ std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
     CPDF_PageObject* pPageObj) {
   auto it = std::find(std::begin(m_PageObjectList), std::end(m_PageObjectList),
                       fxcrt::MakeFakeUniquePtr(pPageObj));
-  if (it == std::end(m_PageObjectList))
+  if (it == std::end(m_PageObjectList)) {
     return nullptr;
+  }
 
   std::unique_ptr<CPDF_PageObject> result = std::move(*it);
   m_PageObjectList.erase(it);
 
   int32_t content_stream = pPageObj->GetContentStream();
-  if (content_stream >= 0)
+  if (content_stream >= 0) {
     m_DirtyStreams.insert(content_stream);
+  }
 
   return result;
 }
 
 bool CPDF_PageObjectHolder::ErasePageObjectAtIndex(size_t index) {
-  if (index >= m_PageObjectList.size())
+  if (index >= m_PageObjectList.size()) {
     return false;
+  }
 
   m_PageObjectList.erase(m_PageObjectList.begin() + index);
   return true;

@@ -45,8 +45,9 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     static constexpr uint32_t kNoPitch = 0;
     std::optional<CFX_DIBitmap::PitchAndSize> pitch_size =
         CFX_DIBitmap::CalculatePitchAndSize(width, height, dibFormat, kNoPitch);
-    if (!pitch_size.has_value())
+    if (!pitch_size.has_value()) {
       return false;
+    }
 
     if (pitch_size.value().size <= kImageSizeLimitBytes &&
         bitmap_device_->Create(width, height, dibFormat)) {

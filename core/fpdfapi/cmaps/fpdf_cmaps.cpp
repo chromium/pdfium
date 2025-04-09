@@ -44,8 +44,9 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
             begin, end, charcode,
             [](const DWordCIDMap& element, uint32_t charcode) {
               uint16_t hiword = static_cast<uint16_t>(charcode >> 16);
-              if (element.m_HiWord != hiword)
+              if (element.m_HiWord != hiword) {
                 return element.m_HiWord < hiword;
+              }
               return element.m_LoWordHigh < static_cast<uint16_t>(charcode);
             });
         if (found != end && loword >= found->m_LoWordLow &&
@@ -68,8 +69,9 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
             begin, end, loword, [](const SingleCmap& element, uint16_t code) {
               return element.code < code;
             });
-        if (found != end && found->code == loword)
+        if (found != end && found->code == loword) {
           return found->cid;
+        }
         break;
       }
       case CMap::Type::kRange: {
@@ -80,8 +82,9 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
             begin, end, loword, [](const RangeCmap& element, uint16_t code) {
               return element.high < code;
             });
-        if (found != end && loword >= found->low && loword <= found->high)
+        if (found != end && loword >= found->low && loword <= found->high) {
           return found->cid + loword - found->low;
+        }
         break;
       }
     }

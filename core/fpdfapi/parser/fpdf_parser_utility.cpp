@@ -80,8 +80,9 @@ std::optional<FX_FILESIZE> GetHeaderOffset(
   static constexpr size_t kBufSize = 4;
   uint8_t buf[kBufSize];
   for (FX_FILESIZE offset = 0; offset <= 1024; ++offset) {
-    if (!pFile->ReadBlockAtOffset(buf, offset))
+    if (!pFile->ReadBlockAtOffset(buf, offset)) {
       return std::nullopt;
+    }
 
     // SAFETY: string literal and `buf` can accommodate 4 byte comparisons.
     if (UNSAFE_BUFFERS(memcmp(buf, "%PDF", 4)) == 0) {
@@ -151,8 +152,9 @@ std::vector<float> ReadArrayElementsToVector(const CPDF_Array* pArray,
   DCHECK(pArray);
   DCHECK(pArray->size() >= nCount);
   std::vector<float> ret(nCount);
-  for (size_t i = 0; i < nCount; ++i)
+  for (size_t i = 0; i < nCount; ++i) {
     ret[i] = pArray->GetFloatAt(i);
+  }
   return ret;
 }
 
@@ -163,15 +165,17 @@ bool ValidateDictType(const CPDF_Dictionary* dict, ByteStringView type) {
 
 bool ValidateDictAllResourcesOfType(const CPDF_Dictionary* dict,
                                     ByteStringView type) {
-  if (!dict)
+  if (!dict) {
     return false;
+  }
 
   CPDF_DictionaryLocker locker(dict);
   for (const auto& it : locker) {
     RetainPtr<const CPDF_Dictionary> entry =
         ToDictionary(it.second->GetDirect());
-    if (!ValidateDictType(entry.Get(), type))
+    if (!ValidateDictType(entry.Get(), type)) {
       return false;
+    }
   }
   return true;
 }

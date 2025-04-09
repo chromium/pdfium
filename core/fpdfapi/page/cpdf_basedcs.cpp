@@ -12,6 +12,7 @@ CPDF_BasedCS::~CPDF_BasedCS() = default;
 
 void CPDF_BasedCS::EnableStdConversion(bool bEnabled) {
   CPDF_ColorSpace::EnableStdConversion(bEnabled);
-  if (m_pBaseCS)
+  if (m_pBaseCS) {
     m_pBaseCS->EnableStdConversion(bEnabled);
+  }
 }

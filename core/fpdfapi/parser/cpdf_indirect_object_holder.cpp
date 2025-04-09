@@ -43,8 +43,9 @@ RetainPtr<CPDF_Object> CPDF_IndirectObjectHolder::GetMutableIndirectObject(
 const CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObjectInternal(
     uint32_t objnum) const {
   auto it = m_IndirectObjs.find(objnum);
-  if (it == m_IndirectObjs.end())
+  if (it == m_IndirectObjs.end()) {
     return nullptr;
+  }
 
   return FilterInvalidObjNum(it->second.Get());
 }
@@ -56,8 +57,9 @@ RetainPtr<CPDF_Object> CPDF_IndirectObjectHolder::GetOrParseIndirectObject(
 
 CPDF_Object* CPDF_IndirectObjectHolder::GetOrParseIndirectObjectInternal(
     uint32_t objnum) {
-  if (objnum == 0 || objnum == CPDF_Object::kInvalidObjNum)
+  if (objnum == 0 || objnum == CPDF_Object::kInvalidObjNum) {
     return nullptr;
+  }
 
   // Add item anyway to prevent recursively parsing of same object.
   auto insert_result = m_IndirectObjs.insert(std::make_pair(objnum, nullptr));
@@ -96,13 +98,15 @@ bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
     uint32_t objnum,
     RetainPtr<CPDF_Object> pObj) {
   DCHECK(objnum);
-  if (!pObj || objnum == CPDF_Object::kInvalidObjNum)
+  if (!pObj || objnum == CPDF_Object::kInvalidObjNum) {
     return false;
+  }
 
   auto& obj_holder = m_IndirectObjs[objnum];
   const CPDF_Object* old_object = FilterInvalidObjNum(obj_holder.Get());
-  if (old_object && pObj->GetGenNum() <= old_object->GetGenNum())
+  if (old_object && pObj->GetGenNum() <= old_object->GetGenNum()) {
     return false;
+  }
 
   pObj->SetObjNum(objnum);
   obj_holder = std::move(pObj);
@@ -112,8 +116,9 @@ bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
 
 void CPDF_IndirectObjectHolder::DeleteIndirectObject(uint32_t objnum) {
   auto it = m_IndirectObjs.find(objnum);
-  if (it == m_IndirectObjs.end() || !FilterInvalidObjNum(it->second.Get()))
+  if (it == m_IndirectObjs.end() || !FilterInvalidObjNum(it->second.Get())) {
     return;
+  }
 
   m_IndirectObjs.erase(it);
 }

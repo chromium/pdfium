@@ -16,14 +16,17 @@ namespace {
 
 int RI_StringToId(const ByteString& ri) {
   uint32_t id = ri.GetID();
-  if (id == FXBSTR_ID('A', 'b', 's', 'o'))
+  if (id == FXBSTR_ID('A', 'b', 's', 'o')) {
     return 1;
+  }
 
-  if (id == FXBSTR_ID('S', 'a', 't', 'u'))
+  if (id == FXBSTR_ID('S', 'a', 't', 'u')) {
     return 2;
+  }
 
-  if (id == FXBSTR_ID('P', 'e', 'r', 'c'))
+  if (id == FXBSTR_ID('P', 'e', 'r', 'c')) {
     return 3;
+  }
 
   return 0;
 }
@@ -44,10 +47,12 @@ BlendMode GetBlendTypeInternal(const ByteString& mode) {
     case FXBSTR_ID('L', 'i', 'g', 'h'):
       return BlendMode::kLighten;
     case FXBSTR_ID('C', 'o', 'l', 'o'):
-      if (mode.GetLength() == 10)
+      if (mode.GetLength() == 10) {
         return BlendMode::kColorDodge;
-      if (mode.GetLength() == 9)
+      }
+      if (mode.GetLength() == 9) {
         return BlendMode::kColorBurn;
+      }
       return BlendMode::kColor;
     case FXBSTR_ID('H', 'a', 'r', 'd'):
       return BlendMode::kHardLight;

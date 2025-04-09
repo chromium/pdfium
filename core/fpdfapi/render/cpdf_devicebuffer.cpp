@@ -48,10 +48,12 @@ CFX_Matrix CPDF_DeviceBuffer::CalculateMatrix(CFX_RenderDevice* pDevice,
           pDevice->GetDeviceCaps(FXDC_PIXEL_WIDTH) * 254 / (horz_size * 10);
       int dpiv =
           pDevice->GetDeviceCaps(FXDC_PIXEL_HEIGHT) * 254 / (vert_size * 10);
-      if (dpih > max_dpi)
+      if (dpih > max_dpi) {
         matrix.Scale(static_cast<float>(max_dpi) / dpih, 1.0f);
-      if (dpiv > max_dpi)
+      }
+      if (dpiv > max_dpi) {
         matrix.Scale(1.0f, static_cast<float>(max_dpi) / dpiv);
+      }
     }
   }
   return matrix;

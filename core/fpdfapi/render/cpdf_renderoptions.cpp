@@ -31,10 +31,12 @@ CPDF_RenderOptions::CPDF_RenderOptions(const CPDF_RenderOptions& rhs) = default;
 CPDF_RenderOptions::~CPDF_RenderOptions() = default;
 
 FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
-  if (ColorModeIs(kNormal))
+  if (ColorModeIs(kNormal)) {
     return argb;
-  if (ColorModeIs(kAlpha))
+  }
+  if (ColorModeIs(kAlpha)) {
     return argb;
+  }
 
   const FX_BGRA_STRUCT<uint8_t> bgra = ArgbToBGRAStruct(argb);
   const int gray = FXRGB2GRAY(bgra.red, bgra.green, bgra.blue);

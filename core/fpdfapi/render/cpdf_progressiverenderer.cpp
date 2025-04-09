@@ -54,8 +54,9 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
       m_LastObjectRendered = m_pCurrentLayer->GetObjectHolder()->end();
       m_pRenderStatus =
           std::make_unique<CPDF_RenderStatus>(m_pContext, m_pDevice);
-      if (m_pOptions)
+      if (m_pOptions) {
         m_pRenderStatus->SetOptions(*m_pOptions);
+      }
       m_pRenderStatus->SetTransparency(
           m_pCurrentLayer->GetObjectHolder()->GetTransparency());
       m_pRenderStatus->Initialize(nullptr, nullptr);
@@ -102,20 +103,23 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
           m_pContext->GetPageCache()->CacheOptimization(
               m_pRenderStatus->GetRenderOptions().GetCacheSizeLimit());
         }
-        if (pCurObj->IsForm() || pCurObj->IsShading())
+        if (pCurObj->IsForm() || pCurObj->IsShading()) {
           nObjsToGo = 0;
-        else
+        } else {
           --nObjsToGo;
+        }
       }
       m_LastObjectRendered = iter;
       if (nObjsToGo == 0) {
-        if (pPause && pPause->NeedToPauseNow())
+        if (pPause && pPause->NeedToPauseNow()) {
           return;
+        }
         nObjsToGo = kStepLimit;
       }
       ++iter;
-      if (is_mask && iter != iterEnd)
+      if (is_mask && iter != iterEnd) {
         return;
+      }
     }
     if (m_pCurrentLayer->GetObjectHolder()->GetParseState() ==
         CPDF_PageObjectHolder::ParseState::kParsed) {
@@ -123,8 +127,9 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
       m_pDevice->RestoreState(false);
       m_pCurrentLayer = nullptr;
       m_LayerIndex++;
-      if (is_mask || (pPause && pPause->NeedToPauseNow()))
+      if (is_mask || (pPause && pPause->NeedToPauseNow())) {
         return;
+      }
     } else if (is_mask) {
       return;
     } else {

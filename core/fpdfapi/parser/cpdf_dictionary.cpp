@@ -33,8 +33,9 @@ CPDF_Dictionary::~CPDF_Dictionary() {
   // and break cyclic references.
   m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Map) {
-    if (it.second->GetObjNum() == kInvalidObjNum)
+    if (it.second->GetObjNum() == kInvalidObjNum) {
       it.second.Leak();
+    }
   }
 }
 
@@ -60,8 +61,9 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
     if (!pdfium::Contains(*pVisited, it.second.Get())) {
       std::set<const CPDF_Object*> visited(*pVisited);
       auto obj = it.second->CloneNonCyclic(bDirect, &visited);
-      if (obj)
+      if (obj) {
         pCopy->m_Map.insert(std::make_pair(it.first, std::move(obj)));
+      }
     }
   }
   return pCopy;
@@ -114,8 +116,9 @@ ByteString CPDF_Dictionary::GetByteStringFor(const ByteString& key,
 
 WideString CPDF_Dictionary::GetUnicodeTextFor(const ByteString& key) const {
   const CPDF_Object* p = GetObjectForInternal(key);
-  if (const CPDF_Reference* pRef = ToReference(p))
+  if (const CPDF_Reference* pRef = ToReference(p)) {
     p = pRef->GetDirectInternal();
+  }
   return p ? p->GetUnicodeText() : WideString();
 }
 
@@ -174,8 +177,9 @@ RetainPtr<CPDF_Dictionary> CPDF_Dictionary::GetMutableDictFor(
 RetainPtr<CPDF_Dictionary> CPDF_Dictionary::GetOrCreateDictFor(
     const ByteString& key) {
   RetainPtr<CPDF_Dictionary> result = GetMutableDictFor(key);
-  if (result)
+  if (result) {
     return result;
+  }
   return SetNewFor<CPDF_Dictionary>(key);
 }
 
@@ -197,8 +201,9 @@ RetainPtr<CPDF_Array> CPDF_Dictionary::GetMutableArrayFor(
 RetainPtr<CPDF_Array> CPDF_Dictionary::GetOrCreateArrayFor(
     const ByteString& key) {
   RetainPtr<CPDF_Array> result = GetMutableArrayFor(key);
-  if (result)
+  if (result) {
     return result;
+  }
   return SetNewFor<CPDF_Array>(key);
 }
 
@@ -240,15 +245,17 @@ RetainPtr<const CPDF_String> CPDF_Dictionary::GetStringFor(
 
 CFX_FloatRect CPDF_Dictionary::GetRectFor(const ByteString& key) const {
   const CPDF_Array* pArray = GetArrayForInternal(key);
-  if (pArray)
+  if (pArray) {
     return pArray->GetRect();
+  }
   return CFX_FloatRect();
 }
 
 CFX_Matrix CPDF_Dictionary::GetMatrixFor(const ByteString& key) const {
   const CPDF_Array* pArray = GetArrayForInternal(key);
-  if (pArray)
+  if (pArray) {
     return pArray->GetMatrix();
+  }
   return CFX_Matrix();
 }
 
@@ -259,8 +266,9 @@ bool CPDF_Dictionary::KeyExist(const ByteString& key) const {
 std::vector<ByteString> CPDF_Dictionary::GetKeys() const {
   std::vector<ByteString> result;
   CPDF_DictionaryLocker locker(this);
-  for (const auto& item : locker)
+  for (const auto& item : locker) {
     result.push_back(item.first);
+  }
   return result;
 }
 
@@ -288,8 +296,9 @@ void CPDF_Dictionary::ConvertToIndirectObjectFor(
     CPDF_IndirectObjectHolder* pHolder) {
   CHECK(!IsLocked());
   auto it = m_Map.find(key);
-  if (it == m_Map.end() || it->second->IsReference())
+  if (it == m_Map.end() || it->second->IsReference()) {
     return;
+  }
 
   pHolder->AddIndirectObject(it->second);
   it->second = it->second->MakeReference(pHolder);
@@ -310,12 +319,14 @@ void CPDF_Dictionary::ReplaceKey(const ByteString& oldkey,
                                  const ByteString& newkey) {
   CHECK(!IsLocked());
   auto old_it = m_Map.find(oldkey);
-  if (old_it == m_Map.end())
+  if (old_it == m_Map.end()) {
     return;
+  }
 
   auto new_it = m_Map.find(newkey);
-  if (new_it == old_it)
+  if (new_it == old_it) {
     return;
+  }
 
   m_Map[MaybeIntern(newkey)] = std::move(old_it->second);
   m_Map.erase(old_it);
@@ -347,8 +358,9 @@ ByteString CPDF_Dictionary::MaybeIntern(const ByteString& str) {
 
 bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive,
                               const CPDF_Encryptor* encryptor) const {
-  if (!archive->WriteString("<<"))
+  if (!archive->WriteString("<<")) {
     return false;
+  }
 
   const bool is_signature = CPDF_CryptoHandler::IsSignatureDictionary(this);
 

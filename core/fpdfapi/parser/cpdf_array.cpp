@@ -29,8 +29,9 @@ CPDF_Array::~CPDF_Array() {
   // Break cycles for cyclic references.
   m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Objects) {
-    if (it->GetObjNum() == kInvalidObjNum)
+    if (it->GetObjNum() == kInvalidObjNum) {
       it.Leak();
+    }
   }
 }
 
@@ -54,8 +55,9 @@ RetainPtr<CPDF_Object> CPDF_Array::CloneNonCyclic(
   for (const auto& pValue : m_Objects) {
     if (!pdfium::Contains(*pVisited, pValue.Get())) {
       std::set<const CPDF_Object*> visited(*pVisited);
-      if (auto obj = pValue->CloneNonCyclic(bDirect, &visited))
+      if (auto obj = pValue->CloneNonCyclic(bDirect, &visited)) {
         pCopy->m_Objects.push_back(std::move(obj));
+      }
     }
   }
   return pCopy;
@@ -63,8 +65,9 @@ RetainPtr<CPDF_Object> CPDF_Array::CloneNonCyclic(
 
 CFX_FloatRect CPDF_Array::GetRect() const {
   CFX_FloatRect rect;
-  if (m_Objects.size() != 4)
+  if (m_Objects.size() != 4) {
     return rect;
+  }
 
   rect.left = GetFloatAt(0);
   rect.bottom = GetFloatAt(1);
@@ -74,8 +77,9 @@ CFX_FloatRect CPDF_Array::GetRect() const {
 }
 
 CFX_Matrix CPDF_Array::GetMatrix() const {
-  if (m_Objects.size() != 6)
+  if (m_Objects.size() != 6) {
     return CFX_Matrix();
+  }
 
   return CFX_Matrix(GetFloatAt(0), GetFloatAt(1), GetFloatAt(2), GetFloatAt(3),
                     GetFloatAt(4), GetFloatAt(5));
@@ -83,8 +87,9 @@ CFX_Matrix CPDF_Array::GetMatrix() const {
 
 std::optional<size_t> CPDF_Array::Find(const CPDF_Object* pThat) const {
   for (size_t i = 0; i < size(); ++i) {
-    if (GetDirectObjectAt(i) == pThat)
+    if (GetDirectObjectAt(i) == pThat) {
       return i;
+    }
   }
   return std::nullopt;
 }
@@ -119,46 +124,54 @@ RetainPtr<CPDF_Object> CPDF_Array::GetMutableDirectObjectAt(size_t index) {
 }
 
 ByteString CPDF_Array::GetByteStringAt(size_t index) const {
-  if (index >= m_Objects.size())
+  if (index >= m_Objects.size()) {
     return ByteString();
+  }
   return m_Objects[index]->GetString();
 }
 
 WideString CPDF_Array::GetUnicodeTextAt(size_t index) const {
-  if (index >= m_Objects.size())
+  if (index >= m_Objects.size()) {
     return WideString();
+  }
   return m_Objects[index]->GetUnicodeText();
 }
 
 bool CPDF_Array::GetBooleanAt(size_t index, bool bDefault) const {
-  if (index >= m_Objects.size())
+  if (index >= m_Objects.size()) {
     return bDefault;
+  }
   const CPDF_Object* p = m_Objects[index].Get();
   return ToBoolean(p) ? p->GetInteger() != 0 : bDefault;
 }
 
 int CPDF_Array::GetIntegerAt(size_t index) const {
-  if (index >= m_Objects.size())
+  if (index >= m_Objects.size()) {
     return 0;
+  }
   return m_Objects[index]->GetInteger();
 }
 
 float CPDF_Array::GetFloatAt(size_t index) const {
-  if (index >= m_Objects.size())
+  if (index >= m_Objects.size()) {
     return 0;
+  }
   return m_Objects[index]->GetNumber();
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Array::GetMutableDictAt(size_t index) {
   RetainPtr<CPDF_Object> p = GetMutableDirectObjectAt(index);
-  if (!p)
+  if (!p) {
     return nullptr;
+  }
   CPDF_Dictionary* pDict = p->AsMutableDictionary();
-  if (pDict)
+  if (pDict) {
     return pdfium::WrapRetain(pDict);
+  }
   CPDF_Stream* pStream = p->AsMutableStream();
-  if (pStream)
+  if (pStream) {
     return pStream->GetMutableDict();
+  }
   return nullptr;
 }
 
@@ -197,18 +210,21 @@ void CPDF_Array::Clear() {
 
 void CPDF_Array::RemoveAt(size_t index) {
   CHECK(!IsLocked());
-  if (index < m_Objects.size())
+  if (index < m_Objects.size()) {
     m_Objects.erase(m_Objects.begin() + index);
+  }
 }
 
 void CPDF_Array::ConvertToIndirectObjectAt(size_t index,
                                            CPDF_IndirectObjectHolder* pHolder) {
   CHECK(!IsLocked());
-  if (index >= m_Objects.size())
+  if (index >= m_Objects.size()) {
     return;
+  }
 
-  if (!m_Objects[index] || m_Objects[index]->IsReference())
+  if (!m_Objects[index] || m_Objects[index]->IsReference()) {
     return;
+  }
 
   pHolder->AddIndirectObject(m_Objects[index]);
   m_Objects[index] = m_Objects[index]->MakeReference(pHolder);
@@ -232,8 +248,9 @@ CPDF_Object* CPDF_Array::SetAtInternal(size_t index,
   CHECK(pObj);
   CHECK(pObj->IsInline());
   CHECK(!pObj->IsStream());
-  if (index >= m_Objects.size())
+  if (index >= m_Objects.size()) {
     return nullptr;
+  }
 
   CPDF_Object* pRet = pObj.Get();
   m_Objects[index] = std::move(pObj);
@@ -246,8 +263,9 @@ CPDF_Object* CPDF_Array::InsertAtInternal(size_t index,
   CHECK(pObj);
   CHECK(pObj->IsInline());
   CHECK(!pObj->IsStream());
-  if (index > m_Objects.size())
+  if (index > m_Objects.size()) {
     return nullptr;
+  }
 
   CPDF_Object* pRet = pObj.Get();
   m_Objects.insert(m_Objects.begin() + index, std::move(pObj));
@@ -266,12 +284,14 @@ CPDF_Object* CPDF_Array::AppendInternal(RetainPtr<CPDF_Object> pObj) {
 
 bool CPDF_Array::WriteTo(IFX_ArchiveStream* archive,
                          const CPDF_Encryptor* encryptor) const {
-  if (!archive->WriteString("["))
+  if (!archive->WriteString("[")) {
     return false;
+  }
 
   for (size_t i = 0; i < size(); ++i) {
-    if (!GetObjectAt(i)->WriteTo(archive, encryptor))
+    if (!GetObjectAt(i)->WriteTo(archive, encryptor)) {
       return false;
+    }
   }
   return archive->WriteString("]");
 }

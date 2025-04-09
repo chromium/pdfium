@@ -20,7 +20,8 @@ bool CPDF_CID2UnicodeMap::IsLoaded() const {
 }
 
 wchar_t CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t cid) const {
-  if (m_Charset == CIDSET_UNICODE)
+  if (m_Charset == CIDSET_UNICODE) {
     return cid;
+  }
   return cid < m_pEmbeddedMap.size() ? m_pEmbeddedMap[cid] : 0;
 }

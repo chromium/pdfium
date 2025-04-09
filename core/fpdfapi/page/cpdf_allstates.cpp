@@ -41,8 +41,9 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
   CPDF_DictionaryLocker locker(pGS);
   for (const auto& it : locker) {
     RetainPtr<CPDF_Object> pObject = it.second->GetMutableDirect();
-    if (!pObject)
+    if (!pObject) {
       continue;
+    }
 
     uint32_t key = it.first.GetID();
     switch (key) {
@@ -62,12 +63,14 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         break;
       case FXBSTR_ID('D', 0, 0, 0): {
         const CPDF_Array* pDash = pObject->AsArray();
-        if (!pDash)
+        if (!pDash) {
           break;
+        }
 
         RetainPtr<const CPDF_Array> pArray = pDash->GetArrayAt(0);
-        if (!pArray)
+        if (!pArray) {
           break;
+        }
 
         SetLineDash(pArray.Get(), pDash->GetFloatAt(1));
         break;
@@ -77,8 +80,9 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         break;
       case FXBSTR_ID('F', 'o', 'n', 't'): {
         const CPDF_Array* pFont = pObject->AsArray();
-        if (!pFont)
+        if (!pFont) {
           break;
+        }
 
         mutable_text_state().SetFontSize(pFont->GetFloatAt(1));
         mutable_text_state().SetFont(
@@ -106,9 +110,10 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
       case FXBSTR_ID('S', 'M', 'a', 's'): {
         RetainPtr<CPDF_Dictionary> pMaskDict = ToDictionary(pObject);
         mutable_general_state().SetSoftMask(pMaskDict);
-        if (pMaskDict)
+        if (pMaskDict) {
           mutable_general_state().SetSMaskMatrix(
               pParser->GetCurStates()->m_CTM);
+        }
         break;
       }
       case FXBSTR_ID('C', 'A', 0, 0):
@@ -121,8 +126,9 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         break;
       case FXBSTR_ID('O', 'P', 0, 0):
         mutable_general_state().SetStrokeOP(!!pObject->GetInteger());
-        if (!pGS->KeyExist("op"))
+        if (!pGS->KeyExist("op")) {
           mutable_general_state().SetFillOP(!!pObject->GetInteger());
+        }
         break;
       case FXBSTR_ID('o', 'p', 0, 0):
         mutable_general_state().SetFillOP(!!pObject->GetInteger());

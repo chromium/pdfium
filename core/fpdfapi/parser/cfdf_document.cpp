@@ -45,33 +45,40 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
     CPDF_SyntaxParser::WordResult word_result = parser.GetNextWord();
     if (word_result.is_number) {
       uint32_t objnum = FXSYS_atoui(word_result.word.c_str());
-      if (!objnum)
+      if (!objnum) {
         break;
+      }
 
       word_result = parser.GetNextWord();
-      if (!word_result.is_number)
+      if (!word_result.is_number) {
         break;
+      }
 
       word_result = parser.GetNextWord();
-      if (word_result.word != "obj")
+      if (word_result.word != "obj") {
         break;
+      }
 
       RetainPtr<CPDF_Object> pObj = parser.GetObjectBody(this);
-      if (!pObj)
+      if (!pObj) {
         break;
+      }
 
       ReplaceIndirectObjectIfHigherGeneration(objnum, std::move(pObj));
       word_result = parser.GetNextWord();
-      if (word_result.word != "endobj")
+      if (word_result.word != "endobj") {
         break;
+      }
     } else {
-      if (word_result.word != "trailer")
+      if (word_result.word != "trailer") {
         break;
+      }
 
       RetainPtr<CPDF_Dictionary> pMainDict =
           ToDictionary(parser.GetObjectBody(this));
-      if (pMainDict)
+      if (pMainDict) {
         m_pRootDict = pMainDict->GetMutableDictFor("Root");
+      }
 
       break;
     }
@@ -79,14 +86,16 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
 }
 
 ByteString CFDF_Document::WriteToString() const {
-  if (!m_pRootDict)
+  if (!m_pRootDict) {
     return ByteString();
+  }
 
   fxcrt::ostringstream buf;
   buf << "%FDF-1.2\r\n";
-  for (const auto& pair : *this)
+  for (const auto& pair : *this) {
     buf << pair.first << " 0 obj\r\n"
         << pair.second.Get() << "\r\nendobj\r\n\r\n";
+  }
 
   buf << "trailer\r\n<</Root " << m_pRootDict->GetObjNum()
       << " 0 R>>\r\n%%EOF\r\n";

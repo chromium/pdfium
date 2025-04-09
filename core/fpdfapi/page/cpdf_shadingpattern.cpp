@@ -37,8 +37,9 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
     : CPDF_Pattern(pDoc, std::move(pPatternObj), parentMatrix),
       m_bShading(bShading) {
   DCHECK(document());
-  if (!bShading)
+  if (!bShading) {
     SetPatternToFormMatrix();
+  }
 }
 
 CPDF_ShadingPattern::~CPDF_ShadingPattern() = default;
@@ -48,14 +49,16 @@ CPDF_ShadingPattern* CPDF_ShadingPattern::AsShadingPattern() {
 }
 
 bool CPDF_ShadingPattern::Load() {
-  if (m_ShadingType != kInvalidShading)
+  if (m_ShadingType != kInvalidShading) {
     return true;
+  }
 
   RetainPtr<const CPDF_Object> pShadingObj = GetShadingObject();
   RetainPtr<const CPDF_Dictionary> pShadingDict =
       pShadingObj ? pShadingObj->GetDict() : nullptr;
-  if (!pShadingDict)
+  if (!pShadingDict) {
     return false;
+  }
 
   m_pFunctions.clear();
   RetainPtr<const CPDF_Object> pFunc =
@@ -72,16 +75,18 @@ bool CPDF_ShadingPattern::Load() {
   }
   RetainPtr<const CPDF_Object> pCSObj =
       pShadingDict->GetDirectObjectFor("ColorSpace");
-  if (!pCSObj)
+  if (!pCSObj) {
     return false;
+  }
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(document());
   m_pCS = pDocPageData->GetColorSpace(pCSObj.Get(), nullptr);
 
   // The color space is required and cannot be a Pattern space, according to the
   // PDF 1.7 spec, page 305.
-  if (!m_pCS || m_pCS->GetFamily() == CPDF_ColorSpace::Family::kPattern)
+  if (!m_pCS || m_pCS->GetFamily() == CPDF_ColorSpace::Family::kPattern) {
     return false;
+  }
 
   m_ShadingType = ToShadingType(pShadingDict->GetIntegerFor("ShadingType"));
   return Validate();
@@ -93,20 +98,23 @@ RetainPtr<const CPDF_Object> CPDF_ShadingPattern::GetShadingObject() const {
 }
 
 bool CPDF_ShadingPattern::Validate() const {
-  if (m_ShadingType == kInvalidShading)
+  if (m_ShadingType == kInvalidShading) {
     return false;
+  }
 
   // We expect to have a stream if our shading type is a mesh.
-  if (IsMeshShading() && !ToStream(GetShadingObject()))
+  if (IsMeshShading() && !ToStream(GetShadingObject())) {
     return false;
+  }
 
   // Validate color space
   switch (m_ShadingType) {
     case kFunctionBasedShading:
     case kAxialShading:
     case kRadialShading: {
-      if (m_pCS->GetFamily() == CPDF_ColorSpace::Family::kIndexed)
+      if (m_pCS->GetFamily() == CPDF_ColorSpace::Family::kIndexed) {
         return false;
+      }
       break;
     }
     case kFreeFormGouraudTriangleMeshShading:
@@ -155,13 +163,15 @@ bool CPDF_ShadingPattern::ValidateFunctions(
     uint32_t nExpectedNumFunctions,
     uint32_t nExpectedNumInputs,
     uint32_t nExpectedNumOutputs) const {
-  if (m_pFunctions.size() != nExpectedNumFunctions)
+  if (m_pFunctions.size() != nExpectedNumFunctions) {
     return false;
+  }
 
   FX_SAFE_UINT32 nTotalOutputs = 0;
   for (const auto& function : m_pFunctions) {
-    if (!function)
+    if (!function) {
       return false;
+    }
 
     if (function->InputCount() != nExpectedNumInputs ||
         function->OutputCount() != nExpectedNumOutputs) {
