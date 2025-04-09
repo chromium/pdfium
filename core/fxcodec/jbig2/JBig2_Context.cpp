@@ -109,8 +109,9 @@ JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
     if (segment_->data_length_ != 0xffffffff) {
       FX_SAFE_UINT32 new_offset = offset_;
       new_offset += segment_->data_length_;
-      if (!new_offset.IsValid())
+      if (!new_offset.IsValid()) {
         return JBig2_Result::kFailure;
+      }
       offset_ = new_offset.ValueOrDie();
       stream_->setOffset(offset_);
     } else {
@@ -179,8 +180,9 @@ bool CJBig2_Context::Continue(PauseIndicatorIface* pPause) {
 CJBig2_Segment* CJBig2_Context::FindSegmentByNumber(uint32_t dwNumber) {
   if (global_context_) {
     CJBig2_Segment* pSeg = global_context_->FindSegmentByNumber(dwNumber);
-    if (pSeg)
+    if (pSeg) {
       return pSeg;
+    }
   }
   for (const auto& pSeg : segment_list_) {
     if (pSeg->number_ == dwNumber) {
@@ -199,8 +201,9 @@ CJBig2_Segment* CJBig2_Context::FindReferredTableSegmentByIndex(
     CJBig2_Segment* pSeg =
         FindSegmentByNumber(pSegment->referred_to_segment_numbers_[i]);
     if (pSeg && pSeg->flags_.s.type == kTableType) {
-      if (count == nIndex)
+      if (count == nIndex) {
         return pSeg;
+      }
       ++count;
     }
   }
@@ -464,8 +467,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
   uint8_t cSDHUFFDH = (wFlags >> 2) & 0x0003;
   uint8_t cSDHUFFDW = (wFlags >> 4) & 0x0003;
   if (pSymbolDictDecoder->SDHUFF) {
-    if (cSDHUFFDH == 2 || cSDHUFFDW == 2)
+    if (cSDHUFFDH == 2 || cSDHUFFDW == 2) {
       return JBig2_Result::kFailure;
+    }
 
     int32_t nIndex = 0;
     if (cSDHUFFDH == 0) {
@@ -475,8 +479,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pSymbolDictDecoder->SDHUFFDH = pSeg->huffman_table_.get();
     }
     if (cSDHUFFDW == 0) {
@@ -486,8 +491,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pSymbolDictDecoder->SDHUFFDW = pSeg->huffman_table_.get();
     }
     uint8_t cSDHUFFBMSIZE = (wFlags >> 6) & 0x0001;
@@ -496,8 +502,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pSymbolDictDecoder->SDHUFFBMSIZE = pSeg->huffman_table_.get();
     }
     if (pSymbolDictDecoder->SDREFAGG) {
@@ -507,8 +514,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       } else {
         CJBig2_Segment* pSeg =
             FindReferredTableSegmentByIndex(pSegment, nIndex++);
-        if (!pSeg)
+        if (!pSeg) {
           return JBig2_Result::kFailure;
+        }
         pSymbolDictDecoder->SDHUFFAGGINST = pSeg->huffman_table_.get();
       }
     }
@@ -536,10 +544,12 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       }
     }
   } else {
-    if (bUseGbContext)
+    if (bUseGbContext) {
       gbContexts.resize(gbContextSize);
-    if (bUseGrContext)
+    }
+    if (bUseGrContext) {
       grContexts.resize(grContextSize);
+    }
   }
 
   CJBig2_CompoundKey key(pSegment->key_, pSegment->data_offset_);
@@ -588,10 +598,12 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
     }
   }
   if (wFlags & 0x0200) {
-    if (bUseGbContext)
+    if (bUseGbContext) {
       pSegment->symbol_dict_->SetGbContexts(std::move(gbContexts));
-    if (bUseGrContext)
+    }
+    if (bUseGrContext) {
       pSegment->symbol_dict_->SetGrContexts(std::move(grContexts));
+    }
   }
   return JBig2_Result::kSuccess;
 }
@@ -603,8 +615,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       stream_->readShortInteger(&wFlags) != 0) {
     return JBig2_Result::kFailure;
   }
-  if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height))
+  if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height)) {
     return JBig2_Result::kFailure;
+  }
 
   auto pTRD = std::make_unique<CJBig2_TRDProc>();
   pTRD->SBW = ri.width;
@@ -644,8 +657,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   // have a maximum size of roughly 11 GB.
   FX_SAFE_INT32 nMaxStripInstances = stream_->getBufSpan().size();
   nMaxStripInstances *= 32;
-  if (pTRD->SBNUMINSTANCES > nMaxStripInstances.ValueOrDie())
+  if (pTRD->SBNUMINSTANCES > nMaxStripInstances.ValueOrDie()) {
     return JBig2_Result::kFailure;
+  }
 
   for (int32_t i = 0; i < pSegment->referred_to_segment_count_; ++i) {
     if (!FindSegmentByNumber(pSegment->referred_to_segment_numbers_[i])) {
@@ -684,8 +698,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   if (pTRD->SBHUFF) {
     std::vector<JBig2HuffmanCode> SBSYMCODES =
         DecodeSymbolIDHuffmanTable(pTRD->SBNUMSYMS);
-    if (SBSYMCODES.empty())
+    if (SBSYMCODES.empty()) {
       return JBig2_Result::kFailure;
+    }
 
     stream_->alignByte();
     pTRD->SBSYMCODES = std::move(SBSYMCODES);
@@ -718,8 +733,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pTRD->SBHUFFFS = pSeg->huffman_table_.get();
     }
     if (cSBHUFFDS == 0) {
@@ -731,8 +747,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pTRD->SBHUFFDS = pSeg->huffman_table_.get();
     }
     if (cSBHUFFDT == 0) {
@@ -744,8 +761,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pTRD->SBHUFFDT = pSeg->huffman_table_.get();
     }
     if (cSBHUFFRDW == 0) {
@@ -755,8 +773,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pTRD->SBHUFFRDW = pSeg->huffman_table_.get();
     }
     if (cSBHUFFRDH == 0) {
@@ -766,8 +785,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pTRD->SBHUFFRDH = pSeg->huffman_table_.get();
     }
     if (cSBHUFFRDX == 0) {
@@ -777,8 +797,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pTRD->SBHUFFRDX = pSeg->huffman_table_.get();
     }
     if (cSBHUFFRDY == 0) {
@@ -788,8 +809,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pTRD->SBHUFFRDY = pSeg->huffman_table_.get();
     }
     if (cSBHUFFRSIZE == 0) {
@@ -797,8 +819,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
       pTRD->SBHUFFRSIZE = pSeg->huffman_table_.get();
     }
   }
@@ -848,8 +871,9 @@ JBig2_Result CJBig2_Context::ParsePatternDict(CJBig2_Segment* pSegment,
       stream_->readInteger(&pPDD->GRAYMAX) != 0) {
     return JBig2_Result::kFailure;
   }
-  if (pPDD->GRAYMAX > kJBig2MaxPatternIndex)
+  if (pPDD->GRAYMAX > kJBig2MaxPatternIndex) {
     return JBig2_Result::kFailure;
+  }
 
   pPDD->HDMMR = cFlags & 0x01;
   pPDD->HDTEMPLATE = (cFlags >> 1) & 0x03;
@@ -892,11 +916,13 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
     return JBig2_Result::kFailure;
   }
 
-  if (!CJBig2_Image::IsValidImageSize(pHRD->HGW, pHRD->HGH))
+  if (!CJBig2_Image::IsValidImageSize(pHRD->HGW, pHRD->HGH)) {
     return JBig2_Result::kFailure;
+  }
 
-  if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height))
+  if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height)) {
     return JBig2_Result::kFailure;
+  }
 
   pHRD->HBW = ri.width;
   pHRD->HBH = ri.height;
@@ -916,8 +942,9 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
   }
 
   const CJBig2_PatternDict* pPatternDict = pSeg->pattern_dict_.get();
-  if (!pPatternDict || (pPatternDict->NUMPATS == 0))
+  if (!pPatternDict || (pPatternDict->NUMPATS == 0)) {
     return JBig2_Result::kFailure;
+  }
 
   pHRD->HNUMPATS = pPatternDict->NUMPATS;
   pHRD->HPATS = &pPatternDict->HDPATS;
@@ -1071,8 +1098,9 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
       stream_->read1Byte(&cFlags) != 0) {
     return JBig2_Result::kFailure;
   }
-  if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height))
+  if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height)) {
     return JBig2_Result::kFailure;
+  }
 
   auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
   pGRRD->GRW = ri.width;
@@ -1091,8 +1119,9 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
     int32_t i;
     for (i = 0; i < pSegment->referred_to_segment_count_; ++i) {
       pSeg = FindSegmentByNumber(pSegment->referred_to_segment_numbers_[0]);
-      if (!pSeg)
+      if (!pSeg) {
         return JBig2_Result::kFailure;
+      }
 
       if (pSeg->flags_.s.type == 4 || pSeg->flags_.s.type == 20 ||
           pSeg->flags_.s.type == 36 || pSeg->flags_.s.type == 40) {
@@ -1138,8 +1167,9 @@ JBig2_Result CJBig2_Context::ParseTable(CJBig2_Segment* pSegment) {
   pSegment->result_type_ = JBIG2_HUFFMAN_TABLE_POINTER;
   pSegment->huffman_table_.reset();
   auto pHuff = std::make_unique<CJBig2_HuffmanTable>(stream_.get());
-  if (!pHuff->IsOK())
+  if (!pHuff->IsOK()) {
     return JBig2_Result::kFailure;
+  }
 
   pSegment->huffman_table_ = std::move(pHuff);
   stream_->alignByte();
@@ -1184,18 +1214,22 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
       }
 
       nSafeVal <<= 1;
-      if (!nSafeVal.IsValid())
+      if (!nSafeVal.IsValid()) {
         return std::vector<JBig2HuffmanCode>();
+      }
 
       nSafeVal |= nTemp;
       ++nBits;
       const int32_t nVal = nSafeVal.ValueOrDie();
       for (j = 0; j < kRunCodesSize; ++j) {
-        if (nBits == huffman_codes[j].codelen && nVal == huffman_codes[j].code)
+        if (nBits == huffman_codes[j].codelen &&
+            nVal == huffman_codes[j].code) {
           break;
+        }
       }
-      if (j < kRunCodesSize)
+      if (j < kRunCodesSize) {
         break;
+      }
     }
     int32_t runcode = static_cast<int32_t>(j);
     if (runcode < 32) {
@@ -1218,13 +1252,15 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
       run = nTemp + 11;
     }
     if (run > 0) {
-      if (i + run > (int)SBNUMSYMS)
+      if (i + run > (int)SBNUMSYMS) {
         return std::vector<JBig2HuffmanCode>();
+      }
       for (int32_t k = 0; k < run; ++k) {
-        if (runcode == 32 && i > 0)
+        if (runcode == 32 && i > 0) {
           SBSYMCODES[i + k].codelen = SBSYMCODES[i - 1].codelen;
-        else
+        } else {
           SBSYMCODES[i + k].codelen = 0;
+        }
       }
       i += run;
     } else {

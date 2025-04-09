@@ -24,12 +24,14 @@ OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
                                 OPJ_SIZE_T nb_bytes,
                                 void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0)
+  if (!srcData || !srcData->src_data || srcData->src_size == 0) {
     return static_cast<OPJ_SIZE_T>(-1);
+  }
 
   // Reads at EOF return an error code.
-  if (srcData->offset >= srcData->src_size)
+  if (srcData->offset >= srcData->src_size) {
     return static_cast<OPJ_SIZE_T>(-1);
+  }
 
   UNSAFE_TODO({
     OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
@@ -42,15 +44,17 @@ OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
 
 OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0)
+  if (!srcData || !srcData->src_data || srcData->src_size == 0) {
     return static_cast<OPJ_OFF_T>(-1);
+  }
 
   // Offsets are signed and may indicate a negative skip. Do not support this
   // because of the strange return convention where either bytes skipped or
   // -1 is returned. Following that convention, a successful relative seek of
   // -1 bytes would be required to to give the same result as the error case.
-  if (nb_bytes < 0)
+  if (nb_bytes < 0) {
     return static_cast<OPJ_OFF_T>(-1);
+  }
 
   auto unsigned_nb_bytes =
       static_cast<std::make_unsigned<OPJ_OFF_T>::type>(nb_bytes);
@@ -74,13 +78,15 @@ OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
 
 OPJ_BOOL opj_seek_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0)
+  if (!srcData || !srcData->src_data || srcData->src_size == 0) {
     return OPJ_FALSE;
+  }
 
   // Offsets are signed and may indicate a negative position, which would
   // be before the start of the file. Do not support this.
-  if (nb_bytes < 0)
+  if (nb_bytes < 0) {
     return OPJ_FALSE;
+  }
 
   auto unsigned_nb_bytes =
       static_cast<std::make_unsigned<OPJ_OFF_T>::type>(nb_bytes);

@@ -166,8 +166,9 @@ bool CJBig2_HuffmanTable::ParseFromStandardTable(size_t idx) {
 
 bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
   unsigned char cTemp;
-  if (pStream->read1Byte(&cTemp) == -1)
+  if (pStream->read1Byte(&cTemp) == -1) {
     return false;
+  }
 
   HTOOB = !!(cTemp & 0x01);
   unsigned char HTPS = ((cTemp >> 1) & 0x07) + 1;
@@ -181,8 +182,9 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
 
   const int low = static_cast<int>(HTLOW);
   const int high = static_cast<int>(HTHIGH);
-  if (low > high)
+  if (low > high) {
     return false;
+  }
 
   ExtendBuffers(false);
   FX_SAFE_INT32 cur_low = low;
@@ -194,35 +196,41 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
     }
     RANGELOW[NTEMP] = cur_low.ValueOrDie();
 
-    if (RANGELEN[NTEMP] >= 32)
+    if (RANGELEN[NTEMP] >= 32) {
       return false;
+    }
 
     cur_low += (1 << RANGELEN[NTEMP]);
-    if (!cur_low.IsValid())
+    if (!cur_low.IsValid()) {
       return false;
+    }
     ExtendBuffers(true);
   } while (cur_low.ValueOrDie() < high);
 
-  if (pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1)
+  if (pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1) {
     return false;
+  }
 
   RANGELEN[NTEMP] = 32;
-  if (low == std::numeric_limits<int>::min())
+  if (low == std::numeric_limits<int>::min()) {
     return false;
+  }
 
   RANGELOW[NTEMP] = low - 1;
   ExtendBuffers(true);
 
-  if (pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1)
+  if (pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1) {
     return false;
+  }
 
   RANGELEN[NTEMP] = 32;
   RANGELOW[NTEMP] = high;
   ExtendBuffers(true);
 
   if (HTOOB) {
-    if (pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1)
+    if (pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1) {
       return false;
+    }
 
     ++NTEMP;
   }
@@ -232,12 +240,14 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
 }
 
 void CJBig2_HuffmanTable::ExtendBuffers(bool increment) {
-  if (increment)
+  if (increment) {
     ++NTEMP;
+  }
 
   size_t size = CODES.size();
-  if (NTEMP < size)
+  if (NTEMP < size) {
     return;
+  }
 
   size += 16;
   DCHECK(NTEMP < size);

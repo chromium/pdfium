@@ -83,8 +83,9 @@ void* _TIFFmalloc(tmsize_t size) {
 }
 
 void _TIFFfree(void* ptr) {
-  if (ptr)
+  if (ptr) {
     FXMEM_DefaultFree(ptr);
+  }
 }
 
 void* _TIFFrealloc(void* ptr, tmsize_t size) {
@@ -109,8 +110,9 @@ tsize_t tiff_read(thandle_t context, tdata_t buf, tsize_t length) {
   CTiffContext* pTiffContext = reinterpret_cast<CTiffContext*>(context);
   FX_SAFE_UINT32 increment = pTiffContext->offset();
   increment += length;
-  if (!increment.IsValid())
+  if (!increment.IsValid()) {
     return 0;
+  }
 
   FX_FILESIZE offset = pTiffContext->offset();
   // SAFETY: required from caller.
@@ -135,28 +137,32 @@ tsize_t tiff_write(thandle_t context, tdata_t buf, tsize_t length) {
 toff_t tiff_seek(thandle_t context, toff_t offset, int whence) {
   CTiffContext* pTiffContext = reinterpret_cast<CTiffContext*>(context);
   FX_SAFE_FILESIZE safe_offset = offset;
-  if (!safe_offset.IsValid())
+  if (!safe_offset.IsValid()) {
     return static_cast<toff_t>(-1);
+  }
   FX_FILESIZE file_offset = safe_offset.ValueOrDie();
 
   switch (whence) {
     case 0: {
-      if (file_offset > pTiffContext->io_in()->GetSize())
+      if (file_offset > pTiffContext->io_in()->GetSize()) {
         return static_cast<toff_t>(-1);
+      }
       pTiffContext->set_offset(pdfium::checked_cast<uint32_t>(file_offset));
       return pTiffContext->offset();
     }
     case 1: {
       FX_SAFE_UINT32 new_increment = pTiffContext->offset();
       new_increment += file_offset;
-      if (!new_increment.IsValid())
+      if (!new_increment.IsValid()) {
         return static_cast<toff_t>(-1);
+      }
       pTiffContext->set_offset(new_increment.ValueOrDie());
       return pTiffContext->offset();
     }
     case 2: {
-      if (pTiffContext->io_in()->GetSize() < file_offset)
+      if (pTiffContext->io_in()->GetSize() < file_offset) {
         return static_cast<toff_t>(-1);
+      }
       pTiffContext->set_offset(pdfium::checked_cast<uint32_t>(
           pTiffContext->io_in()->GetSize() - file_offset));
       return pTiffContext->offset();
@@ -232,18 +238,21 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
 
   float tif_xdpi = 0.0f;
   TIFFGetField(tif_ctx_.get(), TIFFTAG_XRESOLUTION, &tif_xdpi);
-  if (tif_xdpi)
+  if (tif_xdpi) {
     pAttribute->x_dpi_ = static_cast<int32_t>(tif_xdpi + 0.5f);
+  }
 
   float tif_ydpi = 0.0f;
   TIFFGetField(tif_ctx_.get(), TIFFTAG_YRESOLUTION, &tif_ydpi);
-  if (tif_ydpi)
+  if (tif_ydpi) {
     pAttribute->y_dpi_ = static_cast<int32_t>(tif_ydpi + 0.5f);
+  }
 
   FX_SAFE_INT32 checked_width = tif_width;
   FX_SAFE_INT32 checked_height = tif_height;
-  if (!checked_width.IsValid() || !checked_height.IsValid())
+  if (!checked_width.IsValid() || !checked_height.IsValid()) {
     return false;
+  }
 
   *width = checked_width.ValueOrDie();
   *height = checked_height.ValueOrDie();
@@ -294,8 +303,9 @@ namespace fxcodec {
 std::unique_ptr<ProgressiveDecoderIface::Context> TiffDecoder::CreateDecoder(
     const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   auto pDecoder = std::make_unique<CTiffContext>();
-  if (!pDecoder->InitDecoder(file_ptr))
+  if (!pDecoder->InitDecoder(file_ptr)) {
     return nullptr;
+  }
 
   return pDecoder;
 }

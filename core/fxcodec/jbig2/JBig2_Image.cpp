@@ -48,12 +48,14 @@ int BitIndexToAlignedByte(int index) {
 }  // namespace
 
 CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
-  if (w <= 0 || h <= 0 || w > kMaxImagePixels)
+  if (w <= 0 || h <= 0 || w > kMaxImagePixels) {
     return;
+  }
 
   int32_t stride_pixels = FxAlignToBoundary<32>(w);
-  if (h > kMaxImagePixels / stride_pixels)
+  if (h > kMaxImagePixels / stride_pixels) {
     return;
+  }
 
   width_ = w;
   height_ = h;
@@ -66,16 +68,19 @@ CJBig2_Image::CJBig2_Image(int32_t w,
                            int32_t h,
                            int32_t stride,
                            pdfium::span<uint8_t> pBuf) {
-  if (w < 0 || h < 0)
+  if (w < 0 || h < 0) {
     return;
+  }
 
   // Stride must be word-aligned.
-  if (stride < 0 || stride > kMaxImageBytes || stride % 4 != 0)
+  if (stride < 0 || stride > kMaxImageBytes || stride % 4 != 0) {
     return;
+  }
 
   int32_t stride_pixels = 8 * stride;
-  if (stride_pixels < w || h > kMaxImagePixels / stride_pixels)
+  if (stride_pixels < w || h > kMaxImagePixels / stride_pixels) {
     return;
+  }
 
   width_ = w;
   height_ = h;
@@ -109,8 +114,9 @@ int CJBig2_Image::GetPixel(int32_t x, int32_t y) const {
   }
 
   const uint8_t* pLine = GetLine(y);
-  if (!pLine)
+  if (!pLine) {
     return 0;
+  }
 
   int32_t m = BitIndexToByte(x);
   int32_t n = x & 7;
@@ -127,8 +133,9 @@ void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
   }
 
   uint8_t* pLine = GetLine(y);
-  if (!pLine)
+  if (!pLine) {
     return;
+  }
 
   int32_t m = BitIndexToByte(x);
   int32_t n = 1 << (7 - (x & 7));
@@ -145,8 +152,9 @@ void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
   }
 
   uint8_t* pDst = GetLine(hTo);
-  if (!pDst)
+  if (!pDst) {
     return;
+  }
 
   const uint8_t* pSrc = GetLine(hFrom);
   UNSAFE_TODO({
@@ -212,10 +220,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
   }
 
   // Fast case when byte-aligned, normal slow case otherwise.
-  if ((x & 7) == 0)
+  if ((x & 7) == 0) {
     SubImageFast(x, y, w, h, pImage.get());
-  else
+  } else {
     SubImageSlow(x, y, w, h, pImage.get());
+  }
 
   return pImage;
 }
@@ -292,8 +301,9 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
   DCHECK(data_);
 
   // TODO(weili): Check whether the range check is correct. Should x>=1048576?
-  if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576)
+  if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576) {
     return false;
+  }
 
   int32_t sw = rtSrc.Width();
   int32_t sh = rtSrc.Height();
@@ -302,22 +312,25 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
   int32_t xs1;
   FX_SAFE_INT32 iChecked = pDst->width_;
   iChecked -= x;
-  if (iChecked.IsValid() && sw > iChecked.ValueOrDie())
+  if (iChecked.IsValid() && sw > iChecked.ValueOrDie()) {
     xs1 = iChecked.ValueOrDie();
-  else
+  } else {
     xs1 = sw;
+  }
 
   int32_t ys0 = y < 0 ? -y : 0;
   int32_t ys1;
   iChecked = pDst->height_;
   iChecked -= y;
-  if (iChecked.IsValid() && sh > iChecked.ValueOrDie())
+  if (iChecked.IsValid() && sh > iChecked.ValueOrDie()) {
     ys1 = iChecked.ValueOrDie();
-  else
+  } else {
     ys1 = sh;
+  }
 
-  if (ys0 >= ys1 || xs0 >= xs1)
+  if (ys0 >= ys1 || xs0 >= xs1) {
     return false;
+  }
 
   int32_t xd0 = std::max(x, 0);
   int32_t yd0 = std::max(y, 0);
@@ -404,8 +417,9 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
         uint32_t shift1 = s1 - d1;
         uint32_t shift2 = 32 - shift1;
         for (int32_t yy = yd0; yy < yd1; yy++) {
-          if (lineSrc >= lineSrcEnd)
+          if (lineSrc >= lineSrcEnd) {
             return false;
+          }
           uint32_t tmp1 = (JBIG2_GETDWORD(lineSrc) << shift1) |
                           (JBIG2_GETDWORD(lineSrc + 4) >> shift2);
           uint32_t tmp2 = JBIG2_GETDWORD(lineDst);

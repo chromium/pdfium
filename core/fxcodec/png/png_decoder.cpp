@@ -84,8 +84,9 @@ void _png_load_bmp_attribute(png_structp png_ptr,
 void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
   auto* pContext =
       reinterpret_cast<CPngContext*>(png_get_progressive_ptr(png_ptr));
-  if (!pContext)
+  if (!pContext) {
     return;
+  }
 
   png_uint_32 width = 0;
   png_uint_32 height = 0;
@@ -94,14 +95,16 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
   png_get_IHDR(png_ptr, info_ptr, &width, &height, &bpc, &color_type, nullptr,
                nullptr, nullptr);
   int color_type1 = color_type;
-  if (bpc > 8)
+  if (bpc > 8) {
     png_set_strip_16(png_ptr);
-  else if (bpc < 8)
+  } else if (bpc < 8) {
     png_set_expand_gray_1_2_4_to_8(png_ptr);
+  }
 
   bpc = 8;
-  if (color_type == PNG_COLOR_TYPE_PALETTE)
+  if (color_type == PNG_COLOR_TYPE_PALETTE) {
     png_set_palette_to_rgb(png_ptr);
+  }
 
   int pass = png_set_interlace_handling(png_ptr);
   double gamma = 1.0;
@@ -114,10 +117,11 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     png_set_gamma(png_ptr, gamma, 0.45455);
   } else {
     double image_gamma;
-    if (png_get_gAMA(png_ptr, info_ptr, &image_gamma))
+    if (png_get_gAMA(png_ptr, info_ptr, &image_gamma)) {
       png_set_gamma(png_ptr, gamma, image_gamma);
-    else
+    } else {
       png_set_gamma(png_ptr, gamma, 0.45455);
+    }
   }
   switch (color_type) {
     case PNG_COLOR_TYPE_GRAY:
@@ -139,8 +143,9 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
       png_set_bgr(png_ptr);
       break;
   }
-  if (!(color_type & PNG_COLOR_MASK_ALPHA))
+  if (!(color_type & PNG_COLOR_MASK_ALPHA)) {
     png_set_strip_alpha(png_ptr);
+  }
 
   if (color_type & PNG_COLOR_MASK_ALPHA &&
       !(color_type1 & PNG_COLOR_MASK_ALPHA)) {
@@ -157,8 +162,9 @@ void _png_get_row_func(png_structp png_ptr,
                        int pass) {
   auto* pContext =
       reinterpret_cast<CPngContext*>(png_get_progressive_ptr(png_ptr));
-  if (!pContext)
+  if (!pContext) {
     return;
+  }
 
   uint8_t* src_buf = pContext->delegate_->PngAskScanlineBuf(row_num);
   CHECK(src_buf);

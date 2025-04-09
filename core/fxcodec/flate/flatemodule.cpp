@@ -154,17 +154,19 @@ CLZWDecoder::CLZWDecoder(pdfium::span<const uint8_t> src_span,
       codes_(FixedSizeDataVector<uint32_t>::Zeroed(5021)) {}
 
 void CLZWDecoder::AddCode(uint32_t prefix_code, uint8_t append_char) {
-  if (current_code_ + early_change_ == 4094)
+  if (current_code_ + early_change_ == 4094) {
     return;
+  }
 
   pdfium::span<uint32_t> codes_span = codes_.span();
   codes_span[current_code_++] = (prefix_code << 16) | append_char;
-  if (current_code_ + early_change_ == 512 - 258)
+  if (current_code_ + early_change_ == 512 - 258) {
     code_len_ = 10;
-  else if (current_code_ + early_change_ == 1024 - 258)
+  } else if (current_code_ + early_change_ == 1024 - 258) {
     code_len_ = 11;
-  else if (current_code_ + early_change_ == 2048 - 258)
+  } else if (current_code_ + early_change_ == 2048 - 258) {
     code_len_ = 12;
+  }
 }
 
 void CLZWDecoder::DecodeString(uint32_t code) {
@@ -172,18 +174,21 @@ void CLZWDecoder::DecodeString(uint32_t code) {
   pdfium::span<const uint32_t> codes_span = codes_.span();
   while (true) {
     int index = code - 258;
-    if (index < 0 || static_cast<uint32_t>(index) >= current_code_)
+    if (index < 0 || static_cast<uint32_t>(index) >= current_code_) {
       break;
+    }
 
     uint32_t data = codes_span[index];
-    if (stack_len_ >= decode_span.size())
+    if (stack_len_ >= decode_span.size()) {
       return;
+    }
 
     decode_span[stack_len_++] = static_cast<uint8_t>(data);
     code = data >> 16;
   }
-  if (stack_len_ >= decode_span.size())
+  if (stack_len_ >= decode_span.size()) {
     return;
+  }
 
   decode_span[stack_len_++] = static_cast<uint8_t>(code);
 }
@@ -209,8 +214,9 @@ bool CLZWDecoder::Decode() {
   // this size.
   dest_buf_.resize(512);
   while (true) {
-    if (src_bit_pos_ + code_len_ > src_span_.size() * 8)
+    if (src_bit_pos_ + code_len_ > src_span_.size() * 8) {
       break;
+    }
 
     int byte_pos = src_bit_pos_ / 8;
     int bit_pos = src_bit_pos_ % 8;
@@ -225,8 +231,9 @@ bool CLZWDecoder::Decode() {
     } else {
       bit_left -= 8;
       code |= src_span_[byte_pos++] << bit_left;
-      if (bit_left)
+      if (bit_left) {
         code |= src_span_[byte_pos] >> (8 - bit_left);
+      }
     }
     src_bit_pos_ += code_len_;
 
@@ -240,8 +247,9 @@ bool CLZWDecoder::Decode() {
       dest_buf_[dest_byte_pos_] = static_cast<uint8_t>(code);
       dest_byte_pos_++;
       last_char = (uint8_t)code;
-      if (old_code != 0xFFFFFFFF)
+      if (old_code != 0xFFFFFFFF) {
         AddCode(old_code, last_char);
+      }
       old_code = code;
       continue;
     }
@@ -251,18 +259,21 @@ bool CLZWDecoder::Decode() {
       old_code = 0xFFFFFFFF;
       continue;
     }
-    if (code == 257)
+    if (code == 257) {
       break;
+    }
 
     // Case where |code| is 258 or greater.
-    if (old_code == 0xFFFFFFFF)
+    if (old_code == 0xFFFFFFFF) {
       return false;
+    }
 
     DCHECK(old_code < 256 || old_code >= 258);
     stack_len_ = 0;
     if (code - 258 >= current_code_) {
-      if (stack_len_ < decode_stack_.size())
+      if (stack_len_ < decode_stack_.size()) {
         decode_span[stack_len_++] = last_char;
+      }
       DecodeString(old_code);
     } else {
       DecodeString(code);
@@ -270,8 +281,9 @@ bool CLZWDecoder::Decode() {
 
     FX_SAFE_UINT32 safe_required_size = dest_byte_pos_;
     safe_required_size += stack_len_;
-    if (!safe_required_size.IsValid())
+    if (!safe_required_size.IsValid()) {
       return false;
+    }
 
     uint32_t required_size = safe_required_size.ValueOrDie();
     if (required_size > dest_buf_.size()) {
@@ -280,12 +292,14 @@ bool CLZWDecoder::Decode() {
       }
     }
 
-    for (uint32_t i = 0; i < stack_len_; i++)
+    for (uint32_t i = 0; i < stack_len_; i++) {
       dest_buf_[dest_byte_pos_ + i] = decode_span[stack_len_ - i - 1];
+    }
     dest_byte_pos_ += stack_len_;
     last_char = decode_span[stack_len_ - 1];
-    if (old_code >= 258 && old_code - 258 >= current_code_)
+    if (old_code >= 258 && old_code - 258 >= current_code_) {
       break;
+    }
 
     AddCode(old_code, last_char);
     old_code = code;
@@ -536,10 +550,12 @@ DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
 
 enum class PredictorType : uint8_t { kNone, kFlate, kPng };
 static PredictorType GetPredictor(int predictor) {
-  if (predictor >= 10)
+  if (predictor >= 10) {
     return PredictorType::kPng;
-  if (predictor == 2)
+  }
+  if (predictor == 2) {
     return PredictorType::kFlate;
+  }
   return PredictorType::kNone;
 }
 
@@ -669,8 +685,9 @@ FlatePredictorScanlineDecoder::~FlatePredictorScanlineDecoder() {
 }
 
 bool FlatePredictorScanlineDecoder::Rewind() {
-  if (!FlateScanlineDecoder::Rewind())
+  if (!FlateScanlineDecoder::Rewind()) {
     return false;
+  }
 
   left_over_ = 0;
   return true;

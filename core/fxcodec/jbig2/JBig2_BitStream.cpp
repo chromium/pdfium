@@ -14,8 +14,9 @@
 namespace {
 
 pdfium::span<const uint8_t> ValidatedSpan(pdfium::span<const uint8_t> sp) {
-  if (sp.size() > 256 * 1024 * 1024)
+  if (sp.size() > 256 * 1024 * 1024) {
     return {};
+  }
   return sp;
 }
 
@@ -28,18 +29,21 @@ CJBig2_BitStream::CJBig2_BitStream(pdfium::span<const uint8_t> pSrcStream,
 CJBig2_BitStream::~CJBig2_BitStream() = default;
 
 int32_t CJBig2_BitStream::readNBits(uint32_t dwBits, uint32_t* dwResult) {
-  if (!IsInBounds())
+  if (!IsInBounds()) {
     return -1;
+  }
 
   uint32_t dwBitPos = getBitPos();
-  if (dwBitPos > LengthInBits())
+  if (dwBitPos > LengthInBits()) {
     return -1;
+  }
 
   *dwResult = 0;
-  if (dwBitPos + dwBits <= LengthInBits())
+  if (dwBitPos + dwBits <= LengthInBits()) {
     dwBitPos = dwBits;
-  else
+  } else {
     dwBitPos = LengthInBits() - dwBitPos;
+  }
 
   for (; dwBitPos > 0; --dwBitPos) {
     *dwResult =
@@ -50,18 +54,21 @@ int32_t CJBig2_BitStream::readNBits(uint32_t dwBits, uint32_t* dwResult) {
 }
 
 int32_t CJBig2_BitStream::readNBits(uint32_t dwBits, int32_t* nResult) {
-  if (!IsInBounds())
+  if (!IsInBounds()) {
     return -1;
+  }
 
   uint32_t dwBitPos = getBitPos();
-  if (dwBitPos > LengthInBits())
+  if (dwBitPos > LengthInBits()) {
     return -1;
+  }
 
   *nResult = 0;
-  if (dwBitPos + dwBits <= LengthInBits())
+  if (dwBitPos + dwBits <= LengthInBits()) {
     dwBitPos = dwBits;
-  else
+  } else {
     dwBitPos = LengthInBits() - dwBitPos;
+  }
 
   for (; dwBitPos > 0; --dwBitPos) {
     *nResult = (*nResult << 1) | ((span_[byte_idx_] >> (7 - bit_idx_)) & 0x01);
@@ -71,8 +78,9 @@ int32_t CJBig2_BitStream::readNBits(uint32_t dwBits, int32_t* nResult) {
 }
 
 int32_t CJBig2_BitStream::read1Bit(uint32_t* dwResult) {
-  if (!IsInBounds())
+  if (!IsInBounds()) {
     return -1;
+  }
 
   *dwResult = (span_[byte_idx_] >> (7 - bit_idx_)) & 0x01;
   AdvanceBit();
@@ -80,8 +88,9 @@ int32_t CJBig2_BitStream::read1Bit(uint32_t* dwResult) {
 }
 
 int32_t CJBig2_BitStream::read1Bit(bool* bResult) {
-  if (!IsInBounds())
+  if (!IsInBounds()) {
     return -1;
+  }
 
   *bResult = (span_[byte_idx_] >> (7 - bit_idx_)) & 0x01;
   AdvanceBit();
@@ -89,8 +98,9 @@ int32_t CJBig2_BitStream::read1Bit(bool* bResult) {
 }
 
 int32_t CJBig2_BitStream::read1Byte(uint8_t* cResult) {
-  if (!IsInBounds())
+  if (!IsInBounds()) {
     return -1;
+  }
 
   *cResult = span_[byte_idx_];
   ++byte_idx_;

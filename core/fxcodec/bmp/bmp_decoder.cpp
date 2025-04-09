@@ -35,8 +35,9 @@ BmpDecoder::Status BmpDecoder::ReadHeader(
 
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   Status status = ctx->bmp_.ReadHeader();
-  if (status != Status::kSuccess)
+  if (status != Status::kSuccess) {
     return status;
+  }
 
   *width = ctx->bmp_.width();
   *height = ctx->bmp_.height();

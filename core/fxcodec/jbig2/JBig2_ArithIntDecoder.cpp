@@ -37,14 +37,16 @@ size_t RecursiveDecode(CJBig2_ArithDecoder* decoder,
                        int* prev,
                        size_t depth) {
   static const size_t kDepthEnd = std::size(kArithIntDecodeData) - 1;
-  if (depth == kDepthEnd)
+  if (depth == kDepthEnd) {
     return kDepthEnd;
+  }
 
   JBig2ArithCtx* pCX = &(*context)[*prev];
   int D = decoder->Decode(pCX);
   *prev = ShiftOr(*prev, D);
-  if (!D)
+  if (!D) {
     return depth;
+  }
   return RecursiveDecode(decoder, context, prev, depth + 1);
 }
 
@@ -72,8 +74,9 @@ bool CJBig2_ArithIntDecoder::Decode(CJBig2_ArithDecoder* pArithDecoder,
   for (int i = 0; i < kArithIntDecodeData[nDecodeDataIndex].nNeedBits; ++i) {
     int D = pArithDecoder->Decode(&iax_[PREV]);
     PREV = ShiftOr(PREV, D);
-    if (PREV >= 256)
+    if (PREV >= 256) {
       PREV = (PREV & 511) | 256;
+    }
     nTemp = ShiftOr(nTemp, D);
   }
   FX_SAFE_INT32 safeValue = kArithIntDecodeData[nDecodeDataIndex].nValue;
@@ -86,8 +89,9 @@ bool CJBig2_ArithIntDecoder::Decode(CJBig2_ArithDecoder* pArithDecoder,
   }
 
   int nValue = safeValue.ValueOrDie();
-  if (S == 1 && nValue > 0)
+  if (S == 1 && nValue > 0) {
     nValue = -nValue;
+  }
 
   *nResult = nValue;
   return S != 1 || nValue != 0;

@@ -221,8 +221,9 @@ std::unique_ptr<ScanlineDecoder> BasicModule::CreateRunLengthDecoder(
     int nComps,
     int bpc) {
   auto pDecoder = std::make_unique<RLScanlineDecoder>();
-  if (!pDecoder->Create(src_buf, width, height, nComps, bpc))
+  if (!pDecoder->Create(src_buf, width, height, nComps, bpc)) {
     return nullptr;
+  }
 
   return pDecoder;
 }
@@ -230,12 +231,14 @@ std::unique_ptr<ScanlineDecoder> BasicModule::CreateRunLengthDecoder(
 // static
 DataVector<uint8_t> BasicModule::RunLengthEncode(
     pdfium::span<const uint8_t> src_span) {
-  if (src_span.empty())
+  if (src_span.empty()) {
     return {};
+  }
 
   // Handle edge case.
-  if (src_span.size() == 1)
+  if (src_span.size() == 1) {
     return {0, src_span[0], 128};
+  }
 
   // Worst case: 1 nonmatch, 2 match, 1 nonmatch, 2 match, etc. This becomes
   // 4 output chars for every 3 input, plus up to 4 more for the 1-2 chars
@@ -255,14 +258,16 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
   uint8_t y = src_span[run_end];
   while (run_end < src_span.size()) {
     size_t max_len = std::min<size_t>(128, src_span.size() - run_start);
-    while (x == y && (run_end - run_start < max_len - 1))
+    while (x == y && (run_end - run_start < max_len - 1)) {
       y = src_span[++run_end];
+    }
 
     // Reached end with matched run. Update variables to expected values.
     if (x == y) {
       run_end++;
-      if (run_end < src_span.size())
+      if (run_end < src_span.size()) {
         y = src_span[run_end];
+      }
     }
     if (run_end - run_start > 1) {  // Matched run but not at end of input.
       result_span[0] = 257 - (run_end - run_start);
@@ -270,8 +275,9 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
       x = y;
       run_start = run_end;
       run_end++;
-      if (run_end < src_span.size())
+      if (run_end < src_span.size()) {
         y = src_span[run_end];
+      }
       result_span = result_span.subspan(2);
       continue;
     }
@@ -309,8 +315,9 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
 DataVector<uint8_t> BasicModule::A85Encode(
     pdfium::span<const uint8_t> src_span) {
   DataVector<uint8_t> result;
-  if (src_span.empty())
+  if (src_span.empty()) {
     return result;
+  }
 
   // Worst case: 5 output for each 4 input (plus up to 4 from leftover), plus
   // 2 character new lines each 75 output chars plus 2 termination chars. May
@@ -359,8 +366,9 @@ DataVector<uint8_t> BasicModule::A85Encode(
       pos++;
     }
     for (int i = 4; i >= 0; i--) {
-      if (i <= count)
+      if (i <= count) {
         result_span[i] = (val % 85) + 33;
+      }
       val /= 85;
     }
     result_span = result_span.subspan(count + 1);

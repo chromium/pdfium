@@ -177,8 +177,9 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
 
   FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
   codec_memory_->Seek(codec_memory_->GetSize());
-  if (!GifReadMoreData(&error_status))
+  if (!GifReadMoreData(&error_status)) {
     return false;
+  }
 
   if (pal_span.empty()) {
     pal_span = gif_palette_;
@@ -724,8 +725,9 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
 bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                                          CFX_DIBAttribute* pAttribute) {
 #ifdef PDF_ENABLE_XFA_TIFF
-  if (imageType == FXCODEC_IMAGE_TIFF)
+  if (imageType == FXCODEC_IMAGE_TIFF) {
     return TiffDetectImageTypeFromFile(pAttribute);
+  }
 #endif  // PDF_ENABLE_XFA_TIFF
 
   size_t size = pdfium::checked_cast<size_t>(
@@ -739,22 +741,26 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   }
   offset_ += size;
 
-  if (imageType == FXCODEC_IMAGE_JPG)
+  if (imageType == FXCODEC_IMAGE_JPG) {
     return JpegDetectImageTypeInBuffer(pAttribute);
+  }
 
 #ifdef PDF_ENABLE_XFA_BMP
-  if (imageType == FXCODEC_IMAGE_BMP)
+  if (imageType == FXCODEC_IMAGE_BMP) {
     return BmpDetectImageTypeInBuffer(pAttribute);
+  }
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-  if (imageType == FXCODEC_IMAGE_GIF)
+  if (imageType == FXCODEC_IMAGE_GIF) {
     return GifDetectImageTypeInBuffer();
+  }
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
-  if (imageType == FXCODEC_IMAGE_PNG)
+  if (imageType == FXCODEC_IMAGE_PNG) {
     return PngDetectImageTypeInBuffer(pAttribute);
+  }
 #endif  // PDF_ENABLE_XFA_PNG
 
   status_ = FXCODEC_STATUS::kError;
@@ -777,8 +783,9 @@ bool ProgressiveDecoder::ReadMoreData(
   // Figure out if the codec stopped processing midway through the buffer.
   size_t dwUnconsumed;
   FX_SAFE_SIZE_T avail_input = pModule->GetAvailInput(pContext);
-  if (!avail_input.AssignIfValid(&dwUnconsumed))
+  if (!avail_input.AssignIfValid(&dwUnconsumed)) {
     return false;
+  }
 
   if (dwUnconsumed == codec_memory_->GetSize()) {
     // Codec couldn't make any progress against the bytes in the buffer.
@@ -851,8 +858,9 @@ FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
   // If we got here then the image data does not match the requested decoder.
   // If we're skipping the type check then bail out at this point and return
   // the failed status.
-  if (bSkipImageTypeCheck)
+  if (bSkipImageTypeCheck) {
     return status_;
+  }
 
   for (int type = FXCODEC_IMAGE_UNKNOWN + 1; type < FXCODEC_IMAGE_MAX; type++) {
     if (DetectImageType(static_cast<FXCODEC_IMAGE_TYPE>(type), pAttribute)) {
@@ -1162,8 +1170,9 @@ std::pair<FXCODEC_STATUS, size_t> ProgressiveDecoder::GetFrames() {
             GifDecoder::LoadFrameInfo(gif_context_.get());
         while (readResult == GifDecoder::Status::kUnfinished) {
           FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
-          if (!GifReadMoreData(&error_status))
+          if (!GifReadMoreData(&error_status)) {
             return {error_status, 0};
+          }
 
           std::tie(readResult, frame_number_) =
               GifDecoder::LoadFrameInfo(gif_context_.get());

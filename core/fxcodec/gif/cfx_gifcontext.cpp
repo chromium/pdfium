@@ -53,8 +53,9 @@ bool CFX_GifContext::GetRecordPosition(uint32_t cur_pos,
 
 GifDecoder::Status CFX_GifContext::ReadHeader() {
   GifDecoder::Status status = ReadGifSignature();
-  if (status != GifDecoder::Status::kSuccess)
+  if (status != GifDecoder::Status::kSuccess) {
     return status;
+  }
   return ReadLogicalScreenDescriptor();
 }
 
@@ -116,8 +117,9 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
       }
       case GIF_D_STATUS_IMG_INFO: {
         ret = DecodeImageInfo();
-        if (ret != GifDecoder::Status::kSuccess)
+        if (ret != GifDecoder::Status::kSuccess) {
           return ret;
+        }
 
         continue;
       }
@@ -147,8 +149,9 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
       }
       default: {
         ret = DecodeExtension();
-        if (ret != GifDecoder::Status::kSuccess)
+        if (ret != GifDecoder::Status::kSuccess) {
           return ret;
+        }
         break;
       }
     }
@@ -156,16 +159,19 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
 }
 
 GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
-  if (frame_num >= images_.size())
+  if (frame_num >= images_.size()) {
     return GifDecoder::Status::kError;
+  }
 
   CFX_GifImage* gif_image = images_[frame_num].get();
-  if (gif_image->image_info.height == 0)
+  if (gif_image->image_info.height == 0) {
     return GifDecoder::Status::kError;
+  }
 
   uint32_t gif_img_row_bytes = gif_image->image_info.width;
-  if (gif_img_row_bytes == 0)
+  if (gif_img_row_bytes == 0) {
     return GifDecoder::Status::kError;
+  }
 
   if (decode_status_ == GIF_D_STATUS_TAIL) {
     gif_image->row_buffer.resize(gif_img_row_bytes);
@@ -318,8 +324,9 @@ void CFX_GifContext::SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory) {
 }
 
 uint32_t CFX_GifContext::GetAvailInput() const {
-  if (!input_buffer_)
+  if (!input_buffer_) {
     return 0;
+  }
 
   return pdfium::checked_cast<uint32_t>(input_buffer_->GetSize() -
                                         input_buffer_->GetPosition());
@@ -358,8 +365,9 @@ GifDecoder::Status CFX_GifContext::ReadLogicalScreenDescriptor() {
   }
   if (lsd.global_flags.global_pal) {
     uint32_t palette_count = unsigned(2 << lsd.global_flags.pal_bits);
-    if (lsd.bc_index >= palette_count)
+    if (lsd.bc_index >= palette_count) {
       return GifDecoder::Status::kError;
+    }
     bc_index_ = lsd.bc_index;
 
     std::vector<CFX_GifPalette> palette(palette_count);
@@ -425,8 +433,9 @@ GifDecoder::Status CFX_GifContext::DecodeExtension() {
       break;
     }
     default: {
-      if (decode_status_ == GIF_D_STATUS_EXT_PTE)
+      if (decode_status_ == GIF_D_STATUS_EXT_PTE) {
         graphic_control_extension_ = nullptr;
+      }
       if (!ScanForTerminalMarker()) {
         input_buffer_->Seek(read_marker);
         return GifDecoder::Status::kUnfinished;
@@ -439,8 +448,9 @@ GifDecoder::Status CFX_GifContext::DecodeExtension() {
 }
 
 GifDecoder::Status CFX_GifContext::DecodeImageInfo() {
-  if (width_ <= 0 || height_ <= 0)
+  if (width_ <= 0 || height_ <= 0) {
     return GifDecoder::Status::kError;
+  }
 
   size_t read_marker = input_buffer_->GetPosition();
   CFX_GifImageInfo img_info;
@@ -454,8 +464,9 @@ GifDecoder::Status CFX_GifContext::DecodeImageInfo() {
   gif_image->image_info.height = fxcrt::FromLE16(img_info.height);
   gif_image->image_info.local_flags = img_info.local_flags;
   if (gif_image->image_info.left + gif_image->image_info.width > width_ ||
-      gif_image->image_info.top + gif_image->image_info.height > height_)
+      gif_image->image_info.top + gif_image->image_info.height > height_) {
     return GifDecoder::Status::kError;
+  }
 
   CFX_GifLocalFlags* gif_img_info_lf = &img_info.local_flags;
   if (gif_img_info_lf->local_pal) {

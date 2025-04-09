@@ -47,13 +47,15 @@ struct OpjImageRgbData {
 void fx_ignore_callback(const char* msg, void* client_data) {}
 
 opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data) {
-  if (!data || !data->src_data || data->src_size <= 0)
+  if (!data || !data->src_data || data->src_size <= 0) {
     return nullptr;
+  }
 
   opj_stream_t* stream = opj_stream_create(OPJ_J2K_STREAM_CHUNK_SIZE,
                                            /*p_is_input=*/OPJ_TRUE);
-  if (!stream)
+  if (!stream) {
     return nullptr;
+  }
 
   opj_stream_set_user_data(stream, data, nullptr);
   opj_stream_set_user_data_length(stream, data->src_size);
@@ -66,16 +68,19 @@ opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data) {
 std::optional<OpjImageRgbData> alloc_rgb(size_t size) {
   OpjImageRgbData data;
   data.r.reset(static_cast<int*>(opj_image_data_alloc(size)));
-  if (!data.r)
+  if (!data.r) {
     return std::nullopt;
+  }
 
   data.g.reset(static_cast<int*>(opj_image_data_alloc(size)));
-  if (!data.g)
+  if (!data.g) {
     return std::nullopt;
+  }
 
   data.b.reset(static_cast<int*>(opj_image_data_alloc(size)));
-  if (!data.b)
+  if (!data.b) {
     return std::nullopt;
+  }
 
   return data;
 }
@@ -104,8 +109,9 @@ void sycc444_to_rgb(opj_image_t* img) {
   auto components = components_span(img);
   int prec = components[0].prec;
   // If we shift 31 we're going to go negative, then things go bad.
-  if (prec > 30)
+  if (prec > 30) {
     return;
+  }
   int offset = 1 << (prec - 1);
   int upb = (1 << prec) - 1;
   OPJ_UINT32 maxw =
@@ -115,18 +121,21 @@ void sycc444_to_rgb(opj_image_t* img) {
   FX_SAFE_SIZE_T max_size = maxw;
   max_size *= maxh;
   max_size *= sizeof(int);
-  if (!max_size.IsValid())
+  if (!max_size.IsValid()) {
     return;
+  }
 
   const int* y = components[0].data;
   const int* cb = components[1].data;
   const int* cr = components[2].data;
-  if (!y || !cb || !cr)
+  if (!y || !cb || !cr) {
     return;
+  }
 
   std::optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
-  if (!data.has_value())
+  if (!data.has_value()) {
     return;
+  }
 
   int* r = data.value().r.get();
   int* g = data.value().g.get();
@@ -169,8 +178,9 @@ void sycc420_to_rgb(opj_image_t* img) {
     return;
   }
   OPJ_UINT32 prec = components[0].prec;
-  if (!prec)
+  if (!prec) {
     return;
+  }
 
   OPJ_UINT32 offset = 1 << (prec - 1);
   OPJ_UINT32 upb = (1 << prec) - 1;
@@ -184,18 +194,21 @@ void sycc420_to_rgb(opj_image_t* img) {
   FX_SAFE_UINT32 safe_size = yw;
   safe_size *= yh;
   safe_size *= sizeof(int);
-  if (!safe_size.IsValid())
+  if (!safe_size.IsValid()) {
     return;
+  }
 
   const int* y = components[0].data;
   const int* cb = components[1].data;
   const int* cr = components[2].data;
-  if (!y || !cb || !cr)
+  if (!y || !cb || !cr) {
     return;
+  }
 
   std::optional<OpjImageRgbData> data = alloc_rgb(safe_size.ValueOrDie());
-  if (!data.has_value())
+  if (!data.has_value()) {
     return;
+  }
 
   int* r = data.value().r.get();
   int* g = data.value().g.get();
@@ -317,8 +330,9 @@ void sycc422_to_rgb(opj_image_t* img) {
     return;
   }
   int prec = components[0].prec;
-  if (prec <= 0 || prec >= 32)
+  if (prec <= 0 || prec >= 32) {
     return;
+  }
 
   int offset = 1 << (prec - 1);
   int upb = (1 << prec) - 1;
@@ -327,18 +341,21 @@ void sycc422_to_rgb(opj_image_t* img) {
   FX_SAFE_SIZE_T max_size = maxw;
   max_size *= maxh;
   max_size *= sizeof(int);
-  if (!max_size.IsValid())
+  if (!max_size.IsValid()) {
     return;
+  }
 
   const int* y = components[0].data;
   const int* cb = components[1].data;
   const int* cr = components[2].data;
-  if (!y || !cb || !cr)
+  if (!y || !cb || !cr) {
     return;
+  }
 
   std::optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
-  if (!data.has_value())
+  if (!data.has_value()) {
     return;
+  }
 
   int* r = data.value().r.get();
   int* g = data.value().g.get();
@@ -588,8 +605,9 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
       }
     }
   }
-  if (swap_rgb)
+  if (swap_rgb) {
     std::swap(channel_bufs[0], channel_bufs[2]);
+  }
 
   uint32_t width = components[0].w;
   uint32_t height = components[0].h;
@@ -597,8 +615,9 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
     uint8_t* pChannel = channel_bufs[channel];
     const int adjust = adjust_comps[channel];
     const opj_image_comp_t& comps = components[channel];
-    if (!comps.data)
+    if (!comps.data) {
       continue;
+    }
 
     // Perfomance-sensitive code below. Combining these 3 for-loops below will
     // cause a slowdown.

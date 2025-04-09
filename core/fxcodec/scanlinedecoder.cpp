@@ -35,8 +35,9 @@ pdfium::span<const uint8_t> ScanlineDecoder::GetScanline(int line) {
   }
 
   if (next_line_ < 0 || next_line_ > line) {
-    if (!Rewind())
+    if (!Rewind()) {
       return pdfium::span<const uint8_t>();
+    }
     next_line_ = 0;
   }
   while (next_line_ < line) {

@@ -23,8 +23,9 @@ std::unique_ptr<LZWDecompressor> LZWDecompressor::Create(uint8_t color_exp,
                                                          uint8_t code_exp) {
   // |color_exp| generates 2^(n + 1) codes, where as the code_exp reserves 2^n.
   // This is a quirk of the GIF spec.
-  if (code_exp > GIF_MAX_LZW_EXP || code_exp < color_exp + 1)
+  if (code_exp > GIF_MAX_LZW_EXP || code_exp < color_exp + 1) {
     return nullptr;
+  }
 
   // Private ctor.
   return pdfium::WrapUnique(new LZWDecompressor(color_exp, code_exp));
@@ -50,15 +51,17 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
     return Status::kUnfinished;
   }
 
-  if (*dest_size == 0)
+  if (*dest_size == 0) {
     return Status::kInsufficientDestSize;
+  }
 
   FX_SAFE_UINT32 i = 0;
   if (decompressed_next_ != 0) {
     size_t extracted_size =
         ExtractData(UNSAFE_TODO(pdfium::make_span(dest_buf, *dest_size)));
-    if (decompressed_next_ != 0)
+    if (decompressed_next_ != 0) {
       return Status::kInsufficientDestSize;
+    }
 
     UNSAFE_TODO(dest_buf += extracted_size);
     i += extracted_size;
@@ -66,18 +69,21 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
 
   while (i.ValueOrDie() <= *dest_size &&
          (!avail_input_.empty() || bits_left_ >= code_size_cur_)) {
-    if (code_size_cur_ > GIF_MAX_LZW_EXP)
+    if (code_size_cur_ > GIF_MAX_LZW_EXP) {
       return Status::kError;
+    }
 
     if (!avail_input_.empty()) {
-      if (bits_left_ > 31)
+      if (bits_left_ > 31) {
         return Status::kError;
+      }
 
       FX_SAFE_UINT32 safe_code = avail_input_.front();
       safe_code <<= bits_left_;
       safe_code |= code_store_;
-      if (!safe_code.IsValid())
+      if (!safe_code.IsValid()) {
         return Status::kError;
+      }
 
       code_store_ = safe_code.ValueOrDie();
       avail_input_ = avail_input_.subspan(1u);
@@ -102,21 +108,24 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
         if (code_next_ < GIF_MAX_LZW_CODE) {
           if (code == code_next_) {
             AddCode(code_old_, code_first_);
-            if (!DecodeString(code))
+            if (!DecodeString(code)) {
               return Status::kError;
+            }
           } else if (code > code_next_) {
             return Status::kError;
           } else {
-            if (!DecodeString(code))
+            if (!DecodeString(code)) {
               return Status::kError;
+            }
 
             uint8_t append_char = decompressed_[decompressed_next_ - 1];
             AddCode(code_old_, append_char);
           }
         }
       } else {
-        if (!DecodeString(code))
+        if (!DecodeString(code)) {
           return Status::kError;
+        }
       }
 
       code_old_ = code;
@@ -151,14 +160,16 @@ void LZWDecompressor::ClearTable() {
 }
 
 void LZWDecompressor::AddCode(uint16_t prefix_code, uint8_t append_char) {
-  if (code_next_ == GIF_MAX_LZW_CODE)
+  if (code_next_ == GIF_MAX_LZW_CODE) {
     return;
+  }
 
   code_table_[code_next_].prefix = prefix_code;
   code_table_[code_next_].suffix = append_char;
   if (++code_next_ < GIF_MAX_LZW_CODE) {
-    if (code_next_ >> code_size_cur_)
+    if (code_next_ >> code_size_cur_) {
       code_size_cur_++;
+    }
   }
 }
 
@@ -168,15 +179,17 @@ bool LZWDecompressor::DecodeString(uint16_t code) {
 
   while (code >= code_clear_ && code <= code_next_) {
     if (code == code_table_[code].prefix ||
-        decompressed_next_ >= decompressed_.size())
+        decompressed_next_ >= decompressed_.size()) {
       return false;
+    }
 
     decompressed_[decompressed_next_++] = code_table_[code].suffix;
     code = code_table_[code].prefix;
   }
 
-  if (code >= code_color_end_)
+  if (code >= code_color_end_) {
     return false;
+  }
 
   decompressed_[decompressed_next_++] = static_cast<uint8_t>(code);
   code_first_ = static_cast<uint8_t>(code);

@@ -25,29 +25,33 @@ int CJBig2_HuffmanDecoder::DecodeAValue(const CJBig2_HuffmanTable* pTable,
     }
 
     nSafeVal <<= 1;
-    if (!nSafeVal.IsValid())
+    if (!nSafeVal.IsValid()) {
       break;
+    }
 
     nSafeVal |= nTmp;
     ++nBits;
     const int32_t nVal = nSafeVal.ValueOrDie();
     for (uint32_t i = 0; i < pTable->Size(); ++i) {
       const JBig2HuffmanCode& code = pTable->GetCODES()[i];
-      if (code.codelen != nBits || code.code != nVal)
+      if (code.codelen != nBits || code.code != nVal) {
         continue;
+      }
 
-      if (pTable->IsHTOOB() && i == pTable->Size() - 1)
+      if (pTable->IsHTOOB() && i == pTable->Size() - 1) {
         return kJBig2OOB;
+      }
 
       if (stream_->readNBits(pTable->GetRANGELEN()[i], &nTmp) == -1) {
         return -1;
       }
 
       uint32_t offset = pTable->IsHTOOB() ? 3 : 2;
-      if (i == pTable->Size() - offset)
+      if (i == pTable->Size() - offset) {
         *nResult = pTable->GetRANGELOW()[i] - nTmp;
-      else
+      } else {
         *nResult = pTable->GetRANGELOW()[i] + nTmp;
+      }
       return 0;
     }
   }

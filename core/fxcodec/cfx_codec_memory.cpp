@@ -15,16 +15,18 @@ CFX_CodecMemory::CFX_CodecMemory(size_t buffer_size)
 CFX_CodecMemory::~CFX_CodecMemory() = default;
 
 bool CFX_CodecMemory::Seek(size_t pos) {
-  if (pos > size_)
+  if (pos > size_) {
     return false;
+  }
 
   pos_ = pos;
   return true;
 }
 
 size_t CFX_CodecMemory::ReadBlock(pdfium::span<uint8_t> buffer) {
-  if (buffer.empty() || IsEOF())
+  if (buffer.empty() || IsEOF()) {
     return 0;
+  }
 
   size_t bytes_to_read = std::min(buffer.size(), size_ - pos_);
   fxcrt::Copy(GetBufferSpan().subspan(pos_, bytes_to_read), buffer);

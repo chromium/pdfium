@@ -57,12 +57,14 @@ std::unique_ptr<IccTransform> IccTransform::CreateTransformSRGB(
     pdfium::span<const uint8_t> span) {
   ScopedCmsProfile srcProfile(cmsOpenProfileFromMem(
       span.data(), pdfium::checked_cast<cmsUInt32Number>(span.size())));
-  if (!srcProfile)
+  if (!srcProfile) {
     return nullptr;
+  }
 
   ScopedCmsProfile dstProfile(cmsCreate_sRGBProfile());
-  if (!dstProfile)
+  if (!dstProfile) {
     return nullptr;
+  }
 
   cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile.get());
   uint32_t nSrcComponents = cmsChannelsOf(srcCS);
@@ -87,8 +89,9 @@ std::unique_ptr<IccTransform> IccTransform::CreateTransformSRGB(
               srcCS == cmsSigCmykData;
   }
   cmsColorSpaceSignature dstCS = cmsGetColorSpace(dstProfile.get());
-  if (!Check3Components(dstCS))
+  if (!Check3Components(dstCS)) {
     return nullptr;
+  }
 
   cmsHTRANSFORM hTransform = nullptr;
   switch (dstCS) {
@@ -104,8 +107,9 @@ std::unique_ptr<IccTransform> IccTransform::CreateTransformSRGB(
     default:
       break;
   }
-  if (!hTransform)
+  if (!hTransform) {
     return nullptr;
+  }
 
   // Private ctor.
   return pdfium::WrapUnique(
@@ -121,13 +125,15 @@ void IccTransform::Translate(pdfium::span<const float> pSrcValues,
   // components are used.
   if (lab_) {
     DataVector<double> inputs(std::max<size_t>(pSrcValues.size(), 16));
-    for (uint32_t i = 0; i < pSrcValues.size(); ++i)
+    for (uint32_t i = 0; i < pSrcValues.size(); ++i) {
       inputs[i] = pSrcValues[i];
+    }
     cmsDoTransform(transform_, inputs.data(), output, 1);
   } else {
     DataVector<uint8_t> inputs(std::max<size_t>(pSrcValues.size(), 16));
     for (size_t i = 0; i < pSrcValues.size(); ++i) {
-      inputs[i] = static_cast<int>(std::clamp(pSrcValues[i] * 255.0f, 0.0f, 255.0f));
+      inputs[i] =
+          static_cast<int>(std::clamp(pSrcValues[i] * 255.0f, 0.0f, 255.0f));
     }
     cmsDoTransform(transform_, inputs.data(), output, 1);
   }

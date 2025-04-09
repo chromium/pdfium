@@ -27,8 +27,9 @@ GifDecoder::Status GifDecoder::ReadHeader(
     int* bg_index) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
   Status ret = context->ReadHeader();
-  if (ret != Status::kSuccess)
+  if (ret != Status::kSuccess) {
     return ret;
+  }
 
   *width = context->width_;
   *height = context->height_;
@@ -42,8 +43,9 @@ std::pair<GifDecoder::Status, size_t> GifDecoder::LoadFrameInfo(
     ProgressiveDecoderIface::Context* pContext) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
   Status ret = context->GetFrame();
-  if (ret != Status::kSuccess)
+  if (ret != Status::kSuccess) {
     return {ret, 0};
+  }
   return {Status::kSuccess, context->GetFrameNum()};
 }
 

@@ -29,8 +29,9 @@ static pdfium::span<const uint8_t> JpegScanSOI(
   DCHECK(!src_span.empty());
 
   for (size_t offset = 0; offset + 1 < src_span.size(); ++offset) {
-    if (src_span[offset] == 0xff && src_span[offset + 1] == 0xd8)
+    if (src_span[offset] == 0xff && src_span[offset + 1] == 0xd8) {
       return src_span.subspan(offset);
+    }
   }
   return src_span;
 }
@@ -221,8 +222,9 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
   jpeg_transform_ = ColorTransform;
   output_width_ = orig_width_ = width;
   output_height_ = orig_height_ = height;
-  if (!InitDecode(/*bAcceptKnownBadHeader=*/true))
+  if (!InitDecode(/*bAcceptKnownBadHeader=*/true)) {
     return false;
+  }
 
   if (common_.cinfo.num_components < nComps) {
     return false;
@@ -297,15 +299,17 @@ bool JpegDecoder::HasKnownBadHeaderWithInvalidHeight(
       common_.cinfo.image_height == 0xffff && orig_width_ > 0 &&
       orig_width_ <= JPEG_MAX_DIMENSION && orig_height_ > 0 &&
       orig_height_ <= JPEG_MAX_DIMENSION;
-  if (!bDimensionChecks)
+  if (!bDimensionChecks) {
     return false;
+  }
 
   if (src_span_.size() <= dimension_offset + 3u) {
     return false;
   }
 
-  if (!IsSofSegment(dimension_offset - kSofMarkerByteOffset))
+  if (!IsSofSegment(dimension_offset - kSofMarkerByteOffset)) {
     return false;
+  }
 
   const auto pHeaderDimensions = src_span_.subspan(dimension_offset);
   uint8_t nExpectedWidthByte1 = (orig_width_ >> 8) & 0xff;
@@ -354,8 +358,9 @@ std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
   DCHECK(!src_span.empty());
 
   auto pDecoder = std::make_unique<JpegDecoder>();
-  if (!pDecoder->Create(src_span, width, height, nComps, ColorTransform))
+  if (!pDecoder->Create(src_span, width, height, nComps, ColorTransform)) {
     return nullptr;
+  }
 
   return pDecoder;
 }
@@ -364,8 +369,9 @@ std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
 std::optional<JpegModule::ImageInfo> JpegModule::LoadInfo(
     pdfium::span<const uint8_t> src_span) {
   ImageInfo info;
-  if (!JpegLoadInfo(src_span, &info))
+  if (!JpegLoadInfo(src_span, &info)) {
     return std::nullopt;
+  }
 
   return info;
 }
@@ -394,8 +400,9 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
   safe_buf_len *= height;
   safe_buf_len *= nComponents;
   safe_buf_len += 1024;
-  if (!safe_buf_len.IsValid())
+  if (!safe_buf_len.IsValid()) {
     return false;
+  }
 
   uint32_t dest_buf_length = safe_buf_len.ValueOrDie();
   *dest_buf = FX_TryAlloc(uint8_t, dest_buf_length);
@@ -404,8 +411,9 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
     dest_buf_length >>= 1;
     *dest_buf = FX_TryAlloc(uint8_t, dest_buf_length);
   }
-  if (!(*dest_buf))
+  if (!(*dest_buf)) {
     return false;
+  }
 
   jpeg_destination_mgr dest;
   dest.init_destination = jpeg_common_dest_do_nothing;
@@ -425,8 +433,9 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
     cinfo.in_color_space = JCS_CMYK;
   }
   uint8_t* line_buf = nullptr;
-  if (nComponents > 1)
+  if (nComponents > 1) {
     line_buf = FX_Alloc2D(uint8_t, width, nComponents);
+  }
 
   jpeg_set_defaults(&cinfo);
   jpeg_start_compress(&cinfo, TRUE);

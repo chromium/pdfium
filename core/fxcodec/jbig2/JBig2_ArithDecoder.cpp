@@ -42,8 +42,9 @@ JBig2ArithCtx::JBig2ArithCtx() = default;
 
 int JBig2ArithCtx::DecodeNLPS(const JBig2ArithQe& qe) {
   bool D = !mps_;
-  if (qe.bSwitch)
+  if (qe.bSwitch) {
     mps_ = !mps_;
+  }
   i_ = qe.NLPS;
   DCHECK_LT(i_, std::size(kQeTable));
   return D;
