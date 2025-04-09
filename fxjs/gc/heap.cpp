@@ -68,8 +68,9 @@ FXGCScopedHeap FXGC_CreateHeap() {
   // we may still attempt to build a CPDFXFA_Context which will want a
   // heap. But we can't make one because JS is disabled.
   // TODO(tsepez): Stop the context from even being created.
-  if (!g_platform)
+  if (!g_platform) {
     return nullptr;
+  }
 
   ++g_platform_ref_count;
   auto heap = cppgc::Heap::Create(

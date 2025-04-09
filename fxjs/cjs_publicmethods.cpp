@@ -106,8 +106,9 @@ ByteString CalculateString(double dValue,
                            int* iDec2,
                            bool* bNegative) {
   *bNegative = dValue < 0;
-  if (*bNegative)
+  if (*bNegative) {
     dValue = -dValue;
+  }
 
   // Make sure the number of precision characters will fit.
   iDec = std::min(iDec, std::numeric_limits<double>::digits10);
@@ -128,8 +129,9 @@ WideString CalcMergedString(const CJS_EventContext* event,
   WideString prefix = value.First(event->SelStart());
   WideString postfix;
   int end = event->SelEnd();
-  if (end >= 0 && static_cast<size_t>(end) < value.GetLength())
+  if (end >= 0 && static_cast<size_t>(end) < value.GetLength()) {
     postfix = value.Last(value.GetLength() - static_cast<size_t>(end));
+  }
   return prefix + change + postfix;
 }
 
@@ -138,16 +140,19 @@ void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   auto* pObj = static_cast<CJS_Object*>(
       CFXJS_Engine::GetBinding(info.GetIsolate(), info.This()));
-  if (!pObj)
+  if (!pObj) {
     return;
+  }
 
   CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
+  if (!pRuntime) {
     return;
+  }
 
   v8::LocalVector<v8::Value> parameters(info.GetIsolate());
-  for (int i = 0; i < info.Length(); ++i)
+  for (int i = 0; i < info.Length(); ++i) {
     parameters.push_back(info[i]);
+  }
 
   CJS_Result result = (*F)(pRuntime, parameters);
   if (result.HasError()) {
@@ -156,8 +161,9 @@ void JSGlobalFunc(const char* func_name_string,
     return;
   }
 
-  if (result.HasReturn())
+  if (result.HasReturn()) {
     info.GetReturnValue().Set(result.Return());
+  }
 }
 
 int WithinBoundsOrZero(int value, size_t size) {
@@ -212,12 +218,15 @@ std::optional<double> ApplyNamedOperation(const WideString& wsFunction,
       wsFunction.EqualsASCIINoCase("SUM")) {
     return dValue1 + dValue2;
   }
-  if (wsFunction.EqualsASCIINoCase("PRD"))
+  if (wsFunction.EqualsASCIINoCase("PRD")) {
     return dValue1 * dValue2;
-  if (wsFunction.EqualsASCIINoCase("MIN"))
+  }
+  if (wsFunction.EqualsASCIINoCase("MIN")) {
     return std::min(dValue1, dValue2);
-  if (wsFunction.EqualsASCIINoCase("MAX"))
+  }
+  if (wsFunction.EqualsASCIINoCase("MAX")) {
     return std::max(dValue1, dValue2);
+  }
   return std::nullopt;
 }
 
@@ -225,8 +234,9 @@ std::optional<double> ApplyNamedOperation(const WideString& wsFunction,
 
 // static
 void CJS_PublicMethods::DefineJSObjects(CFXJS_Engine* pEngine) {
-  for (const auto& spec : GlobalFunctionSpecs)
+  for (const auto& spec : GlobalFunctionSpecs) {
     pEngine->DefineGlobalMethod(spec.pName, spec.pMethodCall);
+  }
 }
 
 #define JS_STATIC_GLOBAL_FUN(fun_name)                   \
@@ -320,8 +330,9 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
     CJS_Runtime* pRuntime,
     v8::Local<v8::Value> val) {
   DCHECK(!val.IsEmpty());
-  if (val->IsArray())
+  if (val->IsArray()) {
     return pRuntime->ToArray(val);
+  }
 
   DCHECK(val->IsString());
   ByteString bsVal = pRuntime->ToByteString(val);
@@ -370,8 +381,9 @@ double CJS_PublicMethods::ParseDate(v8::Isolate* isolate,
   size_t nIndex = 0;
   size_t i = 0;
   while (i < nLen) {
-    if (nIndex > 2)
+    if (nIndex > 2) {
       break;
+    }
 
     wchar_t c = value[i];
     if (FXSYS_IsDecimalDigit(c)) {
@@ -394,8 +406,9 @@ double CJS_PublicMethods::ParseDate(v8::Isolate* isolate,
       nMonth = number[1];
     }
 
-    if (bWrongFormat)
+    if (bWrongFormat) {
       *bWrongFormat = false;
+    }
   } else if (nIndex == 3) {
     // TODO(thestig): Should the else case set |bWrongFormat| to true?
     // case1: year/month/day
@@ -418,11 +431,13 @@ double CJS_PublicMethods::ParseDate(v8::Isolate* isolate,
       nYear = number[2];
     }
 
-    if (bWrongFormat)
+    if (bWrongFormat) {
       *bWrongFormat = false;
+    }
   } else {
-    if (bWrongFormat)
+    if (bWrongFormat) {
       *bWrongFormat = true;
+    }
     return dt;
   }
 
@@ -438,19 +453,22 @@ double CJS_PublicMethods::ParseDateUsingFormat(v8::Isolate* isolate,
                                                bool* bWrongFormat) {
   double dRet = nan("");
   fxjs::ConversionStatus status = FX_ParseDateUsingFormat(value, format, &dRet);
-  if (status == fxjs::ConversionStatus::kSuccess)
+  if (status == fxjs::ConversionStatus::kSuccess) {
     return dRet;
+  }
 
   if (status == fxjs::ConversionStatus::kBadDate) {
     dRet = JS_DateParse(isolate, value);
-    if (!isnan(dRet))
+    if (!isnan(dRet)) {
       return dRet;
+    }
   }
 
   bool bBadFormat = false;
   dRet = ParseDate(isolate, value, &bBadFormat);
-  if (bWrongFormat)
+  if (bWrongFormat) {
     *bWrongFormat = bBadFormat;
+  }
 
   return dRet;
 }
@@ -543,8 +561,9 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
           switch (c) {
             case 'm':
               i += 3;
-              if (FX_IsValidMonth(nMonth))
+              if (FX_IsValidMonth(nMonth)) {
                 sPart += WideString::FromASCII(fxjs::kMonths[nMonth - 1]);
+              }
               break;
             default:
               i += 3;
@@ -561,8 +580,9 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
               break;
             case 'm':
               i += 4;
-              if (FX_IsValidMonth(nMonth))
+              if (FX_IsValidMonth(nMonth)) {
                 sPart += WideString::FromASCII(fxjs::kFullMonths[nMonth - 1]);
+              }
               break;
             default:
               i += 4;
@@ -595,17 +615,20 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
 #if !BUILDFLAG(IS_ANDROID)
-  if (params.size() != 6)
+  if (params.size() != 6) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_EventContext* pEventContext = pRuntime->GetCurrentEventContext();
-  if (!pEventContext->HasValue())
+  if (!pEventContext->HasValue()) {
     return CJS_Result::Failure(WideString::FromASCII("No event handler"));
+  }
 
   WideString& Value = pEventContext->Value();
   ByteString strValue = StrTrim(Value.ToUTF8());
-  if (strValue.IsEmpty())
+  if (strValue.IsEmpty()) {
     return CJS_Result::Success();
+  }
 
   int iDec = abs(pRuntime->ToInt32(params[0]));
   int iSepStyle = ValidStyleOrZero(pRuntime->ToInt32(params[1]));
@@ -619,8 +642,9 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
 
   // SAFETY: ByteStrings are always NUL-terminated.
   double dValue = UNSAFE_BUFFERS(atof(strValue.c_str()));
-  if (iDec > 0)
+  if (iDec > 0) {
     dValue += kDoubleCorrect;
+  }
 
   // Calculating number string
   bool bNegative;
@@ -638,24 +662,28 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
 
   // Processing separator style
   if (static_cast<size_t>(iDec2) < strValue.GetLength()) {
-    if (IsStyleWithCommaDecimalMark(iSepStyle))
+    if (IsStyleWithCommaDecimalMark(iSepStyle)) {
       strValue.Replace(".", ",");
+    }
 
-    if (iDec2 == 0)
+    if (iDec2 == 0) {
       strValue.Insert(iDec2, '0');
+    }
   }
   if (IsStyleWithDigitSeparator(iSepStyle)) {
     char cSeparator = DigitSeparatorForStyle(iSepStyle);
-    for (int iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3)
+    for (int iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
       strValue.Insert(iDecPositive, cSeparator);
+    }
   }
 
   // Processing currency string
   Value = WideString::FromUTF8(strValue.AsStringView());
-  if (bCurrencyPrepend)
+  if (bCurrencyPrepend) {
     Value = wstrCurrency + Value;
-  else
+  } else {
     Value = Value + wstrCurrency;
+  }
 
   // Processing negative style
   if (bNegative) {
@@ -689,8 +717,9 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
             pRuntime, pRuntime->ToArray(result.Return()));
         CFX_Color crColor =
             CJS_Color::ConvertArrayToPWLColor(pRuntime, arColor);
-        if (crColor != crProp)
+        if (crColor != crProp) {
           fTarget->set_text_color(pRuntime, arColor);
+        }
       }
     }
   }
@@ -703,12 +732,14 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
 CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() < 2)
+  if (params.size() < 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  if (!pContext->HasValue())
+  if (!pContext->HasValue()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   WideString& val = pContext->Value();
   WideString& wstrChange = pContext->Change();
@@ -716,8 +747,9 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
 
   if (pContext->WillCommit()) {
     WideString swTemp = StrTrim(wstrValue);
-    if (swTemp.IsEmpty())
+    if (swTemp.IsEmpty()) {
       return CJS_Result::Success();
+    }
 
     NormalizeDecimalMarkW(&swTemp);
     if (!IsNumber(swTemp)) {
@@ -792,12 +824,14 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
 #if !BUILDFLAG(IS_ANDROID)
-  if (params.size() < 2)
+  if (params.size() < 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_EventContext* pEvent = pRuntime->GetCurrentEventContext();
-  if (!pEvent->HasValue())
+  if (!pEvent->HasValue()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   // Acrobat will accept this. Anything larger causes it to throw an error.
   static constexpr int kMaxSepStyle = 49;
@@ -806,8 +840,9 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   int iSepStyle = pRuntime->ToInt32(params[1]);
   // TODO(thestig): How do we handle negative raw |bPercentPrepend| values?
   bool bPercentPrepend = params.size() > 2 && pRuntime->ToBoolean(params[2]);
-  if (iDec < 0 || iSepStyle < 0 || iSepStyle > kMaxSepStyle)
+  if (iDec < 0 || iSepStyle < 0 || iSepStyle > kMaxSepStyle) {
     return CJS_Result::Failure(JSMessage::kValueError);
+  }
 
   // When the |iDec| value is too big, Acrobat will just return "%".
   static constexpr int kDecLimit = 512;
@@ -820,8 +855,9 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   }
 
   ByteString strValue = StrTrim(Value.ToUTF8());
-  if (strValue.IsEmpty())
+  if (strValue.IsEmpty()) {
     strValue = "0";
+  }
 
   // for processing decimal places
   // SAFETY: ByteStrings are always NUL-terminated.
@@ -854,8 +890,9 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   std::optional<size_t> mark_pos = strValue.Find('.');
   if (mark_pos.has_value()) {
     char mark = DecimalMarkForStyle(iSepStyle);
-    if (mark != '.')
+    if (mark != '.') {
       strValue.SetAt(mark_pos.value(), mark);
+    }
   }
   bool bUseDigitSeparator = IsStyleWithDigitSeparator(iSepStyle);
   if (bUseDigitSeparator || IsStyleWithApostropheSeparator(iSepStyle)) {
@@ -863,14 +900,16 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
         bUseDigitSeparator ? DigitSeparatorForStyle(iSepStyle) : '\'';
     int iEnd = mark_pos.value_or(strValue.GetLength());
     int iStop = dValue < 0 ? 1 : 0;
-    for (int i = iEnd - 3; i > iStop; i -= 3)
+    for (int i = iEnd - 3; i > iStop; i -= 3) {
       strValue.Insert(i, cSeparator);
+    }
   }
 
-  if (bPercentPrepend)
+  if (bPercentPrepend) {
     strValue.InsertAtFront('%');
-  else
+  } else {
     strValue.InsertAtBack('%');
+  }
   Value = WideString::FromUTF8(strValue.AsStringView());
 #endif
   return CJS_Result::Success();
@@ -887,17 +926,20 @@ CJS_Result CJS_PublicMethods::AFPercent_Keystroke(
 CJS_Result CJS_PublicMethods::AFDate_FormatEx(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_EventContext* pEvent = pRuntime->GetCurrentEventContext();
-  if (!pEvent->HasValue())
+  if (!pEvent->HasValue()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   WideString& val = pEvent->Value();
   WideString strValue = val;
-  if (strValue.IsEmpty())
+  if (strValue.IsEmpty()) {
     return CJS_Result::Success();
+  }
 
   WideString sFormat = pRuntime->ToWideString(params[0]);
   double dDate;
@@ -932,8 +974,9 @@ double CJS_PublicMethods::ParseDateAsGMT(v8::Isolate* isolate,
     sTemp += c;
   }
   wsArray.push_back(std::move(sTemp));
-  if (wsArray.size() != 8)
+  if (wsArray.size() != 8) {
     return 0;
+  }
 
   int nMonth = 1;
   sTemp = wsArray[1];
@@ -951,8 +994,9 @@ double CJS_PublicMethods::ParseDateAsGMT(v8::Isolate* isolate,
   int nYear = StringToFloat(wsArray[7].AsStringView());
   double dRet = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
                             FX_MakeTime(nHour, nMin, nSec, 0));
-  if (isnan(dRet))
+  if (isnan(dRet)) {
     dRet = JS_DateParse(isolate, strValue);
+  }
 
   return dRet;
 }
@@ -967,15 +1011,18 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
   }
 
   CJS_EventContext* pEvent = pRuntime->GetCurrentEventContext();
-  if (!pEvent->WillCommit())
+  if (!pEvent->WillCommit()) {
     return CJS_Result::Success();
+  }
 
-  if (!pEvent->HasValue())
+  if (!pEvent->HasValue()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   const WideString& strValue = pEvent->Value();
-  if (strValue.IsEmpty())
+  if (strValue.IsEmpty()) {
     return CJS_Result::Success();
+  }
 
   bool bWrongFormat = false;
   WideString sFormat = pRuntime->ToWideString(params[0]);
@@ -993,8 +1040,9 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
 CJS_Result CJS_PublicMethods::AFDate_Format(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   int iIndex =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kDateFormats));
@@ -1007,8 +1055,9 @@ CJS_Result CJS_PublicMethods::AFDate_Format(
 CJS_Result CJS_PublicMethods::AFDate_Keystroke(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   int iIndex =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kDateFormats));
@@ -1021,8 +1070,9 @@ CJS_Result CJS_PublicMethods::AFDate_Keystroke(
 CJS_Result CJS_PublicMethods::AFTime_Format(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   int iIndex =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kTimeFormats));
@@ -1034,8 +1084,9 @@ CJS_Result CJS_PublicMethods::AFTime_Format(
 CJS_Result CJS_PublicMethods::AFTime_Keystroke(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   int iIndex =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kTimeFormats));
@@ -1060,12 +1111,14 @@ CJS_Result CJS_PublicMethods::AFTime_KeystrokeEx(
 CJS_Result CJS_PublicMethods::AFSpecial_Format(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_EventContext* pEvent = pRuntime->GetCurrentEventContext();
-  if (!pEvent->HasValue())
+  if (!pEvent->HasValue()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   const WideString& wsSource = pEvent->Value();
   WideString wsFormat;
@@ -1077,10 +1130,11 @@ CJS_Result CJS_PublicMethods::AFSpecial_Format(
       wsFormat = WideString::FromASCII("99999-9999");
       break;
     case 2:
-      if (CJS_Util::StringPrintx(L"9999999999", wsSource).GetLength() >= 10)
+      if (CJS_Util::StringPrintx(L"9999999999", wsSource).GetLength() >= 10) {
         wsFormat = WideString::FromASCII("(999) 999-9999");
-      else
+      } else {
         wsFormat = WideString::FromASCII("999-9999");
+      }
       break;
     case 3:
       wsFormat = WideString::FromASCII("999-99-9999");
@@ -1095,21 +1149,25 @@ CJS_Result CJS_PublicMethods::AFSpecial_Format(
 CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() < 1)
+  if (params.size() < 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_EventContext* pEvent = pRuntime->GetCurrentEventContext();
-  if (!pEvent->HasValue())
+  if (!pEvent->HasValue()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   const WideString& valEvent = pEvent->Value();
   WideString wstrMask = pRuntime->ToWideString(params[0]);
-  if (wstrMask.IsEmpty())
+  if (wstrMask.IsEmpty()) {
     return CJS_Result::Success();
+  }
 
   if (pEvent->WillCommit()) {
-    if (valEvent.IsEmpty())
+    if (valEvent.IsEmpty()) {
       return CJS_Result::Success();
+    }
 
     if (valEvent.GetLength() > wstrMask.GetLength()) {
       AlertIfPossible(pEvent, WideString::FromASCII("AFSpecial_KeystrokeEx"),
@@ -1120,8 +1178,9 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
 
     size_t iIndex = 0;
     for (iIndex = 0; iIndex < valEvent.GetLength(); ++iIndex) {
-      if (!MaskSatisfied(valEvent[iIndex], wstrMask[iIndex]))
+      if (!MaskSatisfied(valEvent[iIndex], wstrMask[iIndex])) {
         break;
+      }
     }
     if (iIndex != wstrMask.GetLength()) {
       AlertIfPossible(pEvent, WideString::FromASCII("AFSpecial_KeystrokeEx"),
@@ -1132,8 +1191,9 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
   }
 
   WideString& wideChange = pEvent->Change();
-  if (wideChange.IsEmpty())
+  if (wideChange.IsEmpty()) {
     return CJS_Result::Success();
+  }
 
   WideString wChange = wideChange;
   size_t iIndexMask = pEvent->SelStart();
@@ -1161,8 +1221,9 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
       return CJS_Result::Success();
     }
     wchar_t wMask = wstrMask[iIndexMask];
-    if (!IsReservedMaskChar(wMask))
+    if (!IsReservedMaskChar(wMask)) {
       wChange.SetAt(i, wMask);
+    }
 
     if (!MaskSatisfied(wChange[i], wMask)) {
       pEvent->Rc() = false;
@@ -1178,12 +1239,14 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
 CJS_Result CJS_PublicMethods::AFSpecial_Keystroke(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_EventContext* pEvent = pRuntime->GetCurrentEventContext();
-  if (!pEvent->HasValue())
+  if (!pEvent->HasValue()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   const char* cFormat = "";
   switch (pRuntime->ToInt32(params[0])) {
@@ -1194,10 +1257,11 @@ CJS_Result CJS_PublicMethods::AFSpecial_Keystroke(
       cFormat = "999999999";
       break;
     case 2:
-      if (pEvent->Value().GetLength() + pEvent->Change().GetLength() > 7)
+      if (pEvent->Value().GetLength() + pEvent->Change().GetLength() > 7) {
         cFormat = "9999999999";
-      else
+      } else {
         cFormat = "9999999";
+      }
       break;
     case 3:
       cFormat = "999999999";
@@ -1212,17 +1276,20 @@ CJS_Result CJS_PublicMethods::AFSpecial_Keystroke(
 CJS_Result CJS_PublicMethods::AFMergeChange(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_EventContext* pEvent = pRuntime->GetCurrentEventContext();
 
   WideString swValue;
-  if (pEvent->HasValue())
+  if (pEvent->HasValue()) {
     swValue = pEvent->Value();
+  }
 
-  if (pEvent->WillCommit())
+  if (pEvent->WillCommit()) {
     return CJS_Result::Success(pRuntime->NewString(swValue.AsStringView()));
+  }
 
   return CJS_Result::Success(pRuntime->NewString(
       CalcMergedString(pEvent, swValue, pEvent->Change()).AsStringView()));
@@ -1231,8 +1298,9 @@ CJS_Result CJS_PublicMethods::AFMergeChange(
 CJS_Result CJS_PublicMethods::AFParseDateEx(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 2)
+  if (params.size() != 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString sValue = pRuntime->ToWideString(params[0]);
   WideString sFormat = pRuntime->ToWideString(params[1]);
@@ -1251,18 +1319,21 @@ CJS_Result CJS_PublicMethods::AFParseDateEx(
 CJS_Result CJS_PublicMethods::AFSimple(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 3)
+  if (params.size() != 3) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString sFunction = pRuntime->ToWideString(params[0]);
   double arg1 = pRuntime->ToDouble(params[1]);
   double arg2 = pRuntime->ToDouble(params[2]);
-  if (isnan(arg1) || isnan(arg2))
+  if (isnan(arg1) || isnan(arg2)) {
     return CJS_Result::Failure(JSMessage::kValueError);
+  }
 
   std::optional<double> result = ApplyNamedOperation(sFunction, arg1, arg2);
-  if (!result.has_value())
+  if (!result.has_value()) {
     return CJS_Result::Failure(JSMessage::kValueError);
+  }
 
   double dValue = result.value();
   if (sFunction.EqualsASCII("AVG")) {
@@ -1274,16 +1345,18 @@ CJS_Result CJS_PublicMethods::AFSimple(
 CJS_Result CJS_PublicMethods::AFMakeNumber(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString ws = pRuntime->ToWideString(params[0]);
   NormalizeDecimalMarkW(&ws);
 
   v8::Local<v8::Value> val =
       pRuntime->MaybeCoerceToNumber(pRuntime->NewString(ws.AsStringView()));
-  if (!val->IsNumber())
+  if (!val->IsNumber()) {
     return CJS_Result::Success(pRuntime->NewNumber(0));
+  }
 
   return CJS_Result::Success(val);
 }
@@ -1291,11 +1364,14 @@ CJS_Result CJS_PublicMethods::AFMakeNumber(
 CJS_Result CJS_PublicMethods::AFSimple_Calculate(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 2)
+  if (params.size() != 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
-  if (params[1].IsEmpty() || (!params[1]->IsArray() && !params[1]->IsString()))
+  if (params[1].IsEmpty() ||
+      (!params[1]->IsArray() && !params[1]->IsString())) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString sFunction = pRuntime->ToWideString(params[0]);
   v8::Local<v8::Array> FieldNameArray =
@@ -1313,8 +1389,9 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
 
     for (size_t j = 0; j < pForm->CountFields(wsFieldName); ++j) {
       CPDF_FormField* pFormField = pForm->GetField(j, wsFieldName);
-      if (!pFormField)
+      if (!pFormField) {
         continue;
+      }
 
       double dTemp = 0.0;
       switch (pFormField->GetFieldType()) {
@@ -1332,8 +1409,9 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
         case FormFieldType::kRadioButton:
           for (int c = 0; c < pFormField->CountControls(); ++c) {
             CPDF_FormControl* pFormCtrl = pFormField->GetControl(c);
-            if (!pFormField || !pFormCtrl->IsChecked())
+            if (!pFormField || !pFormCtrl->IsChecked()) {
               continue;
+            }
 
             WideString trimmed = pFormCtrl->GetExportValue();
             trimmed.TrimWhitespaceBack();
@@ -1360,8 +1438,9 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
       }
       std::optional<double> dResult =
           ApplyNamedOperation(sFunction, dValue, dTemp);
-      if (!dResult.has_value())
+      if (!dResult.has_value()) {
         return CJS_Result::Failure(JSMessage::kValueError);
+      }
 
       dValue = dResult.value();
       nFieldsCount++;
@@ -1374,8 +1453,9 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
   dValue = floor(dValue * powf(10, 6) + 0.49) / powf(10, 6);
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  if (pContext->HasValue())
+  if (pContext->HasValue()) {
     pContext->Value() = pRuntime->ToWideString(pRuntime->NewNumber(dValue));
+  }
 
   return CJS_Result::Success();
 }
@@ -1385,15 +1465,18 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
 CJS_Result CJS_PublicMethods::AFRange_Validate(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 4)
+  if (params.size() != 4) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_EventContext* pEvent = pRuntime->GetCurrentEventContext();
-  if (!pEvent->HasValue())
+  if (!pEvent->HasValue()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
-  if (pEvent->Value().IsEmpty())
+  if (pEvent->Value().IsEmpty()) {
     return CJS_Result::Success();
+  }
 
   // SAFETY: ByteStrings are always NUL-terminated.
   double dEventValue = UNSAFE_BUFFERS(atof(pEvent->Value().ToUTF8().c_str()));
@@ -1404,21 +1487,24 @@ CJS_Result CJS_PublicMethods::AFRange_Validate(
   WideString swMsg;
 
   if (bGreaterThan && bLessThan) {
-    if (dEventValue < dGreaterThan || dEventValue > dLessThan)
+    if (dEventValue < dGreaterThan || dEventValue > dLessThan) {
       swMsg = WideString::Format(
           JSGetStringFromID(JSMessage::kRangeBetweenError).c_str(),
           pRuntime->ToWideString(params[1]).c_str(),
           pRuntime->ToWideString(params[3]).c_str());
+    }
   } else if (bGreaterThan) {
-    if (dEventValue < dGreaterThan)
+    if (dEventValue < dGreaterThan) {
       swMsg = WideString::Format(
           JSGetStringFromID(JSMessage::kRangeGreaterError).c_str(),
           pRuntime->ToWideString(params[1]).c_str());
+    }
   } else if (bLessThan) {
-    if (dEventValue > dLessThan)
+    if (dEventValue > dLessThan) {
       swMsg = WideString::Format(
           JSGetStringFromID(JSMessage::kRangeLessError).c_str(),
           pRuntime->ToWideString(params[3]).c_str());
+    }
   }
 
   if (!swMsg.IsEmpty()) {
@@ -1431,12 +1517,14 @@ CJS_Result CJS_PublicMethods::AFRange_Validate(
 CJS_Result CJS_PublicMethods::AFExtractNums(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString str = pRuntime->ToWideString(params[0]);
-  if (str.GetLength() > 0 && IsDigitSeparatorOrDecimalMark(str[0]))
+  if (str.GetLength() > 0 && IsDigitSeparatorOrDecimalMark(str[0])) {
     str.InsertAtFront(L'0');
+  }
 
   WideString sPart;
   v8::Local<v8::Array> nums = pRuntime->NewArray();
@@ -1455,8 +1543,9 @@ CJS_Result CJS_PublicMethods::AFExtractNums(
     pRuntime->PutArrayElement(nums, nIndex,
                               pRuntime->NewString(sPart.AsStringView()));
   }
-  if (pRuntime->GetArrayLength(nums) > 0)
+  if (pRuntime->GetArrayLength(nums) > 0) {
     return CJS_Result::Success(nums);
+  }
 
   return CJS_Result::Success(pRuntime->NewUndefined());
 }

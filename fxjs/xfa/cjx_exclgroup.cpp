@@ -37,8 +37,9 @@ bool CJX_ExclGroup::DynamicTypeIs(TypeTag eType) const {
 
 CJS_Result CJX_ExclGroup::execEvent(CFXJSE_Engine* runtime,
                                     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   execSingleEventByName(runtime->ToWideString(params[0]).AsStringView(),
                         XFA_Element::ExclGroup);
@@ -48,38 +49,44 @@ CJS_Result CJX_ExclGroup::execEvent(CFXJSE_Engine* runtime,
 CJS_Result CJX_ExclGroup::execInitialize(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (pNotify)
+  if (pNotify) {
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize, false,
                                   true);
+  }
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_ExclGroup::execCalculate(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (pNotify)
+  if (pNotify) {
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false,
                                   true);
+  }
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_ExclGroup::execValidate(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* notify = GetDocument()->GetNotify();
-  if (!notify)
+  if (!notify) {
     return CJS_Result::Success(runtime->NewBoolean(false));
+  }
 
   XFA_EventError iRet = notify->ExecEventByDeepFirst(
       GetXFANode(), XFA_EVENT_Validate, false, true);
@@ -90,12 +97,14 @@ CJS_Result CJX_ExclGroup::execValidate(
 CJS_Result CJX_ExclGroup::selectedMember(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   CXFA_Node* pReturnNode = nullptr;
   if (params.empty()) {
@@ -104,8 +113,9 @@ CJS_Result CJX_ExclGroup::selectedMember(
     pReturnNode = node->SetSelectedMember(
         runtime->ToWideString(params[0]).AsStringView());
   }
-  if (!pReturnNode)
+  if (!pReturnNode) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   return CJS_Result::Success(runtime->GetOrCreateJSBindingFromMap(pReturnNode));
 }
@@ -115,8 +125,9 @@ void CJX_ExclGroup::defaultValue(v8::Isolate* pIsolate,
                                  bool bSetting,
                                  XFA_Attribute eAttribute) {
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return;
+  }
 
   if (bSetting) {
     node->SetSelectedMemberByValue(
@@ -150,6 +161,7 @@ void CJX_ExclGroup::errorText(v8::Isolate* pIsolate,
                               v8::Local<v8::Value>* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
-  if (bSetting)
+  if (bSetting) {
     ThrowInvalidPropertyException(pIsolate);
+  }
 }

@@ -132,16 +132,18 @@ ByteString ToByteString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue) {
 }
 
 int ReentrantToInt32Helper(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
+  if (pValue.IsEmpty()) {
     return 0;
+  }
   v8::TryCatch squash_exceptions(pIsolate);
   return pValue->Int32Value(pIsolate->GetCurrentContext()).FromMaybe(0);
 }
 
 bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
                               v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
+  if (pValue.IsEmpty()) {
     return false;
+  }
   v8::TryCatch squash_exceptions(pIsolate);
   return pValue->BooleanValue(pIsolate);
 }
@@ -153,44 +155,50 @@ float ReentrantToFloatHelper(v8::Isolate* pIsolate,
 
 double ReentrantToDoubleHelper(v8::Isolate* pIsolate,
                                v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
+  if (pValue.IsEmpty()) {
     return 0.0;
+  }
   v8::TryCatch squash_exceptions(pIsolate);
   return pValue->NumberValue(pIsolate->GetCurrentContext()).FromMaybe(0.0);
 }
 
 WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
                                        v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
+  if (pValue.IsEmpty()) {
     return WideString();
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::MaybeLocal<v8::String> maybe_string =
       pValue->ToString(pIsolate->GetCurrentContext());
-  if (maybe_string.IsEmpty())
+  if (maybe_string.IsEmpty()) {
     return WideString();
+  }
 
   return ToWideString(pIsolate, maybe_string.ToLocalChecked());
 }
 
 ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
                                        v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
+  if (pValue.IsEmpty()) {
     return ByteString();
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::MaybeLocal<v8::String> maybe_string =
       pValue->ToString(pIsolate->GetCurrentContext());
-  if (maybe_string.IsEmpty())
+  if (maybe_string.IsEmpty()) {
     return ByteString();
+  }
 
   return ToByteString(pIsolate, maybe_string.ToLocalChecked());
 }
 
 v8::Local<v8::Object> ReentrantToObjectHelper(v8::Isolate* pIsolate,
                                               v8::Local<v8::Value> pValue) {
-  if (!fxv8::IsObject(pValue))
+  if (!fxv8::IsObject(pValue)) {
     return v8::Local<v8::Object>();
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
@@ -199,8 +207,9 @@ v8::Local<v8::Object> ReentrantToObjectHelper(v8::Isolate* pIsolate,
 
 v8::Local<v8::Array> ReentrantToArrayHelper(v8::Isolate* pIsolate,
                                             v8::Local<v8::Value> pValue) {
-  if (!fxv8::IsArray(pValue))
+  if (!fxv8::IsArray(pValue)) {
     return v8::Local<v8::Array>();
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
@@ -211,8 +220,9 @@ v8::Local<v8::Value> ReentrantGetObjectPropertyHelper(
     v8::Isolate* pIsolate,
     v8::Local<v8::Object> pObj,
     ByteStringView bsUTF8PropertyName) {
-  if (pObj.IsEmpty())
+  if (pObj.IsEmpty()) {
     return v8::Local<v8::Value>();
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Value> val;
@@ -227,14 +237,16 @@ v8::Local<v8::Value> ReentrantGetObjectPropertyHelper(
 std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
     v8::Isolate* pIsolate,
     v8::Local<v8::Object> pObj) {
-  if (pObj.IsEmpty())
+  if (pObj.IsEmpty()) {
     return std::vector<WideString>();
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Array> val;
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
-  if (!pObj->GetPropertyNames(context).ToLocal(&val))
+  if (!pObj->GetPropertyNames(context).ToLocal(&val)) {
     return std::vector<WideString>();
+  }
 
   std::vector<WideString> result;
   for (uint32_t i = 0; i < val->Length(); ++i) {
@@ -247,8 +259,9 @@ std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
 bool ReentrantHasObjectOwnPropertyHelper(v8::Isolate* pIsolate,
                                          v8::Local<v8::Object> pObj,
                                          ByteStringView bsUTF8PropertyName) {
-  if (pObj.IsEmpty())
+  if (pObj.IsEmpty()) {
     return false;
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Context> pContext = pIsolate->GetCurrentContext();
@@ -261,8 +274,9 @@ bool ReentrantSetObjectOwnPropertyHelper(v8::Isolate* pIsolate,
                                          v8::Local<v8::Object> pObj,
                                          ByteStringView bsUTF8PropertyName,
                                          v8::Local<v8::Value> pValue) {
-  if (pObj.IsEmpty() || pValue.IsEmpty())
+  if (pObj.IsEmpty() || pValue.IsEmpty()) {
     return false;
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::String> name = NewStringHelper(pIsolate, bsUTF8PropertyName);
@@ -274,8 +288,9 @@ bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
                                       v8::Local<v8::Object> pObj,
                                       ByteStringView bsUTF8PropertyName,
                                       v8::Local<v8::Value> pPut) {
-  if (pObj.IsEmpty() || pPut.IsEmpty())
+  if (pObj.IsEmpty() || pPut.IsEmpty()) {
     return false;
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::String> name = NewStringHelper(pIsolate, bsUTF8PropertyName);
@@ -296,8 +311,9 @@ bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
                                     v8::Local<v8::Array> pArray,
                                     size_t index,
                                     v8::Local<v8::Value> pValue) {
-  if (pArray.IsEmpty())
+  if (pArray.IsEmpty()) {
     return false;
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Maybe<bool> result =
@@ -309,8 +325,9 @@ bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
 v8::Local<v8::Value> ReentrantGetArrayElementHelper(v8::Isolate* pIsolate,
                                                     v8::Local<v8::Array> pArray,
                                                     size_t index) {
-  if (pArray.IsEmpty())
+  if (pArray.IsEmpty()) {
     return v8::Local<v8::Value>();
+  }
 
   v8::TryCatch squash_exceptions(pIsolate);
   v8::Local<v8::Value> val;
@@ -324,8 +341,9 @@ v8::Local<v8::Value> ReentrantGetArrayElementHelper(v8::Isolate* pIsolate,
 }
 
 size_t GetArrayLengthHelper(v8::Local<v8::Array> pArray) {
-  if (pArray.IsEmpty())
+  if (pArray.IsEmpty()) {
     return 0;
+  }
   return pArray->Length();
 }
 

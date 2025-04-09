@@ -75,12 +75,14 @@ void JSPropGetter(const char* prop_name_string,
                   v8::Local<v8::Name> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
   auto pObj = JSGetObject<C>(info.GetIsolate(), info.Holder());
-  if (!pObj)
+  if (!pObj) {
     return;
+  }
 
   CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
+  if (!pRuntime) {
     return;
+  }
 
   CJS_Result result = (pObj.get()->*M)(pRuntime);
   if (result.HasError()) {
@@ -89,8 +91,9 @@ void JSPropGetter(const char* prop_name_string,
     return;
   }
 
-  if (result.HasReturn())
+  if (result.HasReturn()) {
     info.GetReturnValue().Set(result.Return());
+  }
 }
 
 template <class C, CJS_Result (C::*M)(CJS_Runtime*, v8::Local<v8::Value>)>
@@ -100,12 +103,14 @@ void JSPropSetter(const char* prop_name_string,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
   auto pObj = JSGetObject<C>(info.GetIsolate(), info.Holder());
-  if (!pObj)
+  if (!pObj) {
     return;
+  }
 
   CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
+  if (!pRuntime) {
     return;
+  }
 
   CJS_Result result = (pObj.get()->*M)(pRuntime, value);
   if (result.HasError()) {
@@ -120,16 +125,19 @@ void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
   auto pObj = JSGetObject<C>(info.GetIsolate(), info.This());
-  if (!pObj)
+  if (!pObj) {
     return;
+  }
 
   CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
+  if (!pRuntime) {
     return;
+  }
 
   v8::LocalVector<v8::Value> parameters(info.GetIsolate());
-  for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
+  for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
     parameters.push_back(info[i]);
+  }
 
   // TODO(tsepez): why does the compiler think this is sometimes unsafe?
   CJS_Result result = UNSAFE_TODO((pObj.get()->*M)(pRuntime, parameters));
@@ -139,8 +147,9 @@ void JSMethod(const char* method_name_string,
     return;
   }
 
-  if (result.HasReturn())
+  if (result.HasReturn()) {
     info.GetReturnValue().Set(result.Return());
+  }
 }
 
 #define JS_STATIC_PROP(err_name, prop_name, class_name)         \

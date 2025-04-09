@@ -34,13 +34,15 @@ CXFA_TreeList* CJX_TreeList::GetXFATreeList() {
 
 CJS_Result CJX_TreeList::namedItem(CFXJSE_Engine* runtime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_Node* pNode = GetXFATreeList()->NamedItem(
       runtime->ToWideString(params[0]).AsStringView());
-  if (!pNode)
+  if (!pNode) {
     return CJS_Result::Success();
+  }
 
   return CJS_Result::Success(runtime->GetOrCreateJSBindingFromMap(pNode));
 }

@@ -99,12 +99,14 @@ CJS_App::~CJS_App() = default;
 CJS_Result CJS_App::get_active_docs(CJS_Runtime* pRuntime) {
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
   auto pJSDocument = JSGetObject<CJS_Document>(pRuntime->GetIsolate(), pObj);
-  if (!pJSDocument)
+  if (!pJSDocument) {
     return CJS_Result::Failure(JSMessage::kObjectTypeError);
+  }
   v8::Local<v8::Array> aDocs = pRuntime->NewArray();
   pRuntime->PutArrayElement(aDocs, 0, pJSDocument->ToV8Object());
-  if (pRuntime->GetArrayLength(aDocs) > 0)
+  if (pRuntime->GetArrayLength(aDocs) > 0) {
     return CJS_Result::Success(aDocs);
+  }
 
   return CJS_Result::Success(pRuntime->NewUndefined());
 }
@@ -170,8 +172,9 @@ CJS_Result CJS_App::get_platform(CJS_Runtime* pRuntime) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
   if (pFormFillEnv) {
     WideString platform = pFormFillEnv->GetPlatform();
-    if (!platform.IsEmpty())
+    if (!platform.IsEmpty()) {
       return CJS_Result::Success(pRuntime->NewString(platform.AsStringView()));
+    }
   }
   return CJS_Result::Success(pRuntime->NewString(kStrPlatform));
 }
@@ -185,8 +188,9 @@ CJS_Result CJS_App::get_language(CJS_Runtime* pRuntime) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
   if (pFormFillEnv) {
     WideString language = pFormFillEnv->GetLanguage();
-    if (!language.IsEmpty())
+    if (!language.IsEmpty()) {
       return CJS_Result::Success(pRuntime->NewString(language.AsStringView()));
+    }
   }
   return CJS_Result::Success(pRuntime->NewString(kStrLanguage));
 }
@@ -222,20 +226,23 @@ CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
   v8::LocalVector<v8::Value> newParams = ExpandKeywordParams(
       pRuntime, params, 4, "cMsg", "nIcon", "nType", "cTitle");
 
-  if (!IsExpandedParamKnown(newParams[0]))
+  if (!IsExpandedParamKnown(newParams[0])) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
-  if (!pFormFillEnv)
+  if (!pFormFillEnv) {
     return CJS_Result::Success(pRuntime->NewNumber(0));
+  }
 
   WideString swMsg;
   if (newParams[0]->IsArray()) {
     v8::Local<v8::Array> carray = pRuntime->ToArray(newParams[0]);
     swMsg = L"[";
     for (size_t i = 0; i < pRuntime->GetArrayLength(carray); ++i) {
-      if (i)
+      if (i) {
         swMsg += L", ";
+      }
 
       swMsg += pRuntime->ToWideString(pRuntime->GetArrayElement(carray, i));
     }
@@ -245,18 +252,21 @@ CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
   }
 
   int iIcon = JSPLATFORM_ALERT_ICON_DEFAULT;
-  if (IsExpandedParamKnown(newParams[1]))
+  if (IsExpandedParamKnown(newParams[1])) {
     iIcon = pRuntime->ToInt32(newParams[1]);
+  }
 
   int iType = JSPLATFORM_ALERT_BUTTON_DEFAULT;
-  if (IsExpandedParamKnown(newParams[2]))
+  if (IsExpandedParamKnown(newParams[2])) {
     iType = pRuntime->ToInt32(newParams[2]);
+  }
 
   WideString swTitle;
-  if (IsExpandedParamKnown(newParams[3]))
+  if (IsExpandedParamKnown(newParams[3])) {
     swTitle = pRuntime->ToWideString(newParams[3]);
-  else
+  } else {
     swTitle = JSGetStringFromID(JSMessage::kAlert);
+  }
 
   pRuntime->BeginBlock();
   pFormFillEnv->KillFocusAnnot({});
@@ -269,12 +279,14 @@ CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_App::beep(CJS_Runtime* pRuntime,
                          pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   int type = JSPLATFORM_BEEP_DEFAULT;
-  if (IsExpandedParamKnown(params[0]))
+  if (IsExpandedParamKnown(params[0])) {
     type = pRuntime->ToInt32(params[0]);
+  }
 
   pRuntime->GetFormFillEnv()->JS_appBeep(type);
   return CJS_Result::Success();
@@ -300,12 +312,14 @@ CJS_Result CJS_App::set_fs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 
 CJS_Result CJS_App::setInterval(CJS_Runtime* pRuntime,
                                 pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() == 0 || params.size() > 2)
+  if (params.size() == 0 || params.size() > 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString script = pRuntime->ToWideString(params[0]);
-  if (script.IsEmpty())
+  if (script.IsEmpty()) {
     return CJS_Result::Failure(JSMessage::kInvalidInputError);
+  }
 
   uint32_t dwInterval = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
   auto timerRef = std::make_unique<GlobalTimer>(
@@ -315,8 +329,9 @@ CJS_Result CJS_App::setInterval(CJS_Runtime* pRuntime,
 
   v8::Local<v8::Object> pRetObj = pRuntime->NewFXJSBoundObject(
       CJS_TimerObj::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pRetObj.IsEmpty())
+  if (pRetObj.IsEmpty()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   auto* pJS_TimerObj = static_cast<CJS_TimerObj*>(
       CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pRetObj));
@@ -327,12 +342,14 @@ CJS_Result CJS_App::setInterval(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_App::setTimeOut(CJS_Runtime* pRuntime,
                                pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() == 0 || params.size() > 2)
+  if (params.size() == 0 || params.size() > 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString script = pRuntime->ToWideString(params[0]);
-  if (script.IsEmpty())
+  if (script.IsEmpty()) {
     return CJS_Result::Failure(JSMessage::kInvalidInputError);
+  }
 
   uint32_t dwTimeOut = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
   auto timerRef =
@@ -343,8 +360,9 @@ CJS_Result CJS_App::setTimeOut(CJS_Runtime* pRuntime,
 
   v8::Local<v8::Object> pRetObj = pRuntime->NewFXJSBoundObject(
       CJS_TimerObj::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pRetObj.IsEmpty())
+  if (pRetObj.IsEmpty()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   auto* pJS_TimerObj = static_cast<CJS_TimerObj*>(
       CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pRetObj));
@@ -355,8 +373,9 @@ CJS_Result CJS_App::setTimeOut(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_App::clearTimeOut(CJS_Runtime* pRuntime,
                                  pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_App::ClearTimerCommon(pRuntime, params[0]);
   return CJS_Result::Success();
@@ -364,8 +383,9 @@ CJS_Result CJS_App::clearTimeOut(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_App::clearInterval(CJS_Runtime* pRuntime,
                                   pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CJS_App::ClearTimerCommon(pRuntime, params[0]);
   return CJS_Result::Success();
@@ -373,13 +393,15 @@ CJS_Result CJS_App::clearInterval(CJS_Runtime* pRuntime,
 
 void CJS_App::ClearTimerCommon(CJS_Runtime* pRuntime,
                                v8::Local<v8::Value> param) {
-  if (!param->IsObject())
+  if (!param->IsObject()) {
     return;
+  }
 
   v8::Local<v8::Object> pObj = pRuntime->ToObject(param);
   auto pTimer = JSGetObject<CJS_TimerObj>(pRuntime->GetIsolate(), pObj);
-  if (!pTimer)
+  if (!pTimer) {
     return;
+  }
 
   GlobalTimer::Cancel(pTimer->GetTimerID());
 }
@@ -391,8 +413,9 @@ CJS_Result CJS_App::execMenuItem(CJS_Runtime* pRuntime,
 
 void CJS_App::TimerProc(GlobalTimer* pTimer) {
   CJS_Runtime* pRuntime = pTimer->GetRuntime();
-  if (pRuntime && (!pTimer->IsOneShot() || pTimer->GetTimeOut() > 0))
+  if (pRuntime && (!pTimer->IsOneShot() || pTimer->GetTimeOut() > 0)) {
     RunJsScript(pRuntime, pTimer->GetJScript());
+  }
 }
 
 void CJS_App::CancelProc(GlobalTimer* pTimer) {
@@ -400,8 +423,9 @@ void CJS_App::CancelProc(GlobalTimer* pTimer) {
 }
 
 void CJS_App::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {
-  if (pRuntime->IsBlocking())
+  if (pRuntime->IsBlocking()) {
     return;
+  }
 
   IJS_Runtime::ScopedEventContext pContext(pRuntime);
   pContext->OnExternal_Exec();
@@ -425,8 +449,9 @@ CJS_Result CJS_App::mailMsg(CJS_Runtime* pRuntime,
   v8::LocalVector<v8::Value> newParams = ExpandKeywordParams(
       pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");
 
-  if (!IsExpandedParamKnown(newParams[0]))
+  if (!IsExpandedParamKnown(newParams[0])) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   bool bUI = pRuntime->ToBoolean(newParams[0]);
   WideString cTo;
@@ -434,25 +459,30 @@ CJS_Result CJS_App::mailMsg(CJS_Runtime* pRuntime,
     cTo = pRuntime->ToWideString(newParams[1]);
   } else {
     // cTo parameter required when UI not invoked.
-    if (!bUI)
+    if (!bUI) {
       return CJS_Result::Failure(JSMessage::kParamError);
+    }
   }
 
   WideString cCc;
-  if (IsExpandedParamKnown(newParams[2]))
+  if (IsExpandedParamKnown(newParams[2])) {
     cCc = pRuntime->ToWideString(newParams[2]);
+  }
 
   WideString cBcc;
-  if (IsExpandedParamKnown(newParams[3]))
+  if (IsExpandedParamKnown(newParams[3])) {
     cBcc = pRuntime->ToWideString(newParams[3]);
+  }
 
   WideString cSubject;
-  if (IsExpandedParamKnown(newParams[4]))
+  if (IsExpandedParamKnown(newParams[4])) {
     cSubject = pRuntime->ToWideString(newParams[4]);
+  }
 
   WideString cMsg;
-  if (IsExpandedParamKnown(newParams[5]))
+  if (IsExpandedParamKnown(newParams[5])) {
     cMsg = pRuntime->ToWideString(newParams[5]);
+  }
 
   pRuntime->BeginBlock();
   pRuntime->GetFormFillEnv()->JS_docmailForm(pdfium::span<const uint8_t>(), bUI,
@@ -523,25 +553,30 @@ CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
       ExpandKeywordParams(pRuntime, params, 5, "cQuestion", "cTitle",
                           "cDefault", "bPassword", "cLabel");
 
-  if (!IsExpandedParamKnown(newParams[0]))
+  if (!IsExpandedParamKnown(newParams[0])) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString swQuestion = pRuntime->ToWideString(newParams[0]);
   auto swTitle = WideString::FromASCII("PDF");
-  if (IsExpandedParamKnown(newParams[1]))
+  if (IsExpandedParamKnown(newParams[1])) {
     swTitle = pRuntime->ToWideString(newParams[1]);
+  }
 
   WideString swDefault;
-  if (IsExpandedParamKnown(newParams[2]))
+  if (IsExpandedParamKnown(newParams[2])) {
     swDefault = pRuntime->ToWideString(newParams[2]);
+  }
 
   bool bPassword = false;
-  if (IsExpandedParamKnown(newParams[3]))
+  if (IsExpandedParamKnown(newParams[3])) {
     bPassword = pRuntime->ToBoolean(newParams[3]);
+  }
 
   WideString swLabel;
-  if (IsExpandedParamKnown(newParams[4]))
+  if (IsExpandedParamKnown(newParams[4])) {
     swLabel = pRuntime->ToWideString(newParams[4]);
+  }
 
   static constexpr int kMaxWideChars = 1024;
   static constexpr int kMaxBytes = kMaxWideChars * sizeof(uint16_t);
@@ -549,8 +584,9 @@ CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
   int byte_length = pRuntime->GetFormFillEnv()->JS_appResponse(
       swQuestion, swTitle, swDefault, swLabel, bPassword, buffer.span());
 
-  if (byte_length < 0 || byte_length > kMaxBytes)
+  if (byte_length < 0 || byte_length > kMaxBytes) {
     return CJS_Result::Failure(JSMessage::kParamTooLongError);
+  }
 
   auto wstr = WideString::FromUTF16LE(buffer.first(byte_length));
   return CJS_Result::Success(pRuntime->NewString(wstr.AsStringView()));

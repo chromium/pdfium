@@ -34,16 +34,18 @@ bool CJX_Template::DynamicTypeIs(TypeTag eType) const {
 
 CJS_Result CJX_Template::formNodes(CFXJSE_Engine* runtime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success(runtime->NewBoolean(true));
 }
 
 CJS_Result CJX_Template::remerge(CFXJSE_Engine* runtime,
                                  pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   GetDocument()->DoDataRemerge();
   return CJS_Result::Success();
@@ -52,8 +54,9 @@ CJS_Result CJX_Template::remerge(CFXJSE_Engine* runtime,
 CJS_Result CJX_Template::execInitialize(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success(
       runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
@@ -62,8 +65,9 @@ CJS_Result CJX_Template::execInitialize(
 CJS_Result CJX_Template::recalculate(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success(runtime->NewBoolean(true));
 }
@@ -71,8 +75,9 @@ CJS_Result CJX_Template::recalculate(
 CJS_Result CJX_Template::execCalculate(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success(
       runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
@@ -81,8 +86,9 @@ CJS_Result CJX_Template::execCalculate(
 CJS_Result CJX_Template::execValidate(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success(
       runtime->NewBoolean(GetXFANode()->IsWidgetReady()));

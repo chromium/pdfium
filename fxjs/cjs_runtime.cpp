@@ -154,12 +154,14 @@ void CJS_Runtime::SetFormFillEnvToDocument() {
   v8::Context::Scope context_scope(context);
 
   v8::Local<v8::Object> pThis = GetThisObj();
-  if (pThis.IsEmpty())
+  if (pThis.IsEmpty()) {
     return;
+  }
 
   auto pJSDocument = JSGetObject<CJS_Document>(GetIsolate(), pThis);
-  if (!pJSDocument)
+  if (!pJSDocument) {
     return;
+  }
 
   pJSDocument->SetFormFillEnv(form_fill_env_.Get());
 }
@@ -192,15 +194,17 @@ v8::Local<v8::Value> CJS_Runtime::GetValueByNameFromGlobalObject(
   v8::Context::Scope context_scope(context);
   v8::Local<v8::String> str = fxv8::NewStringHelper(GetIsolate(), utf8Name);
   v8::MaybeLocal<v8::Value> maybe_value = context->Global()->Get(context, str);
-  if (maybe_value.IsEmpty())
+  if (maybe_value.IsEmpty()) {
     return v8::Local<v8::Value>();
+  }
   return maybe_value.ToLocalChecked();
 }
 
 bool CJS_Runtime::SetValueByNameInGlobalObject(ByteStringView utf8Name,
                                                v8::Local<v8::Value> pValue) {
-  if (utf8Name.IsEmpty() || pValue.IsEmpty())
+  if (utf8Name.IsEmpty() || pValue.IsEmpty()) {
     return false;
+  }
 
   v8::Isolate* pIsolate = GetIsolate();
   v8::Isolate::Scope isolate_scope(pIsolate);
@@ -216,21 +220,25 @@ v8::Local<v8::Value> CJS_Runtime::MaybeCoerceToNumber(
   bool bAllowNaN = false;
   if (value->IsString()) {
     ByteString bstr = fxv8::ToByteString(GetIsolate(), value.As<v8::String>());
-    if (bstr.IsEmpty())
+    if (bstr.IsEmpty()) {
       return value;
-    if (bstr == "NaN")
+    }
+    if (bstr == "NaN") {
       bAllowNaN = true;
+    }
   }
 
   v8::TryCatch try_catch(GetIsolate());
   v8::MaybeLocal<v8::Number> maybeNum =
       value->ToNumber(GetIsolate()->GetCurrentContext());
-  if (maybeNum.IsEmpty())
+  if (maybeNum.IsEmpty()) {
     return value;
+  }
 
   v8::Local<v8::Number> num = maybeNum.ToLocalChecked();
-  if (isnan(num->Value()) && !bAllowNaN)
+  if (isnan(num->Value()) && !bAllowNaN) {
     return value;
+  }
 
   return num;
 }

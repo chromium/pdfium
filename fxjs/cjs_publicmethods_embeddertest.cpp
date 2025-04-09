@@ -250,7 +250,6 @@ TEST_F(CJSPublicMethodsEmbedderTest, AFNumberKeystroke) {
   EXPECT_TRUE(!ret.HasError());
   EXPECT_TRUE(!ret.HasReturn());
 
-
   // Keep the *SAN bots happy. One of these is an UnownedPtr, another seems to
   // used during destruction. Clear them all to be safe and consistent.
   handler->SetValueForTest(nullptr);

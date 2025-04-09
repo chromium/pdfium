@@ -53,8 +53,9 @@ bool CFXJSE_NodeHelper::CreateNode(const WideString& wsName,
                                    const WideString& wsCondition,
                                    bool bLastNode,
                                    CFXJSE_Engine* pScriptContext) {
-  if (!m_pCreateParent)
+  if (!m_pCreateParent) {
     return false;
+  }
 
   WideStringView wsNameView = wsName.AsStringView();
   bool bIsClassName = false;
@@ -68,16 +69,19 @@ bool CFXJSE_NodeHelper::CreateNode(const WideString& wsName,
     bIsClassName = true;
     wsNameView = wsNameView.Last(wsNameView.GetLength() - 1);
   }
-  if (wsNameView.IsEmpty())
+  if (wsNameView.IsEmpty()) {
     return false;
+  }
 
-  if (m_iCreateCount == 0)
+  if (m_iCreateCount == 0) {
     CreateNodeForCondition(wsCondition);
+  }
 
   if (bIsClassName) {
     XFA_Element eType = XFA_GetElementByName(wsNameView);
-    if (eType == XFA_Element::Unknown)
+    if (eType == XFA_Element::Unknown) {
       return false;
+    }
 
     for (size_t i = 0; i < m_iCreateCount; ++i) {
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eType);
@@ -108,15 +112,17 @@ bool CFXJSE_NodeHelper::CreateNode(const WideString& wsName,
       }
     }
   }
-  if (!bResult)
+  if (!bResult) {
     m_pCreateParent = nullptr;
+  }
 
   return bResult;
 }
 
 void CFXJSE_NodeHelper::SetCreateNodeType(CXFA_Node* refNode) {
-  if (!refNode)
+  if (!refNode) {
     return;
+  }
 
   if (refNode->GetElementType() == XFA_Element::Subform) {
     m_eLastCreateType = XFA_Element::DataGroup;

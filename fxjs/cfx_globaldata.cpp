@@ -114,8 +114,9 @@ CFX_GlobalData::iterator CFX_GlobalData::FindGlobalVariable(
     const ByteString& propname) {
   for (auto it = array_global_data_.begin(); it != array_global_data_.end();
        ++it) {
-    if ((*it)->data.sKey == propname)
+    if ((*it)->data.sKey == propname) {
       return it;
+    }
   }
   return array_global_data_.end();
 }
@@ -128,8 +129,9 @@ CFX_GlobalData::Element* CFX_GlobalData::GetGlobalVariable(
 
 void CFX_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
                                              double dData) {
-  if (!TrimPropName(&sPropName))
+  if (!TrimPropName(&sPropName)) {
     return;
+  }
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
@@ -146,8 +148,9 @@ void CFX_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
 
 void CFX_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
                                               bool bData) {
-  if (!TrimPropName(&sPropName))
+  if (!TrimPropName(&sPropName)) {
     return;
+  }
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
@@ -164,8 +167,9 @@ void CFX_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
 
 void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
                                              const ByteString& sData) {
-  if (!TrimPropName(&sPropName))
+  if (!TrimPropName(&sPropName)) {
     return;
+  }
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
@@ -183,8 +187,9 @@ void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
 void CFX_GlobalData::SetGlobalVariableObject(
     ByteString sPropName,
     std::vector<std::unique_ptr<CFX_KeyValue>> array) {
-  if (!TrimPropName(&sPropName))
+  if (!TrimPropName(&sPropName)) {
     return;
+  }
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
@@ -200,8 +205,9 @@ void CFX_GlobalData::SetGlobalVariableObject(
 }
 
 void CFX_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
-  if (!TrimPropName(&sPropName))
+  if (!TrimPropName(&sPropName)) {
     return;
+  }
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
@@ -216,20 +222,23 @@ void CFX_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
 
 bool CFX_GlobalData::SetGlobalVariablePersistent(ByteString sPropName,
                                                  bool bPersistent) {
-  if (!TrimPropName(&sPropName))
+  if (!TrimPropName(&sPropName)) {
     return false;
+  }
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
-  if (!pData)
+  if (!pData) {
     return false;
+  }
 
   pData->bPersistent = bPersistent;
   return true;
 }
 
 bool CFX_GlobalData::DeleteGlobalVariable(ByteString sPropName) {
-  if (!TrimPropName(&sPropName))
+  if (!TrimPropName(&sPropName)) {
     return false;
+  }
 
   auto iter = FindGlobalVariable(sPropName);
   if (iter == array_global_data_.end()) {
@@ -245,8 +254,9 @@ int32_t CFX_GlobalData::GetSize() const {
 }
 
 CFX_GlobalData::Element* CFX_GlobalData::GetAt(int index) {
-  if (index < 0 || index >= GetSize())
+  if (index < 0 || index >= GetSize()) {
     return nullptr;
+  }
   return array_global_data_[index].get();
 }
 
@@ -259,8 +269,9 @@ bool CFX_GlobalData::LoadGlobalPersistentVariables() {
   {
     // Span can't outlive call to BufferDone().
     std::optional<pdfium::span<uint8_t>> buffer = delegate_->LoadBuffer();
-    if (!buffer.has_value() || buffer.value().empty())
+    if (!buffer.has_value() || buffer.value().empty()) {
       return false;
+    }
 
     ret = LoadGlobalPersistentVariablesFromBuffer(buffer.value());
   }
@@ -270,8 +281,9 @@ bool CFX_GlobalData::LoadGlobalPersistentVariables() {
 
 bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
     pdfium::span<uint8_t> buffer) {
-  if (buffer.size() < kMinGlobalDataBytes)
+  if (buffer.size() < kMinGlobalDataBytes) {
     return false;
+  }
 
   CRYPT_ArcFourCryptBlock(buffer, kRC4KEY);
 
@@ -379,15 +391,18 @@ bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
   uint32_t nCount = 0;
   BinaryBuffer sData;
   for (const auto& pElement : array_global_data_) {
-    if (!pElement->bPersistent)
+    if (!pElement->bPersistent) {
       continue;
+    }
 
     BinaryBuffer sElement;
-    if (!MakeByteString(pElement->data.sKey, pElement->data, &sElement))
+    if (!MakeByteString(pElement->data.sKey, pElement->data, &sElement)) {
       continue;
+    }
 
-    if (sData.GetSize() + sElement.GetSize() > kMaxGlobalDataBytes)
+    if (sData.GetSize() + sElement.GetSize() > kMaxGlobalDataBytes) {
       break;
+    }
 
     sData.AppendSpan(sElement.GetSpan());
     nCount++;

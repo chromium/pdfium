@@ -47,21 +47,24 @@ bool CJX_Field::DynamicTypeIs(TypeTag eType) const {
 CJS_Result CJX_Field::clearItems(CFXJSE_Engine* runtime,
                                  pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_Node* node = GetXFANode();
-  if (node->IsWidgetReady())
+  if (node->IsWidgetReady()) {
     node->DeleteItem(-1, true, false);
+  }
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Field::execEvent(CFXJSE_Engine* runtime,
                                 pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString eventString = runtime->ToWideString(params[0]);
   XFA_EventError iRet =
       execSingleEventByName(eventString.AsStringView(), XFA_Element::Field);
-  if (!eventString.EqualsASCII("validate"))
+  if (!eventString.EqualsASCII("validate")) {
     return CJS_Result::Success();
+  }
 
   return CJS_Result::Success(
       runtime->NewBoolean(iRet != XFA_EventError::kError));
@@ -70,8 +73,9 @@ CJS_Result CJX_Field::execEvent(CFXJSE_Engine* runtime,
 CJS_Result CJX_Field::execInitialize(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
@@ -83,12 +87,14 @@ CJS_Result CJX_Field::execInitialize(
 
 CJS_Result CJX_Field::deleteItem(CFXJSE_Engine* runtime,
                                  pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return CJS_Result::Success();
+  }
 
   bool bValue = node->DeleteItem(runtime->ToInt32(params[0]), true, true);
   return CJS_Result::Success(runtime->NewBoolean(bValue));
@@ -96,20 +102,24 @@ CJS_Result CJX_Field::deleteItem(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Field::getSaveItem(CFXJSE_Engine* runtime,
                                   pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   int32_t iIndex = runtime->ToInt32(params[0]);
-  if (iIndex < 0)
+  if (iIndex < 0) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   std::optional<WideString> value = node->GetChoiceListItem(iIndex, true);
-  if (!value.has_value())
+  if (!value.has_value()) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   return CJS_Result::Success(
       runtime->NewString(value->ToUTF8().AsStringView()));
@@ -117,12 +127,14 @@ CJS_Result CJX_Field::getSaveItem(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Field::boundItem(CFXJSE_Engine* runtime,
                                 pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return CJS_Result::Success();
+  }
 
   WideString value = runtime->ToWideString(params[0]);
   WideString boundValue = node->GetItemValue(value.AsStringView());
@@ -132,12 +144,14 @@ CJS_Result CJX_Field::boundItem(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Field::getItemState(CFXJSE_Engine* runtime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return CJS_Result::Success();
+  }
 
   int32_t state = node->GetItemState(runtime->ToInt32(params[0]));
   return CJS_Result::Success(runtime->NewBoolean(state != 0));
@@ -145,8 +159,9 @@ CJS_Result CJX_Field::getItemState(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Field::execCalculate(CFXJSE_Engine* runtime,
                                     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
@@ -159,20 +174,24 @@ CJS_Result CJX_Field::execCalculate(CFXJSE_Engine* runtime,
 CJS_Result CJX_Field::getDisplayItem(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   int32_t iIndex = runtime->ToInt32(params[0]);
-  if (iIndex < 0)
+  if (iIndex < 0) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   std::optional<WideString> value = node->GetChoiceListItem(iIndex, false);
-  if (!value.has_value())
+  if (!value.has_value()) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   return CJS_Result::Success(
       runtime->NewString(value->ToUTF8().AsStringView()));
@@ -180,40 +199,47 @@ CJS_Result CJX_Field::getDisplayItem(
 
 CJS_Result CJX_Field::setItemState(CFXJSE_Engine* runtime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 2)
+  if (params.size() != 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return CJS_Result::Success();
+  }
 
   int32_t iIndex = runtime->ToInt32(params[0]);
   if (runtime->ToInt32(params[1]) != 0) {
     node->SetItemState(iIndex, true, true, true);
     return CJS_Result::Success();
   }
-  if (node->GetItemState(iIndex))
+  if (node->GetItemState(iIndex)) {
     node->SetItemState(iIndex, false, true, true);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Field::addItem(CFXJSE_Engine* runtime,
                               pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1 && params.size() != 2)
+  if (params.size() != 1 && params.size() != 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return CJS_Result::Success();
+  }
 
   WideString label;
-  if (params.size() >= 1)
+  if (params.size() >= 1) {
     label = runtime->ToWideString(params[0]);
+  }
 
   WideString value;
-  if (params.size() >= 2)
+  if (params.size() >= 2) {
     value = runtime->ToWideString(params[1]);
+  }
 
   node->InsertItem(label, value, true);
   return CJS_Result::Success();
@@ -221,12 +247,14 @@ CJS_Result CJX_Field::addItem(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Field::execValidate(CFXJSE_Engine* runtime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify)
+  if (!pNotify) {
     return CJS_Result::Success(runtime->NewBoolean(false));
+  }
 
   XFA_EventError iRet = pNotify->ExecEventByDeepFirst(
       GetXFANode(), XFA_EVENT_Validate, false, false);
@@ -239,8 +267,9 @@ void CJX_Field::defaultValue(v8::Isolate* pIsolate,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
   CXFA_Node* xfaNode = GetXFANode();
-  if (!xfaNode->IsWidgetReady())
+  if (!xfaNode->IsWidgetReady()) {
     return;
+  }
 
   if (bSetting) {
     if (pValue) {
@@ -249,15 +278,19 @@ void CJX_Field::defaultValue(v8::Isolate* pIsolate,
     }
 
     WideString wsNewText;
-    if (pValue && !(fxv8::IsNull(*pValue) || fxv8::IsUndefined(*pValue)))
+    if (pValue && !(fxv8::IsNull(*pValue) || fxv8::IsUndefined(*pValue))) {
       wsNewText = fxv8::ReentrantToWideStringHelper(pIsolate, *pValue);
-    if (xfaNode->GetUIChildNode()->GetElementType() == XFA_Element::NumericEdit)
+    }
+    if (xfaNode->GetUIChildNode()->GetElementType() ==
+        XFA_Element::NumericEdit) {
       wsNewText = xfaNode->NumericLimit(wsNewText);
+    }
 
     CXFA_Node* pContainerNode = xfaNode->GetContainerNode();
     WideString wsFormatText(wsNewText);
-    if (pContainerNode)
+    if (pContainerNode) {
       wsFormatText = pContainerNode->GetFormatDataValue(wsNewText);
+    }
 
     SetContent(wsNewText, wsFormatText, true, true, true);
     return;
@@ -299,8 +332,9 @@ void CJX_Field::editValue(v8::Isolate* pIsolate,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return;
+  }
 
   if (bSetting) {
     node->SetValue(XFA_ValuePicture::kEdit,
@@ -324,8 +358,9 @@ void CJX_Field::formattedValue(v8::Isolate* pIsolate,
                                bool bSetting,
                                XFA_Attribute eAttribute) {
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return;
+  }
 
   if (bSetting) {
     node->SetValue(XFA_ValuePicture::kDisplay,
@@ -369,8 +404,9 @@ void CJX_Field::selectedIndex(v8::Isolate* pIsolate,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   CXFA_Node* node = GetXFANode();
-  if (!node->IsWidgetReady())
+  if (!node->IsWidgetReady()) {
     return;
+  }
 
   if (!bSetting) {
     *pValue = fxv8::NewNumberHelper(pIsolate, node->GetSelectedItem(0));

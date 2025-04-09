@@ -29,14 +29,16 @@ constexpr std::array<uint16_t, 12> kLeapDaysMonth = {
 
 double Mod(double x, double y) {
   double r = fmod(x, y);
-  if (r < 0)
+  if (r < 0) {
     r += y;
+  }
   return r;
 }
 
 double GetLocalTZA() {
-  if (!IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
+  if (!IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
     return 0;
+  }
   time_t t = 0;
   FXSYS_time(&t);
   FXSYS_localtime(&t);
@@ -50,15 +52,18 @@ double GetLocalTZA() {
 }
 
 int GetDaylightSavingTA(double d) {
-  if (!IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
+  if (!IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
     return 0;
+  }
   time_t t = (time_t)(d / 1000);
   struct tm* tmp = FXSYS_localtime(&t);
-  if (!tmp)
+  if (!tmp) {
     return 0;
-  if (tmp->tm_isdst > 0)
+  }
+  if (tmp->tm_isdst > 0) {
     // One hour.
     return (int)60 * 60 * 1000;
+  }
   return 0;
 }
 
@@ -88,11 +93,13 @@ int YearFromTime(double t) {
   // estimate the time.
   int y = 1970 + static_cast<int>(t / (365.2425 * 86400000.0));
   if (TimeFromYear(y) <= t) {
-    while (TimeFromYear(y + 1) <= t)
+    while (TimeFromYear(y + 1) <= t) {
       y++;
+    }
   } else {
-    while (TimeFromYear(y) > t)
+    while (TimeFromYear(y) > t) {
       y--;
+    }
   }
   return y;
 }
@@ -106,20 +113,24 @@ int DayWithinYear(double t) {
 int MonthFromTime(double t) {
   // Check for negative |day| values and check for January.
   int day = DayWithinYear(t);
-  if (day < 0)
+  if (day < 0) {
     return -1;
-  if (day < 31)
+  }
+  if (day < 31) {
     return 0;
+  }
 
-  if (IsLeapYear(YearFromTime(t)))
+  if (IsLeapYear(YearFromTime(t))) {
     --day;
+  }
 
   // Check for February onwards.
   static constexpr std::array<int, 11> kCumulativeDaysInMonths = {
       {59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365}};
   for (size_t i = 0; i < std::size(kCumulativeDaysInMonths); ++i) {
-    if (day < kCumulativeDaysInMonths[i])
+    if (day < kCumulativeDaysInMonths[i]) {
       return static_cast<int>(i) + 1;
+    }
   }
 
   return -1;
@@ -163,8 +174,9 @@ int DateFromTime(double t) {
 size_t FindSubWordLength(const WideString& str, size_t nStart) {
   pdfium::span<const wchar_t> data = str.span();
   size_t i = nStart;
-  while (i < data.size() && iswalnum(data[i]))
+  while (i < data.size() && iswalnum(data[i])) {
     ++i;
+  }
   return i - nStart;
 }
 
@@ -182,8 +194,9 @@ static constexpr size_t KMonthAbbreviationLength = 3;  // Anything in |kMonths|.
 static constexpr size_t kLongestFullMonthLength = 9;   // September
 
 double FX_GetDateTime() {
-  if (!IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
+  if (!IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
     return 0;
+  }
 
   time_t t = FXSYS_time(nullptr);
   struct tm* pTm = FXSYS_localtime(&t);
@@ -249,8 +262,9 @@ double FX_MakeDay(int nYear, int nMonth, int nDate) {
   double ym = y + floor(m / 12);
   double mn = Mod(m, 12);
   double t = TimeFromYearMonth(static_cast<int>(ym), static_cast<int>(mn));
-  if (YearFromTime(t) != ym || MonthFromTime(t) != mn || DateFromTime(t) != 1)
+  if (YearFromTime(t) != ym || MonthFromTime(t) != mn || DateFromTime(t) != 1) {
     return nan("");
+  }
 
   return Day(t) + dt - 1;
 }
@@ -264,8 +278,9 @@ double FX_MakeTime(int nHour, int nMin, int nSec, int nMs) {
 }
 
 double FX_MakeDate(double day, double time) {
-  if (!isfinite(day) || !isfinite(time))
+  if (!isfinite(day) || !isfinite(time)) {
     return nan("");
+  }
 
   return day * 86400000 + time;
 }
@@ -277,17 +292,20 @@ int FX_ParseStringInteger(const WideString& str,
   int nRet = 0;
   size_t nSkip = 0;
   for (size_t i = nStart; i < str.GetLength(); ++i) {
-    if (i - nStart > 10)
+    if (i - nStart > 10) {
       break;
+    }
 
     wchar_t c = str[i];
-    if (!FXSYS_IsDecimalDigit(c))
+    if (!FXSYS_IsDecimalDigit(c)) {
       break;
+    }
 
     nRet = nRet * 10 + FXSYS_DecimalCharToInt(c);
     ++nSkip;
-    if (nSkip >= nMaxStep)
+    if (nSkip >= nMaxStep) {
       break;
+    }
   }
 
   *pSkip = nSkip;
@@ -317,8 +335,9 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
   size_t j = 0;
 
   while (i < format.GetLength()) {
-    if (bExit)
+    if (bExit) {
       break;
+    }
 
     wchar_t c = format[i];
     switch (c) {
@@ -526,14 +545,17 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
     }
   }
 
-  if (bBadFormat)
+  if (bBadFormat) {
     return ConversionStatus::kBadFormat;
+  }
 
-  if (bPm)
+  if (bPm) {
     nHour += 12;
+  }
 
-  if (nYear >= 0 && nYear <= nYearSub)
+  if (nYear >= 0 && nYear <= nYearSub) {
     nYear += 2000;
+  }
 
   if (!FX_IsValidMonth(nMonth) || !FX_IsValidDay(nDay) ||
       !FX_IsValid24Hour(nHour) || !FX_IsValidMinute(nMin) ||
@@ -543,8 +565,9 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
 
   dt = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
                    FX_MakeTime(nHour, nMin, nSec, 0));
-  if (isnan(dt))
+  if (isnan(dt)) {
     return ConversionStatus::kBadDate;
+  }
 
   *result = dt;
   return ConversionStatus::kSuccess;

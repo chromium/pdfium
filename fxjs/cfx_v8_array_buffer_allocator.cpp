@@ -17,8 +17,9 @@ CFX_V8ArrayBufferAllocator::~CFX_V8ArrayBufferAllocator() = default;
 // we need the allocator in order to initialize V8.
 
 void* CFX_V8ArrayBufferAllocator::Allocate(size_t length) {
-  if (length > kMaxAllowedBytes)
+  if (length > kMaxAllowedBytes) {
     return nullptr;
+  }
 #ifdef V8_ENABLE_SANDBOX
   if (!wrapped_) {
     wrapped_.reset(v8::ArrayBuffer::Allocator::NewDefaultAllocator());
@@ -30,8 +31,9 @@ void* CFX_V8ArrayBufferAllocator::Allocate(size_t length) {
 }
 
 void* CFX_V8ArrayBufferAllocator::AllocateUninitialized(size_t length) {
-  if (length > kMaxAllowedBytes)
+  if (length > kMaxAllowedBytes) {
     return nullptr;
+  }
 #ifdef V8_ENABLE_SANDBOX
   if (!wrapped_) {
     wrapped_.reset(v8::ArrayBuffer::Allocator::NewDefaultAllocator());

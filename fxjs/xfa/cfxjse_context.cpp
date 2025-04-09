@@ -71,12 +71,14 @@ const wchar_t kFXJSEProxyObjectTag[] = L"FXJSE Proxy Object";
 v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
                                         v8::TryCatch* trycatch) {
   v8::Local<v8::Object> hReturnValue = v8::Object::New(pIsolate);
-  if (!trycatch->HasCaught())
+  if (!trycatch->HasCaught()) {
     return hReturnValue;
+  }
 
   v8::Local<v8::Message> hMessage = trycatch->Message();
-  if (hMessage.IsEmpty())
+  if (hMessage.IsEmpty()) {
     return hReturnValue;
+  }
 
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   v8::Local<v8::Value> hException = trycatch->Exception();
@@ -95,10 +97,11 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
         fxv8::NewStringHelper(pIsolate, "message");
     hValue =
         hException.As<v8::Object>()->Get(context, hMessageStr).ToLocalChecked();
-    if (hValue->IsString() || hValue->IsStringObject())
+    if (hValue->IsString() || hValue->IsStringObject()) {
       hReturnValue->Set(context, 1, hValue).FromJust();
-    else
+    } else {
       hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
+    }
   } else {
     v8::Local<v8::String> hErrorStr = fxv8::NewStringHelper(pIsolate, "Error");
     hReturnValue->Set(context, 0, hErrorStr).FromJust();
@@ -144,22 +147,26 @@ void FXJSE_ClearObjectBinding(v8::Local<v8::Object> hObject) {
 }
 
 CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Value> hValue) {
-  if (!fxv8::IsObject(hValue))
+  if (!fxv8::IsObject(hValue)) {
     return nullptr;
+  }
 
   v8::Local<v8::Object> hObject = hValue.As<v8::Object>();
   if (hObject->InternalFieldCount() != 2 ||
       hObject->GetAlignedPointerFromInternalField(0) == kFXJSEProxyObjectTag) {
     v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
-    if (!fxv8::IsObject(hProtoObject))
+    if (!fxv8::IsObject(hProtoObject)) {
       return nullptr;
+    }
 
     hObject = hProtoObject.As<v8::Object>();
-    if (hObject->InternalFieldCount() != 2)
+    if (hObject->InternalFieldCount() != 2) {
       return nullptr;
+    }
   }
-  if (hObject->GetAlignedPointerFromInternalField(0) != kFXJSEHostObjectTag)
+  if (hObject->GetAlignedPointerFromInternalField(0) != kFXJSEHostObjectTag) {
     return nullptr;
+  }
 
   return static_cast<CFXJSE_HostObject*>(
       hObject->GetAlignedPointerFromInternalField(1));

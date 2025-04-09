@@ -25,17 +25,19 @@ void CJS_Object::DefineConsts(CFXJS_Engine* pEngine,
 void CJS_Object::DefineProps(CFXJS_Engine* pEngine,
                              uint32_t nObjDefnID,
                              pdfium::span<const JSPropertySpec> props) {
-  for (const auto& item : props)
+  for (const auto& item : props) {
     pEngine->DefineObjProperty(nObjDefnID, item.pName, item.pPropGet,
                                item.pPropPut);
+  }
 }
 
 // static
 void CJS_Object::DefineMethods(CFXJS_Engine* pEngine,
                                uint32_t nObjDefnID,
                                pdfium::span<const JSMethodSpec> methods) {
-  for (const auto& item : methods)
+  for (const auto& item : methods) {
     pEngine->DefineObjMethod(nObjDefnID, item.pName, item.pMethodCall);
+  }
 }
 
 CJS_Object::CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)

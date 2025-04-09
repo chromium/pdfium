@@ -39,8 +39,9 @@ void CJX_Boolean::defaultValue(v8::Isolate* pIsolate,
   WideString wsNewValue(iValue == 0 ? L"0" : L"1");
   WideString wsFormatValue(wsNewValue);
   CXFA_Node* pContainerNode = GetXFANode()->GetContainerNode();
-  if (pContainerNode)
+  if (pContainerNode) {
     wsFormatValue = pContainerNode->GetFormatDataValue(wsNewValue);
+  }
 
   SetContent(wsNewValue, wsFormatValue, true, true, true);
 }

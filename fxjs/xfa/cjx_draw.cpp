@@ -41,12 +41,14 @@ void CJX_Draw::defaultValue(v8::Isolate* pIsolate,
     return;
   }
 
-  if (!pValue || !fxv8::IsString(*pValue))
+  if (!pValue || !fxv8::IsString(*pValue)) {
     return;
+  }
 
   DCHECK(GetXFANode()->IsWidgetReady());
-  if (GetXFANode()->GetFFWidgetType() != XFA_FFWidgetType::kText)
+  if (GetXFANode()->GetFFWidgetType() != XFA_FFWidgetType::kText) {
     return;
+  }
 
   WideString wsNewValue = fxv8::ReentrantToWideStringHelper(pIsolate, *pValue);
   SetContent(wsNewValue, wsNewValue, true, true, true);

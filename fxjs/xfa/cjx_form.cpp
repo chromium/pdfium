@@ -39,12 +39,14 @@ bool CJX_Form::DynamicTypeIs(TypeTag eType) const {
 
 CJS_Result CJX_Form::formNodes(CFXJSE_Engine* runtime,
                                pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_Node* pDataNode = ToNode(runtime->ToXFAObject(params[0]));
-  if (!pDataNode)
+  if (!pDataNode) {
     return CJS_Result::Failure(JSMessage::kValueError);
+  }
 
   CXFA_Document* pDoc = GetDocument();
   auto* pFormNodes = cppgc::MakeGarbageCollected<CXFA_ArrayNodeList>(
@@ -57,8 +59,9 @@ CJS_Result CJX_Form::formNodes(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Form::remerge(CFXJSE_Engine* runtime,
                              pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   GetDocument()->DoDataRemerge();
   return CJS_Result::Success();
@@ -66,13 +69,15 @@ CJS_Result CJX_Form::remerge(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Form::execInitialize(CFXJSE_Engine* runtime,
                                     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (pNotify)
+  if (pNotify) {
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize, false,
                                   true);
+  }
   return CJS_Result::Success();
 }
 
@@ -83,12 +88,14 @@ CJS_Result CJX_Form::recalculate(CFXJSE_Engine* runtime,
                       pEventParam->type_ == XFA_EVENT_InitCalculate)) {
     return CJS_Result::Success();
   }
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify || runtime->ToInt32(params[0]) != 0)
+  if (!pNotify || runtime->ToInt32(params[0]) != 0) {
     return CJS_Result::Success();
+  }
 
   pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false, true);
   pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate, false, true);
@@ -98,24 +105,28 @@ CJS_Result CJX_Form::recalculate(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Form::execCalculate(CFXJSE_Engine* runtime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (pNotify)
+  if (pNotify) {
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false,
                                   true);
+  }
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Form::execValidate(CFXJSE_Engine* runtime,
                                   pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 0)
+  if (params.size() != 0) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify)
+  if (!pNotify) {
     return CJS_Result::Success(runtime->NewBoolean(false));
+  }
 
   XFA_EventError iRet = pNotify->ExecEventByDeepFirst(
       GetXFANode(), XFA_EVENT_Validate, false, true);

@@ -45,8 +45,9 @@ std::optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
   }
 
   std::optional<IJS_Runtime::JS_Error> err;
-  if (script.GetLength() > 0)
+  if (script.GetLength() > 0) {
     err = runtime_->ExecuteScript(script);
+  }
 
   runtime_->RemoveEventFromSet(event);
   Destroy();
@@ -56,13 +57,15 @@ std::optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
 CJS_Field* CJS_EventContext::SourceField() {
   v8::Local<v8::Object> pDocObj = runtime_->NewFXJSBoundObject(
       CJS_Document::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pDocObj.IsEmpty())
+  if (pDocObj.IsEmpty()) {
     return nullptr;
+  }
 
   v8::Local<v8::Object> pFieldObj = runtime_->NewFXJSBoundObject(
       CJS_Field::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pFieldObj.IsEmpty())
+  if (pFieldObj.IsEmpty()) {
     return nullptr;
+  }
 
   auto* pFormFillEnv = GetFormFillEnv();
   auto* pJSDocument = static_cast<CJS_Document*>(
@@ -78,13 +81,15 @@ CJS_Field* CJS_EventContext::SourceField() {
 CJS_Field* CJS_EventContext::TargetField() {
   v8::Local<v8::Object> pDocObj = runtime_->NewFXJSBoundObject(
       CJS_Document::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pDocObj.IsEmpty())
+  if (pDocObj.IsEmpty()) {
     return nullptr;
+  }
 
   v8::Local<v8::Object> pFieldObj = runtime_->NewFXJSBoundObject(
       CJS_Field::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pFieldObj.IsEmpty())
+  if (pFieldObj.IsEmpty()) {
     return nullptr;
+  }
 
   auto* pFormFillEnv = GetFormFillEnv();
   auto* pJSDocument = static_cast<CJS_Document*>(
@@ -259,8 +264,9 @@ void CJS_EventContext::OnField_Calculate(CPDF_FormField* pSource,
   DCHECK(pValue);
   DCHECK(pRc);
   Initialize(Kind::kFieldCalculate);
-  if (pSource)
+  if (pSource) {
     source_name_ = pSource->GetFullName();
+  }
   target_name_ = pTarget->GetFullName();
   value_ = pValue;
   pb_rc_ = pRc;

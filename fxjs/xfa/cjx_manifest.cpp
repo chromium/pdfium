@@ -28,8 +28,9 @@ bool CJX_Manifest::DynamicTypeIs(TypeTag eType) const {
 
 CJS_Result CJX_Manifest::evaluate(CFXJSE_Engine* runtime,
                                   pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success(
       runtime->NewBoolean(GetXFANode()->IsWidgetReady()));

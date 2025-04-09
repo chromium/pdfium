@@ -142,12 +142,14 @@ v8::Intercepted CJS_Global::delprop_static(
 void CJS_Global::enumprop_static(
     const v8::PropertyCallbackInfo<v8::Array>& info) {
   auto pObj = JSGetObject<CJS_Global>(info.GetIsolate(), info.Holder());
-  if (!pObj)
+  if (!pObj) {
     return;
+  }
 
   CJS_Runtime* pRuntime = pObj->GetRuntime();
-  if (!pRuntime)
+  if (!pRuntime) {
     return;
+  }
 
   pObj->EnumProperties(pRuntime, info);
 }
@@ -206,8 +208,9 @@ CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
   }
 
   JSGlobalData* pData = it->second.get();
-  if (pData->bDeleted)
+  if (pData->bDeleted) {
     return CJS_Result::Success();
+  }
 
   switch (pData->nType) {
     case CFX_Value::DataType::kNumber:
@@ -264,8 +267,9 @@ void CJS_Global::EnumProperties(
   v8::Local<v8::Array> result = pRuntime->NewArray();
   int idx = 0;
   for (const auto& it : map_global_) {
-    if (it.second->bDeleted)
+    if (it.second->bDeleted) {
       continue;
+    }
     v8::Local<v8::Name> name = pRuntime->NewString(it.first.AsStringView());
     pRuntime->PutArrayElement(result, idx, name);
     ++idx;
@@ -276,8 +280,9 @@ void CJS_Global::EnumProperties(
 CJS_Result CJS_Global::setPersistent(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 2)
+  if (params.size() != 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   auto it = map_global_.find(pRuntime->ToByteString(params[0]));
   if (it == map_global_.end() || it->second->bDeleted) {
@@ -290,8 +295,9 @@ CJS_Result CJS_Global::setPersistent(
 
 void CJS_Global::UpdateGlobalPersistentVariables() {
   CJS_Runtime* pRuntime = GetRuntime();
-  if (!pRuntime)
+  if (!pRuntime) {
     return;
+  }
 
   for (int i = 0, sz = global_data_->GetSize(); i < sz; i++) {
     CFX_GlobalData::Element* pData = global_data_->GetAt(i);
@@ -343,8 +349,9 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
 
 void CJS_Global::CommitGlobalPersisitentVariables() {
   CJS_Runtime* pRuntime = GetRuntime();
-  if (!pRuntime)
+  if (!pRuntime) {
     return;
+  }
 
   for (const auto& iter : map_global_) {
     ByteString name = iter.first;
@@ -436,8 +443,9 @@ std::vector<std::unique_ptr<CFX_KeyValue>> CJS_Global::ObjectToArray(
 void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
                                    CFX_KeyValue* pData) {
   CJS_Runtime* pRuntime = GetRuntime();
-  if (pRuntime)
+  if (pRuntime) {
     return;
+  }
 
   for (size_t i = 0; i < pData->objData.size(); ++i) {
     CFX_KeyValue* pObjData = pData->objData.at(i).get();
@@ -482,8 +490,9 @@ CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
                                           const ByteString& sData,
                                           v8::Local<v8::Object> pData,
                                           bool bDefaultPersistent) {
-  if (propname.IsEmpty())
+  if (propname.IsEmpty()) {
     return CJS_Result::Failure(JSMessage::kUnknownProperty);
+  }
 
   auto it = map_global_.find(propname);
   if (it != map_global_.end()) {

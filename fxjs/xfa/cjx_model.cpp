@@ -38,30 +38,36 @@ CJS_Result CJX_Model::clearErrorList(
 
 CJS_Result CJX_Model::createNode(CFXJSE_Engine* runtime,
                                  pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.empty() || params.size() > 3)
+  if (params.empty() || params.size() > 3) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString name;
-  if (params.size() > 1)
+  if (params.size() > 1) {
     name = runtime->ToWideString(params[1]);
+  }
 
   WideString nameSpace;
-  if (params.size() == 3)
+  if (params.size() == 3) {
     nameSpace = runtime->ToWideString(params[2]);
+  }
 
   WideString tagName = runtime->ToWideString(params[0]);
   XFA_Element eType = XFA_GetElementByName(tagName.AsStringView());
   CXFA_Node* pNewNode = GetXFANode()->CreateSamePacketNode(eType);
-  if (!pNewNode)
+  if (!pNewNode) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   if (!name.IsEmpty()) {
-    if (!pNewNode->HasAttribute(XFA_Attribute::Name))
+    if (!pNewNode->HasAttribute(XFA_Attribute::Name)) {
       return CJS_Result::Failure(JSMessage::kParamError);
+    }
 
     pNewNode->JSObject()->SetAttributeByEnum(XFA_Attribute::Name, name, true);
-    if (pNewNode->GetPacketType() == XFA_PacketType::Datasets)
+    if (pNewNode->GetPacketType() == XFA_PacketType::Datasets) {
       pNewNode->CreateXMLMappingNode();
+    }
   }
   return CJS_Result::Success(runtime->GetOrCreateJSBindingFromMap(pNewNode));
 }
@@ -69,12 +75,14 @@ CJS_Result CJX_Model::createNode(CFXJSE_Engine* runtime,
 CJS_Result CJX_Model::isCompatibleNS(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.empty())
+  if (params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString nameSpace;
-  if (params.size() >= 1)
+  if (params.size() >= 1) {
     nameSpace = runtime->ToWideString(params[0]);
+  }
 
   return CJS_Result::Success(
       runtime->NewBoolean(TryNamespace().value_or(WideString()) == nameSpace));

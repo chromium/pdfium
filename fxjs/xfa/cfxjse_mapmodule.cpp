@@ -34,23 +34,26 @@ void CFXJSE_MapModule::SetMeasurement(uint32_t key,
 
 std::optional<int32_t> CFXJSE_MapModule::GetValue(uint32_t key) const {
   auto it = m_ValueMap.find(key);
-  if (it == m_ValueMap.end())
+  if (it == m_ValueMap.end()) {
     return std::nullopt;
+  }
   return it->second;
 }
 
 std::optional<WideString> CFXJSE_MapModule::GetString(uint32_t key) const {
   auto it = m_StringMap.find(key);
-  if (it == m_StringMap.end())
+  if (it == m_StringMap.end()) {
     return std::nullopt;
+  }
   return it->second;
 }
 
 std::optional<CXFA_Measurement> CFXJSE_MapModule::GetMeasurement(
     uint32_t key) const {
   auto it = m_MeasurementMap.find(key);
-  if (it == m_MeasurementMap.end())
+  if (it == m_MeasurementMap.end()) {
     return std::nullopt;
+  }
   return it->second;
 }
 
@@ -67,12 +70,15 @@ void CFXJSE_MapModule::RemoveKey(uint32_t key) {
 }
 
 void CFXJSE_MapModule::MergeDataFrom(const CFXJSE_MapModule* pSrc) {
-  for (const auto& pair : pSrc->m_ValueMap)
+  for (const auto& pair : pSrc->m_ValueMap) {
     SetValue(pair.first, pair.second);
+  }
 
-  for (const auto& pair : pSrc->m_StringMap)
+  for (const auto& pair : pSrc->m_StringMap) {
     SetString(pair.first, pair.second);
+  }
 
-  for (const auto& pair : pSrc->m_MeasurementMap)
+  for (const auto& pair : pSrc->m_MeasurementMap) {
     SetMeasurement(pair.first, pair.second);
+  }
 }

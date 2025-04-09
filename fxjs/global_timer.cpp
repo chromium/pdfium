@@ -51,8 +51,9 @@ GlobalTimer::GlobalTimer(CJS_App* pObj,
 }
 
 GlobalTimer::~GlobalTimer() {
-  if (!HasValidID())
+  if (!HasValidID()) {
     return;
+  }
 
   if (runtime_ && runtime_->GetTimerHandler()) {
     runtime_->GetTimerHandler()->KillTimer(timer_id_);
@@ -87,8 +88,9 @@ void GlobalTimer::Trigger(int32_t nTimerID) {
 
   pTimer = it->second;
   pTimer->processing_ = false;
-  if (pTimer->IsOneShot())
+  if (pTimer->IsOneShot()) {
     pTimer->embed_app_->CancelProc(pTimer);
+  }
 }
 
 // static

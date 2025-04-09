@@ -87,21 +87,24 @@ v8::Local<v8::Array> CJS_Color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
 CFX_Color CJS_Color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
                                             v8::Local<v8::Array> array) {
   size_t nArrayLen = pRuntime->GetArrayLength(array);
-  if (nArrayLen == 0)
+  if (nArrayLen == 0) {
     return CFX_Color();
+  }
 
   WideString sSpace =
       pRuntime->ToWideString(pRuntime->GetArrayElement(array, 0));
-  if (sSpace.EqualsASCII("T"))
+  if (sSpace.EqualsASCII("T")) {
     return CFX_Color(CFX_Color::Type::kTransparent);
+  }
 
   float d1 = 0;
   if (nArrayLen > 1) {
     d1 = static_cast<float>(
         pRuntime->ToDouble(pRuntime->GetArrayElement(array, 1)));
   }
-  if (sSpace.EqualsASCII("G"))
+  if (sSpace.EqualsASCII("G")) {
     return CFX_Color(CFX_Color::Type::kGray, d1);
+  }
 
   float d2 = 0;
   float d3 = 0;
@@ -113,16 +116,18 @@ CFX_Color CJS_Color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
     d3 = static_cast<float>(
         pRuntime->ToDouble(pRuntime->GetArrayElement(array, 3)));
   }
-  if (sSpace.EqualsASCII("RGB"))
+  if (sSpace.EqualsASCII("RGB")) {
     return CFX_Color(CFX_Color::Type::kRGB, d1, d2, d3);
+  }
 
   float d4 = 0;
   if (nArrayLen > 4) {
     d4 = static_cast<float>(
         pRuntime->ToDouble(pRuntime->GetArrayElement(array, 4)));
   }
-  if (sSpace.EqualsASCII("CMYK"))
+  if (sSpace.EqualsASCII("CMYK")) {
     return CFX_Color(CFX_Color::Type::kCMYK, d1, d2, d3, d4);
+  }
 
   return CFX_Color();
 }
@@ -250,8 +255,9 @@ CJS_Result CJS_Color::set_light_gray(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_Color::GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* var) {
   v8::Local<v8::Value> array = ConvertPWLColorToArray(pRuntime, *var);
-  if (array.IsEmpty())
+  if (array.IsEmpty()) {
     return CJS_Result::Success(pRuntime->NewArray());
+  }
 
   return CJS_Result::Success(array);
 }
@@ -259,11 +265,13 @@ CJS_Result CJS_Color::GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* var) {
 CJS_Result CJS_Color::SetPropertyHelper(CJS_Runtime* pRuntime,
                                         v8::Local<v8::Value> vp,
                                         CFX_Color* var) {
-  if (vp.IsEmpty())
+  if (vp.IsEmpty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
-  if (!vp->IsArray())
+  if (!vp->IsArray()) {
     return CJS_Result::Failure(JSMessage::kTypeError);
+  }
 
   *var = ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(vp));
   return CJS_Result::Success();
@@ -271,40 +279,46 @@ CJS_Result CJS_Color::SetPropertyHelper(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_Color::convert(CJS_Runtime* pRuntime,
                               pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() < 2)
+  if (params.size() < 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
-  if (!fxv8::IsArray(params[0]))
+  if (!fxv8::IsArray(params[0])) {
     return CJS_Result::Failure(JSMessage::kTypeError);
+  }
 
   WideString sDestSpace = pRuntime->ToWideString(params[1]);
   CFX_Color::Type nColorType = CFX_Color::Type::kTransparent;
-  if (sDestSpace.EqualsASCII("T"))
+  if (sDestSpace.EqualsASCII("T")) {
     nColorType = CFX_Color::Type::kTransparent;
-  else if (sDestSpace.EqualsASCII("G"))
+  } else if (sDestSpace.EqualsASCII("G")) {
     nColorType = CFX_Color::Type::kGray;
-  else if (sDestSpace.EqualsASCII("RGB"))
+  } else if (sDestSpace.EqualsASCII("RGB")) {
     nColorType = CFX_Color::Type::kRGB;
-  else if (sDestSpace.EqualsASCII("CMYK"))
+  } else if (sDestSpace.EqualsASCII("CMYK")) {
     nColorType = CFX_Color::Type::kCMYK;
+  }
 
   CFX_Color color =
       ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(params[0]));
   v8::Local<v8::Value> array =
       ConvertPWLColorToArray(pRuntime, color.ConvertColorType(nColorType));
-  if (array.IsEmpty())
+  if (array.IsEmpty()) {
     return CJS_Result::Success(pRuntime->NewArray());
+  }
 
   return CJS_Result::Success(array);
 }
 
 CJS_Result CJS_Color::equal(CJS_Runtime* pRuntime,
                             pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() < 2)
+  if (params.size() < 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
-  if (!fxv8::IsArray(params[0]) || !fxv8::IsArray(params[1]))
+  if (!fxv8::IsArray(params[0]) || !fxv8::IsArray(params[1])) {
     return CJS_Result::Failure(JSMessage::kTypeError);
+  }
 
   CFX_Color color1 =
       ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(params[0]));

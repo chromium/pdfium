@@ -63,10 +63,12 @@ const TbConvert kTbConvertTable[] = {
 enum CaseMode { kPreserveCase, kUpperCase, kLowerCase };
 
 wchar_t TranslateCase(wchar_t input, CaseMode eMode) {
-  if (eMode == kLowerCase && FXSYS_iswupper(input))
+  if (eMode == kLowerCase && FXSYS_iswupper(input)) {
     return input | 0x20;
-  if (eMode == kUpperCase && FXSYS_iswlower(input))
+  }
+  if (eMode == kUpperCase && FXSYS_iswlower(input)) {
     return input & ~0x20;
+  }
   return input;
 }
 
@@ -102,8 +104,9 @@ CJS_Util::~CJS_Util() = default;
 CJS_Result CJS_Util::printf(CJS_Runtime* pRuntime,
                             pdfium::span<v8::Local<v8::Value>> params) {
   const size_t num_params = params.size();
-  if (num_params < 1)
+  if (num_params < 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   // Use 'S' as a sentinel to ensure we always have some text before the first
   // format specifier.
@@ -165,15 +168,18 @@ CJS_Result CJS_Util::printf(CJS_Runtime* pRuntime,
 CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
                             pdfium::span<v8::Local<v8::Value>> params) {
   const size_t iSize = params.size();
-  if (iSize < 2)
+  if (iSize < 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
-  if (!fxv8::IsDate(params[1]))
+  if (!fxv8::IsDate(params[1])) {
     return CJS_Result::Failure(JSMessage::kSecondParamNotDateError);
+  }
 
   v8::Local<v8::Date> v8_date = params[1].As<v8::Date>();
-  if (v8_date.IsEmpty() || isnan(pRuntime->ToDouble(v8_date)))
+  if (v8_date.IsEmpty() || isnan(pRuntime->ToDouble(v8_date))) {
     return CJS_Result::Failure(JSMessage::kSecondParamInvalidDateError);
+  }
 
   double date = FX_LocalTime(pRuntime->ToDouble(v8_date));
   int year = FX_GetYearFromTime(date);
@@ -205,12 +211,14 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
     return CJS_Result::Success(pRuntime->NewString(swResult.AsStringView()));
   }
 
-  if (!params[0]->IsString())
+  if (!params[0]->IsString()) {
     return CJS_Result::Failure(JSMessage::kTypeError);
+  }
 
   // We don't support XFAPicture at the moment.
-  if (iSize > 2 && pRuntime->ToBoolean(params[2]))
+  if (iSize > 2 && pRuntime->ToBoolean(params[2])) {
     return CJS_Result::Failure(JSMessage::kNotSupportedError);
+  }
 
   // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
   // pre-existing %-directives before inserting our own.
@@ -230,8 +238,9 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
     }
   }
 
-  if (year < 0)
+  if (year < 0) {
     return CJS_Result::Failure(JSMessage::kValueError);
+  }
 
   const TbConvertAdditional table_additional[] = {
       {L'm', month}, {L'd', day},
@@ -271,8 +280,9 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_Util::printx(CJS_Runtime* pRuntime,
                             pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() < 2)
+  if (params.size() < 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success(
       pRuntime->NewString(StringPrintx(pRuntime->ToWideString(params[0]),
@@ -372,29 +382,34 @@ WideString CJS_Util::StringPrintx(const WideString& wsFormat,
 
 CJS_Result CJS_Util::scand(CJS_Runtime* pRuntime,
                            pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() < 2)
+  if (params.size() < 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString sFormat = pRuntime->ToWideString(params[0]);
   WideString sDate = pRuntime->ToWideString(params[1]);
   double dDate = FX_GetDateTime();
-  if (sDate.GetLength() > 0)
+  if (sDate.GetLength() > 0) {
     dDate = CJS_PublicMethods::ParseDateUsingFormat(pRuntime->GetIsolate(),
                                                     sDate, sFormat, nullptr);
-  if (isnan(dDate))
+  }
+  if (isnan(dDate)) {
     return CJS_Result::Success(pRuntime->NewUndefined());
+  }
 
   return CJS_Result::Success(pRuntime->NewDate(dDate));
 }
 
 CJS_Result CJS_Util::byteToChar(CJS_Runtime* pRuntime,
                                 pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() < 1)
+  if (params.size() < 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   int arg = pRuntime->ToInt32(params[0]);
-  if (arg < 0 || arg > 255)
+  if (arg < 0 || arg > 255) {
     return CJS_Result::Failure(JSMessage::kValueError);
+  }
 
   WideString wStr(static_cast<wchar_t>(arg));
   return CJS_Result::Success(pRuntime->NewString(wStr.AsStringView()));
@@ -412,8 +427,9 @@ CJS_Util::DataType CJS_Util::ParseDataType(WideString* sFormat) {
     wchar_t c = (*sFormat)[i];
     switch (state) {
       case kBefore:
-        if (c == L'%')
+        if (c == L'%') {
           state = kFlags;
+        }
         break;
       case kFlags:
         if (c == L'+' || c == L'-' || c == L'#' || c == L' ') {
@@ -424,8 +440,9 @@ CJS_Util::DataType CJS_Util::ParseDataType(WideString* sFormat) {
         }
         break;
       case kWidth:
-        if (c == L'*')
+        if (c == L'*') {
           return DataType::kInvalid;
+        }
         if (FXSYS_IsDecimalDigit(c)) {
           // Stay in same state.
         } else if (c == L'.') {
@@ -436,8 +453,9 @@ CJS_Util::DataType CJS_Util::ParseDataType(WideString* sFormat) {
         }
         break;
       case kPrecision:
-        if (c == L'*')
+        if (c == L'*') {
           return DataType::kInvalid;
+        }
         if (FXSYS_IsDecimalDigit(c)) {
           // Stay in same state.
           ++precision_digits;
@@ -465,16 +483,18 @@ CJS_Util::DataType CJS_Util::ParseDataType(WideString* sFormat) {
         state = kAfter;
         break;
       case kAfter:
-        if (c == L'%')
+        if (c == L'%') {
           return DataType::kInvalid;
+        }
         // Stay in same state until string exhausted.
         break;
     }
     ++i;
   }
   // See https://crbug.com/740166
-  if (result == DataType::kInt && precision_digits > 2)
+  if (result == DataType::kInt && precision_digits > 2) {
     return DataType::kInvalid;
+  }
 
   return result;
 }

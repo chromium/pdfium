@@ -42,128 +42,144 @@ bool CJX_Source::DynamicTypeIs(TypeTag eType) const {
 
 CJS_Result CJX_Source::next(CFXJSE_Engine* runtime,
                             pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::cancelBatch(CFXJSE_Engine* runtime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::first(CFXJSE_Engine* runtime,
                              pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::updateBatch(CFXJSE_Engine* runtime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::previous(CFXJSE_Engine* runtime,
                                 pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::isBOF(CFXJSE_Engine* runtime,
                              pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::isEOF(CFXJSE_Engine* runtime,
                              pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::cancel(CFXJSE_Engine* runtime,
                               pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::update(CFXJSE_Engine* runtime,
                               pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::open(CFXJSE_Engine* runtime,
                             pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::deleteItem(CFXJSE_Engine* runtime,
                                   pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::addNew(CFXJSE_Engine* runtime,
                               pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::requery(CFXJSE_Engine* runtime,
                                pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::resync(CFXJSE_Engine* runtime,
                               pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::close(CFXJSE_Engine* runtime,
                              pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_Source::last(CFXJSE_Engine* runtime,
                             pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }
@@ -171,8 +187,9 @@ CJS_Result CJX_Source::last(CFXJSE_Engine* runtime,
 CJS_Result CJX_Source::hasDataChanged(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!params.empty())
+  if (!params.empty()) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   return CJS_Result::Success();
 }

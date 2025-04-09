@@ -123,13 +123,15 @@ void CJX_EventPseudoModel::newText(v8::Isolate* pIsolate,
                                    v8::Local<v8::Value>* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {
-  if (bSetting)
+  if (bSetting) {
     return;
+  }
 
   CXFA_EventParam* pEventParam =
       GetDocument()->GetScriptContext()->GetEventParam();
-  if (!pEventParam)
+  if (!pEventParam) {
     return;
+  }
 
   *pValue = fxv8::NewStringHelper(
       pIsolate, pEventParam->GetNewText().ToUTF8().AsStringView());
@@ -202,12 +204,14 @@ CJS_Result CJX_EventPseudoModel::emit(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_EventParam* pEventParam = runtime->GetEventParam();
-  if (!pEventParam)
+  if (!pEventParam) {
     return CJS_Result::Success();
+  }
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify)
+  if (!pNotify) {
     return CJS_Result::Success();
+  }
 
   pNotify->HandleWidgetEvent(runtime->GetEventTarget(), pEventParam);
   return CJS_Result::Success();
@@ -217,8 +221,9 @@ CJS_Result CJX_EventPseudoModel::reset(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_EventParam* pEventParam = runtime->GetEventParam();
-  if (pEventParam)
+  if (pEventParam) {
     *pEventParam = CXFA_EventParam(XFA_EVENT_Unknown);
+  }
 
   return CJS_Result::Success();
 }
@@ -236,8 +241,9 @@ void CJX_EventPseudoModel::Property(v8::Isolate* pIsolate,
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
-  if (!pEventParam)
+  if (!pEventParam) {
     return;
+  }
 
   switch (dwFlag) {
     case XFA_Event::CancelAction:

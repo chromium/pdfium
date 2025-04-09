@@ -74,8 +74,9 @@ const ExecEventParaInfo kExecEventParaInfoTable[] = {
 
 const ExecEventParaInfo* GetExecEventParaInfoByName(
     WideStringView wsEventName) {
-  if (wsEventName.IsEmpty())
+  if (wsEventName.IsEmpty()) {
     return nullptr;
+  }
 
   uint32_t uHash = FX_HashCode_GetW(wsEventName);
   auto* result = std::lower_bound(
@@ -83,8 +84,9 @@ const ExecEventParaInfo* GetExecEventParaInfoByName(
       uHash, [](const ExecEventParaInfo& iter, const uint16_t& hash) {
         return iter.m_uHash < hash;
       });
-  if (result != std::end(kExecEventParaInfoTable) && result->m_uHash == uHash)
+  if (result != std::end(kExecEventParaInfoTable) && result->m_uHash == uHash) {
     return result;
+  }
   return nullptr;
 }
 
@@ -115,8 +117,9 @@ bool CJX_Node::DynamicTypeIs(TypeTag eType) const {
 
 CJS_Result CJX_Node::applyXSL(CFXJSE_Engine* runtime,
                               pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
   return CJS_Result::Success();
@@ -124,8 +127,9 @@ CJS_Result CJX_Node::applyXSL(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Node::assignNode(CFXJSE_Engine* runtime,
                                 pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.empty() || params.size() > 3)
+  if (params.empty() || params.size() > 3) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
   return CJS_Result::Success();
@@ -133,8 +137,9 @@ CJS_Result CJX_Node::assignNode(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Node::clone(CFXJSE_Engine* runtime,
                            pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   CXFA_Node* pCloneNode = GetXFANode()->Clone(runtime->ToBoolean(params[0]));
   return CJS_Result::Success(runtime->GetOrCreateJSBindingFromMap(pCloneNode));
@@ -142,8 +147,9 @@ CJS_Result CJX_Node::clone(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Node::getAttribute(CFXJSE_Engine* runtime,
                                   pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1)
+  if (params.size() != 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString expression = runtime->ToWideString(params[0]);
   return CJS_Result::Success(runtime->NewString(
@@ -152,18 +158,21 @@ CJS_Result CJX_Node::getAttribute(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Node::getElement(CFXJSE_Engine* runtime,
                                 pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.empty() || params.size() > 2)
+  if (params.empty() || params.size() > 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString expression = runtime->ToWideString(params[0]);
   int32_t iValue = params.size() >= 2 ? runtime->ToInt32(params[1]) : 0;
   XFA_Element eElement = XFA_GetElementByName(expression.AsStringView());
-  if (eElement == XFA_Element::Unknown)
+  if (eElement == XFA_Element::Unknown) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   CXFA_Node* pNode = GetOrCreateProperty<CXFA_Node>(iValue, eElement);
-  if (!pNode)
+  if (!pNode) {
     return CJS_Result::Success(runtime->NewNull());
+  }
 
   return CJS_Result::Success(runtime->GetOrCreateJSBindingFromMap(pNode));
 }
@@ -171,18 +180,21 @@ CJS_Result CJX_Node::getElement(CFXJSE_Engine* runtime,
 CJS_Result CJX_Node::isPropertySpecified(
     CFXJSE_Engine* runtime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.empty() || params.size() > 3)
+  if (params.empty() || params.size() > 3) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   WideString expression = runtime->ToWideString(params[0]);
   std::optional<XFA_ATTRIBUTEINFO> attr =
       XFA_GetAttributeByName(expression.AsStringView());
-  if (attr.has_value() && HasAttribute(attr.value().attribute))
+  if (attr.has_value() && HasAttribute(attr.value().attribute)) {
     return CJS_Result::Success(runtime->NewBoolean(true));
+  }
 
   XFA_Element eType = XFA_GetElementByName(expression.AsStringView());
-  if (eType == XFA_Element::Unknown)
+  if (eType == XFA_Element::Unknown) {
     return CJS_Result::Success(runtime->NewBoolean(false));
+  }
 
   bool bParent = params.size() < 2 || runtime->ToBoolean(params[1]);
   int32_t iIndex = params.size() == 3 ? runtime->ToInt32(params[2]) : 0;
@@ -198,20 +210,24 @@ CJS_Result CJX_Node::isPropertySpecified(
 
 CJS_Result CJX_Node::loadXML(CFXJSE_Engine* runtime,
                              pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.empty() || params.size() > 3)
+  if (params.empty() || params.size() > 3) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   ByteString expression = runtime->ToByteString(params[0]);
-  if (expression.IsEmpty())
+  if (expression.IsEmpty()) {
     return CJS_Result::Success();
+  }
 
   bool bIgnoreRoot = true;
-  if (params.size() >= 2)
+  if (params.size() >= 2) {
     bIgnoreRoot = runtime->ToBoolean(params[1]);
+  }
 
   bool bOverwrite = false;
-  if (params.size() >= 3)
+  if (params.size() >= 3) {
     bOverwrite = runtime->ToBoolean(params[2]);
+  }
 
   auto stream =
       pdfium::MakeRetain<CFX_ReadOnlyStringStream>(std::move(expression));
@@ -220,8 +236,9 @@ CJS_Result CJX_Node::loadXML(CFXJSE_Engine* runtime,
   std::unique_ptr<CFX_XMLDocument> xml_doc = parser.Parse();
   CXFA_DocumentBuilder builder(GetDocument());
   CFX_XMLNode* pXMLNode = builder.Build(xml_doc.get());
-  if (!pXMLNode)
+  if (!pXMLNode) {
     return CJS_Result::Success();
+  }
 
   CFX_XMLDocument* top_xml_doc =
       GetXFANode()->GetDocument()->GetNotify()->GetFFDoc()->GetXMLDocument();
@@ -268,8 +285,9 @@ CJS_Result CJX_Node::loadXML(CFXJSE_Engine* runtime,
 
   builder.ConstructXFANode(pFakeRoot, pFakeXMLRoot);
   pFakeRoot = builder.GetRootNode();
-  if (!pFakeRoot)
+  if (!pFakeRoot) {
     return CJS_Result::Success();
+  }
 
   if (bOverwrite) {
     CXFA_Node* pChild = GetXFANode()->GetFirstChild();
@@ -295,10 +313,11 @@ CJS_Result CJX_Node::loadXML(CFXJSE_Engine* runtime,
       CFX_XMLNode* pTempXMLNode = GetXFANode()->GetXMLMappingNode();
       GetXFANode()->SetXMLMappingNode(pFakeXMLRoot);
 
-      if (pTempXMLNode && !pTempXMLNode->GetParent())
+      if (pTempXMLNode && !pTempXMLNode->GetParent()) {
         pFakeXMLRoot = pTempXMLNode;
-      else
+      } else {
         pFakeXMLRoot = nullptr;
+      }
     }
     MoveBufferMapData(pFakeRoot, GetXFANode());
   } else {
@@ -329,8 +348,9 @@ CJS_Result CJX_Node::saveFilteredXML(
 
 CJS_Result CJX_Node::saveXML(CFXJSE_Engine* runtime,
                              pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() > 1)
+  if (params.size() > 1) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   if (params.size() == 1 &&
       !runtime->ToWideString(params[0]).EqualsASCII("pretty")) {
@@ -371,8 +391,9 @@ CJS_Result CJX_Node::saveXML(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Node::setAttribute(CFXJSE_Engine* runtime,
                                   pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 2)
+  if (params.size() != 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   // Note: yes, arglist is spec'd absolutely backwards from what any sane
   // person would do, namely value first, attribute second.
@@ -386,8 +407,9 @@ CJS_Result CJX_Node::setAttribute(CFXJSE_Engine* runtime,
 
 CJS_Result CJX_Node::setElement(CFXJSE_Engine* runtime,
                                 pdfium::span<v8::Local<v8::Value>> params) {
-  if (params.size() != 1 && params.size() != 2)
+  if (params.size() != 1 && params.size() != 2) {
     return CJS_Result::Failure(JSMessage::kParamError);
+  }
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
   return CJS_Result::Success();
@@ -468,13 +490,15 @@ void CJX_Node::oneOfChild(v8::Isolate* pIsolate,
 XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
                                                XFA_Element eType) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify)
+  if (!pNotify) {
     return XFA_EventError::kNotExist;
+  }
 
   const ExecEventParaInfo* eventParaInfo =
       GetExecEventParaInfoByName(wsEventName);
-  if (!eventParaInfo)
+  if (!eventParaInfo) {
     return XFA_EventError::kNotExist;
+  }
 
   switch (eventParaInfo->m_validFlags) {
     case EventAppliesTo::kNone:
@@ -485,14 +509,16 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
           GetXFANode(), eventParaInfo->m_eventType, false,
           eventParaInfo->m_validFlags == EventAppliesTo::kAll);
     case EventAppliesTo::kSubform:
-      if (eType != XFA_Element::Subform)
+      if (eType != XFA_Element::Subform) {
         return XFA_EventError::kNotExist;
+      }
 
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     case EventAppliesTo::kFieldOrExclusion: {
-      if (eType != XFA_Element::ExclGroup && eType != XFA_Element::Field)
+      if (eType != XFA_Element::ExclGroup && eType != XFA_Element::Field) {
         return XFA_EventError::kNotExist;
+      }
 
       CXFA_Node* pParentNode = GetXFANode()->GetParent();
       if (pParentNode &&
@@ -505,14 +531,16 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     }
     case EventAppliesTo::kField:
-      if (eType != XFA_Element::Field)
+      if (eType != XFA_Element::Field) {
         return XFA_EventError::kNotExist;
+      }
 
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     case EventAppliesTo::kSignature: {
-      if (!GetXFANode()->IsWidgetReady())
+      if (!GetXFANode()->IsWidgetReady()) {
         return XFA_EventError::kNotExist;
+      }
       if (GetXFANode()->GetUIChildNode()->GetElementType() !=
           XFA_Element::Signature) {
         return XFA_EventError::kNotExist;
@@ -521,8 +549,9 @@ XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     }
     case EventAppliesTo::kChoiceList: {
-      if (!GetXFANode()->IsWidgetReady())
+      if (!GetXFANode()->IsWidgetReady()) {
         return XFA_EventError::kNotExist;
+      }
       if (GetXFANode()->GetUIChildNode()->GetElementType() !=
           XFA_Element::ChoiceList) {
         return XFA_EventError::kNotExist;

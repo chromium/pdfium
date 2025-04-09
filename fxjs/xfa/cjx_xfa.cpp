@@ -24,8 +24,9 @@ void CJX_Xfa::thisValue(v8::Isolate* pIsolate,
                         v8::Local<v8::Value>* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
-  if (bSetting)
+  if (bSetting) {
     return;
+  }
 
   auto* pScriptContext = GetDocument()->GetScriptContext();
   CXFA_Object* pThis = pScriptContext->GetThisObject();

@@ -21,8 +21,9 @@ const char kClassTag[] = "class descriptor tag";
 
 // static
 CFXJSE_HostObject* CFXJSE_HostObject::FromV8(v8::Local<v8::Value> arg) {
-  if (!fxv8::IsObject(arg))
+  if (!fxv8::IsObject(arg)) {
     return nullptr;
+  }
 
   return FXJSE_RetrieveObjectBinding(arg.As<v8::Object>());
 }
