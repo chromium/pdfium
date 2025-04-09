@@ -20,6 +20,7 @@ cppgc::Heap* XFAProcessState::GetHeap() const {
 
 void XFAProcessState::ForceGCAndPump() {
   FXGC_ForceGarbageCollection(heap_.get());
-  while (v8::platform::PumpMessageLoop(platform_, isolate_))
+  while (v8::platform::PumpMessageLoop(platform_, isolate_)) {
     continue;
+  }
 }

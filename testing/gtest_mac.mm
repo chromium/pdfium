@@ -3,12 +3,15 @@
 // found in the LICENSE file.
 
 #import "gtest_mac.h"
-#include <string>
+
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-port.h>
 #include <gtest/internal/gtest-string.h>
+#include <string>
+
 #ifdef GTEST_OS_MAC
 #import <Foundation/Foundation.h>
+
 namespace testing {
 namespace internal {
 // Handles nil values for |obj| properly by using safe printing of %@ in

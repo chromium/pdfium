@@ -14,22 +14,25 @@ RangeSet::RangeSet() = default;
 RangeSet::~RangeSet() = default;
 
 bool RangeSet::Contains(const Range& range) const {
-  if (IsEmptyRange(range))
+  if (IsEmptyRange(range)) {
     return false;
+  }
 
   const Range fixed_range = FixDirection(range);
   auto it = ranges().upper_bound(fixed_range);
 
-  if (it == ranges().begin())
+  if (it == ranges().begin()) {
     return false;  // No ranges includes range.first.
+  }
 
   --it;  // Now it starts equal or before range.first.
   return it->second >= fixed_range.second;
 }
 
 void RangeSet::Union(const Range& range) {
-  if (IsEmptyRange(range))
+  if (IsEmptyRange(range)) {
     return;
+  }
 
   Range fixed_range = FixDirection(range);
   if (IsEmpty()) {
@@ -38,11 +41,13 @@ void RangeSet::Union(const Range& range) {
   }
 
   auto start = ranges_.upper_bound(fixed_range);
-  if (start != ranges_.begin())
+  if (start != ranges_.begin()) {
     --start;  // start now points to the key equal or lower than offset.
+  }
 
-  if (start->second < fixed_range.first)
+  if (start->second < fixed_range.first) {
     ++start;  // start element is entirely before current range, skip it.
+  }
 
   auto end = ranges_.upper_bound(Range(fixed_range.second, fixed_range.second));
 
@@ -61,8 +66,9 @@ void RangeSet::Union(const Range& range) {
 
 void RangeSet::Union(const RangeSet& range_set) {
   DCHECK(&range_set != this);
-  for (const auto& it : range_set.ranges())
+  for (const auto& it : range_set.ranges()) {
     Union(it);
+  }
 }
 
 RangeSet::Range RangeSet::FixDirection(const Range& range) const {

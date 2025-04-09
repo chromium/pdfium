@@ -634,7 +634,7 @@ std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture) {
   }
   SkSerialProcs procs;
   procs.fImageProc = [](SkImage* img, void*) -> sk_sp<SkData> {
-      return SkPngEncoder::Encode(nullptr, img, SkPngEncoder::Options{});
+    return SkPngEncoder::Encode(nullptr, img, SkPngEncoder::Options{});
   };
 
   picture.serialize(stream.get(), &procs);

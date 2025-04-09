@@ -30,15 +30,18 @@ class HintTableForFuzzing final : public CPDF_HintTables {
   ~HintTableForFuzzing() override = default;
 
   void Fuzz(const uint8_t* data, size_t size) {
-    if (shared_hint_table_offset_ <= 0)
+    if (shared_hint_table_offset_ <= 0) {
       return;
+    }
 
-    if (size < static_cast<size_t>(shared_hint_table_offset_))
+    if (size < static_cast<size_t>(shared_hint_table_offset_)) {
       return;
+    }
 
     CFX_BitStream bs(pdfium::make_span(data, size));
-    if (!ReadPageHintTable(&bs))
+    if (!ReadPageHintTable(&bs)) {
       return;
+    }
     ReadSharedObjHintTable(&bs, shared_hint_table_offset_);
   }
 
@@ -56,8 +59,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   // Need 28 bytes for |linearized_dict|.
   // The header section of page offset hint table is 36 bytes.
   // The header section of shared object hint table is 24 bytes.
-  if (size < 28 + 36 + 24)
+  if (size < 28 + 36 + 24) {
     return 0;
+  }
 
   const int32_t* data32 = reinterpret_cast<const int32_t*>(data);
 

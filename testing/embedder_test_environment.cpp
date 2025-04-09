@@ -65,8 +65,9 @@ void EmbedderTestEnvironment::TearDown() {
 }
 
 void EmbedderTestEnvironment::AddFlags(int argc, char** argv) {
-  for (int i = 1; i < argc; ++i)
+  for (int i = 1; i < argc; ++i) {
     AddFlag(argv[i]);
+  }
 }
 
 void EmbedderTestEnvironment::AddFlag(const std::string& flag) {

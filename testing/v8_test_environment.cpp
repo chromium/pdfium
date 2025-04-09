@@ -32,8 +32,9 @@ V8TestEnvironment::~V8TestEnvironment() {
   DCHECK(g_environment);
 
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  if (startup_data_)
+  if (startup_data_) {
     free(const_cast<char*>(startup_data_->data));
+  }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
   g_environment = nullptr;
@@ -47,8 +48,9 @@ V8TestEnvironment* V8TestEnvironment::GetInstance() {
 // static
 void V8TestEnvironment::PumpPlatformMessageLoop(v8::Isolate* isolate) {
   v8::Platform* platform = GetInstance()->platform();
-  while (v8::platform::PumpMessageLoop(platform, isolate))
+  while (v8::platform::PumpMessageLoop(platform, isolate)) {
     continue;
+  }
 }
 
 void V8TestEnvironment::SetUp() {

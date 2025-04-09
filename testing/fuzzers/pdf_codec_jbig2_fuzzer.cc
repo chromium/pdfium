@@ -16,8 +16,9 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   const size_t kParameterSize = 8;
-  if (size < kParameterSize)
+  if (size < kParameterSize) {
     return 0;
+  }
 
   // SAFETY: trusted arguments from fuzzer.
   auto span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
@@ -30,12 +31,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   FX_SAFE_UINT32 mem = width;
   mem *= height;
   mem *= k1bppRgbComponents;
-  if (!mem.IsValid() || mem.ValueOrDie() > kMemLimit)
+  if (!mem.IsValid() || mem.ValueOrDie() > kMemLimit) {
     return 0;
+  }
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!bitmap->Create(width, height, FXDIB_Format::k1bppRgb))
+  if (!bitmap->Create(width, height, FXDIB_Format::k1bppRgb)) {
     return 0;
+  }
 
   JBig2_DocumentContext document_context;
   Jbig2Context jbig2_context;
@@ -43,7 +46,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       &jbig2_context, &document_context, width, height, span, 1, {}, 0,
       bitmap->GetWritableBuffer(), bitmap->GetPitch(), nullptr);
 
-  while (status == FXCODEC_STATUS::kDecodeToBeContinued)
+  while (status == FXCODEC_STATUS::kDecodeToBeContinued) {
     status = Jbig2Decoder::ContinueDecode(&jbig2_context, nullptr);
+  }
   return 0;
 }

@@ -33,11 +33,13 @@ ByteString RenameFontForTesting(const ByteString& face) {
     return face;
   }
 
-  if (face.Contains("Bold"))
+  if (face.Contains("Bold")) {
     result += " Bold";
+  }
 
-  if (face.Contains("Italic") || face.Contains("Oblique"))
+  if (face.Contains("Italic") || face.Contains("Oblique")) {
     result += " Italic";
+  }
 
   return result;
 }
@@ -93,8 +95,9 @@ class SystemFontInfoWrapper : public SystemFontInfoIface {
 }  // namespace
 
 TestFonts::TestFonts() {
-  if (!PathService::GetExecutableDir(&font_path_))
+  if (!PathService::GetExecutableDir(&font_path_)) {
     return;
+  }
   font_path_.push_back(PATH_SEPARATOR);
   font_path_.append("test_fonts");
   font_paths_ = std::vector<const char*>{font_path_.c_str(), nullptr};

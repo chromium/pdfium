@@ -12,19 +12,14 @@
 
 namespace pdfium {
 
-#define STR_IN_TEST_CASE(input_literal, ...)         \
-  {                                                  \
-    reinterpret_cast<const uint8_t*>(input_literal), \
-        sizeof(input_literal) - 1, __VA_ARGS__       \
-  }
+#define STR_IN_TEST_CASE(input_literal, ...)                                   \
+  {reinterpret_cast<const uint8_t*>(input_literal), sizeof(input_literal) - 1, \
+   __VA_ARGS__}
 
-#define STR_IN_OUT_CASE(input_literal, expected_literal, ...) \
-  {                                                           \
-    reinterpret_cast<const uint8_t*>(input_literal),          \
-        sizeof(input_literal) - 1,                            \
-        reinterpret_cast<const uint8_t*>(expected_literal),   \
-        sizeof(expected_literal) - 1, __VA_ARGS__             \
-  }
+#define STR_IN_OUT_CASE(input_literal, expected_literal, ...)                  \
+  {reinterpret_cast<const uint8_t*>(input_literal), sizeof(input_literal) - 1, \
+   reinterpret_cast<const uint8_t*>(expected_literal),                         \
+   sizeof(expected_literal) - 1, __VA_ARGS__}
 
 struct StrFuncTestData {
   pdfium::span<const uint8_t> input_span() const {

@@ -28,17 +28,19 @@ constexpr char kTZ[] = "TZ";
 
 ScopedSetTZ::ScopedSetTZ(const std::string& tz) {
   const char* old_tz = getenv(kTZ);
-  if (old_tz)
+  if (old_tz) {
     old_tz_ = old_tz;
+  }
 
   CHECK_EQ(0, SETENV(kTZ, tz.c_str()));
   TZSET();
 }
 
 ScopedSetTZ::~ScopedSetTZ() {
-  if (old_tz_.has_value())
+  if (old_tz_.has_value()) {
     CHECK_EQ(0, SETENV(kTZ, old_tz_.value().c_str()));
-  else
+  } else {
     CHECK_EQ(0, UNSETENV(kTZ));
+  }
   TZSET();
 }

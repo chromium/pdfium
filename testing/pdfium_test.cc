@@ -205,28 +205,39 @@ struct Options {
 
 int PageRenderFlagsFromOptions(const Options& options) {
   int flags = FPDF_ANNOT;
-  if (options.lcd_text)
+  if (options.lcd_text) {
     flags |= FPDF_LCD_TEXT;
-  if (options.no_nativetext)
+  }
+  if (options.no_nativetext) {
     flags |= FPDF_NO_NATIVETEXT;
-  if (options.grayscale)
+  }
+  if (options.grayscale) {
     flags |= FPDF_GRAYSCALE;
-  if (options.fill_to_stroke)
+  }
+  if (options.fill_to_stroke) {
     flags |= FPDF_CONVERT_FILL_TO_STROKE;
-  if (options.limit_cache)
+  }
+  if (options.limit_cache) {
     flags |= FPDF_RENDER_LIMITEDIMAGECACHE;
-  if (options.force_halftone)
+  }
+  if (options.force_halftone) {
     flags |= FPDF_RENDER_FORCEHALFTONE;
-  if (options.printing)
+  }
+  if (options.printing) {
     flags |= FPDF_PRINTING;
-  if (options.no_smoothtext)
+  }
+  if (options.no_smoothtext) {
     flags |= FPDF_RENDER_NO_SMOOTHTEXT;
-  if (options.no_smoothimage)
+  }
+  if (options.no_smoothimage) {
     flags |= FPDF_RENDER_NO_SMOOTHIMAGE;
-  if (options.no_smoothpath)
+  }
+  if (options.no_smoothpath) {
     flags |= FPDF_RENDER_NO_SMOOTHPATH;
-  if (options.reverse_byte_order)
+  }
+  if (options.reverse_byte_order) {
     flags |= FPDF_REVERSE_BYTE_ORDER;
+  }
   return flags;
 }
 
@@ -251,13 +262,15 @@ std::optional<const char*> GetCustomFontPath(const Options& options) {
 #if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
   // Set custom font path to an empty path. This avoids the fallback to default
   // font paths.
-  if (options.linux_no_system_fonts)
+  if (options.linux_no_system_fonts) {
     return nullptr;
+  }
 #endif
 
   // No custom font path. Use default.
-  if (options.font_directory.empty())
+  if (options.font_directory.empty()) {
     return std::nullopt;
+  }
 
   // Set custom font path to |options.font_directory|.
   return options.font_directory.c_str();
@@ -299,8 +312,9 @@ int ExampleAppAlert(IPDF_JSPLATFORM*,
                     int type,
                     int icon) {
   printf("%ls", GetPlatformWString(title).c_str());
-  if (icon || type)
+  if (icon || type) {
     printf("[icon=%d,type=%d]", icon, type);
+  }
   printf(": %ls\n", GetPlatformWString(msg).c_str());
   return 0;
 }
@@ -335,8 +349,9 @@ int ExampleAppResponse(IPDF_JSPLATFORM*,
 int ExampleDocGetFilePath(IPDF_JSPLATFORM*, void* file_path, int length) {
   static const char kPath[] = "myfile.pdf";
   static constexpr int kRequired = static_cast<int>(sizeof(kPath));
-  if (file_path && length >= kRequired)
+  if (file_path && length >= kRequired) {
     memcpy(file_path, kPath, kRequired);
+  }
   return kRequired;
 }
 
@@ -375,8 +390,9 @@ void ExampleDocSubmitForm(IPDF_JSPLATFORM*,
   printf("Doc Submit Form: url=%ls + %d data bytes:\n",
          GetPlatformWString(url).c_str(), length);
   uint8_t* ptr = reinterpret_cast<uint8_t*>(formData);
-  for (int i = 0; i < length; ++i)
+  for (int i = 0; i < length; ++i) {
     printf(" %02x", ptr[i]);
+  }
   printf("\n");
 }
 
@@ -387,8 +403,9 @@ void ExampleDocGotoPage(IPDF_JSPLATFORM*, int page_number) {
 int ExampleFieldBrowse(IPDF_JSPLATFORM*, void* file_path, int length) {
   static const char kPath[] = "selected.txt";
   static constexpr int kRequired = static_cast<int>(sizeof(kPath));
-  if (file_path && length >= kRequired)
+  if (file_path && length >= kRequired) {
     memcpy(file_path, kPath, kRequired);
+  }
   return kRequired;
 }
 #endif  // PDF_ENABLE_V8
@@ -456,8 +473,9 @@ void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {
 bool ParseCommandLine(const std::vector<std::string>& args,
                       Options* options,
                       std::vector<std::string>* files) {
-  if (args.empty())
+  if (args.empty()) {
     return false;
+  }
 
   options->exe_path = args[0];
   size_t cur_idx = 1;
@@ -782,12 +800,14 @@ FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
       ToPDFiumTestFormFillInfo(param);
   auto& loaded_pages = form_fill_info->loaded_pages;
   auto iter = loaded_pages.find(index);
-  if (iter != loaded_pages.end())
+  if (iter != loaded_pages.end()) {
     return iter->second.get();
+  }
 
   ScopedFPDFPage page(FPDF_LoadPage(doc, index));
-  if (!page)
+  if (!page) {
     return nullptr;
+  }
 
   // Mark the page as loaded first to prevent infinite recursion.
   FPDF_PAGE page_ptr = page.get();
@@ -1270,15 +1290,17 @@ class SkPicturePageRenderer final : public SkCanvasPageRenderer {
 
   bool Write(const std::string& name, int page_index, bool md5) override {
     std::string image_file_name = WriteSkp(name.c_str(), page_index, *picture_);
-    if (image_file_name.empty())
+    if (image_file_name.empty()) {
       return false;
+    }
 
     if (md5) {
       // Play back the `SkPicture` so we can take a hash of the result.
       sk_sp<SkSurface> surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(
           /*width=*/width(), /*height=*/height()));
-      if (!surface)
+      if (!surface) {
         return false;
+      }
 
       // Must clear to white before replay to match initial `CFX_DIBitmap`.
       surface->getCanvas()->clear(SK_ColorWHITE);
@@ -1286,8 +1308,9 @@ class SkPicturePageRenderer final : public SkCanvasPageRenderer {
 
       // Write the filename and the MD5 of the buffer to stdout.
       SkPixmap pixmap;
-      if (!surface->peekPixels(&pixmap))
+      if (!surface->peekPixels(&pixmap)) {
         return false;
+      }
 
       OutputMD5Hash(image_file_name.c_str(),
                     UNSAFE_TODO(pdfium::make_span(
@@ -1520,8 +1543,9 @@ bool PdfProcessor::ProcessPage(const int page_index) {
   }
 
   if (renderer->Start()) {
-    while (renderer->Continue())
+    while (renderer->Continue()) {
       continue;
+    }
     renderer->Finish(form());
     renderer->Write(name(), page_index, /*md5=*/options().md5);
   } else {
@@ -1571,8 +1595,9 @@ void Processor::ProcessPdf(const std::string& name,
       int avail_status = PDF_DATA_NOTAVAIL;
       doc.reset(FPDFAvail_GetDocument(pdf_avail.get(), password));
       if (doc) {
-        while (avail_status == PDF_DATA_NOTAVAIL)
+        while (avail_status == PDF_DATA_NOTAVAIL) {
           avail_status = FPDFAvail_IsDocAvail(pdf_avail.get(), &hints);
+        }
 
         if (avail_status == PDF_DATA_ERROR) {
           fprintf(stderr, "Unknown error in checking if doc was available.\n");
@@ -1598,8 +1623,9 @@ void Processor::ProcessPdf(const std::string& name,
     return;
   }
 
-  if (!FPDF_DocumentHasValidCrossReferenceTable(doc.get()))
+  if (!FPDF_DocumentHasValidCrossReferenceTable(doc.get())) {
     fprintf(stderr, "Document has invalid cross reference table\n");
+  }
 
   if (options().show_metadata) {
     DumpMetaData(doc.get());
@@ -1649,8 +1675,9 @@ void Processor::ProcessPdf(const std::string& name,
   if (!options().disable_xfa && !options().disable_javascript) {
     int doc_type = FPDF_GetFormType(doc.get());
     if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND) {
-      if (!FPDF_LoadXFA(doc.get()))
+      if (!FPDF_LoadXFA(doc.get())) {
         fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
+      }
     }
   }
 #endif  // PDF_ENABLE_XFA
@@ -1680,8 +1707,9 @@ void Processor::ProcessPdf(const std::string& name,
   for (int i = first_page; i < last_page; ++i) {
     if (is_linearized) {
       int avail_status = PDF_DATA_NOTAVAIL;
-      while (avail_status == PDF_DATA_NOTAVAIL)
+      while (avail_status == PDF_DATA_NOTAVAIL) {
         avail_status = FPDFAvail_IsPageAvail(pdf_avail.get(), i, &hints);
+      }
 
       if (avail_status == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if page %d is available.\n",
@@ -1701,15 +1729,17 @@ void Processor::ProcessPdf(const std::string& name,
   Idle();
 
   fprintf(stderr, "Processed %d pages.\n", processed_pages);
-  if (bad_pages)
+  if (bad_pages) {
     fprintf(stderr, "Skipped %d bad pages.\n", bad_pages);
+  }
 }
 
 void ShowConfig() {
   std::string config;
   [[maybe_unused]] auto append_config = [&config](const char* name) {
-    if (!config.empty())
+    if (!config.empty()) {
       config += ',';
+    }
     config += name;
   };
 
@@ -1936,10 +1966,12 @@ int main(int argc, const char* argv[]) {
 
     idler = [&platform, &isolate]() {
       int task_count = 0;
-      while (v8::platform::PumpMessageLoop(platform.get(), isolate.get()))
+      while (v8::platform::PumpMessageLoop(platform.get(), isolate.get())) {
         ++task_count;
-      if (task_count)
+      }
+      if (task_count) {
         fprintf(stderr, "Pumped %d tasks\n", task_count);
+      }
     };
   }
 #endif  // PDF_ENABLE_V8

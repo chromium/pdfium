@@ -10,8 +10,9 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CPDF_StreamParser parser(pdfium::make_span(data, size));
-  while (RetainPtr<CPDF_Object> pObj = parser.ReadNextObject(true, false, 0))
+  while (RetainPtr<CPDF_Object> pObj = parser.ReadNextObject(true, false, 0)) {
     continue;
+  }
 
   return 0;
 }

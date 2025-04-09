@@ -16,20 +16,23 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   FX_SAFE_SIZE_T safe_size = size;
-  if (!safe_size.IsValid())
+  if (!safe_size.IsValid()) {
     return 0;
+  }
 
   auto stream =
       pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::make_span(data, size));
   CFX_XMLParser parser(stream);
   std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();
-  if (!doc || !doc->GetRoot())
+  if (!doc || !doc->GetRoot()) {
     return 0;
+  }
 
   for (CFX_XMLNode* pXMLNode = doc->GetRoot()->GetFirstChild(); pXMLNode;
        pXMLNode = pXMLNode->GetNextSibling()) {
-    if (pXMLNode->GetType() == CFX_XMLNode::Type::kElement)
+    if (pXMLNode->GetType() == CFX_XMLNode::Type::kElement) {
       break;
+    }
   }
   return 0;
 }

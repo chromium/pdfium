@@ -65,14 +65,16 @@ class Image {
 
   // Returns the RGBA value of the pixel at the given location
   uint32_t pixel_at(int x, int y) const {
-    if (!pixel_in_bounds(x, y))
+    if (!pixel_in_bounds(x, y)) {
       return 0;
+    }
     return *reinterpret_cast<const uint32_t*>(&(data_[pixel_address(x, y)]));
   }
 
   void set_pixel_at(int x, int y, uint32_t color) {
-    if (!pixel_in_bounds(x, y))
+    if (!pixel_in_bounds(x, y)) {
       return;
+    }
 
     void* addr = &data_[pixel_address(x, y)];
     *reinterpret_cast<uint32_t*>(addr) = color;
@@ -82,8 +84,9 @@ class Image {
   bool CreateFromFilenameImpl(const std::string& path,
                               bool reverse_byte_order) {
     FILE* f = fopen(path.c_str(), "rb");
-    if (!f)
+    if (!f) {
       return false;
+    }
 
     std::vector<uint8_t> compressed;
     const size_t kBufSize = 1024;
@@ -221,10 +224,11 @@ float HistogramPercentageDifferent(const Image& baseline, const Image& actual) {
     for (int x = 0; x < w; ++x) {
       uint32_t actual_rgba = actual.pixel_at(x, y);
       auto it = baseline_histogram.find(actual_rgba);
-      if (it != baseline_histogram.end() && it->second > 0)
+      if (it != baseline_histogram.end() && it->second > 0) {
         --it->second;
-      else
+      } else {
         ++pixels_different;
+      }
     }
   }
 
@@ -393,22 +397,26 @@ int DiffImages(const std::string& binary_name,
   bool same = do_subtraction
                   ? SubtractImages(baseline_image, actual_image, &diff_image)
                   : CreateImageDiff(baseline_image, actual_image, &diff_image);
-  if (same)
+  if (same) {
     return kStatusSame;
+  }
 
   std::vector<uint8_t> png_encoding = image_diff_png::EncodeRGBAPNG(
       diff_image.span(), diff_image.w(), diff_image.h(), diff_image.w() * 4);
-  if (png_encoding.empty())
+  if (png_encoding.empty()) {
     return kStatusError;
+  }
 
   FILE* f = fopen(out_file.c_str(), "wb");
-  if (!f)
+  if (!f) {
     return kStatusError;
+  }
 
   size_t size = png_encoding.size();
   char* ptr = reinterpret_cast<char*>(&png_encoding.front());
-  if (fwrite(ptr, 1, size, f) != size)
+  if (fwrite(ptr, 1, size, f) != size) {
     return kStatusError;
+  }
 
   return kStatusDifferent;
 }
@@ -432,8 +440,9 @@ int main(int argc, const char* argv[]) {
   int i;
   for (i = 1; i < argc; ++i) {
     const char* arg = argv[i];
-    if (strstr(arg, "--") != arg)
+    if (strstr(arg, "--") != arg) {
       break;
+    }
     if (strcmp(arg, "--histogram") == 0) {
       histograms = true;
     } else if (strcmp(arg, "--diff") == 0) {
@@ -446,12 +455,15 @@ int main(int argc, const char* argv[]) {
       max_pixel_per_channel_delta = 1;
     }
   }
-  if (i < argc)
+  if (i < argc) {
     filename1 = argv[i++];
-  if (i < argc)
+  }
+  if (i < argc) {
     filename2 = argv[i++];
-  if (i < argc)
+  }
+  if (i < argc) {
     diff_filename = argv[i++];
+  }
 
   if (produce_diff_image || produce_image_subtraction) {
     if (!diff_filename.empty()) {

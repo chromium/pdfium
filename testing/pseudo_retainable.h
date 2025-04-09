@@ -10,8 +10,9 @@ class PseudoRetainable {
   PseudoRetainable() = default;
   void Retain() const { ++retain_count_; }
   void Release() const {
-    if (++release_count_ == retain_count_)
+    if (++release_count_ == retain_count_) {
       alive_ = false;
+    }
   }
   bool alive() const { return alive_; }
   int retain_count() const { return retain_count_; }

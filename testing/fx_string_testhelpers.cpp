@@ -29,8 +29,9 @@ std::vector<std::string> StringSplit(const std::string& str, char delimiter) {
   size_t pos = 0;
   while (true) {
     size_t found = str.find(delimiter, pos);
-    if (found == std::string::npos)
+    if (found == std::string::npos) {
       break;
+    }
 
     result.push_back(str.substr(pos, found - pos));
     pos = found + 1;
@@ -45,12 +46,14 @@ std::string GetPlatformString(FPDF_WIDESTRING wstr) {
 }
 
 std::wstring GetPlatformWString(FPDF_WIDESTRING wstr) {
-  if (!wstr)
+  if (!wstr) {
     return std::wstring();
+  }
 
   size_t characters = 0;
-  while (wstr[characters])
+  while (wstr[characters]) {
     ++characters;
+  }
 
   std::wstring platform_string;
   platform_string.reserve(characters);

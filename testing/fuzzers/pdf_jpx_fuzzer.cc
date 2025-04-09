@@ -41,22 +41,26 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<CJPX_Decoder> decoder =
       CJPX_Decoder::Create(span.subspan(3u), color_space_option,
                            resolution_levels_to_skip, strict_mode);
-  if (!decoder)
+  if (!decoder) {
     return 0;
+  }
 
   // A call to StartDecode could be too expensive if image size is very big, so
   // check size before calling StartDecode().
   CJPX_Decoder::JpxImageInfo image_info = decoder->GetInfo();
-  if (!CheckImageSize(image_info))
+  if (!CheckImageSize(image_info)) {
     return 0;
+  }
 
-  if (!decoder->StartDecode())
+  if (!decoder->StartDecode()) {
     return 0;
+  }
 
   // StartDecode() could change image size, so check again.
   image_info = decoder->GetInfo();
-  if (!CheckImageSize(image_info))
+  if (!CheckImageSize(image_info)) {
     return 0;
+  }
 
   FXDIB_Format format;
   if (image_info.channels == 1) {
@@ -70,13 +74,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     format = FXDIB_Format::kBgr;
   }
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!bitmap->Create(image_info.width, image_info.height, format))
+  if (!bitmap->Create(image_info.width, image_info.height, format)) {
     return 0;
+  }
 
   if (bitmap->GetHeight() <= 0 ||
       kMaxJPXFuzzSize / bitmap->GetPitch() <
-          static_cast<uint32_t>(bitmap->GetHeight()))
+          static_cast<uint32_t>(bitmap->GetHeight())) {
     return 0;
+  }
 
   decoder->Decode(bitmap->GetWritableBuffer(), bitmap->GetPitch(),
                   /*swap_rgb=*/false, GetCompsFromFormat(format));

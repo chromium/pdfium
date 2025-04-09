@@ -14,13 +14,15 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   static constexpr size_t kParameterSize = sizeof(uint32_t) + sizeof(wchar_t);
-  if (size <= kParameterSize)
+  if (size <= kParameterSize) {
     return 0;
+  }
 
   // Limit data size to prevent fuzzer timeout.
   static constexpr size_t kMaxDataSize = 256 * 1024;
-  if (size > kParameterSize + kMaxDataSize)
+  if (size > kParameterSize + kMaxDataSize) {
     return 0;
+  }
 
   FuzzedDataProvider data_provider(data, size);
   uint32_t charcode_to_lookup = data_provider.ConsumeIntegral<uint32_t>();

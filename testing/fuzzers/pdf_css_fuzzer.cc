@@ -12,8 +12,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       UNSAFE_BUFFERS(ByteStringView(data, static_cast<size_t>(size))));
 
   // If we convert the input into an empty string bail out.
-  if (input.IsEmpty())
+  if (input.IsEmpty()) {
     return 0;
+  }
 
   CFX_CSSSyntaxParser parser(input.AsStringView());
   CFX_CSSSyntaxParser::Status status;

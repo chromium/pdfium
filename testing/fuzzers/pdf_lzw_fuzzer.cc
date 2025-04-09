@@ -25,8 +25,9 @@ void LZWFuzz(pdfium::span<const uint8_t> src_buf,
              uint8_t code_exp) {
   std::unique_ptr<LZWDecompressor> decompressor =
       LZWDecompressor::Create(color_exp, code_exp);
-  if (!decompressor)
+  if (!decompressor) {
     return;
+  }
 
   for (uint32_t compressions_ratio = kMinCompressionRatio;
        compressions_ratio <= kMaxCompressionRatio; compressions_ratio++) {

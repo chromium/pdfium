@@ -192,28 +192,33 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
   // that an image's size (in bytes) fits in a (signed) int.
   unsigned long long total_size =
       static_cast<unsigned long long>(w) * static_cast<unsigned long long>(h);
-  if (total_size > ((1 << 29) - 1))
+  if (total_size > ((1 << 29) - 1)) {
     longjmp(png_jmpbuf(png_ptr), 1);
+  }
   state->width = static_cast<int>(w);
   state->height = static_cast<int>(h);
 
   // Expand to ensure we use 24-bit for RGB and 32-bit for RGBA.
   if (color_type == PNG_COLOR_TYPE_PALETTE ||
-      (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8))
+      (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)) {
     png_set_expand(png_ptr);
+  }
 
   // Transparency for paletted images.
-  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
     png_set_expand(png_ptr);
+  }
 
   // Convert 16-bit to 8-bit.
-  if (bit_depth == 16)
+  if (bit_depth == 16) {
     png_set_strip_16(png_ptr);
+  }
 
   // Expand grayscale to RGB.
   if (color_type == PNG_COLOR_TYPE_GRAY ||
-      color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+      color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
     png_set_gray_to_rgb(png_ptr);
+  }
 
   // Deal with gamma and keep it under our control.
   double gamma;
@@ -228,8 +233,9 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
   }
 
   // Tell libpng to send us rows for interlaced pngs.
-  if (interlace_type == PNG_INTERLACE_ADAM7)
+  if (interlace_type == PNG_INTERLACE_ADAM7) {
     png_set_interlace_handling(png_ptr);
+  }
 
   // Update our info now
   png_read_update_info(png_ptr, info_ptr);
@@ -293,10 +299,11 @@ void DecodeRowCallback(png_struct* png_ptr,
   base = &state->output->front();
 
   uint8_t* dest = &base[state->width * state->output_channels * row_num];
-  if (state->row_converter)
+  if (state->row_converter) {
     state->row_converter(new_row, state->width, dest, &state->is_opaque);
-  else
+  } else {
     FXSYS_memcpy(dest, new_row, state->width * state->output_channels);
+  }
 }
 
 void DecodeEndCallback(png_struct* png_ptr, png_info* info) {
@@ -323,17 +330,20 @@ class PngReadStructDestroyer {
 bool BuildPNGStruct(pdfium::span<const uint8_t> input,
                     png_struct** png_ptr,
                     png_info** info_ptr) {
-  if (input.size() < 8)
+  if (input.size() < 8) {
     return false;  // Input data too small to be a png
+  }
 
   // Have libpng check the signature, it likes the first 8 bytes.
-  if (png_sig_cmp(const_cast<uint8_t*>(input.data()), 0, 8) != 0)
+  if (png_sig_cmp(const_cast<uint8_t*>(input.data()), 0, 8) != 0) {
     return false;
+  }
 
   *png_ptr =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-  if (!*png_ptr)
+  if (!*png_ptr) {
     return false;
+  }
 
   *info_ptr = png_create_info_struct(*png_ptr);
   if (!*info_ptr) {
@@ -351,8 +361,9 @@ std::vector<uint8_t> Decode(pdfium::span<const uint8_t> input,
   std::vector<uint8_t> output;
   png_struct* png_ptr = nullptr;
   png_info* info_ptr = nullptr;
-  if (!BuildPNGStruct(input, &png_ptr, &info_ptr))
+  if (!BuildPNGStruct(input, &png_ptr, &info_ptr)) {
     return output;
+  }
 
   PngReadStructDestroyer destroyer(&png_ptr, &info_ptr);
   if (setjmp(png_jmpbuf(png_ptr))) {
@@ -433,8 +444,9 @@ class CommentWriter {
  public:
   explicit CommentWriter(const std::vector<Comment>& comments)
       : comments_(comments), png_text_(new png_text[comments.size()]) {
-    for (size_t i = 0; i < comments.size(); ++i)
+    for (size_t i = 0; i < comments.size(); ++i) {
       AddComment(i, comments[i]);
+    }
   }
 
   ~CommentWriter() {
@@ -455,8 +467,9 @@ class CommentWriter {
   void AddComment(size_t pos, const Comment& comment) {
     png_text_[pos].compression = PNG_TEXT_COMPRESSION_NONE;
     // A PNG comment's key can only be 79 characters long.
-    if (comment.key.size() > 79)
+    if (comment.key.size() > 79) {
       return;
+    }
     png_text_[pos].key = strdup(comment.key.substr(0, 78).c_str());
     png_text_[pos].text = strdup(comment.text.c_str());
     png_text_[pos].text_length = comment.text.size();
@@ -607,13 +620,15 @@ std::vector<uint8_t> EncodeWithCompressionLevel(
   }
 
   // Row stride should be at least as long as the length of the data.
-  if (row_byte_width < input_color_components * width)
+  if (row_byte_width < input_color_components * width) {
     return output;
+  }
 
   png_struct* png_ptr =
       png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-  if (!png_ptr)
+  if (!png_ptr) {
     return output;
+  }
   png_info* info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr) {
     png_destroy_write_struct(&png_ptr, nullptr);
@@ -627,8 +642,9 @@ std::vector<uint8_t> EncodeWithCompressionLevel(
                     output_color_components, converter, comments);
   png_destroy_write_struct(&png_ptr, &info_ptr);
 
-  if (!success)
+  if (!success) {
     output.clear();
+  }
   return output;
 }
 

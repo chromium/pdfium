@@ -47,8 +47,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   // |remaining| needs to outlive |parser|.
   std::vector<uint8_t> remaining =
       data_provider.ConsumeRemainingBytes<uint8_t>();
-  if (remaining.empty())
+  if (remaining.empty()) {
     return 0;
+  }
 
   CPDF_StreamParser parser(remaining);
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -57,18 +58,21 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   for (const auto& name : params.names) {
     RetainPtr<CPDF_Object> obj = parser.ReadNextObject(
         /*bAllowNestedArray*/ true, /*bInArray=*/false, /*dwRecursionLevel=*/0);
-    if (!obj)
+    if (!obj) {
       break;
+    }
 
     name_tree->AddValueAndName(std::move(obj), name);
   }
 
   if (params.delete_backwards) {
-    for (size_t i = params.count; i > 0; --i)
+    for (size_t i = params.count; i > 0; --i) {
       name_tree->DeleteValueAndName(i);
+    }
   } else {
-    for (size_t i = 0; i < params.count; ++i)
+    for (size_t i = 0; i < params.count; ++i) {
       name_tree->DeleteValueAndName(0);
+    }
   }
   return 0;
 }

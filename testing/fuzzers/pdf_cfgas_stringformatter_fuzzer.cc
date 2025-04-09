@@ -30,8 +30,9 @@ const CFGAS_StringFormatter::DateTimeType kTypes[] = {
 }  // namespace
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  if (size < 5 || size > 128)  // Big strings are unlikely to help.
+  if (size < 5 || size > 128) {  // Big strings are unlikely to help.
     return 0;
+  }
 
   auto* state = static_cast<XFAProcessState*>(FPDF_GetFuzzerPerProcessState());
   cppgc::Heap* heap = state->GetHeap();

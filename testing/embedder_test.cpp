@@ -287,8 +287,9 @@ void EmbedderTest::TearDown() {
   // possible. This can fail when an DCHECK test fails in a test case.
   EXPECT_EQ(0U, page_map_.size());
   EXPECT_EQ(0U, saved_page_map_.size());
-  if (document())
+  if (document()) {
     CloseDocument();
+  }
 }
 
 void EmbedderTest::CreateEmptyDocument() {
@@ -376,13 +377,15 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
       nRet = FPDFAvail_IsDocAvail(avail_ptr,
                                   network_simulator->GetDownloadHints());
     }
-    if (nRet == PDF_DATA_ERROR)
+    if (nRet == PDF_DATA_ERROR) {
       return false;
+    }
 
     document->reset(FPDFAvail_GetDocument(avail_ptr, password));
     document_ptr = document->get();
-    if (!document_ptr)
+    if (!document_ptr) {
       return false;
+    }
 
     nRet = PDF_DATA_NOTAVAIL;
     while (nRet == PDF_DATA_NOTAVAIL) {
@@ -390,8 +393,9 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
       nRet = FPDFAvail_IsFormAvail(avail_ptr,
                                    network_simulator->GetDownloadHints());
     }
-    if (nRet == PDF_FORM_ERROR)
+    if (nRet == PDF_FORM_ERROR) {
       return false;
+    }
 
     int page_count = FPDF_GetPageCount(document_ptr);
     for (int i = 0; i < page_count; ++i) {
@@ -401,24 +405,28 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
         nRet = FPDFAvail_IsPageAvail(avail_ptr, i,
                                      network_simulator->GetDownloadHints());
       }
-      if (nRet == PDF_DATA_ERROR)
+      if (nRet == PDF_DATA_ERROR) {
         return false;
+      }
     }
   } else {
-    if (linearize_option == LinearizeOption::kMustLinearize)
+    if (linearize_option == LinearizeOption::kMustLinearize) {
       return false;
+    }
     network_simulator->SetWholeFileAvailable();
     document->reset(
         FPDF_LoadCustomDocument(network_simulator->GetFileAccess(), password));
     document_ptr = document->get();
-    if (!document_ptr)
+    if (!document_ptr) {
       return false;
+    }
   }
   form_handle->reset(SetupFormFillEnvironment(document_ptr, javascript_option));
 
   int doc_type = FPDF_GetFormType(document_ptr);
-  if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND)
+  if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND) {
     FPDF_LoadXFA(document_ptr);
+  }
 
   return true;
 }
@@ -480,8 +488,9 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
   formfillinfo->FFI_DoURIActionWithKeyboardModifier =
       DoURIActionWithKeyboardModifierTrampoline;
 
-  if (javascript_option == JavaScriptOption::kEnableJavaScript)
+  if (javascript_option == JavaScriptOption::kEnableJavaScript) {
     formfillinfo->m_pJsPlatform = platform;
+  }
 
   FPDF_FORMHANDLE form_handle =
       FPDFDOC_InitFormFillEnvironment(doc, formfillinfo);
@@ -504,9 +513,10 @@ int EmbedderTest::GetFirstPageNum() {
 
 int EmbedderTest::GetPageCount() {
   int page_count = FPDF_GetPageCount(document());
-  for (int i = 0; i < page_count; ++i)
+  for (int i = 0; i < page_count; ++i) {
     (void)FPDFAvail_IsPageAvail(avail(), i,
                                 fake_file_access_->GetDownloadHints());
+  }
   return page_count;
 }
 
@@ -529,8 +539,9 @@ FPDF_PAGE EmbedderTest::LoadPageCommon(int page_index, bool do_events) {
   CHECK(!pdfium::Contains(page_map_, page_index));
 
   FPDF_PAGE page = FPDF_LoadPage(document(), page_index);
-  if (!page)
+  if (!page) {
     return nullptr;
+  }
 
   if (do_events) {
     FORM_OnAfterLoadPage(page, form_handle());
@@ -643,8 +654,9 @@ std::string EmbedderTest::GetPostScriptFromEmf(
   // This comes from Emf::InitFromData() in Chromium.
   HENHMETAFILE emf = SetEnhMetaFileBits(
       pdfium::checked_cast<UINT>(emf_data.size()), emf_data.data());
-  if (!emf)
+  if (!emf) {
     return std::string();
+  }
 
   // This comes from Emf::Enumerator::Enumerator() in Chromium.
   std::vector<const ENHMETARECORD*> records;
@@ -656,8 +668,9 @@ std::string EmbedderTest::GetPostScriptFromEmf(
   // This comes from PostScriptMetaFile::SafePlayback() in Chromium.
   std::string ps_data;
   for (const auto* record : records) {
-    if (record->iType != EMR_GDICOMMENT)
+    if (record->iType != EMR_GDICOMMENT) {
       continue;
+    }
 
     // PostScript data is encapsulated inside EMF comment records.
     // The first two bytes of the comment indicate the string length. The rest
@@ -717,8 +730,9 @@ FPDF_PAGE EmbedderTest::LoadSavedPage(int page_index) {
   CHECK(!pdfium::Contains(saved_page_map_, page_index));
 
   FPDF_PAGE page = FPDF_LoadPage(saved_document(), page_index);
-  if (!page)
+  if (!page) {
     return nullptr;
+  }
 
   FORM_OnAfterLoadPage(page, saved_form_handle());
   FORM_DoPageAAction(page, saved_form_handle(), FPDFPAGE_AACTION_OPEN);
@@ -791,8 +805,9 @@ std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
                         static_cast<size_t>(stride) * height);
 
   CRYPT_md5_context context = CRYPT_MD5Start();
-  for (int i = 0; i < height; ++i)
+  for (int i = 0; i < height; ++i) {
     CRYPT_MD5Update(&context, span.subspan(i * stride, usable_bytes_per_row));
+  }
   uint8_t digest[16];
   CRYPT_MD5Finish(&context, digest);
   return CryptToBase16(digest);
@@ -818,8 +833,9 @@ void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
       (expected_width * GetBitmapBytesPerPixel(bitmap) * 8 + 31) / 32 * 4;
   ASSERT_EQ(expected_stride, FPDFBitmap_GetStride(bitmap));
 
-  if (!expected_md5sum)
+  if (!expected_md5sum) {
     return;
+  }
 
   std::string actual_md5sum = HashBitmap(bitmap);
   EXPECT_EQ(expected_md5sum, actual_md5sum);
@@ -836,8 +852,9 @@ int EmbedderTest::WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
 
   pThis->data_string_.append(static_cast<const char*>(data), size);
 
-  if (pThis->filestream_.is_open())
+  if (pThis->filestream_.is_open()) {
     pThis->filestream_.write(static_cast<const char*>(data), size);
+  }
 
   return 1;
 }

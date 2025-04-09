@@ -13,13 +13,15 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   static constexpr size_t kParameterSize = 21;
-  if (size < kParameterSize)
+  if (size < kParameterSize) {
     return 0;
+  }
 
   // Limit data size to prevent fuzzer timeout.
   static constexpr size_t kMaxDataSize = 256 * 1024;
-  if (size > kParameterSize + kMaxDataSize)
+  if (size > kParameterSize + kMaxDataSize) {
     return 0;
+  }
 
   // SAFETY: trusted arguments from fuzzer.
   auto span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
@@ -41,8 +43,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   if (decoder) {
     int line = 0;
-    while (!decoder->GetScanline(line).empty())
+    while (!decoder->GetScanline(line).empty()) {
       line++;
+    }
   }
 
   return 0;

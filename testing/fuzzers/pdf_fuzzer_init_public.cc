@@ -43,22 +43,25 @@ std::string ProgramPath() {
 #ifdef _WIN32
   char path[MAX_PATH];
   DWORD len = GetModuleFileNameA(nullptr, path, MAX_PATH);
-  if (len != 0)
+  if (len != 0) {
     result = std::string(path, len);
+  }
 #elif defined(__APPLE__)
   char path[PATH_MAX];
   unsigned int len = PATH_MAX;
   if (!_NSGetExecutablePath(path, &len)) {
     std::unique_ptr<char, pdfium::FreeDeleter> resolved_path(
         realpath(path, nullptr));
-    if (resolved_path.get())
+    if (resolved_path.get()) {
       result = std::string(resolved_path.get());
+    }
   }
 #else  // Linux
   char path[PATH_MAX];
   ssize_t len = readlink("/proc/self/exe", path, PATH_MAX);
-  if (len > 0)
+  if (len > 0) {
     result = std::string(path, len);
+  }
 #endif
   return result;
 }
