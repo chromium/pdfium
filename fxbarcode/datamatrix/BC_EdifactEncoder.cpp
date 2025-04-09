@@ -33,8 +33,9 @@ namespace {
 
 WideString EncodeToEdifactCodewords(const WideString& sb) {
   size_t len = sb.GetLength();
-  if (len == 0)
+  if (len == 0) {
     return WideString();
+  }
 
   wchar_t c1 = sb[0];
   wchar_t c2 = len >= 2 ? sb[1] : 0;
@@ -53,32 +54,38 @@ WideString EncodeToEdifactCodewords(const WideString& sb) {
 
 bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
   size_t count = buffer.GetLength();
-  if (count == 0)
+  if (count == 0) {
     return true;
-  if (count > 4)
+  }
+  if (count > 4) {
     return false;
+  }
 
   if (count == 1) {
-    if (!context->UpdateSymbolInfo())
+    if (!context->UpdateSymbolInfo()) {
       return false;
+    }
 
     int32_t available =
         context->symbol_info_->data_capacity() - context->getCodewordCount();
     int32_t remaining = context->getRemainingCharacters();
-    if (remaining == 0 && available <= 2)
+    if (remaining == 0 && available <= 2) {
       return true;
+    }
   }
 
   int32_t restChars = count - 1;
   WideString encoded = EncodeToEdifactCodewords(buffer);
-  if (encoded.IsEmpty())
+  if (encoded.IsEmpty()) {
     return false;
+  }
 
   bool endOfSymbolReached = !context->hasMoreCharacters();
   bool restInAscii = endOfSymbolReached && restChars <= 2;
   if (restChars <= 2) {
-    if (!context->UpdateSymbolInfo(context->getCodewordCount() + restChars))
+    if (!context->UpdateSymbolInfo(context->getCodewordCount() + restChars)) {
       return false;
+    }
 
     int32_t available =
         context->symbol_info_->data_capacity() - context->getCodewordCount();
@@ -129,15 +136,17 @@ bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
   WideString buffer;
   while (context->hasMoreCharacters()) {
     wchar_t c = context->getCurrentChar();
-    if (!AppendEncodedChar(c, &buffer))
+    if (!AppendEncodedChar(c, &buffer)) {
       return false;
+    }
 
     context->pos_++;
     size_t count = buffer.GetLength();
     if (count >= 4) {
       WideString encoded = EncodeToEdifactCodewords(buffer);
-      if (encoded.IsEmpty())
+      if (encoded.IsEmpty()) {
         return false;
+      }
 
       context->writeCodewords(encoded);
       buffer.Delete(0, 4);

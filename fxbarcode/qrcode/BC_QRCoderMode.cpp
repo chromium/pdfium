@@ -63,12 +63,13 @@ int32_t CBC_QRCoderMode::GetCharacterCountBits(int32_t number) const {
   }
 
   int32_t offset;
-  if (number <= 9)
+  if (number <= 9) {
     offset = 0;
-  else if (number <= 26)
+  } else if (number <= 26) {
     offset = 1;
-  else
+  } else {
     offset = 2;
+  }
 
   int32_t result = character_count_bits_for_versions_[offset];
   DCHECK(result != 0);

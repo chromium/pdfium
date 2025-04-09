@@ -42,8 +42,9 @@ CBC_PDF417I::CBC_PDF417I()
 CBC_PDF417I::~CBC_PDF417I() = default;
 
 bool CBC_PDF417I::Encode(WideStringView contents) {
-  if (contents.GetLength() > kMaxPDF417InputLengthBytes)
+  if (contents.GetLength() > kMaxPDF417InputLengthBytes) {
     return false;
+  }
 
   auto* pWriter = GetPDF417Writer();
   CBC_PDF417Writer::EncodeResult result = pWriter->Encode(contents);

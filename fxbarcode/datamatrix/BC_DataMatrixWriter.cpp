@@ -112,18 +112,21 @@ DataVector<uint8_t> CBC_DataMatrixWriter::Encode(const WideString& contents,
                                                  int32_t* pOutWidth,
                                                  int32_t* pOutHeight) {
   WideString encoded = CBC_HighLevelEncoder::EncodeHighLevel(contents);
-  if (encoded.IsEmpty())
+  if (encoded.IsEmpty()) {
     return DataVector<uint8_t>();
+  }
 
   const CBC_SymbolInfo* pSymbolInfo =
       CBC_SymbolInfo::Lookup(encoded.GetLength(), false);
-  if (!pSymbolInfo)
+  if (!pSymbolInfo) {
     return DataVector<uint8_t>();
+  }
 
   WideString codewords =
       CBC_ErrorCorrection::EncodeECC200(encoded, pSymbolInfo);
-  if (codewords.IsEmpty())
+  if (codewords.IsEmpty()) {
     return DataVector<uint8_t>();
+  }
 
   int32_t width = pSymbolInfo->GetSymbolDataWidth();
   DCHECK(width);

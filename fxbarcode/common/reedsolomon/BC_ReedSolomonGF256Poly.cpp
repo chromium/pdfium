@@ -50,8 +50,9 @@ CBC_ReedSolomonGF256Poly::CBC_ReedSolomonGF256Poly(
     coefficients_ = field_->GetZero()->GetCoefficients();
   } else {
     coefficients_.resize(coefficients.size() - firstNonZero);
-    for (size_t i = firstNonZero, j = 0; i < coefficients.size(); i++, j++)
+    for (size_t i = firstNonZero, j = 0; i < coefficients.size(); i++, j++) {
       coefficients_[j] = coefficients[i];
+    }
   }
 }
 
@@ -80,20 +81,24 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Clone()
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly>
 CBC_ReedSolomonGF256Poly::AddOrSubtract(const CBC_ReedSolomonGF256Poly* other) {
-  if (IsZero())
+  if (IsZero()) {
     return other->Clone();
-  if (other->IsZero())
+  }
+  if (other->IsZero()) {
     return Clone();
+  }
 
   std::vector<int32_t> smallerCoefficients = coefficients_;
   std::vector<int32_t> largerCoefficients = other->GetCoefficients();
-  if (smallerCoefficients.size() > largerCoefficients.size())
+  if (smallerCoefficients.size() > largerCoefficients.size()) {
     std::swap(smallerCoefficients, largerCoefficients);
+  }
 
   std::vector<int32_t> sumDiff(largerCoefficients.size());
   size_t lengthDiff = largerCoefficients.size() - smallerCoefficients.size();
-  for (size_t i = 0; i < lengthDiff; ++i)
+  for (size_t i = 0; i < lengthDiff; ++i) {
     sumDiff[i] = largerCoefficients[i];
+  }
 
   for (size_t i = lengthDiff; i < largerCoefficients.size(); ++i) {
     sumDiff[i] = CBC_ReedSolomonGF256::AddOrSubtract(
@@ -104,8 +109,9 @@ CBC_ReedSolomonGF256Poly::AddOrSubtract(const CBC_ReedSolomonGF256Poly* other) {
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Multiply(
     const CBC_ReedSolomonGF256Poly* other) {
-  if (IsZero() || other->IsZero())
+  if (IsZero() || other->IsZero()) {
     return field_->GetZero()->Clone();
+  }
 
   const std::vector<int32_t>& aCoefficients = coefficients_;
   const std::vector<int32_t>& bCoefficients = other->GetCoefficients();
@@ -125,36 +131,43 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Multiply(
 std::unique_ptr<CBC_ReedSolomonGF256Poly>
 CBC_ReedSolomonGF256Poly::MultiplyByMonomial(int32_t degree,
                                              int32_t coefficient) const {
-  if (degree < 0)
+  if (degree < 0) {
     return nullptr;
-  if (coefficient == 0)
+  }
+  if (coefficient == 0) {
     return field_->GetZero()->Clone();
+  }
 
   size_t size = coefficients_.size();
   std::vector<int32_t> product(size + degree);
-  for (size_t i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++) {
     product[i] = field_->Multiply(coefficients_[i], coefficient);
+  }
 
   return std::make_unique<CBC_ReedSolomonGF256Poly>(field_, product);
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Divide(
     const CBC_ReedSolomonGF256Poly* other) {
-  if (other->IsZero())
+  if (other->IsZero()) {
     return nullptr;
+  }
 
   auto quotient = field_->GetZero()->Clone();
-  if (!quotient)
+  if (!quotient) {
     return nullptr;
+  }
   auto remainder = Clone();
-  if (!remainder)
+  if (!remainder) {
     return nullptr;
+  }
 
   int32_t denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());
   std::optional<int32_t> inverseDenominatorLeadingTeam =
       field_->Inverse(denominatorLeadingTerm);
-  if (!inverseDenominatorLeadingTeam.has_value())
+  if (!inverseDenominatorLeadingTeam.has_value()) {
     return nullptr;
+  }
 
   while (remainder->GetDegree() >= other->GetDegree() && !remainder->IsZero()) {
     int32_t degreeDifference = remainder->GetDegree() - other->GetDegree();
@@ -162,17 +175,21 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Divide(
         field_->Multiply(remainder->GetCoefficients((remainder->GetDegree())),
                          inverseDenominatorLeadingTeam.value());
     auto term = other->MultiplyByMonomial(degreeDifference, scale);
-    if (!term)
+    if (!term) {
       return nullptr;
+    }
     auto iteratorQuotient = field_->BuildMonomial(degreeDifference, scale);
-    if (!iteratorQuotient)
+    if (!iteratorQuotient) {
       return nullptr;
+    }
     quotient = quotient->AddOrSubtract(iteratorQuotient.get());
-    if (!quotient)
+    if (!quotient) {
       return nullptr;
+    }
     remainder = remainder->AddOrSubtract(term.get());
-    if (!remainder)
+    if (!remainder) {
       return nullptr;
+    }
   }
   return remainder;
 }

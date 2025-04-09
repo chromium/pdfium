@@ -66,8 +66,9 @@ void CBC_OneDimWriter::SetCalcChecksum(bool state) {
 }
 
 bool CBC_OneDimWriter::SetFont(CFX_Font* cFont) {
-  if (!cFont)
+  if (!cFont) {
     return false;
+  }
 
   font_ = cFont;
   return true;
@@ -93,8 +94,9 @@ pdfium::span<uint8_t> CBC_OneDimWriter::AppendPattern(
   size_t added = 0;
   size_t pos = 0;
   for (const int8_t pattern_value : pattern) {
-    for (int32_t i = 0; i < pattern_value; ++i)
+    for (int32_t i = 0; i < pattern_value; ++i) {
       target[pos++] = color ? 1 : 0;
+    }
     added += pattern_value;
     color = !color;
   }
@@ -194,8 +196,9 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
   int32_t iFontSize = static_cast<int32_t>(fabs(font_size_));
   int32_t iTextHeight = iFontSize + 1;
   CalcTextInfo(str, charpos, font_, geWidth, iFontSize, charsLen);
-  if (charsLen < 1)
+  if (charsLen < 1) {
     return true;
+  }
 
   int32_t locX = 0;
   int32_t locY = 0;
@@ -255,8 +258,9 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
 
 bool CBC_OneDimWriter::RenderResult(WideStringView contents,
                                     pdfium::span<const uint8_t> code) {
-  if (code.empty())
+  if (code.empty()) {
     return false;
+  }
 
   module_height_ = std::max(module_height_, 20);
   const size_t original_codelength = code.size();
@@ -271,12 +275,14 @@ bool CBC_OneDimWriter::RenderResult(WideStringView contents,
   output_.clear();
   output_.reserve(original_codelength);
   for (size_t i = 0; i < original_codelength; ++i) {
-    if (code[i] != 1)
+    if (code[i] != 1) {
       continue;
+    }
 
     size_t output_index = i + leftPadding;
-    if (output_index >= codelength)
+    if (output_index >= codelength) {
       return true;
+    }
 
     output_.emplace_back();
     output_.back().AppendRect(output_index, 0.0f, output_index + 1, 1.0f);

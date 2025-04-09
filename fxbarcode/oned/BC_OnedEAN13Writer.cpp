@@ -88,8 +88,9 @@ WideString CBC_OnedEAN13Writer::FilterContents(WideStringView contents) {
       i++;
       continue;
     }
-    if (FXSYS_IsDecimalDigit(ch))
+    if (FXSYS_IsDecimalDigit(ch)) {
       filtercontents += ch;
+    }
   }
   return filtercontents;
 }
@@ -99,8 +100,9 @@ int32_t CBC_OnedEAN13Writer::CalcChecksum(const ByteString& contents) {
 }
 
 DataVector<uint8_t> CBC_OnedEAN13Writer::Encode(const ByteString& contents) {
-  if (contents.GetLength() != 13)
+  if (contents.GetLength() != 13) {
     return DataVector<uint8_t>();
+  }
 
   data_length_ = 13;
   int32_t firstDigit = FXSYS_DecimalCharToInt(contents.Front());
@@ -132,8 +134,9 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
                                     CFX_RenderDevice* device,
                                     const CFX_Matrix& matrix,
                                     int32_t barWidth) {
-  if (!device)
+  if (!device) {
     return false;
+  }
 
   static constexpr float kLeftPosition = 10.0f;
   ByteString str = FX_UTF8Encode(contents);

@@ -69,8 +69,9 @@ DataVector<uint8_t> CBC_QRCodeWriter::Encode(WideStringView contents,
       return DataVector<uint8_t>();
   }
   CBC_QRCoder qr;
-  if (!CBC_QRCoderEncoder::Encode(contents, ec, &qr))
+  if (!CBC_QRCoderEncoder::Encode(contents, ec, &qr)) {
     return DataVector<uint8_t>();
+  }
 
   *pOutWidth = qr.GetMatrixWidth();
   *pOutHeight = qr.GetMatrixWidth();

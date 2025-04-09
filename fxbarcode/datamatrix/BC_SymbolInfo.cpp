@@ -57,8 +57,9 @@ constexpr std::array<CBC_SymbolInfo::Data, kSymbolDataSize> kSymbolData = {
 
 // static
 void CBC_SymbolInfo::Initialize() {
-  for (size_t i = 0; i < kSymbolDataSize; ++i)
+  for (size_t i = 0; i < kSymbolDataSize; ++i) {
     g_symbols[i] = new CBC_SymbolInfo(&kSymbolData[i]);
+  }
   g_symbols[kSymbolDataSize] = new CBC_DataMatrixSymbolInfo144();
 }
 
@@ -78,11 +79,13 @@ const CBC_SymbolInfo* CBC_SymbolInfo::Lookup(size_t data_codewords,
                                              bool allow_rectangular) {
   for (size_t i = 0; i < kSymbolsCount; ++i) {
     CBC_SymbolInfo* symbol = g_symbols[i];
-    if (symbol->is_rectangular() && !allow_rectangular)
+    if (symbol->is_rectangular() && !allow_rectangular) {
       continue;
+    }
 
-    if (data_codewords <= symbol->data_capacity())
+    if (data_codewords <= symbol->data_capacity()) {
       return symbol;
+    }
   }
   return nullptr;
 }

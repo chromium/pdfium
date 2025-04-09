@@ -33,12 +33,14 @@ CBC_Code128::~CBC_Code128() = default;
 
 bool CBC_Code128::Encode(WideStringView contents) {
   auto* pWriter = GetOnedCode128Writer();
-  if (!pWriter->CheckContentValidity(contents))
+  if (!pWriter->CheckContentValidity(contents)) {
     return false;
+  }
 
   WideString content(contents);
-  if (contents.GetLength() % 2 && pWriter->GetType() == BC_TYPE::kCode128C)
+  if (contents.GetLength() % 2 && pWriter->GetType() == BC_TYPE::kCode128C) {
     content += '0';
+  }
 
   render_contents_ = pWriter->FilterContents(content.AsStringView());
   ByteString byteString = render_contents_.ToUTF8();

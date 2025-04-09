@@ -66,11 +66,13 @@ const auto kAlphaNumericTable = fxcrt::ToArray<const int8_t>(
      25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35});
 
 int32_t GetAlphaNumericCode(int32_t code) {
-  if (code < 32)
+  if (code < 32) {
     return -1;
+  }
   size_t code_index = static_cast<size_t>(code - 32);
-  if (code_index >= std::size(kAlphaNumericTable))
+  if (code_index >= std::size(kAlphaNumericTable)) {
     return -1;
+  }
   return kAlphaNumericTable[code_index];
 }
 
@@ -102,13 +104,15 @@ bool AppendAlphaNumericBytes(const ByteString& content,
   size_t i = 0;
   while (i < length) {
     int32_t code1 = GetAlphaNumericCode(content[i]);
-    if (code1 == -1)
+    if (code1 == -1) {
       return false;
+    }
 
     if (i + 1 < length) {
       int32_t code2 = GetAlphaNumericCode(content[i + 1]);
-      if (code2 == -1)
+      if (code2 == -1) {
         return false;
+      }
 
       bits->AppendBits(code1 * 45 + code2, 11);
       i += 2;
@@ -121,8 +125,9 @@ bool AppendAlphaNumericBytes(const ByteString& content,
 }
 
 bool Append8BitBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
-  for (char c : content)
+  for (char c : content) {
     bits->AppendBits(c, 8);
+  }
   return true;
 }
 
@@ -135,13 +140,16 @@ bool AppendLengthInfo(int32_t numLetters,
                       CBC_QRCoderMode* mode,
                       CBC_QRCoderBitVector* bits) {
   const auto* qcv = CBC_QRCoderVersion::GetVersionForNumber(version);
-  if (!qcv)
+  if (!qcv) {
     return false;
+  }
   int32_t numBits = mode->GetCharacterCountBits(qcv->GetVersionNumber());
-  if (numBits == 0)
+  if (numBits == 0) {
     return false;
-  if (numBits > ((1 << numBits) - 1))
+  }
+  if (numBits > ((1 << numBits) - 1)) {
     return true;
+  }
 
   bits->AppendBits(numLetters, numBits);
   return true;
@@ -150,12 +158,15 @@ bool AppendLengthInfo(int32_t numLetters,
 bool AppendBytes(const ByteString& content,
                  CBC_QRCoderMode* mode,
                  CBC_QRCoderBitVector* bits) {
-  if (mode == CBC_QRCoderMode::sNUMERIC)
+  if (mode == CBC_QRCoderMode::sNUMERIC) {
     return AppendNumericBytes(content, bits);
-  if (mode == CBC_QRCoderMode::sALPHANUMERIC)
+  }
+  if (mode == CBC_QRCoderMode::sALPHANUMERIC) {
     return AppendAlphaNumericBytes(content, bits);
-  if (mode == CBC_QRCoderMode::sBYTE)
+  }
+  if (mode == CBC_QRCoderMode::sBYTE) {
     return Append8BitBytes(content, bits);
+  }
   return false;
 }
 
@@ -235,8 +246,9 @@ void GetNumDataBytesAndNumECBytesForBlockID(int32_t numTotalBytes,
                                             int32_t blockID,
                                             int32_t* numDataBytesInBlock,
                                             int32_t* numECBytesInBlock) {
-  if (blockID >= numRSBlocks)
+  if (blockID >= numRSBlocks) {
     return;
+  }
 
   int32_t numRsBlocksInGroup2 = numTotalBytes % numRSBlocks;
   int32_t numRsBlocksInGroup1 = numRSBlocks - numRsBlocksInGroup2;
@@ -257,25 +269,30 @@ void GetNumDataBytesAndNumECBytesForBlockID(int32_t numTotalBytes,
 
 bool TerminateBits(int32_t numDataBytes, CBC_QRCoderBitVector* bits) {
   size_t capacity = numDataBytes << 3;
-  if (bits->Size() > capacity)
+  if (bits->Size() > capacity) {
     return false;
+  }
 
-  for (int32_t i = 0; i < 4 && bits->Size() < capacity; ++i)
+  for (int32_t i = 0; i < 4 && bits->Size() < capacity; ++i) {
     bits->AppendBit(0);
+  }
 
   int32_t numBitsInLastByte = bits->Size() % 8;
   if (numBitsInLastByte > 0) {
     int32_t numPaddingBits = 8 - numBitsInLastByte;
-    for (int32_t j = 0; j < numPaddingBits; ++j)
+    for (int32_t j = 0; j < numPaddingBits; ++j) {
       bits->AppendBit(0);
+    }
   }
 
-  if (bits->Size() % 8 != 0)
+  if (bits->Size() % 8 != 0) {
     return false;
+  }
 
   int32_t numPaddingBytes = numDataBytes - bits->sizeInBytes();
-  for (int32_t k = 0; k < numPaddingBytes; ++k)
+  for (int32_t k = 0; k < numPaddingBytes; ++k) {
     bits->AppendBits(k % 2 ? 0x11 : 0xec, 8);
+  }
   return bits->Size() == capacity;
 }
 
@@ -291,10 +308,12 @@ CBC_QRCoderMode* ChooseMode(const ByteString& content) {
       return CBC_QRCoderMode::sBYTE;
     }
   }
-  if (hasAlphaNumeric)
+  if (hasAlphaNumeric) {
     return CBC_QRCoderMode::sALPHANUMERIC;
-  if (hasNumeric)
+  }
+  if (hasNumeric) {
     return CBC_QRCoderMode::sNUMERIC;
+  }
   return CBC_QRCoderMode::sBYTE;
 }
 
@@ -305,8 +324,9 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
                            CBC_QRCoderBitVector* result) {
   DCHECK(numTotalBytes >= 0);
   DCHECK(numDataBytes >= 0);
-  if (bits->sizeInBytes() != static_cast<size_t>(numDataBytes))
+  if (bits->sizeInBytes() != static_cast<size_t>(numDataBytes)) {
     return false;
+  }
 
   int32_t dataBytesOffset = 0;
   size_t maxNumDataBytes = 0;
@@ -318,16 +338,18 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     GetNumDataBytesAndNumECBytesForBlockID(numTotalBytes, numDataBytes,
                                            numRSBlocks, i, &numDataBytesInBlock,
                                            &numEcBytesInBlock);
-    if (numDataBytesInBlock < 0 || numEcBytesInBlock <= 0)
+    if (numDataBytesInBlock < 0 || numEcBytesInBlock <= 0) {
       return false;
+    }
 
     DataVector<uint8_t> dataBytes(numDataBytesInBlock);
     fxcrt::Copy(bits->GetArray().subspan(dataBytesOffset, numDataBytesInBlock),
                 dataBytes);
 
     DataVector<uint8_t> ecBytes = GenerateECBytes(dataBytes, numEcBytesInBlock);
-    if (ecBytes.empty())
+    if (ecBytes.empty()) {
       return false;
+    }
 
     maxNumDataBytes = std::max(maxNumDataBytes, dataBytes.size());
     maxNumEcBytes = std::max(maxNumEcBytes, ecBytes.size());
@@ -335,21 +357,24 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     blocks[i].ecc = std::move(ecBytes);
     dataBytesOffset += numDataBytesInBlock;
   }
-  if (numDataBytes != dataBytesOffset)
+  if (numDataBytes != dataBytesOffset) {
     return false;
+  }
 
   for (size_t x = 0; x < maxNumDataBytes; x++) {
     for (size_t j = 0; j < blocks.size(); j++) {
       const DataVector<uint8_t>& dataBytes = blocks[j].data;
-      if (x < dataBytes.size())
+      if (x < dataBytes.size()) {
         result->AppendBits(dataBytes[x], 8);
+      }
     }
   }
   for (size_t y = 0; y < maxNumEcBytes; y++) {
     for (size_t l = 0; l < blocks.size(); l++) {
       const DataVector<uint8_t>& ecBytes = blocks[l].ecc;
-      if (y < ecBytes.size())
+      if (y < ecBytes.size()) {
         result->AppendBits(ecBytes[y], 8);
+      }
     }
   }
   return static_cast<size_t>(numTotalBytes) == result->sizeInBytes();
@@ -376,11 +401,13 @@ bool CBC_QRCoderEncoder::Encode(WideStringView content,
   ByteString utf8Data = FX_UTF8Encode(content);
   CBC_QRCoderMode* mode = ChooseMode(utf8Data);
   CBC_QRCoderBitVector dataBits;
-  if (!AppendBytes(utf8Data, mode, &dataBits))
+  if (!AppendBytes(utf8Data, mode, &dataBits)) {
     return false;
+  }
   int32_t numInputBytes = dataBits.sizeInBytes();
-  if (!InitQRCode(numInputBytes, ecLevel, qrCode))
+  if (!InitQRCode(numInputBytes, ecLevel, qrCode)) {
     return false;
+  }
   CBC_QRCoderBitVector headerAndDataBits;
   AppendModeInfo(mode, &headerAndDataBits);
   int32_t numLetters = mode == CBC_QRCoderMode::sBYTE ? dataBits.sizeInBytes()
@@ -390,8 +417,9 @@ bool CBC_QRCoderEncoder::Encode(WideStringView content,
     return false;
   }
   headerAndDataBits.AppendBitVector(&dataBits);
-  if (!TerminateBits(qrCode->GetNumDataBytes(), &headerAndDataBits))
+  if (!TerminateBits(qrCode->GetNumDataBytes(), &headerAndDataBits)) {
     return false;
+  }
   CBC_QRCoderBitVector finalBits;
   if (!InterleaveWithECBytes(&headerAndDataBits, qrCode->GetNumTotalBytes(),
                              qrCode->GetNumDataBytes(),
@@ -403,8 +431,9 @@ bool CBC_QRCoderEncoder::Encode(WideStringView content,
       qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   std::optional<int32_t> maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get());
-  if (!maskPattern.has_value())
+  if (!maskPattern.has_value()) {
     return false;
+  }
 
   qrCode->SetMaskPattern(maskPattern.value());
   if (!CBC_QRCoderMatrixUtil::BuildMatrix(

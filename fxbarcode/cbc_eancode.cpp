@@ -22,8 +22,9 @@ CBC_OneDimEANWriter* CBC_EANCode::GetOneDimEANWriter() {
 
 bool CBC_EANCode::Encode(WideStringView contents) {
   auto* pWriter = GetOneDimEANWriter();
-  if (!pWriter->CheckContentValidity(contents))
+  if (!pWriter->CheckContentValidity(contents)) {
     return false;
+  }
 
   render_contents_ = Preprocess(contents);
   ByteString str = render_contents_.ToUTF8();
@@ -44,8 +45,9 @@ WideString CBC_EANCode::Preprocess(WideStringView contents) {
   size_t length = encoded_contents.GetLength();
   size_t max_length = GetMaxLength();
   if (length <= max_length) {
-    for (size_t i = 0; i < max_length - length; i++)
+    for (size_t i = 0; i < max_length - length; i++) {
       encoded_contents.InsertAtFront(L'0');
+    }
 
     ByteString str = encoded_contents.ToUTF8();
     int32_t checksum = pWriter->CalcChecksum(str);

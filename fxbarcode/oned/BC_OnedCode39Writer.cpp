@@ -62,21 +62,24 @@ bool IsInOnedCode39Alphabet(wchar_t ch) {
 }
 
 char CalcCheckSum(const ByteString& contents) {
-  if (contents.GetLength() > 80)
+  if (contents.GetLength() > 80) {
     return '*';
+  }
 
   int32_t checksum = 0;
   for (const auto& c : contents) {
     size_t j = 0;
     for (; j < kOnedCode39AlphabetLen; j++) {
       if (kOnedCode39Alphabet[j] == c) {
-        if (c != '*')
+        if (c != '*') {
           checksum += j;
+        }
         break;
       }
     }
-    if (j >= kOnedCode39AlphabetLen)
+    if (j >= kOnedCode39AlphabetLen) {
       return '*';
+    }
   }
   return kOnedCode39Checksum[checksum % std::size(kOnedCode39Checksum)];
 }
@@ -111,8 +114,9 @@ WideString CBC_OnedCode39Writer::FilterContents(WideStringView contents) {
       continue;
     }
     ch = FXSYS_ToUpperASCII(ch);
-    if (IsInOnedCode39Alphabet(ch))
+    if (IsInOnedCode39Alphabet(ch)) {
       filtercontents += ch;
+    }
   }
   return filtercontents;
 }
@@ -128,8 +132,9 @@ WideString CBC_OnedCode39Writer::RenderTextContents(WideStringView contents) {
       i++;
       continue;
     }
-    if (IsInOnedCode39Alphabet(FXSYS_ToUpperASCII(ch)))
+    if (IsInOnedCode39Alphabet(FXSYS_ToUpperASCII(ch))) {
       renderContents += ch;
+    }
   }
   return renderContents;
 }
@@ -139,8 +144,9 @@ void CBC_OnedCode39Writer::SetTextLocation(BC_TEXT_LOC location) {
 }
 
 bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
-  if (ratio < 2 || ratio > 3)
+  if (ratio < 2 || ratio > 3) {
     return false;
+  }
 
   wide_narr_ratio_ = ratio;
   return true;
@@ -148,8 +154,9 @@ bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
 
 DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
   char checksum = CalcCheckSum(contents);
-  if (checksum == '*')
+  if (checksum == '*') {
     return DataVector<uint8_t>();
+  }
 
   std::array<uint8_t, kArraySize> widths = {};
   static constexpr int32_t kWideStrideNum = 3;
@@ -168,8 +175,9 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
         continue;
       }
       ToIntArray(kOnedCode39CharacterEncoding[i], wide_narr_ratio_, widths);
-      for (size_t k = 0; k < kArraySize; k++)
+      for (size_t k = 0; k < kArraySize; k++) {
         code_width += widths[k];
+      }
     }
   }
   DataVector<uint8_t> result(code_width);
@@ -209,8 +217,9 @@ bool CBC_OnedCode39Writer::encodedContents(WideStringView contents,
     ByteString str = checksumContent.ToUTF8();
     char checksum;
     checksum = CalcCheckSum(str);
-    if (checksum == '*')
+    if (checksum == '*') {
       return false;
+    }
     str += checksum;
     *result += checksum;
   }
@@ -220,7 +229,8 @@ bool CBC_OnedCode39Writer::encodedContents(WideStringView contents,
 bool CBC_OnedCode39Writer::RenderResult(WideStringView contents,
                                         pdfium::span<const uint8_t> code) {
   WideString encodedCon;
-  if (!encodedContents(contents, &encodedCon))
+  if (!encodedContents(contents, &encodedCon)) {
     return false;
+  }
   return CBC_OneDimWriter::RenderResult(encodedCon.AsStringView(), code);
 }

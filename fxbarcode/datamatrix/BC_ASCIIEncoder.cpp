@@ -77,8 +77,9 @@ bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
   if (n >= 2) {
     std::optional<wchar_t> code = EncodeASCIIDigits(
         context->msg_[context->pos_], context->msg_[context->pos_ + 1]);
-    if (!code.has_value())
+    if (!code.has_value()) {
       return false;
+    }
 
     context->writeCodeword(code.value());
     context->pos_ += 2;

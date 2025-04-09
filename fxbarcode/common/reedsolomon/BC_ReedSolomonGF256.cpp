@@ -53,11 +53,13 @@ CBC_ReedSolomonGF256::~CBC_ReedSolomonGF256() = default;
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256::BuildMonomial(
     int32_t degree,
     int32_t coefficient) {
-  if (degree < 0)
+  if (degree < 0) {
     return nullptr;
+  }
 
-  if (coefficient == 0)
+  if (coefficient == 0) {
     return zero_->Clone();
+  }
 
   std::vector<int32_t> coefficients(degree + 1);
   coefficients[0] = coefficient;
@@ -74,8 +76,9 @@ int32_t CBC_ReedSolomonGF256::Exp(int32_t a) {
 }
 
 std::optional<int32_t> CBC_ReedSolomonGF256::Inverse(int32_t a) {
-  if (a == 0)
+  if (a == 0) {
     return std::nullopt;
+  }
   return exp_table_[255 - log_table_[a]];
 }
 

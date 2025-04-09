@@ -33,8 +33,9 @@ CBC_Codabar::~CBC_Codabar() = default;
 
 bool CBC_Codabar::Encode(WideStringView contents) {
   auto* pWriter = GetOnedCodaBarWriter();
-  if (!pWriter->CheckContentValidity(contents))
+  if (!pWriter->CheckContentValidity(contents)) {
     return false;
+  }
 
   render_contents_ = pWriter->FilterContents(contents);
   ByteString byteString = render_contents_.ToUTF8();

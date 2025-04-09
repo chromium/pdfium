@@ -11,16 +11,18 @@ CBC_Writer::CBC_Writer() = default;
 CBC_Writer::~CBC_Writer() = default;
 
 bool CBC_Writer::SetModuleHeight(int32_t moduleHeight) {
-  if (moduleHeight > 10 || moduleHeight < 1)
+  if (moduleHeight > 10 || moduleHeight < 1) {
     return false;
+  }
 
   module_height_ = moduleHeight;
   return true;
 }
 
 bool CBC_Writer::SetModuleWidth(int32_t moduleWidth) {
-  if (moduleWidth > 10 || moduleWidth < 1)
+  if (moduleWidth > 10 || moduleWidth < 1) {
     return false;
+  }
 
   module_width_ = moduleWidth;
   return true;

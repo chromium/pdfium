@@ -11,10 +11,11 @@ int32_t EANCalcChecksum(const ByteString& contents) {
   int32_t even = 0;
   size_t parity = 1;
   for (size_t i = contents.GetLength(); i > 0; i--) {
-    if (parity % 2)
+    if (parity % 2) {
       odd += FXSYS_DecimalCharToInt(contents[i - 1]);
-    else
+    } else {
       even += FXSYS_DecimalCharToInt(contents[i - 1]);
+    }
     parity++;
   }
   return (10 - (odd * 3 + even) % 10) % 10;

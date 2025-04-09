@@ -24,8 +24,9 @@ CBC_TwoDimWriter::~CBC_TwoDimWriter() = default;
 bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
                                     int32_t codeWidth,
                                     int32_t codeHeight) {
-  if (code.empty())
+  if (code.empty()) {
     return false;
+  }
 
   input_width_ = codeWidth;
   input_height_ = codeHeight;

@@ -159,8 +159,9 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
     ++table;
   }
 
-  if (table >= kFactorTableNum)
+  if (table >= kFactorTableNum) {
     return WideString();
+  }
 
   auto ecc = FixedSizeDataVector<uint16_t>::Zeroed(numECWords);
   pdfium::span<uint16_t> ecc_span = ecc.span();
@@ -183,8 +184,9 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
   }
   WideString strecc;
   strecc.Reserve(numECWords);
-  for (size_t i = 0; i < numECWords; ++i)
+  for (size_t i = 0; i < numECWords; ++i) {
     strecc.InsertAtBack(static_cast<wchar_t>(ecc_span[numECWords - i - 1]));
+  }
 
   DCHECK(!strecc.IsEmpty());
   return strecc;
@@ -194,15 +196,17 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
 
 WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
                                              const CBC_SymbolInfo* symbolInfo) {
-  if (codewords.GetLength() != symbolInfo->data_capacity())
+  if (codewords.GetLength() != symbolInfo->data_capacity()) {
     return WideString();
+  }
 
   WideString sb = codewords;
   size_t blockCount = symbolInfo->GetInterleavedBlockCount();
   if (blockCount == 1) {
     WideString ecc = CreateECCBlock(codewords, symbolInfo->error_codewords());
-    if (ecc.IsEmpty())
+    if (ecc.IsEmpty()) {
       return WideString();
+    }
     sb += ecc;
   } else {
     std::vector<size_t> dataSizes(blockCount);
@@ -217,19 +221,23 @@ WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
     size_t max_error_sizes =
         *std::max_element(errorSizes.begin(), errorSizes.end()) * blockCount;
     sb.Reserve(sb.GetLength() + max_error_sizes);
-    for (size_t i = 0; i < max_error_sizes; ++i)
+    for (size_t i = 0; i < max_error_sizes; ++i) {
       sb.InsertAtBack(0);
+    }
 
     for (size_t block = 0; block < blockCount; ++block) {
       WideString temp;
-      if (symbolInfo->data_capacity() > block)
+      if (symbolInfo->data_capacity() > block) {
         temp.Reserve((symbolInfo->data_capacity() - block / blockCount) + 1);
-      for (size_t d = block; d < symbolInfo->data_capacity(); d += blockCount)
+      }
+      for (size_t d = block; d < symbolInfo->data_capacity(); d += blockCount) {
         temp.InsertAtBack(static_cast<wchar_t>(codewords[d]));
+      }
 
       WideString ecc = CreateECCBlock(temp, errorSizes[block]);
-      if (ecc.IsEmpty())
+      if (ecc.IsEmpty()) {
         return WideString();
+      }
 
       for (size_t pos = 0, i = block; i < errorSizes[block] * blockCount;
            ++pos, i += blockCount) {

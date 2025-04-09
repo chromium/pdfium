@@ -33,8 +33,9 @@ CBC_Code39::~CBC_Code39() = default;
 
 bool CBC_Code39::Encode(WideStringView contents) {
   auto* pWriter = GetOnedCode39Writer();
-  if (!pWriter->CheckContentValidity(contents))
+  if (!pWriter->CheckContentValidity(contents)) {
     return false;
+  }
 
   WideString filtercontents = pWriter->FilterContents(contents);
   render_contents_ = pWriter->RenderTextContents(contents);

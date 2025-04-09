@@ -67,8 +67,9 @@ void CBC_OnedEAN8Writer::SetDataLength(int32_t length) {
 }
 
 void CBC_OnedEAN8Writer::SetTextLocation(BC_TEXT_LOC location) {
-  if (location == BC_TEXT_LOC::kBelowEmbed)
+  if (location == BC_TEXT_LOC::kBelowEmbed) {
     loc_text_loc_ = location;
+  }
 }
 
 bool CBC_OnedEAN8Writer::CheckContentValidity(WideStringView contents) {
@@ -87,8 +88,9 @@ WideString CBC_OnedEAN8Writer::FilterContents(WideStringView contents) {
       i++;
       continue;
     }
-    if (FXSYS_IsDecimalDigit(ch))
+    if (FXSYS_IsDecimalDigit(ch)) {
       filtercontents += ch;
+    }
   }
   return filtercontents;
 }
@@ -98,8 +100,9 @@ int32_t CBC_OnedEAN8Writer::CalcChecksum(const ByteString& contents) {
 }
 
 DataVector<uint8_t> CBC_OnedEAN8Writer::Encode(const ByteString& contents) {
-  if (contents.GetLength() != 8)
+  if (contents.GetLength() != 8) {
     return {};
+  }
 
   DataVector<uint8_t> result(code_width_);
   auto result_span = pdfium::make_span(result);
@@ -125,8 +128,9 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
                                    CFX_RenderDevice* device,
                                    const CFX_Matrix& matrix,
                                    int32_t barWidth) {
-  if (!device)
+  if (!device) {
     return false;
+  }
 
   static constexpr float kLeftPosition = 3.0f;
   ByteString str = FX_UTF8Encode(contents);

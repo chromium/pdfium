@@ -50,8 +50,9 @@ const char kContentChars[] = {'0', '1', '2', '3', '4', '5', '6', '7',
                               '8', '9', '-', '$', '/', ':', '+', '.'};
 
 bool IsValidChar(wchar_t ch, bool isContent) {
-  if (ch > 0x7F)
+  if (ch > 0x7F) {
     return false;
+  }
 
   char narrow_ch = static_cast<char>(ch);
   return pdfium::Contains(kContentChars, narrow_ch) ||
@@ -65,16 +66,18 @@ CBC_OnedCodaBarWriter::CBC_OnedCodaBarWriter() = default;
 CBC_OnedCodaBarWriter::~CBC_OnedCodaBarWriter() = default;
 
 bool CBC_OnedCodaBarWriter::SetStartChar(char start) {
-  if (!pdfium::Contains(kStartEndChars, start))
+  if (!pdfium::Contains(kStartEndChars, start)) {
     return false;
+  }
 
   ch_start_ = start;
   return true;
 }
 
 bool CBC_OnedCodaBarWriter::SetEndChar(char end) {
-  if (!pdfium::Contains(kStartEndChars, end))
+  if (!pdfium::Contains(kStartEndChars, end)) {
     return false;
+  }
 
   ch_end_ = end;
   return true;
@@ -89,8 +92,9 @@ void CBC_OnedCodaBarWriter::SetTextLocation(BC_TEXT_LOC location) {
 }
 
 bool CBC_OnedCodaBarWriter::SetWideNarrowRatio(int8_t ratio) {
-  if (ratio < 2 || ratio > 3)
+  if (ratio < 2 || ratio > 3) {
     return false;
+  }
 
   wide_narr_ratio_ = ratio;
   return true;
@@ -112,8 +116,9 @@ WideString CBC_OnedCodaBarWriter::FilterContents(WideStringView contents) {
       index++;
       continue;
     }
-    if (!IsValidChar(ch, true))
+    if (!IsValidChar(ch, true)) {
       continue;
+    }
     filtercontents += ch;
   }
   return filtercontents;

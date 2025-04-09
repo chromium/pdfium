@@ -152,8 +152,9 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(
   size_t height = matrix->GetHeight();
   for (size_t y = 0; y < height; ++y) {
     for (size_t x = 0; x < width; ++x) {
-      if (array[y * width + x] == 1)
+      if (array[y * width + x] == 1) {
         numDarkCells += 1;
+      }
     }
   }
   size_t numTotalCells = matrix->GetHeight() * matrix->GetWidth();

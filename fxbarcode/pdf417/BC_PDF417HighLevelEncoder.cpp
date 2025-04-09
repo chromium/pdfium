@@ -87,8 +87,9 @@ std::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
   result.Reserve(len);
   for (size_t i = 0; i < len; i++) {
     wchar_t ch = bytes[i] & 0xff;
-    if (ch == '?' && bytes[i] != '?')
+    if (ch == '?' && bytes[i] != '?') {
       return std::nullopt;
+    }
 
     result += ch;
   }
@@ -119,12 +120,14 @@ std::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
       } else {
         std::optional<size_t> b =
             DetermineConsecutiveBinaryCount(result, bytes.unsigned_span(), p);
-        if (!b.has_value())
+        if (!b.has_value()) {
           return std::nullopt;
+        }
 
         size_t b_value = b.value();
-        if (b_value == 0)
+        if (b_value == 0) {
           b_value = 1;
+        }
         if (b_value == 1 && encodingMode == EncodingMode::kText) {
           EncodeBinary(bytes.unsigned_span(), p, 1, EncodingMode::kText, &sb);
         } else {
@@ -154,10 +157,11 @@ CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
     switch (submode) {
       case SubMode::kAlpha:
         if (IsAlphaUpperOrSpace(ch)) {
-          if (ch == ' ')
+          if (ch == ' ') {
             tmp += 26;
-          else
+          } else {
             tmp += ch - 65;
+          }
           break;
         }
         if (IsAlphaLowerOrSpace(ch)) {
@@ -177,10 +181,11 @@ CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
         break;
       case SubMode::kLower:
         if (IsAlphaLowerOrSpace(ch)) {
-          if (ch == ' ')
+          if (ch == ' ') {
             tmp += 26;
-          else
+          } else {
             tmp += ch - 97;
+          }
           break;
         }
         if (IsAlphaUpperOrSpace(ch)) {
@@ -248,8 +253,9 @@ CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
       h = tmp[i];
     }
   }
-  if ((len % 2) != 0)
+  if ((len % 2) != 0) {
     *sb += (h * 30) + 29;
+  }
   return submode;
 }
 
@@ -258,8 +264,9 @@ void CBC_PDF417HighLevelEncoder::EncodeBinary(pdfium::span<const uint8_t> bytes,
                                               size_t count,
                                               EncodingMode startmode,
                                               WideString* sb) {
-  if (count == 1 && startmode == EncodingMode::kText)
+  if (count == 1 && startmode == EncodingMode::kText) {
     *sb += kShiftToByte;
+  }
 
   size_t idx = startpos;
   if (count >= 6) {
@@ -275,13 +282,15 @@ void CBC_PDF417HighLevelEncoder::EncodeBinary(pdfium::span<const uint8_t> bytes,
         chars[i] = (t % 900);
         t /= 900;
       }
-      for (size_t i = 5; i >= 1; i--)
+      for (size_t i = 5; i >= 1; i--) {
         *sb += (chars[i - 1]);
+      }
       idx += 6;
     }
   }
-  if (idx < startpos + count)
+  if (idx < startpos + count) {
     *sb += kLatchToBytePadded;
+  }
   for (size_t i = idx; i < startpos + count; i++) {
     int32_t ch = bytes[i] & 0xff;
     *sb += ch;
@@ -304,8 +313,9 @@ void CBC_PDF417HighLevelEncoder::EncodeNumeric(const WideString& msg,
       tmp += c;
       bigint = bigint / num900;
     } while (!bigint.isZero());
-    for (size_t i = tmp.GetLength(); i >= 1; i--)
+    for (size_t i = tmp.GetLength(); i >= 1; i--) {
       *sb += tmp[i - 1];
+    }
     idx += len;
   }
 }
@@ -321,8 +331,9 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveDigitCount(
     while (FXSYS_IsDecimalDigit(ch) && idx < len) {
       count++;
       idx++;
-      if (idx < len)
+      if (idx < len) {
         ch = msg[idx];
+      }
     }
   }
   return count;
@@ -339,16 +350,20 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
     while (numericCount < 13 && FXSYS_IsDecimalDigit(ch) && idx < len) {
       numericCount++;
       idx++;
-      if (idx < len)
+      if (idx < len) {
         ch = msg[idx];
+      }
     }
-    if (numericCount >= 13)
+    if (numericCount >= 13) {
       return idx - startpos - numericCount;
-    if (numericCount > 0)
+    }
+    if (numericCount > 0) {
       continue;
+    }
     ch = msg[idx];
-    if (!IsText(ch))
+    if (!IsText(ch)) {
       break;
+    }
     idx++;
   }
   return idx - startpos;
@@ -367,26 +382,31 @@ CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
     while (numericCount < 13 && FXSYS_IsDecimalDigit(ch)) {
       numericCount++;
       size_t i = idx + numericCount;
-      if (i >= len)
+      if (i >= len) {
         break;
+      }
       ch = msg[i];
     }
-    if (numericCount >= 13)
+    if (numericCount >= 13) {
       return idx - startpos;
+    }
 
     size_t textCount = 0;
     while (textCount < 5 && IsText(ch)) {
       textCount++;
       size_t i = idx + textCount;
-      if (i >= len)
+      if (i >= len) {
         break;
+      }
       ch = msg[i];
     }
-    if (textCount >= 5)
+    if (textCount >= 5) {
       return idx - startpos;
+    }
     ch = msg[idx];
-    if (bytes[idx] == 63 && ch != '?')
+    if (bytes[idx] == 63 && ch != '?') {
       return std::nullopt;
+    }
     idx++;
   }
   return idx - startpos;

@@ -43,8 +43,9 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(
     for (size_t d = cached_generators_.size(); d <= degree; ++d) {
       CBC_ReedSolomonGF256Poly temp_poly(field_, {1, field_->Exp(d - 1)});
       auto nextGenerator = lastGenerator->Multiply(&temp_poly);
-      if (!nextGenerator)
+      if (!nextGenerator) {
         return nullptr;
+      }
 
       lastGenerator = nextGenerator.get();
       cached_generators_.push_back(std::move(nextGenerator));
@@ -55,36 +56,44 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(
 
 bool CBC_ReedSolomonEncoder::Encode(std::vector<int32_t>* toEncode,
                                     size_t ecBytes) {
-  if (ecBytes == 0)
+  if (ecBytes == 0) {
     return false;
+  }
 
-  if (toEncode->size() <= ecBytes)
+  if (toEncode->size() <= ecBytes) {
     return false;
+  }
 
   CBC_ReedSolomonGF256Poly* generator = BuildGenerator(ecBytes);
-  if (!generator)
+  if (!generator) {
     return false;
+  }
 
   size_t dataBytes = toEncode->size() - ecBytes;
   std::vector<int32_t> infoCoefficients(dataBytes);
-  for (size_t x = 0; x < dataBytes; x++)
+  for (size_t x = 0; x < dataBytes; x++) {
     infoCoefficients[x] = (*toEncode)[x];
+  }
 
   CBC_ReedSolomonGF256Poly info(field_, infoCoefficients);
   auto infoTemp = info.MultiplyByMonomial(ecBytes, 1);
-  if (!infoTemp)
+  if (!infoTemp) {
     return false;
+  }
 
   auto remainder = infoTemp->Divide(generator);
-  if (!remainder)
+  if (!remainder) {
     return false;
+  }
 
   const auto& coefficients = remainder->GetCoefficients();
   size_t numZeroCoefficients =
       ecBytes > coefficients.size() ? ecBytes - coefficients.size() : 0;
-  for (size_t i = 0; i < numZeroCoefficients; i++)
+  for (size_t i = 0; i < numZeroCoefficients; i++) {
     (*toEncode)[dataBytes + i] = 0;
-  for (size_t y = 0; y < coefficients.size(); y++)
+  }
+  for (size_t y = 0; y < coefficients.size(); y++) {
     (*toEncode)[dataBytes + numZeroCoefficients + y] = coefficients[y];
+  }
   return true;
 }

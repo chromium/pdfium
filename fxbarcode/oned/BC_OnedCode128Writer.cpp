@@ -109,8 +109,9 @@ WideString CBC_OnedCode128Writer::FilterContents(WideStringView contents) {
       i++;
       continue;
     }
-    if (ch >= 32 && ch <= limit)
+    if (ch >= 32 && ch <= limit) {
       filtered += ch;
+    }
   }
   return filtered;
 }
@@ -120,8 +121,9 @@ void CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
 }
 
 DataVector<uint8_t> CBC_OnedCode128Writer::Encode(const ByteString& contents) {
-  if (contents.GetLength() < 1 || contents.GetLength() > 80)
+  if (contents.GetLength() < 1 || contents.GetLength() > 80) {
     return DataVector<uint8_t>();
+  }
 
   std::vector<int32_t> patterns;
   int32_t checkSum = 0;
@@ -137,8 +139,9 @@ DataVector<uint8_t> CBC_OnedCode128Writer::Encode(const ByteString& contents) {
   content_len_ = contents.GetLength() + 3;
   int32_t codeWidth = 0;
   for (const auto& patternIndex : patterns) {
-    for (size_t i = 0; i < kPatternSize; ++i)
+    for (size_t i = 0; i < kPatternSize; ++i) {
       codeWidth += kCodePatternTable[patternIndex][i];
+    }
   }
   DataVector<uint8_t> result(codeWidth);
   auto result_span = pdfium::make_span(result);

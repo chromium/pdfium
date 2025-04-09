@@ -32,8 +32,9 @@ namespace {
 wchar_t Randomize255State(wchar_t ch, int32_t position) {
   int32_t pseudoRandom = ((149 * position) % 255) + 1;
   int32_t tempVariable = ch + pseudoRandom;
-  if (tempVariable <= 255)
+  if (tempVariable <= 255) {
     return static_cast<wchar_t>(tempVariable);
+  }
   return static_cast<wchar_t>(tempVariable - 256);
 }
 
@@ -70,8 +71,9 @@ bool CBC_Base256Encoder::Encode(CBC_EncoderContext* context) {
   int32_t lengthFieldSize = 1;
   int32_t currentSize =
       context->getCodewordCount() + dataCount + lengthFieldSize;
-  if (!context->UpdateSymbolInfo(currentSize))
+  if (!context->UpdateSymbolInfo(currentSize)) {
     return false;
+  }
 
   bool mustPad = (context->symbol_info_->data_capacity() - currentSize) > 0;
   if (context->hasMoreCharacters() || mustPad) {

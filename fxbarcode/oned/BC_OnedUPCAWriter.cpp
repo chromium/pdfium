@@ -57,8 +57,9 @@ WideString CBC_OnedUPCAWriter::FilterContents(WideStringView contents) {
       i++;
       continue;
     }
-    if (FXSYS_IsDecimalDigit(ch))
+    if (FXSYS_IsDecimalDigit(ch)) {
       filtercontents += ch;
+    }
   }
   return filtercontents;
 }
@@ -94,8 +95,9 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
                                    CFX_RenderDevice* device,
                                    const CFX_Matrix& matrix,
                                    int32_t barWidth) {
-  if (!device)
+  if (!device) {
     return false;
+  }
 
   static constexpr float kLeftPosition = 17.0f;
   ByteString str = FX_UTF8Encode(contents);

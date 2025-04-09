@@ -67,8 +67,9 @@ const CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
           std::make_unique<CBC_QRCoderVersion>(i + 1, kQRCoderECBDataTable[i]));
     }
   }
-  if (versionNumber < 1 || versionNumber > kMaxVersion)
+  if (versionNumber < 1 || versionNumber > kMaxVersion) {
     return nullptr;
+  }
   return (*g_VERSION)[versionNumber - 1].get();
 }
 

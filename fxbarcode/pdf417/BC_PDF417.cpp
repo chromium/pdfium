@@ -369,19 +369,22 @@ bool CBC_PDF417::GenerateBarcodeLogic(WideStringView msg,
   int32_t errorCorrectionCodeWords =
       CBC_PDF417ErrorCorrection::GetErrorCorrectionCodewordCount(
           errorCorrectionLevel);
-  if (errorCorrectionCodeWords < 0)
+  if (errorCorrectionCodeWords < 0) {
     return false;
+  }
 
   std::optional<WideString> high_level =
       CBC_PDF417HighLevelEncoder::EncodeHighLevel(msg);
-  if (!high_level.has_value())
+  if (!high_level.has_value()) {
     return false;
+  }
 
   size_t sourceCodeWords = high_level.value().GetLength();
   std::vector<int32_t> dimensions =
       determineDimensions(sourceCodeWords, errorCorrectionCodeWords);
-  if (dimensions.size() != 2)
+  if (dimensions.size() != 2) {
     return false;
+  }
   int32_t cols = dimensions[0];
   int32_t rows = dimensions[1];
   int32_t pad = getNumberOfPadCodewords(sourceCodeWords,
@@ -398,15 +401,17 @@ bool CBC_PDF417::GenerateBarcodeLogic(WideStringView msg,
   WideString sb;
   sb += (wchar_t)n;
   sb += high_level.value();
-  for (int32_t i = 0; i < pad; i++)
+  for (int32_t i = 0; i < pad; i++) {
     sb += (wchar_t)900;
+  }
 
   WideString dataCodewords(sb);
   std::optional<WideString> ec =
       CBC_PDF417ErrorCorrection::GenerateErrorCorrection(dataCodewords,
                                                          errorCorrectionLevel);
-  if (!ec.has_value())
+  if (!ec.has_value()) {
     return false;
+  }
 
   WideString fullCodewords = dataCodewords + ec.value();
   barcode_matrix_ = std::make_unique<CBC_BarcodeMatrix>(cols, rows);

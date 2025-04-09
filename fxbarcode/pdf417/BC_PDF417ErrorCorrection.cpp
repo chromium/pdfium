@@ -131,8 +131,9 @@ constexpr std::array<pdfium::span<const uint16_t>, 9> EC_COEFFICIENTS = {
 // static
 int32_t CBC_PDF417ErrorCorrection::GetErrorCorrectionCodewordCount(
     int32_t errorCorrectionLevel) {
-  if (errorCorrectionLevel < 0 || errorCorrectionLevel > 8)
+  if (errorCorrectionLevel < 0 || errorCorrectionLevel > 8) {
     return -1;
+  }
   return 1 << (errorCorrectionLevel + 1);
 }
 
@@ -141,8 +142,9 @@ std::optional<WideString> CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
     const WideString& dataCodewords,
     int32_t errorCorrectionLevel) {
   int32_t k = GetErrorCorrectionCodewordCount(errorCorrectionLevel);
-  if (k < 0)
+  if (k < 0) {
     return std::nullopt;
+  }
 
   DataVector<wchar_t> ech(k);
   size_t sld = dataCodewords.GetLength();
@@ -162,8 +164,9 @@ std::optional<WideString> CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
   WideString result;
   result.Reserve(k);
   for (int32_t j = k - 1; j >= 0; j--) {
-    if (ech[j] != 0)
+    if (ech[j] != 0) {
       ech[j] = static_cast<wchar_t>(929) - ech[j];
+    }
     result += ech[j];
   }
   return result;

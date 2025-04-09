@@ -61,13 +61,15 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
     wchar_t c = context->getCurrentChar();
     context->pos_++;
     int32_t lastCharSize = EncodeChar(c, &buffer);
-    if (lastCharSize <= 0)
+    if (lastCharSize <= 0) {
       return false;
+    }
 
     size_t unwritten = (buffer.GetLength() / 3) * 2;
     int32_t curCodewordCount = context->getCodewordCount() + unwritten;
-    if (!context->UpdateSymbolInfo(curCodewordCount))
+    if (!context->UpdateSymbolInfo(curCodewordCount)) {
       return false;
+    }
 
     int32_t available =
         context->symbol_info_->data_capacity() - curCodewordCount;
@@ -75,15 +77,17 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
       if ((buffer.GetLength() % 3) == 2) {
         if (available < 2 || available > 2) {
           lastCharSize = BacktrackOneCharacter(context, &buffer, lastCharSize);
-          if (lastCharSize < 0)
+          if (lastCharSize < 0) {
             return false;
+          }
         }
       }
       while ((buffer.GetLength() % 3) == 1 &&
              ((lastCharSize <= 3 && available != 1) || lastCharSize > 3)) {
         lastCharSize = BacktrackOneCharacter(context, &buffer, lastCharSize);
-        if (lastCharSize < 0)
+        if (lastCharSize < 0) {
           return false;
+        }
       }
       break;
     }
@@ -112,27 +116,31 @@ bool CBC_C40Encoder::HandleEOD(CBC_EncoderContext* context,
   size_t unwritten = (buffer->GetLength() / 3) * 2;
   size_t rest = buffer->GetLength() % 3;
   int32_t curCodewordCount = context->getCodewordCount() + unwritten;
-  if (!context->UpdateSymbolInfo(curCodewordCount))
+  if (!context->UpdateSymbolInfo(curCodewordCount)) {
     return false;
+  }
 
   int32_t available = context->symbol_info_->data_capacity() - curCodewordCount;
   if (rest == 2) {
     *buffer += (wchar_t)'\0';
-    while (buffer->GetLength() >= 3)
+    while (buffer->GetLength() >= 3) {
       WriteNextTriplet(context, buffer);
+    }
     if (context->hasMoreCharacters()) {
       context->writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
     }
   } else if (available == 1 && rest == 1) {
-    while (buffer->GetLength() >= 3)
+    while (buffer->GetLength() >= 3) {
       WriteNextTriplet(context, buffer);
+    }
     if (context->hasMoreCharacters()) {
       context->writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
     }
     context->pos_--;
   } else if (rest == 0) {
-    while (buffer->GetLength() >= 3)
+    while (buffer->GetLength() >= 3) {
       WriteNextTriplet(context, buffer);
+    }
     if (available > 0 || context->hasMoreCharacters()) {
       context->writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
     }
@@ -200,16 +208,18 @@ int32_t CBC_C40Encoder::BacktrackOneCharacter(CBC_EncoderContext* context,
   }
 
   size_t count = buffer->GetLength();
-  if (count < static_cast<size_t>(lastCharSize))
+  if (count < static_cast<size_t>(lastCharSize)) {
     return -1;
+  }
 
   buffer->Delete(count - lastCharSize, lastCharSize);
   context->pos_--;
   wchar_t c = context->getCurrentChar();
   WideString removed;
   int32_t len = EncodeChar(c, &removed);
-  if (len <= 0)
+  if (len <= 0) {
     return -1;
+  }
 
   context->resetSymbolInfo();
   return len;

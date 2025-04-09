@@ -71,8 +71,9 @@ void CBC_QRCoderBitVector::AppendBits(int32_t value, int32_t numBits) {
 }
 
 void CBC_QRCoderBitVector::AppendBitVector(const CBC_QRCoderBitVector* bits) {
-  for (size_t i = 0; i < bits->Size(); i++)
+  for (size_t i = 0; i < bits->Size(); i++) {
     AppendBit(bits->At(i));
+  }
 }
 
 bool CBC_QRCoderBitVector::XOR(const CBC_QRCoderBitVector* other) {
@@ -81,8 +82,9 @@ bool CBC_QRCoderBitVector::XOR(const CBC_QRCoderBitVector* other) {
   }
 
   pdfium::span<const uint8_t> other_span = other->GetArray();
-  for (size_t i = 0; i < sizeInBytes(); ++i)
+  for (size_t i = 0; i < sizeInBytes(); ++i) {
     array_[i] ^= other_span[i];
+  }
   return true;
 }
 

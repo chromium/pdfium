@@ -73,19 +73,22 @@ int32_t FindMinimums(const std::array<float, kEncoderCount>& charCounts,
     (*intCharCounts)[i] = current;
     if (min > current) {
       min = current;
-      for (auto& m : *mins)
+      for (auto& m : *mins) {
         m = 0;
+      }
     }
-    if (min == current)
+    if (min == current) {
       (*mins)[i]++;
+    }
   }
   return min;
 }
 
 int32_t GetMinimumCount(const std::array<uint8_t, kEncoderCount>& mins) {
   int32_t count = 0;
-  for (const auto& m : mins)
+  for (const auto& m : mins) {
     count += m;
+  }
   return count;
 }
 
@@ -123,12 +126,14 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
   static constexpr size_t kMaxNumericInputLength = 3116;
 
   // Exit early if the input is too long. It will fail no matter what.
-  if (msg.GetLength() > kMaxNumericInputLength)
+  if (msg.GetLength() > kMaxNumericInputLength) {
     return WideString();
+  }
 
   CBC_EncoderContext context(msg);
-  if (context.HasCharactersOutsideISO88591Encoding())
+  if (context.HasCharactersOutsideISO88591Encoding()) {
     return WideString();
+  }
 
   if (msg.Back() == kMacroTrailer) {
     WideString left = msg.First(6);
@@ -152,8 +157,9 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
   encoders.push_back(std::make_unique<CBC_Base256Encoder>());
   Encoding encodingMode = Encoding::ASCII;
   while (context.hasMoreCharacters()) {
-    if (!encoders[EncoderIndex(encodingMode)]->Encode(&context))
+    if (!encoders[EncoderIndex(encodingMode)]->Encode(&context)) {
       return WideString();
+    }
 
     if (context.new_encoding_ != Encoding::UNKNOWN) {
       encodingMode = context.new_encoding_;
@@ -161,20 +167,24 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
     }
   }
   size_t len = context.codewords_.GetLength();
-  if (!context.UpdateSymbolInfo())
+  if (!context.UpdateSymbolInfo()) {
     return WideString();
+  }
 
   size_t capacity = context.symbol_info_->data_capacity();
   if (len < capacity) {
-    if (encodingMode != Encoding::ASCII && encodingMode != Encoding::BASE256)
+    if (encodingMode != Encoding::ASCII && encodingMode != Encoding::BASE256) {
       context.writeCodeword(0x00fe);
+    }
   }
   WideString codewords = context.codewords_;
-  if (codewords.GetLength() < capacity)
+  if (codewords.GetLength() < capacity) {
     codewords += kPad;
+  }
 
-  while (codewords.GetLength() < capacity)
+  while (codewords.GetLength() < capacity) {
     codewords += Randomize253State(kPad, codewords.GetLength() + 1);
+  }
 
   DCHECK(!codewords.IsEmpty());
   return codewords;
@@ -185,8 +195,9 @@ CBC_HighLevelEncoder::Encoding CBC_HighLevelEncoder::LookAheadTest(
     const WideString& msg,
     size_t startpos,
     CBC_HighLevelEncoder::Encoding currentMode) {
-  if (startpos >= msg.GetLength())
+  if (startpos >= msg.GetLength()) {
     return currentMode;
+  }
 
   std::array<float, kEncoderCount> charCounts;
   if (currentMode == Encoding::ASCII) {
@@ -202,18 +213,23 @@ CBC_HighLevelEncoder::Encoding CBC_HighLevelEncoder::LookAheadTest(
       std::array<int32_t, kEncoderCount> intCharCounts;
       std::array<uint8_t, kEncoderCount> mins;
       int32_t min = FindMinimums(charCounts, &intCharCounts, &mins);
-      if (intCharCounts[EncoderIndex(Encoding::ASCII)] == min)
+      if (intCharCounts[EncoderIndex(Encoding::ASCII)] == min) {
         return Encoding::ASCII;
+      }
       const int32_t minCount = GetMinimumCount(mins);
       if (minCount == 1) {
-        if (mins[EncoderIndex(Encoding::BASE256)] > 0)
+        if (mins[EncoderIndex(Encoding::BASE256)] > 0) {
           return Encoding::BASE256;
-        if (mins[EncoderIndex(Encoding::EDIFACT)] > 0)
+        }
+        if (mins[EncoderIndex(Encoding::EDIFACT)] > 0) {
           return Encoding::EDIFACT;
-        if (mins[EncoderIndex(Encoding::TEXT)] > 0)
+        }
+        if (mins[EncoderIndex(Encoding::TEXT)] > 0) {
           return Encoding::TEXT;
-        if (mins[EncoderIndex(Encoding::X12)] > 0)
+        }
+        if (mins[EncoderIndex(Encoding::X12)] > 0) {
           return Encoding::X12;
+        }
       }
       return Encoding::C40;
     }
@@ -222,57 +238,63 @@ CBC_HighLevelEncoder::Encoding CBC_HighLevelEncoder::LookAheadTest(
     charsProcessed++;
     {
       auto& count = charCounts[EncoderIndex(Encoding::ASCII)];
-      if (FXSYS_IsDecimalDigit(c))
+      if (FXSYS_IsDecimalDigit(c)) {
         count += 0.5;
-      else if (IsExtendedASCII(c))
+      } else if (IsExtendedASCII(c)) {
         count = ceilf(count) + 2;
-      else
+      } else {
         count = ceilf(count) + 1;
+      }
     }
 
     {
       auto& count = charCounts[EncoderIndex(Encoding::C40)];
-      if (IsNativeC40(c))
+      if (IsNativeC40(c)) {
         count += 2.0f / 3.0f;
-      else if (IsExtendedASCII(c))
+      } else if (IsExtendedASCII(c)) {
         count += 8.0f / 3.0f;
-      else
+      } else {
         count += 4.0f / 3.0f;
+      }
     }
 
     {
       auto& count = charCounts[EncoderIndex(Encoding::TEXT)];
-      if (IsNativeText(c))
+      if (IsNativeText(c)) {
         count += 2.0f / 3.0f;
-      else if (IsExtendedASCII(c))
+      } else if (IsExtendedASCII(c)) {
         count += 8.0f / 3.0f;
-      else
+      } else {
         count += 4.0f / 3.0f;
+      }
     }
 
     {
       auto& count = charCounts[EncoderIndex(Encoding::X12)];
-      if (IsNativeX12(c))
+      if (IsNativeX12(c)) {
         count += 2.0f / 3.0f;
-      else if (IsExtendedASCII(c))
+      } else if (IsExtendedASCII(c)) {
         count += 13.0f / 3.0f;
-      else
+      } else {
         count += 10.0f / 3.0f;
+      }
     }
 
     {
       auto& count = charCounts[EncoderIndex(Encoding::EDIFACT)];
-      if (IsNativeEDIFACT(c))
+      if (IsNativeEDIFACT(c)) {
         count += 3.0f / 4.0f;
-      else if (IsExtendedASCII(c))
+      } else if (IsExtendedASCII(c)) {
         count += 17.0f / 4.0f;
-      else
+      } else {
         count += 13.0f / 4.0f;
+      }
     }
 
     charCounts[EncoderIndex(Encoding::BASE256)]++;
-    if (charsProcessed < 4)
+    if (charsProcessed < 4) {
       continue;
+    }
 
     std::array<int32_t, kEncoderCount> intCharCounts;
     std::array<uint8_t, kEncoderCount> mins;
@@ -297,24 +319,30 @@ CBC_HighLevelEncoder::Encoding CBC_HighLevelEncoder::LookAheadTest(
       return Encoding::BASE256;
     }
     if (minCount == 1) {
-      if (mins[EncoderIndex(Encoding::EDIFACT)] > 0)
+      if (mins[EncoderIndex(Encoding::EDIFACT)] > 0) {
         return Encoding::EDIFACT;
-      if (mins[EncoderIndex(Encoding::TEXT)] > 0)
+      }
+      if (mins[EncoderIndex(Encoding::TEXT)] > 0) {
         return Encoding::TEXT;
-      if (mins[EncoderIndex(Encoding::X12)] > 0)
+      }
+      if (mins[EncoderIndex(Encoding::X12)] > 0) {
         return Encoding::X12;
+      }
     }
     if (c40_count + 1 < ascii_count && c40_count + 1 < bet_min) {
-      if (c40_count < x12_count)
+      if (c40_count < x12_count) {
         return Encoding::C40;
+      }
       if (c40_count == x12_count) {
         size_t p = startpos + charsProcessed + 1;
         while (p < msg.GetLength()) {
           wchar_t tc = msg[p];
-          if (IsX12TermSep(tc))
+          if (IsX12TermSep(tc)) {
             return Encoding::X12;
-          if (!IsNativeX12(tc))
+          }
+          if (!IsNativeX12(tc)) {
             break;
+          }
           p++;
         }
         return Encoding::C40;
