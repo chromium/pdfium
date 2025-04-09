@@ -31,20 +31,24 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
   parser->SetCurrentPosition(0);
   while (true) {
     pBuf[buf_index++] = parser->GetCurrentPosition();
-    if (buf_index == nParams)
+    if (buf_index == nParams) {
       buf_index = 0;
+    }
 
     buf_count++;
-    if (buf_count > nParams)
+    if (buf_count > nParams) {
       buf_count = nParams;
+    }
 
     ByteStringView word = parser->GetWord();
-    if (word.IsEmpty())
+    if (word.IsEmpty()) {
       return false;
+    }
 
     if (word == token) {
-      if (buf_count < nParams)
+      if (buf_count < nParams) {
         continue;
+      }
 
       parser->SetCurrentPosition(pBuf[buf_index]);
       return true;
@@ -108,8 +112,9 @@ std::optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
 std::optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB()
     const {
   std::optional<CFX_Color> maybe_color = GetColor();
-  if (!maybe_color.has_value())
+  if (!maybe_color.has_value()) {
     return std::nullopt;
+  }
 
   const CFX_Color& color = maybe_color.value();
   if (color.nColorType == CFX_Color::Type::kGray) {

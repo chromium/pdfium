@@ -22,21 +22,25 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
                                         int* z_order) {
   const std::vector<RetainPtr<CPDF_Dictionary>>* pPageLinkList =
       GetPageLinks(pPage);
-  if (!pPageLinkList)
+  if (!pPageLinkList) {
     return CPDF_Link();
+  }
 
   for (size_t i = pPageLinkList->size(); i > 0; --i) {
     size_t annot_index = i - 1;
     RetainPtr<CPDF_Dictionary> pAnnot = (*pPageLinkList)[annot_index];
-    if (!pAnnot)
+    if (!pAnnot) {
       continue;
+    }
 
     CPDF_Link link(std::move(pAnnot));
-    if (!link.GetRect().Contains(point))
+    if (!link.GetRect().Contains(point)) {
       continue;
+    }
 
-    if (z_order)
+    if (z_order) {
       *z_order = pdfium::checked_cast<int32_t>(annot_index);
+    }
     return link;
   }
   return CPDF_Link();
@@ -45,8 +49,9 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
 const std::vector<RetainPtr<CPDF_Dictionary>>* CPDF_LinkList::GetPageLinks(
     CPDF_Page* pPage) {
   uint32_t objnum = pPage->GetDict()->GetObjNum();
-  if (objnum == 0)
+  if (objnum == 0) {
     return nullptr;
+  }
 
   auto it = page_map_.find(objnum);
   if (it != page_map_.end()) {
@@ -56,8 +61,9 @@ const std::vector<RetainPtr<CPDF_Dictionary>>* CPDF_LinkList::GetPageLinks(
   // std::map::operator[] forces the creation of a map entry.
   auto* page_link_list = &page_map_[objnum];
   RetainPtr<CPDF_Array> pAnnotList = pPage->GetMutableAnnotsArray();
-  if (!pAnnotList)
+  if (!pAnnotList) {
     return page_link_list;
+  }
 
   for (size_t i = 0; i < pAnnotList->size(); ++i) {
     RetainPtr<CPDF_Dictionary> pAnnot = pAnnotList->GetMutableDictAt(i);

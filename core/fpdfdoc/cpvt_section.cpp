@@ -260,8 +260,9 @@ CPVT_WordPlace CPVT_Section::GetEndWordPlace() const {
 
 CPVT_WordPlace CPVT_Section::GetPrevWordPlace(
     const CPVT_WordPlace& place) const {
-  if (place.nLineIndex < 0)
+  if (place.nLineIndex < 0) {
     return GetBeginWordPlace();
+  }
 
   if (place.nLineIndex >= fxcrt::CollectionSize<int32_t>(line_array_)) {
     return GetEndWordPlace();
@@ -285,8 +286,9 @@ CPVT_WordPlace CPVT_Section::GetPrevWordPlace(
 
 CPVT_WordPlace CPVT_Section::GetNextWordPlace(
     const CPVT_WordPlace& place) const {
-  if (place.nLineIndex < 0)
+  if (place.nLineIndex < 0) {
     return GetBeginWordPlace();
+  }
 
   if (place.nLineIndex >= fxcrt::CollectionSize<int32_t>(line_array_)) {
     return GetEndWordPlace();
@@ -335,10 +337,12 @@ CPVT_WordPlace CPVT_Section::SearchWordPlace(const CFX_PointF& point) const {
     float fTop = pLine->line_info_.fLineY - pLine->line_info_.fLineAscent -
                  vt_->GetLineLeading();
     float fBottom = pLine->line_info_.fLineY - pLine->line_info_.fLineDescent;
-    if (FXSYS_IsFloatBigger(point.y, fTop))
+    if (FXSYS_IsFloatBigger(point.y, fTop)) {
       bUp = false;
-    if (FXSYS_IsFloatSmaller(point.y, fBottom))
+    }
+    if (FXSYS_IsFloatSmaller(point.y, fBottom)) {
       bDown = false;
+    }
     if (FXSYS_IsFloatSmaller(point.y, fTop)) {
       nRight = nMid - 1;
       nMid = (nLeft + nRight) / 2;
@@ -356,10 +360,12 @@ CPVT_WordPlace CPVT_Section::SearchWordPlace(const CFX_PointF& point) const {
     place.nLineIndex = nMid;
     return place;
   }
-  if (bUp)
+  if (bUp) {
     place = GetBeginWordPlace();
-  if (bDown)
+  }
+  if (bDown) {
     place = GetEndWordPlace();
+  }
   return place;
 }
 
@@ -387,8 +393,9 @@ CPVT_WordPlace CPVT_Section::SearchWordPlace(
   int32_t nRight = range.EndPos.nWordIndex + 1;
   int32_t nMid = (nLeft + nRight) / 2;
   while (nLeft < nRight) {
-    if (nMid == nLeft)
+    if (nMid == nLeft) {
       break;
+    }
     if (nMid == nRight) {
       nMid--;
       break;

@@ -103,16 +103,19 @@ WideString CPDF_FileSpec::GetFileName() const {
   if (const CPDF_Dictionary* pDict = obj_->AsDictionary()) {
     RetainPtr<const CPDF_String> pUF =
         ToString(pDict->GetDirectObjectFor("UF"));
-    if (pUF)
+    if (pUF) {
       csFileName = pUF->GetUnicodeText();
+    }
     if (csFileName.IsEmpty()) {
       RetainPtr<const CPDF_String> pK =
           ToString(pDict->GetDirectObjectFor(pdfium::stream::kF));
-      if (pK)
+      if (pK) {
         csFileName = WideString::FromDefANSI(pK->GetString().AsStringView());
+      }
     }
-    if (pDict->GetByteStringFor("FS") == "URL")
+    if (pDict->GetByteStringFor("FS") == "URL") {
       return csFileName;
+    }
 
     if (csFileName.IsEmpty()) {
       for (const auto* key : {"DOS", "Mac", "Unix"}) {
@@ -133,13 +136,15 @@ WideString CPDF_FileSpec::GetFileName() const {
 
 RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
   const CPDF_Dictionary* pDict = obj_->AsDictionary();
-  if (!pDict)
+  if (!pDict) {
     return nullptr;
+  }
 
   // Get the embedded files dictionary.
   RetainPtr<const CPDF_Dictionary> pFiles = pDict->GetDictFor("EF");
-  if (!pFiles)
+  if (!pFiles) {
     return nullptr;
+  }
 
   // List of keys to check for the file specification string.
   // Follows the same precedence order as GetFileName().
@@ -150,8 +155,9 @@ RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
     ByteString key = kKeys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
       RetainPtr<const CPDF_Stream> pStream = pFiles->GetStreamFor(key);
-      if (pStream)
+      if (pStream) {
         return pStream;
+      }
     }
   }
   return nullptr;

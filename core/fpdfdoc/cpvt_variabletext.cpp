@@ -43,12 +43,14 @@ CPVT_VariableText::Provider::~Provider() = default;
 int CPVT_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
                                               uint16_t word) {
   RetainPtr<CPDF_Font> pPDFFont = font_map_->GetPDFFont(nFontIndex);
-  if (!pPDFFont)
+  if (!pPDFFont) {
     return 0;
+  }
 
   uint32_t charcode = pPDFFont->CharCodeFromUnicode(word);
-  if (charcode == CPDF_Font::kInvalidCharCode)
+  if (charcode == CPDF_Font::kInvalidCharCode) {
     return 0;
+  }
 
   return pPDFFont->GetCharWidthF(charcode);
 }
@@ -67,12 +69,14 @@ int32_t CPVT_VariableText::Provider::GetWordFontIndex(uint16_t word,
                                                       FX_Charset charset,
                                                       int32_t nFontIndex) {
   if (RetainPtr<CPDF_Font> pDefFont = font_map_->GetPDFFont(0)) {
-    if (pDefFont->CharCodeFromUnicode(word) != CPDF_Font::kInvalidCharCode)
+    if (pDefFont->CharCodeFromUnicode(word) != CPDF_Font::kInvalidCharCode) {
       return 0;
+    }
   }
   if (RetainPtr<CPDF_Font> pSysFont = font_map_->GetPDFFont(1)) {
-    if (pSysFont->CharCodeFromUnicode(word) != CPDF_Font::kInvalidCharCode)
+    if (pSysFont->CharCodeFromUnicode(word) != CPDF_Font::kInvalidCharCode) {
       return 1;
+    }
   }
   return -1;
 }
@@ -134,8 +138,9 @@ bool CPVT_VariableText::Iterator::GetWord(CPVT_Word& word) const {
   }
 
   const CPVT_WordInfo* pInfo = pSection->GetWordFromArray(cur_pos_.nWordIndex);
-  if (!pInfo)
+  if (!pInfo) {
     return false;
+  }
 
   word.Word = pInfo->Word;
   word.nCharset = pInfo->nCharset;
@@ -160,8 +165,9 @@ bool CPVT_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   CPVT_Section* pSection = vt_->section_array_[cur_pos_.nSecIndex].get();
   const CPVT_Section::Line* pLine =
       pSection->GetLineFromArray(cur_pos_.nLineIndex);
-  if (!pLine)
+  if (!pLine) {
     return false;
+  }
 
   line.ptLine = vt_->InToOut(
       CFX_PointF(pLine->line_info_.fLineX + pSection->GetRect().left,
@@ -262,8 +268,9 @@ CPVT_WordPlace CPVT_VariableText::DeleteWords(
   ClearWords(PlaceRange);
   if (PlaceRange.BeginPos.nSecIndex != PlaceRange.EndPos.nSecIndex) {
     ClearEmptySections(PlaceRange);
-    if (!bLastSecPos)
+    if (!bLastSecPos) {
       LinkLatterSection(PlaceRange.BeginPos);
+    }
   }
   return PlaceRange.BeginPos;
 }
@@ -296,16 +303,18 @@ void CPVT_VariableText::SetText(const WideString& swText) {
     switch (word) {
       case 0x0D:
         if (multi_line_) {
-          if (i + 1 < sz && swText[i + 1] == 0x0A)
+          if (i + 1 < sz && swText[i + 1] == 0x0A) {
             i++;
+          }
           wp.AdvanceSection();
           AddSection(wp);
         }
         break;
       case 0x0A:
         if (multi_line_) {
-          if (i + 1 < sz && swText[i + 1] == 0x0D)
+          if (i + 1 < sz && swText[i + 1] == 0x0D) {
             i++;
+          }
           wp.AdvanceSection();
           AddSection(wp);
         }
@@ -322,8 +331,9 @@ void CPVT_VariableText::SetText(const WideString& swText) {
 }
 
 void CPVT_VariableText::UpdateWordPlace(CPVT_WordPlace& place) const {
-  if (place.nSecIndex < 0)
+  if (place.nSecIndex < 0) {
     place = GetBeginWordPlace();
+  }
   if (static_cast<size_t>(place.nSecIndex) >= section_array_.size()) {
     place = GetEndWordPlace();
   }
@@ -345,8 +355,9 @@ int32_t CPVT_VariableText::WordPlaceToWordIndex(
        i < sz && i < newplace.nSecIndex; i++) {
     CPVT_Section* pSection = section_array_[i].get();
     nIndex += pSection->GetWordArraySize();
-    if (i != sz - 1)
+    if (i != sz - 1) {
       nIndex += kReturnLength;
+    }
   }
   if (fxcrt::IndexInBounds(section_array_, i)) {
     nIndex += newplace.nWordIndex + kReturnLength;
@@ -379,8 +390,9 @@ CPVT_WordPlace CPVT_VariableText::WordIndexToWordPlace(int32_t index) const {
     }
     nOldIndex = nIndex;
   }
-  if (!bFound)
+  if (!bFound) {
     place = GetEndWordPlace();
+  }
   return place;
 }
 
@@ -397,15 +409,17 @@ CPVT_WordPlace CPVT_VariableText::GetEndWordPlace() const {
 
 CPVT_WordPlace CPVT_VariableText::GetPrevWordPlace(
     const CPVT_WordPlace& place) const {
-  if (place.nSecIndex < 0)
+  if (place.nSecIndex < 0) {
     return GetBeginWordPlace();
+  }
   if (static_cast<size_t>(place.nSecIndex) >= section_array_.size()) {
     return GetEndWordPlace();
   }
 
   CPVT_Section* pSection = section_array_[place.nSecIndex].get();
-  if (place > pSection->GetBeginWordPlace())
+  if (place > pSection->GetBeginWordPlace()) {
     return pSection->GetPrevWordPlace(place);
+  }
   if (!fxcrt::IndexInBounds(section_array_, place.nSecIndex - 1)) {
     return GetBeginWordPlace();
   }
@@ -414,15 +428,17 @@ CPVT_WordPlace CPVT_VariableText::GetPrevWordPlace(
 
 CPVT_WordPlace CPVT_VariableText::GetNextWordPlace(
     const CPVT_WordPlace& place) const {
-  if (place.nSecIndex < 0)
+  if (place.nSecIndex < 0) {
     return GetBeginWordPlace();
+  }
   if (static_cast<size_t>(place.nSecIndex) >= section_array_.size()) {
     return GetEndWordPlace();
   }
 
   CPVT_Section* pSection = section_array_[place.nSecIndex].get();
-  if (place < pSection->GetEndWordPlace())
+  if (place < pSection->GetEndWordPlace()) {
     return pSection->GetNextWordPlace(place);
+  }
   if (!fxcrt::IndexInBounds(section_array_, place.nSecIndex + 1)) {
     return GetEndWordPlace();
   }
@@ -443,10 +459,12 @@ CPVT_WordPlace CPVT_VariableText::SearchWordPlace(
       break;
     }
     CPVT_Section* pSection = section_array_[nMid].get();
-    if (FXSYS_IsFloatBigger(pt.y, pSection->GetRect().top))
+    if (FXSYS_IsFloatBigger(pt.y, pSection->GetRect().top)) {
       bUp = false;
-    if (FXSYS_IsFloatBigger(pSection->GetRect().bottom, pt.y))
+    }
+    if (FXSYS_IsFloatBigger(pSection->GetRect().bottom, pt.y)) {
       bDown = false;
+    }
     if (FXSYS_IsFloatSmaller(pt.y, pSection->GetRect().top)) {
       nRight = nMid - 1;
       nMid = (nLeft + nRight) / 2;
@@ -462,10 +480,12 @@ CPVT_WordPlace CPVT_VariableText::SearchWordPlace(
     place.nSecIndex = nMid;
     return place;
   }
-  if (bUp)
+  if (bUp) {
     place = GetBeginWordPlace();
-  if (bDown)
+  }
+  if (bDown) {
     place = GetEndWordPlace();
+  }
   return place;
 }
 
@@ -529,8 +549,9 @@ CPVT_WordPlace CPVT_VariableText::GetLineEndPlace(
   CPVT_Section* pSection = section_array_[place.nSecIndex].get();
   const CPVT_Section::Line* pLine =
       pSection->GetLineFromArray(place.nLineIndex);
-  if (!pLine)
+  if (!pLine) {
     return place;
+  }
 
   return pLine->GetEndWordPlace();
 }
@@ -683,15 +704,17 @@ void CPVT_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
 
 CPVT_WordPlace CPVT_VariableText::PrevLineHeaderPlace(
     const CPVT_WordPlace& place) const {
-  if (place.nWordIndex < 0 && place.nLineIndex > 0)
+  if (place.nWordIndex < 0 && place.nLineIndex > 0) {
     return GetPrevWordPlace(place);
+  }
   return place;
 }
 
 CPVT_WordPlace CPVT_VariableText::NextLineHeaderPlace(
     const CPVT_WordPlace& place) const {
-  if (place.nWordIndex < 0 && place.nLineIndex > 0)
+  if (place.nWordIndex < 0 && place.nLineIndex > 0) {
     return GetNextWordPlace(place);
+  }
   return place;
 }
 
@@ -756,14 +779,16 @@ CPVT_WordPlace CPVT_VariableText::ClearLeftWord(const CPVT_WordPlace& place) {
 
   CPVT_Section* pSection = section_array_[place.nSecIndex].get();
   CPVT_WordPlace leftplace = GetPrevWordPlace(place);
-  if (leftplace == place)
+  if (leftplace == place) {
     return place;
+  }
 
   if (leftplace.nSecIndex != place.nSecIndex) {
-    if (pSection->GetWordArraySize() == 0)
+    if (pSection->GetWordArraySize() == 0) {
       ClearEmptySection(place);
-    else
+    } else {
       LinkLatterSection(leftplace);
+    }
   } else {
     pSection->ClearWord(place);
   }
@@ -777,13 +802,15 @@ CPVT_WordPlace CPVT_VariableText::ClearRightWord(const CPVT_WordPlace& place) {
 
   CPVT_Section* pSection = section_array_[place.nSecIndex].get();
   CPVT_WordPlace rightplace = NextLineHeaderPlace(GetNextWordPlace(place));
-  if (rightplace == place)
+  if (rightplace == place) {
     return place;
+  }
 
-  if (rightplace.nSecIndex != place.nSecIndex)
+  if (rightplace.nSecIndex != place.nSecIndex) {
     LinkLatterSection(place);
-  else
+  } else {
     pSection->ClearWord(rightplace);
+  }
   return place;
 }
 

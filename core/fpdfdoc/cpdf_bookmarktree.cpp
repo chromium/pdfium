@@ -19,12 +19,14 @@ CPDF_BookmarkTree::~CPDF_BookmarkTree() = default;
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
     const CPDF_Bookmark& parent) const {
   const CPDF_Dictionary* parent_dict = parent.GetDict();
-  if (parent_dict)
+  if (parent_dict) {
     return CPDF_Bookmark(parent_dict->GetDictFor("First"));
+  }
 
   const CPDF_Dictionary* root = document_->GetRoot();
-  if (!root)
+  if (!root) {
     return CPDF_Bookmark();
+  }
 
   RetainPtr<const CPDF_Dictionary> outlines = root->GetDictFor("Outlines");
   return outlines ? CPDF_Bookmark(outlines->GetDictFor("First"))
@@ -34,8 +36,9 @@ CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
 CPDF_Bookmark CPDF_BookmarkTree::GetNextSibling(
     const CPDF_Bookmark& bookmark) const {
   const CPDF_Dictionary* dict = bookmark.GetDict();
-  if (!dict)
+  if (!dict) {
     return CPDF_Bookmark();
+  }
 
   RetainPtr<const CPDF_Dictionary> next = dict->GetDictFor("Next");
   return next != dict ? CPDF_Bookmark(std::move(next)) : CPDF_Bookmark();

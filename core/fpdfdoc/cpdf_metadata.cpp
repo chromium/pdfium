@@ -34,12 +34,14 @@ bool CheckForSharedFormInternal(int depth,
   if (attr.EqualsASCII("http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/")) {
     for (const auto* child = element->GetFirstChild(); child;
          child = child->GetNextSibling()) {
-      if (child->GetType() != CFX_XMLNode::Type::kElement)
+      if (child->GetType() != CFX_XMLNode::Type::kElement) {
         continue;
+      }
 
       const auto* child_elem = static_cast<const CFX_XMLElement*>(child);
-      if (!child_elem->GetName().EqualsASCII("adhocwf:workflowType"))
+      if (!child_elem->GetName().EqualsASCII("adhocwf:workflowType")) {
         continue;
+      }
 
       switch (child_elem->GetTextData().GetInteger()) {
         case 0:
@@ -86,8 +88,9 @@ std::vector<UnsupportedFeature> CPDF_Metadata::CheckForSharedForm() const {
   auto stream = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pAcc->GetSpan());
   CFX_XMLParser parser(stream);
   std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();
-  if (!doc)
+  if (!doc) {
     return {};
+  }
 
   std::vector<UnsupportedFeature> unsupported;
   CheckForSharedFormInternal(/*depth=*/0, doc->GetRoot(), &unsupported);

@@ -42,8 +42,9 @@ std::pair<WideString, WideString> GetNodeLimitsAndSanitize(
     csLeft = pLimits->GetUnicodeTextAt(0);
     csRight = pLimits->GetUnicodeTextAt(1);
   }
-  while (pLimits->size() > 2)
+  while (pLimits->size() > 2) {
     pLimits->RemoveAt(pLimits->size() - 1);
+  }
   return {csLeft, csRight};
 }
 
@@ -54,8 +55,9 @@ bool GetNodeAncestorsLimitsInternal(const RetainPtr<CPDF_Dictionary>& pNode,
                                     const CPDF_Array* pFind,
                                     int nLevel,
                                     std::vector<CPDF_Array*>* pLimits) {
-  if (nLevel > kNameTreeMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion) {
     return false;
+  }
 
   if (pNode->GetArrayFor("Names") == pFind) {
     pLimits->push_back(pNode->GetMutableArrayFor("Limits").Get());
@@ -63,13 +65,15 @@ bool GetNodeAncestorsLimitsInternal(const RetainPtr<CPDF_Dictionary>& pNode,
   }
 
   RetainPtr<CPDF_Array> pKids = pNode->GetMutableArrayFor("Kids");
-  if (!pKids)
+  if (!pKids) {
     return false;
+  }
 
   for (size_t i = 0; i < pKids->size(); ++i) {
     RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
-    if (!pKid)
+    if (!pKid) {
       continue;
+    }
 
     if (GetNodeAncestorsLimitsInternal(pKid, pFind, nLevel + 1, pLimits)) {
       pLimits->push_back(pNode->GetMutableArrayFor("Limits").Get());
@@ -96,23 +100,28 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
                                       const CPDF_Array* pFind,
                                       const WideString& csName,
                                       int nLevel) {
-  if (nLevel > kNameTreeMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion) {
     return false;
+  }
 
   RetainPtr<CPDF_Array> pLimits = pNode->GetMutableArrayFor("Limits");
   WideString csLeft;
   WideString csRight;
-  if (pLimits)
+  if (pLimits) {
     std::tie(csLeft, csRight) = GetNodeLimitsAndSanitize(pLimits.Get());
+  }
 
   RetainPtr<const CPDF_Array> pNames = pNode->GetArrayFor("Names");
   if (pNames) {
-    if (pNames != pFind)
+    if (pNames != pFind) {
       return false;
-    if (pNames->IsEmpty() || !pLimits)
+    }
+    if (pNames->IsEmpty() || !pLimits) {
       return true;
-    if (csLeft != csName && csRight != csName)
+    }
+    if (csLeft != csName && csRight != csName) {
       return true;
+    }
 
     // Since |csName| defines |pNode|'s limits, we need to loop through the
     // names to find the new lower and upper limits.
@@ -120,10 +129,12 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
     WideString csNewRight = csLeft;
     for (size_t i = 0; i < pNames->size() / 2; ++i) {
       WideString wsName = pNames->GetUnicodeTextAt(i * 2);
-      if (wsName.Compare(csNewLeft) < 0)
+      if (wsName.Compare(csNewLeft) < 0) {
         csNewLeft = wsName;
-      if (wsName.Compare(csNewRight) > 0)
+      }
+      if (wsName.Compare(csNewRight) > 0) {
         csNewRight = wsName;
+      }
     }
     pLimits->SetNewAt<CPDF_String>(0, csNewLeft.AsStringView());
     pLimits->SetNewAt<CPDF_String>(1, csNewRight.AsStringView());
@@ -131,14 +142,16 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
   }
 
   RetainPtr<CPDF_Array> pKids = pNode->GetMutableArrayFor("Kids");
-  if (!pKids)
+  if (!pKids) {
     return false;
+  }
 
   // Loop through the kids to find the leaf array |pFind|.
   for (size_t i = 0; i < pKids->size(); ++i) {
     RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
-    if (!pKid)
+    if (!pKid) {
       continue;
+    }
     if (!UpdateNodesAndLimitsUponDeletion(pKid.Get(), pFind, csName,
                                           nLevel + 1)) {
       continue;
@@ -148,10 +161,12 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
         (pKid->KeyExist("Kids") && pKid->GetArrayFor("Kids")->IsEmpty())) {
       pKids->RemoveAt(i);
     }
-    if (pKids->IsEmpty() || !pLimits)
+    if (pKids->IsEmpty() || !pLimits) {
       return true;
-    if (csLeft != csName && csRight != csName)
+    }
+    if (csLeft != csName && csRight != csName) {
       return true;
+    }
 
     // Since |csName| defines |pNode|'s limits, we need to loop through the
     // kids to find the new lower and upper limits.
@@ -161,10 +176,12 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
       RetainPtr<const CPDF_Array> pKidLimits =
           pKids->GetDictAt(j)->GetArrayFor("Limits");
       DCHECK(pKidLimits);
-      if (pKidLimits->GetUnicodeTextAt(0).Compare(csNewLeft) < 0)
+      if (pKidLimits->GetUnicodeTextAt(0).Compare(csNewLeft) < 0) {
         csNewLeft = pKidLimits->GetUnicodeTextAt(0);
-      if (pKidLimits->GetUnicodeTextAt(1).Compare(csNewRight) > 0)
+      }
+      if (pKidLimits->GetUnicodeTextAt(1).Compare(csNewRight) > 0) {
         csNewRight = pKidLimits->GetUnicodeTextAt(1);
+      }
     }
     pLimits->SetNewAt<CPDF_String>(0, csNewLeft.AsStringView());
     pLimits->SetNewAt<CPDF_String>(1, csNewRight.AsStringView());
@@ -176,8 +193,9 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
 bool IsTraversedObject(const CPDF_Object* obj,
                        std::set<uint32_t>* seen_obj_nums) {
   uint32_t obj_num = obj->GetObjNum();
-  if (!obj_num)
+  if (!obj_num) {
     return false;
+  }
 
   bool inserted = seen_obj_nums->insert(obj_num).second;
   return !inserted;
@@ -185,13 +203,15 @@ bool IsTraversedObject(const CPDF_Object* obj,
 
 bool IsArrayWithTraversedObject(const CPDF_Array* array,
                                 std::set<uint32_t>* seen_obj_nums) {
-  if (IsTraversedObject(array, seen_obj_nums))
+  if (IsTraversedObject(array, seen_obj_nums)) {
     return true;
+  }
 
   CPDF_ArrayLocker locker(array);
   for (const auto& item : locker) {
-    if (IsTraversedObject(item.Get(), seen_obj_nums))
+    if (IsTraversedObject(item.Get(), seen_obj_nums)) {
       return true;
+    }
   }
   return false;
 }
@@ -208,15 +228,18 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     size_t* nIndex,
     NodeToInsert* node_to_insert,
     std::set<uint32_t>* seen_obj_nums) {
-  if (nLevel > kNameTreeMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_Array> pLimits = pNode->GetMutableArrayFor("Limits");
   RetainPtr<CPDF_Array> pNames = pNode->GetMutableArrayFor("Names");
-  if (pNames && IsArrayWithTraversedObject(pNames.Get(), seen_obj_nums))
+  if (pNames && IsArrayWithTraversedObject(pNames.Get(), seen_obj_nums)) {
     pNames.Reset();
-  if (pLimits && IsArrayWithTraversedObject(pLimits.Get(), seen_obj_nums))
+  }
+  if (pLimits && IsArrayWithTraversedObject(pLimits.Get(), seen_obj_nums)) {
     pLimits.Reset();
+  }
 
   if (pLimits) {
     auto [csLeft, csRight] = GetNodeLimitsAndSanitize(pLimits.Get());
@@ -248,14 +271,16 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     for (size_t i = 0; i < dwCount; i++) {
       WideString csValue = pNames->GetUnicodeTextAt(i * 2);
       int32_t iCompare = csValue.Compare(csName);
-      if (iCompare > 0)
+      if (iCompare > 0) {
         break;
+      }
       if (node_to_insert) {
         node_to_insert->names = pNames;
         node_to_insert->index = pdfium::checked_cast<int32_t>(i);
       }
-      if (iCompare < 0)
+      if (iCompare < 0) {
         continue;
+      }
 
       *nIndex += i;
       return pNames->GetDirectObjectAt(i * 2 + 1);
@@ -266,18 +291,21 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
 
   // Search through the node's children.
   RetainPtr<CPDF_Array> pKids = pNode->GetMutableArrayFor("Kids");
-  if (!pKids || IsTraversedObject(pKids.Get(), seen_obj_nums))
+  if (!pKids || IsTraversedObject(pKids.Get(), seen_obj_nums)) {
     return nullptr;
+  }
 
   for (size_t i = 0; i < pKids->size(); i++) {
     RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
-    if (!pKid || IsTraversedObject(pKid.Get(), seen_obj_nums))
+    if (!pKid || IsTraversedObject(pKid.Get(), seen_obj_nums)) {
       continue;
+    }
 
     RetainPtr<const CPDF_Object> pFound = SearchNameNodeByNameInternal(
         pKid, csName, nLevel + 1, nIndex, node_to_insert, seen_obj_nums);
-    if (pFound)
+    if (pFound) {
       return pFound;
+    }
   }
   return nullptr;
 }
@@ -312,8 +340,9 @@ std::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
     size_t nTargetPairIndex,
     int nLevel,
     size_t* nCurPairIndex) {
-  if (nLevel > kNameTreeMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion) {
     return std::nullopt;
+  }
 
   RetainPtr<CPDF_Array> pNames = pNode->GetMutableArrayFor("Names");
   if (pNames) {
@@ -325,8 +354,9 @@ std::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
 
     size_t index = 2 * (nTargetPairIndex - *nCurPairIndex);
     RetainPtr<CPDF_Object> value = pNames->GetMutableDirectObjectAt(index + 1);
-    if (!value)
+    if (!value) {
       return std::nullopt;
+    }
 
     IndexSearchResult result;
     result.key = pNames->GetUnicodeTextAt(index);
@@ -337,17 +367,20 @@ std::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
   }
 
   RetainPtr<CPDF_Array> pKids = pNode->GetMutableArrayFor("Kids");
-  if (!pKids)
+  if (!pKids) {
     return std::nullopt;
+  }
 
   for (size_t i = 0; i < pKids->size(); i++) {
     RetainPtr<CPDF_Dictionary> pKid = pKids->GetMutableDictAt(i);
-    if (!pKid)
+    if (!pKid) {
       continue;
+    }
     std::optional<IndexSearchResult> result = SearchNameNodeByIndexInternal(
         pKid.Get(), nTargetPairIndex, nLevel + 1, nCurPairIndex);
-    if (result.has_value())
+    if (result.has_value()) {
       return result;
+    }
   }
   return std::nullopt;
 }
@@ -366,26 +399,31 @@ std::optional<IndexSearchResult> SearchNameNodeByIndex(
 size_t CountNamesInternal(const CPDF_Dictionary* pNode,
                           int nLevel,
                           std::set<const CPDF_Dictionary*>& seen) {
-  if (nLevel > kNameTreeMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion) {
     return 0;
+  }
 
   const bool inserted = seen.insert(pNode).second;
-  if (!inserted)
+  if (!inserted) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Array> pNames = pNode->GetArrayFor("Names");
-  if (pNames)
+  if (pNames) {
     return pNames->size() / 2;
+  }
 
   RetainPtr<const CPDF_Array> pKids = pNode->GetArrayFor("Kids");
-  if (!pKids)
+  if (!pKids) {
     return 0;
+  }
 
   size_t nCount = 0;
   for (size_t i = 0; i < pKids->size(); i++) {
     RetainPtr<const CPDF_Dictionary> pKid = pKids->GetDictAt(i);
-    if (!pKid)
+    if (!pKid) {
       continue;
+    }
 
     nCount += CountNamesInternal(pKid.Get(), nLevel + 1, seen);
   }
@@ -395,11 +433,13 @@ size_t CountNamesInternal(const CPDF_Dictionary* pNode,
 RetainPtr<const CPDF_Array> GetNamedDestFromObject(
     RetainPtr<const CPDF_Object> obj) {
   RetainPtr<const CPDF_Array> array = ToArray(obj);
-  if (array)
+  if (array) {
     return array;
+  }
   RetainPtr<const CPDF_Dictionary> dict = ToDictionary(obj);
-  if (dict)
+  if (dict) {
     return dict->GetArrayFor("D");
+  }
   return nullptr;
 }
 
@@ -407,8 +447,9 @@ RetainPtr<const CPDF_Array> LookupOldStyleNamedDest(CPDF_Document* pDoc,
                                                     const ByteString& name) {
   RetainPtr<const CPDF_Dictionary> pDests =
       pDoc->GetRoot()->GetDictFor("Dests");
-  if (!pDests)
+  if (!pDests) {
     return nullptr;
+  }
   return GetNamedDestFromObject(pDests->GetDirectObjectFor(name));
 }
 
@@ -426,16 +467,19 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::Create(
     CPDF_Document* pDoc,
     const ByteString& category) {
   RetainPtr<CPDF_Dictionary> pRoot = pDoc->GetMutableRoot();
-  if (!pRoot)
+  if (!pRoot) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_Dictionary> pNames = pRoot->GetMutableDictFor("Names");
-  if (!pNames)
+  if (!pNames) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_Dictionary> pCategory = pNames->GetMutableDictFor(category);
-  if (!pCategory)
+  if (!pCategory) {
     return nullptr;
+  }
 
   return pdfium::WrapUnique(
       new CPDF_NameTree(std::move(pCategory)));  // Private ctor.
@@ -446,8 +490,9 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateWithRootNameArray(
     CPDF_Document* pDoc,
     const ByteString& category) {
   RetainPtr<CPDF_Dictionary> pRoot = pDoc->GetMutableRoot();
-  if (!pRoot)
+  if (!pRoot) {
     return nullptr;
+  }
 
   // Retrieve the document's Names dictionary; create it if missing.
   RetainPtr<CPDF_Dictionary> pNames = pRoot->GetMutableDictFor("Names");
@@ -480,10 +525,12 @@ RetainPtr<const CPDF_Array> CPDF_NameTree::LookupNamedDest(
     const ByteString& name) {
   RetainPtr<const CPDF_Array> dest_array;
   std::unique_ptr<CPDF_NameTree> name_tree = Create(pDoc, "Dests");
-  if (name_tree)
+  if (name_tree) {
     dest_array = name_tree->LookupNewStyleNamedDest(name);
-  if (!dest_array)
+  }
+  if (!dest_array) {
     dest_array = LookupOldStyleNamedDest(pDoc, name);
+  }
   return dest_array;
 }
 
@@ -538,14 +585,17 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   std::vector<CPDF_Array*> all_limits =
       GetNodeAncestorsLimits(root_, node_to_insert.names.Get());
   for (auto* pLimits : all_limits) {
-    if (!pLimits)
+    if (!pLimits) {
       continue;
+    }
 
-    if (name.Compare(pLimits->GetUnicodeTextAt(0)) < 0)
+    if (name.Compare(pLimits->GetUnicodeTextAt(0)) < 0) {
       pLimits->SetNewAt<CPDF_String>(0, name.AsStringView());
+    }
 
-    if (name.Compare(pLimits->GetUnicodeTextAt(1)) > 0)
+    if (name.Compare(pLimits->GetUnicodeTextAt(1)) > 0) {
       pLimits->SetNewAt<CPDF_String>(1, name.AsStringView());
+    }
   }
   return true;
 }

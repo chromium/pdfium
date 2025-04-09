@@ -36,8 +36,9 @@ CFX_Color::TypeAndARGB CPDF_ApSettings::GetColorARGB(
   }
 
   RetainPtr<const CPDF_Array> pEntry = dict_->GetArrayFor(csEntry);
-  if (!pEntry)
+  if (!pEntry) {
     return {CFX_Color::Type::kTransparent, 0};
+  }
 
   const size_t dwCount = pEntry->size();
   if (dwCount == 1) {
@@ -80,8 +81,9 @@ CFX_Color CPDF_ApSettings::GetOriginalColor(const ByteString& csEntry) const {
   }
 
   RetainPtr<const CPDF_Array> pEntry = dict_->GetArrayFor(csEntry);
-  if (!pEntry)
+  if (!pEntry) {
     return CFX_Color();
+  }
 
   size_t dwCount = pEntry->size();
   if (dwCount == 1) {

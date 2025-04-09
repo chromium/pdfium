@@ -40,11 +40,13 @@ CPDF_Dest::~CPDF_Dest() = default;
 // static
 CPDF_Dest CPDF_Dest::Create(CPDF_Document* pDoc,
                             RetainPtr<const CPDF_Object> pDest) {
-  if (!pDest)
+  if (!pDest) {
     return CPDF_Dest(nullptr);
+  }
 
-  if (pDest->IsString() || pDest->IsName())
+  if (pDest->IsString() || pDest->IsName()) {
     return CPDF_Dest(CPDF_NameTree::LookupNamedDest(pDoc, pDest->GetString()));
+  }
 
   return CPDF_Dest(ToArray(pDest));
 }
@@ -55,14 +57,17 @@ int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
   }
 
   RetainPtr<const CPDF_Object> pPage = array_->GetDirectObjectAt(0);
-  if (!pPage)
+  if (!pPage) {
     return -1;
+  }
 
-  if (pPage->IsNumber())
+  if (pPage->IsNumber()) {
     return pPage->GetInteger();
+  }
 
-  if (!pPage->IsDictionary())
+  if (!pPage->IsDictionary()) {
     return -1;
+  }
 
   return pDoc->GetPageIndex(pPage->GetObjNum());
 }
@@ -115,8 +120,9 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
   }
 
   RetainPtr<const CPDF_Name> xyz = ToName(array_->GetDirectObjectAt(1));
-  if (!xyz || xyz->GetString() != "XYZ")
+  if (!xyz || xyz->GetString() != "XYZ") {
     return false;
+  }
 
   RetainPtr<const CPDF_Number> numX = ToNumber(array_->GetDirectObjectAt(2));
   RetainPtr<const CPDF_Number> numY = ToNumber(array_->GetDirectObjectAt(3));
@@ -127,18 +133,21 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
   *pHasY = !!numY;
   *pHasZoom = !!numZoom;
 
-  if (numX)
+  if (numX) {
     *pX = numX->GetNumber();
-  if (numY)
+  }
+  if (numY) {
     *pY = numY->GetNumber();
+  }
 
   // A zoom value of 0 is equivalent to a null value, so treat it as a null.
   if (numZoom) {
     float num = numZoom->GetNumber();
-    if (num == 0.0)
+    if (num == 0.0) {
       *pHasZoom = false;
-    else
+    } else {
       *pZoom = num;
+    }
   }
 
   return true;

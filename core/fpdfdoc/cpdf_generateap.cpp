@@ -1394,10 +1394,11 @@ bool GenerateSquigglyAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
       }
 
       float remainder = rect.right - (x - kDelta);
-      if (isUpwards)
+      if (isUpwards) {
         app_stream << rect.right << " " << bottom + remainder << " l ";
-      else
+      } else {
         app_stream << rect.right << " " << top - remainder << " l ";
+      }
 
       app_stream << "S\n";
     }

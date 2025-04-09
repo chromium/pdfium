@@ -32,12 +32,15 @@ CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() const {
   }
 
   ByteString csSW = dict_->GetByteStringFor("SW", "A");
-  if (csSW == "B")
+  if (csSW == "B") {
     return ScaleMethod::kBigger;
-  if (csSW == "S")
+  }
+  if (csSW == "S") {
     return ScaleMethod::kSmaller;
-  if (csSW == "N")
+  }
+  if (csSW == "N") {
     return ScaleMethod::kNever;
+  }
   return ScaleMethod::kAlways;
 }
 
@@ -53,14 +56,17 @@ CFX_PointF CPDF_IconFit::GetIconBottomLeftPosition() const {
   }
 
   RetainPtr<const CPDF_Array> pA = dict_->GetArrayFor("A");
-  if (!pA)
+  if (!pA) {
     return {fLeft, fBottom};
+  }
 
   size_t dwCount = pA->size();
-  if (dwCount > 0)
+  if (dwCount > 0) {
     fLeft = pA->GetFloatAt(0);
-  if (dwCount > 1)
+  }
+  if (dwCount > 1) {
     fBottom = pA->GetFloatAt(1);
+  }
   return {fLeft, fBottom};
 }
 
@@ -74,8 +80,9 @@ CFX_PointF CPDF_IconFit::GetIconPosition() const {
   }
 
   RetainPtr<const CPDF_Array> pA = dict_->GetArrayFor("A");
-  if (!pA)
+  if (!pA) {
     return CFX_PointF();
+  }
 
   size_t dwCount = pA->size();
   return {dwCount > 0 ? pA->GetFloatAt(0) : 0.0f,
@@ -96,16 +103,20 @@ CFX_VectorF CPDF_IconFit::GetScale(const CFX_SizeF& image_size,
       fVScale = fPlateHeight / std::max(fImageHeight, 1.0f);
       break;
     case CPDF_IconFit::ScaleMethod::kBigger:
-      if (fPlateWidth < fImageWidth)
+      if (fPlateWidth < fImageWidth) {
         fHScale = fPlateWidth / std::max(fImageWidth, 1.0f);
-      if (fPlateHeight < fImageHeight)
+      }
+      if (fPlateHeight < fImageHeight) {
         fVScale = fPlateHeight / std::max(fImageHeight, 1.0f);
+      }
       break;
     case CPDF_IconFit::ScaleMethod::kSmaller:
-      if (fPlateWidth > fImageWidth)
+      if (fPlateWidth > fImageWidth) {
         fHScale = fPlateWidth / std::max(fImageWidth, 1.0f);
-      if (fPlateHeight > fImageHeight)
+      }
+      if (fPlateHeight > fImageHeight) {
         fVScale = fPlateHeight / std::max(fImageHeight, 1.0f);
+      }
       break;
     case CPDF_IconFit::ScaleMethod::kNever:
       break;

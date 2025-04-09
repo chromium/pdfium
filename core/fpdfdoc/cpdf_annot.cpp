@@ -48,8 +48,9 @@ CPDF_Form* AnnotGetMatrix(CPDF_Page* pPage,
                           const CFX_Matrix& mtUser2Device,
                           CFX_Matrix* matrix) {
   CPDF_Form* pForm = pAnnot->GetAPForm(pPage, mode);
-  if (!pForm)
+  if (!pForm) {
     return nullptr;
+  }
 
   CFX_Matrix form_matrix = pForm->GetDict()->GetMatrixFor("Matrix");
   CFX_FloatRect form_bbox =
@@ -79,28 +80,34 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
                                           bool bFallbackToNormal) {
   RetainPtr<CPDF_Dictionary> pAP =
       pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
-  if (!pAP)
+  if (!pAP) {
     return nullptr;
+  }
 
   const char* ap_entry = "N";
-  if (eMode == CPDF_Annot::AppearanceMode::kDown)
+  if (eMode == CPDF_Annot::AppearanceMode::kDown) {
     ap_entry = "D";
-  else if (eMode == CPDF_Annot::AppearanceMode::kRollover)
+  } else if (eMode == CPDF_Annot::AppearanceMode::kRollover) {
     ap_entry = "R";
-  if (bFallbackToNormal && !pAP->KeyExist(ap_entry))
+  }
+  if (bFallbackToNormal && !pAP->KeyExist(ap_entry)) {
     ap_entry = "N";
+  }
 
   RetainPtr<CPDF_Object> psub = pAP->GetMutableDirectObjectFor(ap_entry);
-  if (!psub)
+  if (!psub) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_Stream> pStream(psub->AsMutableStream());
-  if (pStream)
+  if (pStream) {
     return pStream;
+  }
 
   CPDF_Dictionary* pDict = psub->AsMutableDictionary();
-  if (!pDict)
+  if (!pDict) {
     return nullptr;
+  }
 
   ByteString as = pAnnotDict->GetByteStringFor(pdfium::annotation::kAS);
   if (as.IsEmpty()) {
@@ -134,8 +141,9 @@ CPDF_Annot::~CPDF_Annot() {
 }
 
 void CPDF_Annot::GenerateAPIfNeeded() {
-  if (!ShouldGenerateAP())
+  if (!ShouldGenerateAP()) {
     return;
+  }
   if (!CPDF_GenerateAP::GenerateAnnotAP(document_, annot_dict_.Get(),
                                         subtype_)) {
     return;
@@ -150,15 +158,17 @@ bool CPDF_Annot::ShouldGenerateAP() const {
   // the appearance defined in the existing AP dictionary.
   RetainPtr<const CPDF_Dictionary> pAP =
       annot_dict_->GetDictFor(pdfium::annotation::kAP);
-  if (pAP && pAP->GetDictFor("N"))
+  if (pAP && pAP->GetDictFor("N")) {
     return false;
+  }
 
   return !IsHidden();
 }
 
 bool CPDF_Annot::ShouldDrawAnnotation() const {
-  if (IsHidden())
+  if (IsHidden()) {
     return false;
+  }
   return open_state_ || subtype_ != CPDF_Annot::Subtype::POPUP;
 }
 
@@ -173,8 +183,9 @@ CPDF_Annot::Subtype CPDF_Annot::GetSubtype() const {
 CFX_FloatRect CPDF_Annot::RectForDrawing() const {
   bool bShouldUseQuadPointsCoords =
       is_text_markup_annotation_ && has_generated_ap_;
-  if (bShouldUseQuadPointsCoords)
+  if (bShouldUseQuadPointsCoords) {
     return BoundingRectFromQuadPoints(annot_dict_.Get());
+  }
   return annot_dict_->GetRectFor(pdfium::annotation::kRect);
 }
 
@@ -206,8 +217,9 @@ RetainPtr<CPDF_Stream> GetAnnotAPNoFallback(CPDF_Dictionary* pAnnotDict,
 
 CPDF_Form* CPDF_Annot::GetAPForm(CPDF_Page* pPage, AppearanceMode mode) {
   RetainPtr<CPDF_Stream> pStream = GetAnnotAP(annot_dict_.Get(), mode);
-  if (!pStream)
+  if (!pStream) {
     return nullptr;
+  }
 
   auto it = ap_map_.find(pStream);
   if (it != ap_map_.end()) {
@@ -264,8 +276,9 @@ CFX_FloatRect CPDF_Annot::BoundingRectFromQuadPoints(
   CFX_FloatRect ret;
   RetainPtr<const CPDF_Array> pArray = pAnnotDict->GetArrayFor("QuadPoints");
   size_t nQuadPointCount = pArray ? QuadPointCount(pArray.Get()) : 0;
-  if (nQuadPointCount == 0)
+  if (nQuadPointCount == 0) {
     return ret;
+  }
 
   ret = RectFromQuadPointsArray(pArray.Get(), 0);
   for (size_t i = 1; i < nQuadPointCount; ++i) {
@@ -280,131 +293,188 @@ CFX_FloatRect CPDF_Annot::RectFromQuadPoints(const CPDF_Dictionary* pAnnotDict,
                                              size_t nIndex) {
   RetainPtr<const CPDF_Array> pArray = pAnnotDict->GetArrayFor("QuadPoints");
   size_t nQuadPointCount = pArray ? QuadPointCount(pArray.Get()) : 0;
-  if (nIndex >= nQuadPointCount)
+  if (nIndex >= nQuadPointCount) {
     return CFX_FloatRect();
+  }
   return RectFromQuadPointsArray(pArray.Get(), nIndex);
 }
 
 // static
 CPDF_Annot::Subtype CPDF_Annot::StringToAnnotSubtype(
     const ByteString& sSubtype) {
-  if (sSubtype == "Text")
+  if (sSubtype == "Text") {
     return CPDF_Annot::Subtype::TEXT;
-  if (sSubtype == "Link")
+  }
+  if (sSubtype == "Link") {
     return CPDF_Annot::Subtype::LINK;
-  if (sSubtype == "FreeText")
+  }
+  if (sSubtype == "FreeText") {
     return CPDF_Annot::Subtype::FREETEXT;
-  if (sSubtype == "Line")
+  }
+  if (sSubtype == "Line") {
     return CPDF_Annot::Subtype::LINE;
-  if (sSubtype == "Square")
+  }
+  if (sSubtype == "Square") {
     return CPDF_Annot::Subtype::SQUARE;
-  if (sSubtype == "Circle")
+  }
+  if (sSubtype == "Circle") {
     return CPDF_Annot::Subtype::CIRCLE;
-  if (sSubtype == "Polygon")
+  }
+  if (sSubtype == "Polygon") {
     return CPDF_Annot::Subtype::POLYGON;
-  if (sSubtype == "PolyLine")
+  }
+  if (sSubtype == "PolyLine") {
     return CPDF_Annot::Subtype::POLYLINE;
-  if (sSubtype == "Highlight")
+  }
+  if (sSubtype == "Highlight") {
     return CPDF_Annot::Subtype::HIGHLIGHT;
-  if (sSubtype == "Underline")
+  }
+  if (sSubtype == "Underline") {
     return CPDF_Annot::Subtype::UNDERLINE;
-  if (sSubtype == "Squiggly")
+  }
+  if (sSubtype == "Squiggly") {
     return CPDF_Annot::Subtype::SQUIGGLY;
-  if (sSubtype == "StrikeOut")
+  }
+  if (sSubtype == "StrikeOut") {
     return CPDF_Annot::Subtype::STRIKEOUT;
-  if (sSubtype == "Stamp")
+  }
+  if (sSubtype == "Stamp") {
     return CPDF_Annot::Subtype::STAMP;
-  if (sSubtype == "Caret")
+  }
+  if (sSubtype == "Caret") {
     return CPDF_Annot::Subtype::CARET;
-  if (sSubtype == "Ink")
+  }
+  if (sSubtype == "Ink") {
     return CPDF_Annot::Subtype::INK;
-  if (sSubtype == "Popup")
+  }
+  if (sSubtype == "Popup") {
     return CPDF_Annot::Subtype::POPUP;
-  if (sSubtype == "FileAttachment")
+  }
+  if (sSubtype == "FileAttachment") {
     return CPDF_Annot::Subtype::FILEATTACHMENT;
-  if (sSubtype == "Sound")
+  }
+  if (sSubtype == "Sound") {
     return CPDF_Annot::Subtype::SOUND;
-  if (sSubtype == "Movie")
+  }
+  if (sSubtype == "Movie") {
     return CPDF_Annot::Subtype::MOVIE;
-  if (sSubtype == "Widget")
+  }
+  if (sSubtype == "Widget") {
     return CPDF_Annot::Subtype::WIDGET;
-  if (sSubtype == "Screen")
+  }
+  if (sSubtype == "Screen") {
     return CPDF_Annot::Subtype::SCREEN;
-  if (sSubtype == "PrinterMark")
+  }
+  if (sSubtype == "PrinterMark") {
     return CPDF_Annot::Subtype::PRINTERMARK;
-  if (sSubtype == "TrapNet")
+  }
+  if (sSubtype == "TrapNet") {
     return CPDF_Annot::Subtype::TRAPNET;
-  if (sSubtype == "Watermark")
+  }
+  if (sSubtype == "Watermark") {
     return CPDF_Annot::Subtype::WATERMARK;
-  if (sSubtype == "3D")
+  }
+  if (sSubtype == "3D") {
     return CPDF_Annot::Subtype::THREED;
-  if (sSubtype == "RichMedia")
+  }
+  if (sSubtype == "RichMedia") {
     return CPDF_Annot::Subtype::RICHMEDIA;
-  if (sSubtype == "XFAWidget")
+  }
+  if (sSubtype == "XFAWidget") {
     return CPDF_Annot::Subtype::XFAWIDGET;
-  if (sSubtype == "Redact")
+  }
+  if (sSubtype == "Redact") {
     return CPDF_Annot::Subtype::REDACT;
+  }
   return CPDF_Annot::Subtype::UNKNOWN;
 }
 
 // static
 ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
-  if (nSubtype == CPDF_Annot::Subtype::TEXT)
+  if (nSubtype == CPDF_Annot::Subtype::TEXT) {
     return "Text";
-  if (nSubtype == CPDF_Annot::Subtype::LINK)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::LINK) {
     return "Link";
-  if (nSubtype == CPDF_Annot::Subtype::FREETEXT)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::FREETEXT) {
     return "FreeText";
-  if (nSubtype == CPDF_Annot::Subtype::LINE)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::LINE) {
     return "Line";
-  if (nSubtype == CPDF_Annot::Subtype::SQUARE)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::SQUARE) {
     return "Square";
-  if (nSubtype == CPDF_Annot::Subtype::CIRCLE)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::CIRCLE) {
     return "Circle";
-  if (nSubtype == CPDF_Annot::Subtype::POLYGON)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::POLYGON) {
     return "Polygon";
-  if (nSubtype == CPDF_Annot::Subtype::POLYLINE)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::POLYLINE) {
     return "PolyLine";
-  if (nSubtype == CPDF_Annot::Subtype::HIGHLIGHT)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::HIGHLIGHT) {
     return "Highlight";
-  if (nSubtype == CPDF_Annot::Subtype::UNDERLINE)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::UNDERLINE) {
     return "Underline";
-  if (nSubtype == CPDF_Annot::Subtype::SQUIGGLY)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::SQUIGGLY) {
     return "Squiggly";
-  if (nSubtype == CPDF_Annot::Subtype::STRIKEOUT)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::STRIKEOUT) {
     return "StrikeOut";
-  if (nSubtype == CPDF_Annot::Subtype::STAMP)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::STAMP) {
     return "Stamp";
-  if (nSubtype == CPDF_Annot::Subtype::CARET)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::CARET) {
     return "Caret";
-  if (nSubtype == CPDF_Annot::Subtype::INK)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::INK) {
     return "Ink";
-  if (nSubtype == CPDF_Annot::Subtype::POPUP)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::POPUP) {
     return "Popup";
-  if (nSubtype == CPDF_Annot::Subtype::FILEATTACHMENT)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::FILEATTACHMENT) {
     return "FileAttachment";
-  if (nSubtype == CPDF_Annot::Subtype::SOUND)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::SOUND) {
     return "Sound";
-  if (nSubtype == CPDF_Annot::Subtype::MOVIE)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::MOVIE) {
     return "Movie";
-  if (nSubtype == CPDF_Annot::Subtype::WIDGET)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::WIDGET) {
     return "Widget";
-  if (nSubtype == CPDF_Annot::Subtype::SCREEN)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::SCREEN) {
     return "Screen";
-  if (nSubtype == CPDF_Annot::Subtype::PRINTERMARK)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::PRINTERMARK) {
     return "PrinterMark";
-  if (nSubtype == CPDF_Annot::Subtype::TRAPNET)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::TRAPNET) {
     return "TrapNet";
-  if (nSubtype == CPDF_Annot::Subtype::WATERMARK)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::WATERMARK) {
     return "Watermark";
-  if (nSubtype == CPDF_Annot::Subtype::THREED)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::THREED) {
     return "3D";
-  if (nSubtype == CPDF_Annot::Subtype::RICHMEDIA)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::RICHMEDIA) {
     return "RichMedia";
-  if (nSubtype == CPDF_Annot::Subtype::XFAWIDGET)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::XFAWIDGET) {
     return "XFAWidget";
-  if (nSubtype == CPDF_Annot::Subtype::REDACT)
+  }
+  if (nSubtype == CPDF_Annot::Subtype::REDACT) {
     return "Redact";
+  }
   return ByteString();
 }
 
@@ -417,8 +487,9 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
                                 CFX_RenderDevice* pDevice,
                                 const CFX_Matrix& mtUser2Device,
                                 AppearanceMode mode) {
-  if (!ShouldDrawAnnotation())
+  if (!ShouldDrawAnnotation()) {
     return false;
+  }
 
   // It might happen that by the time this annotation instance was created,
   // it was flagged as "hidden" (e.g. /F 2), and hence CPDF_GenerateAP decided
@@ -429,8 +500,9 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
 
   CFX_Matrix matrix;
   CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, mtUser2Device, &matrix);
-  if (!pForm)
+  if (!pForm) {
     return false;
+  }
 
   CPDF_RenderContext context(pPage->GetDocument(),
                              pPage->GetMutablePageResources(),
@@ -444,8 +516,9 @@ bool CPDF_Annot::DrawInContext(CPDF_Page* pPage,
                                CPDF_RenderContext* pContext,
                                const CFX_Matrix& mtUser2Device,
                                AppearanceMode mode) {
-  if (!ShouldDrawAnnotation())
+  if (!ShouldDrawAnnotation()) {
     return false;
+  }
 
   // It might happen that by the time this annotation instance was created,
   // it was flagged as "hidden" (e.g. /F 2), and hence CPDF_GenerateAP decided
@@ -456,8 +529,9 @@ bool CPDF_Annot::DrawInContext(CPDF_Page* pPage,
 
   CFX_Matrix matrix;
   CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, mtUser2Device, &matrix);
-  if (!pForm)
+  if (!pForm) {
     return false;
+  }
 
   pContext->AppendLayer(pForm, matrix);
   return true;
@@ -465,12 +539,14 @@ bool CPDF_Annot::DrawInContext(CPDF_Page* pPage,
 
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
                             const CFX_Matrix* pUser2Device) {
-  if (GetSubtype() == CPDF_Annot::Subtype::POPUP)
+  if (GetSubtype() == CPDF_Annot::Subtype::POPUP) {
     return;
+  }
 
   uint32_t annot_flags = GetFlags();
-  if (annot_flags & pdfium::annotation_flags::kHidden)
+  if (annot_flags & pdfium::annotation_flags::kHidden) {
     return;
+  }
 
 #if BUILDFLAG(IS_WIN)
   bool is_printing = pDevice->GetDeviceType() == DeviceType::kPrinter;

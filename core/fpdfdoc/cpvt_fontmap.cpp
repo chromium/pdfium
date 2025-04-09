@@ -37,8 +37,9 @@ void CPVT_FontMap::SetupAnnotSysPDFFont() {
   RetainPtr<CPDF_Font> pPDFFont =
       CPDF_InteractiveForm::AddNativeInteractiveFormFont(document_,
                                                          &sys_font_alias_);
-  if (!pPDFFont)
+  if (!pPDFFont) {
     return;
+  }
 
   RetainPtr<CPDF_Dictionary> pFontList = res_dict_->GetMutableDictFor("Font");
   if (ValidateFontResourceDict(pFontList.Get()) &&

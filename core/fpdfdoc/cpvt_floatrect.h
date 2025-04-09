@@ -23,8 +23,9 @@ class CPVT_FloatRect final : public CFX_FloatRect {
       : CFX_FloatRect(rect.left, rect.bottom, rect.right, rect.top) {}
 
   float Height() const {
-    if (top > bottom)
+    if (top > bottom) {
       return top - bottom;
+    }
     return bottom - top;
   }
 };

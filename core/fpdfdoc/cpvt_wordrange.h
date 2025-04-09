@@ -29,8 +29,9 @@ struct CPVT_WordRange {
   }
 
   void Normalize() {
-    if (BeginPos > EndPos)
+    if (BeginPos > EndPos) {
       std::swap(BeginPos, EndPos);
+    }
   }
 
   CPVT_WordPlace BeginPos;
