@@ -132,8 +132,9 @@ void CRYPT_ArcFourSetup(CRYPT_rc4_context* context,
                         pdfium::span<const uint8_t> key) {
   context->x = 0;
   context->y = 0;
-  for (int i = 0; i < CRYPT_rc4_context::kPermutationLength; ++i)
+  for (int i = 0; i < CRYPT_rc4_context::kPermutationLength; ++i) {
     context->m[i] = i;
+  }
 
   int j = 0;
   for (int i = 0; i < CRYPT_rc4_context::kPermutationLength; ++i) {
@@ -174,8 +175,9 @@ CRYPT_md5_context CRYPT_MD5Start() {
 
 void CRYPT_MD5Update(CRYPT_md5_context* context,
                      pdfium::span<const uint8_t> data) {
-  if (data.empty())
+  if (data.empty()) {
     return;
+  }
 
   uint32_t left = (context->total[0] >> 3) & 0x3F;
   uint32_t fill = 64 - left;

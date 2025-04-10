@@ -41,11 +41,13 @@ size_t FindWebLinkEnding(const WideString& str, size_t start, size_t end) {
         size_t off = end + 1;
         if (off < len && str[off] == L':') {
           off++;
-          while (off < len && FXSYS_IsDecimalDigit(str[off]))
+          while (off < len && FXSYS_IsDecimalDigit(str[off])) {
             off++;
+          }
           if (off > end + 2 &&
-              off <= len)   // At least one digit in port number.
-            end = off - 1;  // |off| is offset of the first invalid char.
+              off <= len) {  // At least one digit in port number.
+            end = off - 1;   // |off| is offset of the first invalid char.
+          }
         }
       }
     }
@@ -155,8 +157,9 @@ void CPDF_LinkExtract::ExtractLinks() {
     if (strBeCheck.GetLength() > 5) {
       while (strBeCheck.GetLength() > 0) {
         wchar_t ch = strBeCheck.Back();
-        if (ch != L')' && ch != L',' && ch != L'>' && ch != L'.')
+        if (ch != L')' && ch != L',' && ch != L'>' && ch != L'.') {
           break;
+        }
 
         strBeCheck = strBeCheck.First(strBeCheck.GetLength() - 1);
         nCount--;
@@ -190,8 +193,9 @@ std::optional<CPDF_LinkExtract::Link> CPDF_LinkExtract::CheckWebLink(
   if (start.has_value()) {
     size_t off = start.value() + kHttpScheme.GetLength();  // move after "http".
     if (str.GetLength() > off + 4) {  // At least "://<char>" follows.
-      if (str[off] == L's')  // "https" scheme is accepted.
+      if (str[off] == L's') {         // "https" scheme is accepted.
         off++;
+      }
       if (str[off] == L':' && str[off + 1] == L'/' && str[off + 2] == L'/') {
         off += 3;
         const size_t end =
@@ -231,15 +235,17 @@ std::optional<CPDF_LinkExtract::Link> CPDF_LinkExtract::CheckWebLink(
 bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
   auto aPos = str->Find(L'@');
   // Invalid when no '@' or when starts/ends with '@'.
-  if (!aPos.has_value() || aPos.value() == 0 || aPos == str->GetLength() - 1)
+  if (!aPos.has_value() || aPos.value() == 0 || aPos == str->GetLength() - 1) {
     return false;
+  }
 
   // Check the local part.
   size_t pPos = aPos.value();  // Used to track the position of '@' or '.'.
   for (size_t i = aPos.value(); i > 0; i--) {
     wchar_t ch = (*str)[i - 1];
-    if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch))
+    if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch)) {
       continue;
+    }
 
     if (ch != L'.' || i == pPos || i == 1) {
       if (i == aPos.value()) {
@@ -258,24 +264,27 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
 
   // Check the domain name part.
   aPos = str->Find(L'@');
-  if (!aPos.has_value() || aPos.value() == 0)
+  if (!aPos.has_value() || aPos.value() == 0) {
     return false;
+  }
 
   str->TrimBack(L'.');
   // At least one '.' in domain name, but not at the beginning.
   // TODO(weili): RFC5322 allows domain names to be a local name without '.'.
   // Check whether we should remove this check.
   auto ePos = str->Find(L'.', aPos.value() + 1);
-  if (!ePos.has_value() || ePos.value() == aPos.value() + 1)
+  if (!ePos.has_value() || ePos.value() == aPos.value() + 1) {
     return false;
+  }
 
   // Validate all other chars in domain name.
   size_t nLen = str->GetLength();
   pPos = 0;  // Used to track the position of '.'.
   for (size_t i = aPos.value() + 1; i < nLen; i++) {
     wchar_t wch = (*str)[i];
-    if (wch == L'-' || FXSYS_iswalnum(wch))
+    if (wch == L'-' || FXSYS_iswalnum(wch)) {
       continue;
+    }
 
     if (wch != L'.' || i == pPos + 1) {
       // Domain name should end before invalid char.
@@ -290,8 +299,9 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
     pPos = i;
   }
 
-  if (!str->Contains(L"mailto:"))
+  if (!str->Contains(L"mailto:")) {
     *str = L"mailto:" + *str;
+  }
 
   return true;
 }
@@ -302,8 +312,9 @@ WideString CPDF_LinkExtract::GetURL(size_t index) const {
 }
 
 std::vector<CFX_FloatRect> CPDF_LinkExtract::GetRects(size_t index) const {
-  if (index >= m_LinkArray.size())
+  if (index >= m_LinkArray.size()) {
     return std::vector<CFX_FloatRect>();
+  }
 
   return m_pTextPage->GetRectArray(m_LinkArray[index].m_Start,
                                    m_LinkArray[index].m_Count);
@@ -311,7 +322,8 @@ std::vector<CFX_FloatRect> CPDF_LinkExtract::GetRects(size_t index) const {
 
 std::optional<CPDF_LinkExtract::Range> CPDF_LinkExtract::GetTextRange(
     size_t index) const {
-  if (index >= m_LinkArray.size())
+  if (index >= m_LinkArray.size()) {
     return std::nullopt;
+  }
   return m_LinkArray[index];
 }
