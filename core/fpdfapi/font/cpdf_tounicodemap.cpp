@@ -56,13 +56,13 @@ CPDF_ToUnicodeMap::CPDF_ToUnicodeMap(RetainPtr<const CPDF_Stream> pStream) {
 CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() = default;
 
 WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
-  auto it = m_Multimap.find(charcode);
-  if (it == m_Multimap.end()) {
-    if (!m_pBaseMap) {
+  auto it = multimap_.find(charcode);
+  if (it == multimap_.end()) {
+    if (!base_map_) {
       return WideString();
     }
     return WideString(
-        m_pBaseMap->UnicodeFromCID(static_cast<uint16_t>(charcode)));
+        base_map_->UnicodeFromCID(static_cast<uint16_t>(charcode)));
   }
 
   uint32_t value = *it->second.begin();
@@ -72,11 +72,11 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   }
 
   size_t index = value >> 16;
-  return index < m_MultiCharVec.size() ? m_MultiCharVec[index] : WideString();
+  return index < multi_char_vec_.size() ? multi_char_vec_[index] : WideString();
 }
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
-  for (const auto& pair : m_Multimap) {
+  for (const auto& pair : multimap_) {
     if (pdfium::Contains(pair.second, static_cast<uint32_t>(unicode))) {
       return pair.first;
     }
@@ -86,8 +86,8 @@ uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
 
 size_t CPDF_ToUnicodeMap::GetUnicodeCountByCharcodeForTesting(
     uint32_t charcode) const {
-  auto it = m_Multimap.find(charcode);
-  return it != m_Multimap.end() ? it->second.size() : 0u;
+  auto it = multimap_.find(charcode);
+  return it != multimap_.end() ? it->second.size() : 0u;
 }
 
 // static
@@ -187,7 +187,7 @@ void CPDF_ToUnicodeMap::Load(RetainPtr<const CPDF_Stream> pStream) {
     previous_word = word;
   }
   if (cid_set != CIDSET_UNKNOWN) {
-    m_pBaseMap = CPDF_FontGlobals::GetInstance()->GetCID2UnicodeMap(cid_set);
+    base_map_ = CPDF_FontGlobals::GetInstance()->GetCID2UnicodeMap(cid_set);
   }
 }
 
@@ -366,7 +366,7 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
         uint32_t code = range.low_code;
         for (const auto& retcode : range.retcodes) {
           InsertIntoMultimap(code, GetMultiCharIndexIndicator());
-          m_MultiCharVec.push_back(retcode);
+          multi_char_vec_.push_back(retcode);
           ++code;
         }
       }
@@ -376,7 +376,7 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
 }
 
 uint32_t CPDF_ToUnicodeMap::GetMultiCharIndexIndicator() const {
-  FX_SAFE_UINT32 uni = m_MultiCharVec.size();
+  FX_SAFE_UINT32 uni = multi_char_vec_.size();
   uni = uni * 0x10000 + 0xffff;
   return uni.ValueOrDefault(0);
 }
@@ -391,14 +391,14 @@ void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
     InsertIntoMultimap(srccode, destcode[0]);
   } else {
     InsertIntoMultimap(srccode, GetMultiCharIndexIndicator());
-    m_MultiCharVec.push_back(destcode);
+    multi_char_vec_.push_back(destcode);
   }
 }
 
 void CPDF_ToUnicodeMap::InsertIntoMultimap(uint32_t code, uint32_t destcode) {
-  auto it = m_Multimap.find(code);
-  if (it == m_Multimap.end()) {
-    m_Multimap.emplace(code, std::set<uint32_t>{destcode});
+  auto it = multimap_.find(code);
+  if (it == multimap_.end()) {
+    multimap_.emplace(code, std::set<uint32_t>{destcode});
     return;
   }
 

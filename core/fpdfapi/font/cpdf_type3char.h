@@ -33,21 +33,21 @@ class CPDF_Type3Char {
 
   RetainPtr<CFX_DIBitmap> GetBitmap();
 
-  bool colored() const { return m_bColored; }
-  int width() const { return m_Width; }
-  const CFX_Matrix& matrix() const { return m_ImageMatrix; }
-  const FX_RECT& bbox() const { return m_BBox; }
+  bool colored() const { return colored_; }
+  int width() const { return width_; }
+  const CFX_Matrix& matrix() const { return image_matrix_; }
+  const FX_RECT& bbox() const { return bbox_; }
 
-  const CPDF_Font::FormIface* form() const { return m_pForm.get(); }
+  const CPDF_Font::FormIface* form() const { return form_.get(); }
   void SetForm(std::unique_ptr<CPDF_Font::FormIface> pForm);
 
  private:
-  std::unique_ptr<CPDF_Font::FormIface> m_pForm;
-  RetainPtr<CFX_DIBitmap> m_pBitmap;
-  bool m_bColored = false;
-  int m_Width = 0;
-  CFX_Matrix m_ImageMatrix;
-  FX_RECT m_BBox;
+  std::unique_ptr<CPDF_Font::FormIface> form_;
+  RetainPtr<CFX_DIBitmap> bitmap_;
+  bool colored_ = false;
+  int width_ = 0;
+  CFX_Matrix image_matrix_;
+  FX_RECT bbox_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TYPE3CHAR_H_

@@ -19,8 +19,8 @@ class CPDF_CID2UnicodeMap {
   wchar_t UnicodeFromCID(uint16_t cid) const;
 
  private:
-  const CIDSet m_Charset;
-  const pdfium::raw_span<const uint16_t> m_pEmbeddedMap;
+  const CIDSet charset_;
+  const pdfium::raw_span<const uint16_t> embedded_map_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_CID2UNICODEMAP_H_

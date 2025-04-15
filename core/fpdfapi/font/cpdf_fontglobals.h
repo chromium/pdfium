@@ -40,16 +40,16 @@ class CPDF_FontGlobals {
            RetainPtr<CPDF_Font> pFont);
 
   void SetEmbeddedCharset(CIDSet idx, pdfium::span<const fxcmap::CMap> map) {
-    m_EmbeddedCharsets[idx] = map;
+    embedded_charsets_[idx] = map;
   }
   pdfium::span<const fxcmap::CMap> GetEmbeddedCharset(CIDSet idx) const {
-    return m_EmbeddedCharsets[idx];
+    return embedded_charsets_[idx];
   }
   void SetEmbeddedToUnicode(CIDSet idx, pdfium::span<const uint16_t> map) {
-    m_EmbeddedToUnicodes[idx] = map;
+    embedded_to_unicodes_[idx] = map;
   }
   pdfium::span<const uint16_t> GetEmbeddedToUnicode(CIDSet idx) {
-    return m_EmbeddedToUnicodes[idx];
+    return embedded_to_unicodes_[idx];
   }
 
   RetainPtr<const CPDF_CMap> GetPredefinedCMap(const ByteString& name);
@@ -64,17 +64,17 @@ class CPDF_FontGlobals {
   void LoadEmbeddedJapan1CMaps();
   void LoadEmbeddedKorea1CMaps();
 
-  std::map<ByteString, RetainPtr<const CPDF_CMap>> m_CMaps;
+  std::map<ByteString, RetainPtr<const CPDF_CMap>> cmaps_;
   std::array<std::unique_ptr<CPDF_CID2UnicodeMap>, CIDSET_NUM_SETS>
-      m_CID2UnicodeMaps;
+      cid2unicode_maps_;
   std::array<pdfium::raw_span<const fxcmap::CMap>, CIDSET_NUM_SETS>
-      m_EmbeddedCharsets;
+      embedded_charsets_;
   std::array<pdfium::raw_span<const uint16_t>, CIDSET_NUM_SETS>
-      m_EmbeddedToUnicodes;
+      embedded_to_unicodes_;
   std::map<UnownedPtr<CPDF_Document>,
            std::unique_ptr<CFX_StockFontArray>,
            std::less<>>
-      m_StockMap;
+      stock_map_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_FONTGLOBALS_H_

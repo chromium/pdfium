@@ -23,7 +23,7 @@ class CFX_StockFontArray {
   void SetFont(CFX_FontMapper::StandardFont index, RetainPtr<CPDF_Font> pFont);
 
  private:
-  std::array<RetainPtr<CPDF_Font>, 14> m_StockFonts;
+  std::array<RetainPtr<CPDF_Font>, 14> stock_fonts_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CFX_STOCKFONTARRAY_H_

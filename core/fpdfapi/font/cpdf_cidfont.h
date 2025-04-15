@@ -87,21 +87,21 @@ class CPDF_CIDFont final : public CPDF_Font {
   void LoadSubstFont();
   wchar_t GetUnicodeFromCharCode(uint32_t charcode) const;
 
-  RetainPtr<const CPDF_CMap> m_pCMap;
-  UnownedPtr<const CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
-  RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
-  std::unique_ptr<CFX_CTTGSUBTable> m_pTTGSUBTable;
-  CIDFontType m_FontType = CIDFontType::kTrueType;
-  bool m_bCIDIsGID = false;
-  bool m_bAnsiWidthsFixed = false;
-  bool m_bAdobeCourierStd = false;
-  CIDSet m_Charset = CIDSET_UNKNOWN;
-  int16_t m_DefaultWidth = 1000;
-  int16_t m_DefaultVY = 880;
-  int16_t m_DefaultW1 = -1000;
-  std::vector<int> m_WidthList;
-  std::vector<int> m_VertMetrics;
-  std::array<FX_RECT, 256> m_CharBBox;
+  RetainPtr<const CPDF_CMap> cmap_;
+  UnownedPtr<const CPDF_CID2UnicodeMap> cid2unicode_map_;
+  RetainPtr<CPDF_StreamAcc> stream_acc_;
+  std::unique_ptr<CFX_CTTGSUBTable> ttg_subtable_;
+  CIDFontType font_type_ = CIDFontType::kTrueType;
+  bool cid_is_gid_ = false;
+  bool ansi_widths_fixed_ = false;
+  bool adobe_courier_std_ = false;
+  CIDSet charset_ = CIDSET_UNKNOWN;
+  int16_t default_width_ = 1000;
+  int16_t default_vy_ = 880;
+  int16_t default_w1_ = -1000;
+  std::vector<int> width_list_;
+  std::vector<int> vert_metrics_;
+  std::array<FX_RECT, 256> char_bbox_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_CIDFONT_H_

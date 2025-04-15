@@ -27,7 +27,7 @@ struct RangeCmap {
 };
 
 const CMap* FindNextCMap(const CMap* pMap) {
-  return pMap->m_UseOffset ? UNSAFE_TODO(pMap + pMap->m_UseOffset) : nullptr;
+  return pMap->use_offset_ ? UNSAFE_TODO(pMap + pMap->use_offset_) : nullptr;
 }
 
 }  // namespace
@@ -37,21 +37,21 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
   const uint16_t loword = static_cast<uint16_t>(charcode);
   if (charcode >> 16) {
     while (pMap) {
-      if (pMap->m_pDWordMap) {
-        const DWordCIDMap* begin = pMap->m_pDWordMap;
-        const auto* end = UNSAFE_TODO(begin + pMap->m_DWordCount);
+      if (pMap->dword_map_) {
+        const DWordCIDMap* begin = pMap->dword_map_;
+        const auto* end = UNSAFE_TODO(begin + pMap->dword_count_);
         const auto* found = std::lower_bound(
             begin, end, charcode,
             [](const DWordCIDMap& element, uint32_t charcode) {
               uint16_t hiword = static_cast<uint16_t>(charcode >> 16);
-              if (element.m_HiWord != hiword) {
-                return element.m_HiWord < hiword;
+              if (element.hi_word_ != hiword) {
+                return element.hi_word_ < hiword;
               }
-              return element.m_LoWordHigh < static_cast<uint16_t>(charcode);
+              return element.lo_word_high_ < static_cast<uint16_t>(charcode);
             });
-        if (found != end && loword >= found->m_LoWordLow &&
-            loword <= found->m_LoWordHigh) {
-          return found->m_CID + loword - found->m_LoWordLow;
+        if (found != end && loword >= found->lo_word_low_ &&
+            loword <= found->lo_word_high_) {
+          return found->cid_ + loword - found->lo_word_low_;
         }
       }
       pMap = FindNextCMap(pMap);
@@ -59,12 +59,12 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
     return 0;
   }
 
-  while (pMap && pMap->m_pWordMap) {
-    switch (pMap->m_WordMapType) {
+  while (pMap && pMap->word_map_) {
+    switch (pMap->word_map_type_) {
       case CMap::Type::kSingle: {
         const auto* begin =
-            reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap);
-        const auto* end = UNSAFE_TODO(begin + pMap->m_WordCount);
+            reinterpret_cast<const SingleCmap*>(pMap->word_map_);
+        const auto* end = UNSAFE_TODO(begin + pMap->word_count_);
         const auto* found = std::lower_bound(
             begin, end, loword, [](const SingleCmap& element, uint16_t code) {
               return element.code < code;
@@ -75,9 +75,8 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
         break;
       }
       case CMap::Type::kRange: {
-        const auto* begin =
-            reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap);
-        const auto* end = UNSAFE_TODO(begin + pMap->m_WordCount);
+        const auto* begin = reinterpret_cast<const RangeCmap*>(pMap->word_map_);
+        const auto* end = UNSAFE_TODO(begin + pMap->word_count_);
         const auto* found = std::lower_bound(
             begin, end, loword, [](const RangeCmap& element, uint16_t code) {
               return element.high < code;
@@ -95,18 +94,18 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
 }
 
 uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
-  // TODO(dsinclair): This should be checking both pMap->m_WordMap and
-  // pMap->m_DWordMap. There was a second while() but it was never reached as
+  // TODO(dsinclair): This should be checking both pMap->word_map_ and
+  // pMap->dword_map_. There was a second while() but it was never reached as
   // the first always returns. Investigate and determine how this should
   // really be working. (https://codereview.chromium.org/2235743003 removed the
   // second while loop.)
   DCHECK(pMap);
   while (pMap) {
-    switch (pMap->m_WordMapType) {
+    switch (pMap->word_map_type_) {
       case CMap::Type::kSingle: {
         auto single_span = UNSAFE_TODO(pdfium::make_span(
-            reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap),
-            pMap->m_WordCount));
+            reinterpret_cast<const SingleCmap*>(pMap->word_map_),
+            pMap->word_count_));
         for (const auto& single : single_span) {
           if (single.cid == cid) {
             return single.code;
@@ -116,8 +115,8 @@ uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
       }
       case CMap::Type::kRange: {
         auto range_span = UNSAFE_TODO(pdfium::make_span(
-            reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap),
-            pMap->m_WordCount));
+            reinterpret_cast<const RangeCmap*>(pMap->word_map_),
+            pMap->word_count_));
         for (const auto& range : range_span) {
           if (cid >= range.cid && cid <= range.cid + range.high - range.low) {
             return range.low + cid - range.cid;

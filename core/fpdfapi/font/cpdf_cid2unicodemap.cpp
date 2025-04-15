@@ -9,19 +9,19 @@
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 
 CPDF_CID2UnicodeMap::CPDF_CID2UnicodeMap(CIDSet charset)
-    : m_Charset(charset),
-      m_pEmbeddedMap(
-          CPDF_FontGlobals::GetInstance()->GetEmbeddedToUnicode(m_Charset)) {}
+    : charset_(charset),
+      embedded_map_(
+          CPDF_FontGlobals::GetInstance()->GetEmbeddedToUnicode(charset_)) {}
 
 CPDF_CID2UnicodeMap::~CPDF_CID2UnicodeMap() = default;
 
 bool CPDF_CID2UnicodeMap::IsLoaded() const {
-  return !m_pEmbeddedMap.empty();
+  return !embedded_map_.empty();
 }
 
 wchar_t CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t cid) const {
-  if (m_Charset == CIDSET_UNICODE) {
+  if (charset_ == CIDSET_UNICODE) {
     return cid;
   }
-  return cid < m_pEmbeddedMap.size() ? m_pEmbeddedMap[cid] : 0;
+  return cid < embedded_map_.size() ? embedded_map_[cid] : 0;
 }

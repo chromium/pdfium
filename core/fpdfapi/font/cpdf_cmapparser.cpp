@@ -28,83 +28,84 @@ ByteStringView CMap_GetString(ByteStringView word) {
 
 }  // namespace
 
-CPDF_CMapParser::CPDF_CMapParser(CPDF_CMap* pCMap) : m_pCMap(pCMap) {}
+CPDF_CMapParser::CPDF_CMapParser(CPDF_CMap* pCMap) : cmap_(pCMap) {}
 
 CPDF_CMapParser::~CPDF_CMapParser() {
-  m_pCMap->SetAdditionalMappings(std::move(m_AdditionalCharcodeToCIDMappings));
-  m_pCMap->SetMixedFourByteLeadingRanges(std::move(m_Ranges));
+  cmap_->SetAdditionalMappings(std::move(additional_charcode_to_cidmappings_));
+  cmap_->SetMixedFourByteLeadingRanges(std::move(ranges_));
 }
 
 void CPDF_CMapParser::ParseWord(ByteStringView word) {
   DCHECK(!word.IsEmpty());
 
   if (word == "begincidchar") {
-    m_Status = kProcessingCidChar;
-    m_CodeSeq = 0;
+    status_ = kProcessingCidChar;
+    code_seq_ = 0;
   } else if (word == "begincidrange") {
-    m_Status = kProcessingCidRange;
-    m_CodeSeq = 0;
+    status_ = kProcessingCidRange;
+    code_seq_ = 0;
   } else if (word == "endcidrange" || word == "endcidchar") {
-    m_Status = kStart;
+    status_ = kStart;
   } else if (word == "/WMode") {
-    m_Status = kProcessingWMode;
+    status_ = kProcessingWMode;
   } else if (word == "/Registry") {
-    m_Status = kProcessingRegistry;
+    status_ = kProcessingRegistry;
   } else if (word == "/Ordering") {
-    m_Status = kProcessingOrdering;
+    status_ = kProcessingOrdering;
   } else if (word == "/Supplement") {
-    m_Status = kProcessingSupplement;
+    status_ = kProcessingSupplement;
   } else if (word == "begincodespacerange") {
-    m_Status = kProcessingCodeSpaceRange;
-    m_CodeSeq = 0;
+    status_ = kProcessingCodeSpaceRange;
+    code_seq_ = 0;
   } else if (word == "usecmap") {
-  } else if (m_Status == kProcessingCidChar) {
+  } else if (status_ == kProcessingCidChar) {
     HandleCid(word);
-  } else if (m_Status == kProcessingCidRange) {
+  } else if (status_ == kProcessingCidRange) {
     HandleCid(word);
-  } else if (m_Status == kProcessingRegistry) {
-    m_Status = kStart;
-  } else if (m_Status == kProcessingOrdering) {
-    m_pCMap->SetCharset(CharsetFromOrdering(CMap_GetString(word)));
-    m_Status = kStart;
-  } else if (m_Status == kProcessingSupplement) {
-    m_Status = kStart;
-  } else if (m_Status == kProcessingWMode) {
-    m_pCMap->SetVertical(GetCode(word) != 0);
-    m_Status = kStart;
-  } else if (m_Status == kProcessingCodeSpaceRange) {
+  } else if (status_ == kProcessingRegistry) {
+    status_ = kStart;
+  } else if (status_ == kProcessingOrdering) {
+    cmap_->SetCharset(CharsetFromOrdering(CMap_GetString(word)));
+    status_ = kStart;
+  } else if (status_ == kProcessingSupplement) {
+    status_ = kStart;
+  } else if (status_ == kProcessingWMode) {
+    cmap_->SetVertical(GetCode(word) != 0);
+    status_ = kStart;
+  } else if (status_ == kProcessingCodeSpaceRange) {
     HandleCodeSpaceRange(word);
   }
-  m_LastWord = word;
+  last_word_ = word;
 }
 
 void CPDF_CMapParser::HandleCid(ByteStringView word) {
-  DCHECK(m_Status == kProcessingCidChar || m_Status == kProcessingCidRange);
-  bool bChar = m_Status == kProcessingCidChar;
+  DCHECK(status_ == kProcessingCidChar || status_ == kProcessingCidRange);
+  bool bChar = status_ == kProcessingCidChar;
 
-  m_CodePoints[m_CodeSeq] = GetCode(word);
-  m_CodeSeq++;
+  code_points_[code_seq_] = GetCode(word);
+  code_seq_++;
   int nRequiredCodePoints = bChar ? 2 : 3;
-  if (m_CodeSeq < nRequiredCodePoints) {
+  if (code_seq_ < nRequiredCodePoints) {
     return;
   }
 
-  uint32_t StartCode = m_CodePoints[0];
+  uint32_t StartCode = code_points_[0];
   uint32_t EndCode;
   uint16_t StartCID;
   if (bChar) {
     EndCode = StartCode;
-    StartCID = static_cast<uint16_t>(m_CodePoints[1]);
+    StartCID = static_cast<uint16_t>(code_points_[1]);
   } else {
-    EndCode = m_CodePoints[1];
-    StartCID = static_cast<uint16_t>(m_CodePoints[2]);
+    EndCode = code_points_[1];
+    StartCID = static_cast<uint16_t>(code_points_[2]);
   }
   if (EndCode < CPDF_CMap::kDirectMapTableSize) {
-    m_pCMap->SetDirectCharcodeToCIDTableRange(StartCode, EndCode, StartCID);
+    cmap_->SetDirectCharcodeToCIDTableRange(StartCode, EndCode, StartCID);
   } else {
-    m_AdditionalCharcodeToCIDMappings.push_back({StartCode, EndCode, StartCID});
+    additional_charcode_to_cidmappings_.push_back(
+        {StartCode, EndCode, StartCID});
   }
-  m_CodeSeq = 0;
+  code_seq_ = 0;
 }
 
 void CPDF_CMapParser::HandleCodeSpaceRange(ByteStringView word) {
@@ -113,31 +114,31 @@ void CPDF_CMapParser::HandleCodeSpaceRange(ByteStringView word) {
       return;
     }
 
-    if (m_CodeSeq % 2) {
+    if (code_seq_ % 2) {
       std::optional<CPDF_CMap::CodeRange> range =
-          GetCodeRange(m_LastWord.AsStringView(), word);
+          GetCodeRange(last_word_.AsStringView(), word);
       if (range.has_value()) {
-        m_PendingRanges.push_back(range.value());
+        pending_ranges_.push_back(range.value());
       }
     }
-    m_CodeSeq++;
+    code_seq_++;
     return;
   }
 
-  size_t nSegs = m_Ranges.size() + m_PendingRanges.size();
+  size_t nSegs = ranges_.size() + pending_ranges_.size();
   if (nSegs == 1) {
     const auto& first_range =
-        !m_Ranges.empty() ? m_Ranges[0] : m_PendingRanges[0];
-    m_pCMap->SetCodingScheme(first_range.m_CharSize == 2 ? CPDF_CMap::TwoBytes
-                                                         : CPDF_CMap::OneByte);
+        !ranges_.empty() ? ranges_[0] : pending_ranges_[0];
+    cmap_->SetCodingScheme(first_range.char_size_ == 2 ? CPDF_CMap::TwoBytes
+                                                       : CPDF_CMap::OneByte);
   } else if (nSegs > 1) {
-    m_pCMap->SetCodingScheme(CPDF_CMap::MixedFourBytes);
-    m_Ranges.reserve(nSegs);
-    std::move(m_PendingRanges.begin(), m_PendingRanges.end(),
-              std::back_inserter(m_Ranges));
-    m_PendingRanges.clear();
+    cmap_->SetCodingScheme(CPDF_CMap::MixedFourBytes);
+    ranges_.reserve(nSegs);
+    std::move(pending_ranges_.begin(), pending_ranges_.end(),
+              std::back_inserter(ranges_));
+    pending_ranges_.clear();
   }
-  m_Status = kStart;
+  status_ = kStart;
 }
 
 // static
@@ -187,21 +188,21 @@ std::optional<CPDF_CMap::CodeRange> CPDF_CMapParser::GetCodeRange(
   }
 
   CPDF_CMap::CodeRange range;
-  range.m_CharSize = char_size;
-  for (i = 0; i < range.m_CharSize; ++i) {
+  range.char_size_ = char_size;
+  for (i = 0; i < range.char_size_; ++i) {
     uint8_t digit1 = first[i * 2 + 1];
     uint8_t digit2 = first[i * 2 + 2];
-    range.m_Lower[i] =
+    range.lower_[i] =
         FXSYS_HexCharToInt(digit1) * 16 + FXSYS_HexCharToInt(digit2);
   }
 
   size_t size = second.GetLength();
-  for (i = 0; i < range.m_CharSize; ++i) {
+  for (i = 0; i < range.char_size_; ++i) {
     size_t i1 = i * 2 + 1;
     size_t i2 = i1 + 1;
     uint8_t digit1 = i1 < size ? second[i1] : '0';
     uint8_t digit2 = i2 < size ? second[i2] : '0';
-    range.m_Upper[i] =
+    range.upper_[i] =
         FXSYS_HexCharToInt(digit1) * 16 + FXSYS_HexCharToInt(digit2);
   }
   return range;

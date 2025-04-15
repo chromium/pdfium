@@ -38,9 +38,9 @@ void GetPredefinedEncoding(const ByteString& value, FontEncoding* basemap) {
 CPDF_SimpleFont::CPDF_SimpleFont(CPDF_Document* pDocument,
                                  RetainPtr<CPDF_Dictionary> pFontDict)
     : CPDF_Font(pDocument, std::move(pFontDict)) {
-  m_CharWidth.fill(0xffff);
-  m_GlyphIndex.fill(0xffff);
-  m_CharBBox.fill(FX_RECT(-1, -1, -1, -1));
+  char_width_.fill(0xffff);
+  glyph_index_.fill(0xffff);
+  char_bbox_.fill(FX_RECT(-1, -1, -1, -1));
 }
 
 CPDF_SimpleFont::~CPDF_SimpleFont() = default;
@@ -54,7 +54,7 @@ int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     return -1;
   }
 
-  int index = m_GlyphIndex[charcode];
+  int index = glyph_index_[charcode];
   if (index == 0xffff) {
     return -1;
   }
@@ -63,25 +63,25 @@ int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
 }
 
 void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
-  if (!m_Font.GetFaceRec()) {
+  if (!font_.GetFaceRec()) {
     return;
   }
 
   if (charcode < 0 || charcode > 0xff) {
     return;
   }
-  int glyph_index = m_GlyphIndex[charcode];
+  int glyph_index = glyph_index_[charcode];
   if (glyph_index == 0xffff) {
-    if (!m_pFontFile && charcode != 32) {
+    if (!font_file_ && charcode != 32) {
       LoadCharMetrics(32);
-      m_CharBBox[charcode] = m_CharBBox[32];
-      if (m_bUseFontWidth) {
-        m_CharWidth[charcode] = m_CharWidth[32];
+      char_bbox_[charcode] = char_bbox_[32];
+      if (use_font_width_) {
+        char_width_[charcode] = char_width_[32];
       }
     }
     return;
   }
-  RetainPtr<CFX_Face> face = m_Font.GetFace();
+  RetainPtr<CFX_Face> face = font_.GetFace();
   if (!face) {
     return;
   }
@@ -94,36 +94,36 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
     return;
   }
 
-  m_CharBBox[charcode] = face->GetGlyphBBox();
+  char_bbox_[charcode] = face->GetGlyphBBox();
 
-  if (m_bUseFontWidth) {
+  if (use_font_width_) {
     int TT_Width = NormalizeFontMetric(FXFT_Get_Glyph_HoriAdvance(face_rec),
                                        face->GetUnitsPerEm());
-    if (m_CharWidth[charcode] == 0xffff) {
-      m_CharWidth[charcode] = TT_Width;
+    if (char_width_[charcode] == 0xffff) {
+      char_width_[charcode] = TT_Width;
     } else if (TT_Width && !IsEmbedded()) {
-      m_CharBBox[charcode].right =
-          m_CharBBox[charcode].right * m_CharWidth[charcode] / TT_Width;
-      m_CharBBox[charcode].left =
-          m_CharBBox[charcode].left * m_CharWidth[charcode] / TT_Width;
+      char_bbox_[charcode].right =
+          char_bbox_[charcode].right * char_width_[charcode] / TT_Width;
+      char_bbox_[charcode].left =
+          char_bbox_[charcode].left * char_width_[charcode] / TT_Width;
     }
   }
 }
 
 void CPDF_SimpleFont::LoadCharWidths(const CPDF_Dictionary* font_desc) {
-  RetainPtr<const CPDF_Array> width_array = m_pFontDict->GetArrayFor("Widths");
-  m_bUseFontWidth = !width_array;
+  RetainPtr<const CPDF_Array> width_array = font_dict_->GetArrayFor("Widths");
+  use_font_width_ = !width_array;
   if (!width_array) {
     return;
   }
 
   if (font_desc && font_desc->KeyExist("MissingWidth")) {
     int missing_width = font_desc->GetIntegerFor("MissingWidth");
-    std::fill(std::begin(m_CharWidth), std::end(m_CharWidth), missing_width);
+    std::fill(std::begin(char_width_), std::end(char_width_), missing_width);
   }
 
-  size_t width_start = m_pFontDict->GetIntegerFor("FirstChar", 0);
-  size_t width_end = m_pFontDict->GetIntegerFor("LastChar", 0);
+  size_t width_start = font_dict_->GetIntegerFor("FirstChar", 0);
+  size_t width_end = font_dict_->GetIntegerFor("LastChar", 0);
   if (width_start > 255) {
     return;
   }
@@ -135,7 +135,7 @@ void CPDF_SimpleFont::LoadCharWidths(const CPDF_Dictionary* font_desc) {
     width_end = 255;
   }
   for (size_t i = width_start; i <= width_end; i++) {
-    m_CharWidth[i] = width_array->GetIntegerAt(i - width_start);
+    char_width_[i] = width_array->GetIntegerAt(i - width_start);
   }
 }
 
@@ -145,7 +145,7 @@ void CPDF_SimpleFont::LoadDifferences(const CPDF_Dictionary* encoding) {
     return;
   }
 
-  m_CharNames.resize(kInternalTableSize);
+  char_names_.resize(kInternalTableSize);
   uint32_t cur_code = 0;
   for (uint32_t i = 0; i < diffs->size(); i++) {
     RetainPtr<const CPDF_Object> element = diffs->GetDirectObjectAt(i);
@@ -155,8 +155,8 @@ void CPDF_SimpleFont::LoadDifferences(const CPDF_Dictionary* encoding) {
 
     const CPDF_Name* name = element->AsName();
     if (name) {
-      if (cur_code < m_CharNames.size()) {
-        m_CharNames[cur_code] = name->GetString();
+      if (cur_code < char_names_.size()) {
+        char_names_[cur_code] = name->GetString();
       }
       cur_code++;
     } else {
@@ -167,24 +167,24 @@ void CPDF_SimpleFont::LoadDifferences(const CPDF_Dictionary* encoding) {
 
 void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
   RetainPtr<const CPDF_Object> pEncoding =
-      m_pFontDict->GetDirectObjectFor("Encoding");
+      font_dict_->GetDirectObjectFor("Encoding");
   if (!pEncoding) {
-    if (m_BaseFontName == "Symbol") {
-      m_BaseEncoding =
+    if (base_font_name_ == "Symbol") {
+      base_encoding_ =
           bTrueType ? FontEncoding::kMsSymbol : FontEncoding::kAdobeSymbol;
-    } else if (!bEmbedded && m_BaseEncoding == FontEncoding::kBuiltin) {
-      m_BaseEncoding = FontEncoding::kWinAnsi;
+    } else if (!bEmbedded && base_encoding_ == FontEncoding::kBuiltin) {
+      base_encoding_ = FontEncoding::kWinAnsi;
     }
     return;
   }
   if (pEncoding->IsName()) {
-    if (m_BaseEncoding == FontEncoding::kAdobeSymbol ||
-        m_BaseEncoding == FontEncoding::kZapfDingbats) {
+    if (base_encoding_ == FontEncoding::kAdobeSymbol ||
+        base_encoding_ == FontEncoding::kZapfDingbats) {
       return;
     }
-    if (FontStyleIsSymbolic(m_Flags) && m_BaseFontName == "Symbol") {
+    if (FontStyleIsSymbolic(flags_) && base_font_name_ == "Symbol") {
       if (!bTrueType) {
-        m_BaseEncoding = FontEncoding::kAdobeSymbol;
+        base_encoding_ = FontEncoding::kAdobeSymbol;
       }
       return;
     }
@@ -192,7 +192,7 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
     if (bsEncoding == pdfium::font_encodings::kMacExpertEncoding) {
       bsEncoding = pdfium::font_encodings::kWinAnsiEncoding;
     }
-    GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);
+    GetPredefinedEncoding(bsEncoding, &base_encoding_);
     return;
   }
 
@@ -201,16 +201,16 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
     return;
   }
 
-  if (m_BaseEncoding != FontEncoding::kAdobeSymbol &&
-      m_BaseEncoding != FontEncoding::kZapfDingbats) {
+  if (base_encoding_ != FontEncoding::kAdobeSymbol &&
+      base_encoding_ != FontEncoding::kZapfDingbats) {
     ByteString bsEncoding = pDict->GetByteStringFor("BaseEncoding");
     if (bTrueType && bsEncoding == pdfium::font_encodings::kMacExpertEncoding) {
       bsEncoding = pdfium::font_encodings::kWinAnsiEncoding;
     }
-    GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);
+    GetPredefinedEncoding(bsEncoding, &base_encoding_);
   }
-  if ((!bEmbedded || bTrueType) && m_BaseEncoding == FontEncoding::kBuiltin) {
-    m_BaseEncoding = FontEncoding::kStandard;
+  if ((!bEmbedded || bTrueType) && base_encoding_ == FontEncoding::kBuiltin) {
+    base_encoding_ = FontEncoding::kStandard;
   }
 
   LoadDifferences(pDict);
@@ -221,13 +221,13 @@ int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {
     charcode = 0;
   }
 
-  if (m_CharWidth[charcode] == 0xffff) {
+  if (char_width_[charcode] == 0xffff) {
     LoadCharMetrics(charcode);
-    if (m_CharWidth[charcode] == 0xffff) {
-      m_CharWidth[charcode] = 0;
+    if (char_width_[charcode] == 0xffff) {
+      char_width_[charcode] = 0;
     }
   }
-  return m_CharWidth[charcode];
+  return char_width_[charcode];
 }
 
 FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode) {
@@ -235,51 +235,51 @@ FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode) {
     charcode = 0;
   }
 
-  if (m_CharBBox[charcode].left == -1) {
+  if (char_bbox_[charcode].left == -1) {
     LoadCharMetrics(charcode);
   }
 
-  return m_CharBBox[charcode];
+  return char_bbox_[charcode];
 }
 
 bool CPDF_SimpleFont::LoadCommon() {
   RetainPtr<const CPDF_Dictionary> pFontDesc =
-      m_pFontDict->GetDictFor("FontDescriptor");
+      font_dict_->GetDictFor("FontDescriptor");
   if (pFontDesc) {
     LoadFontDescriptor(pFontDesc.Get());
   }
   LoadCharWidths(pFontDesc.Get());
-  if (m_pFontFile) {
-    if (m_BaseFontName.GetLength() > 7 && m_BaseFontName[6] == '+') {
-      m_BaseFontName = m_BaseFontName.Last(m_BaseFontName.GetLength() - 7);
+  if (font_file_) {
+    if (base_font_name_.GetLength() > 7 && base_font_name_[6] == '+') {
+      base_font_name_ = base_font_name_.Last(base_font_name_.GetLength() - 7);
     }
   } else {
     LoadSubstFont();
   }
-  if (!FontStyleIsSymbolic(m_Flags)) {
-    m_BaseEncoding = FontEncoding::kStandard;
+  if (!FontStyleIsSymbolic(flags_)) {
+    base_encoding_ = FontEncoding::kStandard;
   }
-  LoadPDFEncoding(!!m_pFontFile, m_Font.IsTTFont());
+  LoadPDFEncoding(!!font_file_, font_.IsTTFont());
   LoadGlyphMap();
-  m_CharNames.clear();
+  char_names_.clear();
   if (!HasFace()) {
     return true;
   }
 
-  if (FontStyleIsAllCaps(m_Flags)) {
+  if (FontStyleIsAllCaps(flags_)) {
     static const auto kLowercases =
         fxcrt::ToArray<std::pair<const uint8_t, const uint8_t>>(
             {{'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}});
     for (const auto& lower : kLowercases) {
       for (int i = lower.first; i <= lower.second; ++i) {
-        if (m_GlyphIndex[i] != 0xffff && m_pFontFile) {
+        if (glyph_index_[i] != 0xffff && font_file_) {
           continue;
         }
         int j = i - 32;
-        m_GlyphIndex[i] = m_GlyphIndex[j];
-        if (m_CharWidth[j]) {
-          m_CharWidth[i] = m_CharWidth[j];
-          m_CharBBox[i] = m_CharBBox[j];
+        glyph_index_[i] = glyph_index_[j];
+        if (char_width_[j]) {
+          char_width_[i] = char_width_[j];
+          char_bbox_[i] = char_bbox_[j];
         }
       }
     }
@@ -289,22 +289,22 @@ bool CPDF_SimpleFont::LoadCommon() {
 }
 
 void CPDF_SimpleFont::LoadSubstFont() {
-  if (!m_bUseFontWidth && !FontStyleIsFixedPitch(m_Flags)) {
+  if (!use_font_width_ && !FontStyleIsFixedPitch(flags_)) {
     int width = 0;
     size_t i;
     for (i = 0; i < kInternalTableSize; i++) {
-      if (m_CharWidth[i] == 0 || m_CharWidth[i] == 0xffff) {
+      if (char_width_[i] == 0 || char_width_[i] == 0xffff) {
         continue;
       }
 
       if (width == 0) {
-        width = m_CharWidth[i];
-      } else if (width != m_CharWidth[i]) {
+        width = char_width_[i];
+      } else if (width != char_width_[i]) {
         break;
       }
     }
     if (i == kInternalTableSize && width) {
-      m_Flags |= pdfium::kFontStyleFixedPitch;
+      flags_ |= pdfium::kFontStyleFixedPitch;
     }
   }
 
@@ -313,14 +313,14 @@ void CPDF_SimpleFont::LoadSubstFont() {
       weight > pdfium::kFontWeightExtraBold) {
     weight = pdfium::kFontWeightNormal;
   }
-  m_Font.LoadSubst(m_BaseFontName, IsTrueTypeFont(), m_Flags, weight,
-                   m_ItalicAngle, FX_CodePage::kDefANSI, /*bVertical=*/false);
+  font_.LoadSubst(base_font_name_, IsTrueTypeFont(), flags_, weight,
+                  italic_angle_, FX_CodePage::kDefANSI, /*bVertical=*/false);
 }
 
 bool CPDF_SimpleFont::IsUnicodeCompatible() const {
-  return m_BaseEncoding != FontEncoding::kBuiltin &&
-         m_BaseEncoding != FontEncoding::kAdobeSymbol &&
-         m_BaseEncoding != FontEncoding::kZapfDingbats;
+  return base_encoding_ != FontEncoding::kBuiltin &&
+         base_encoding_ != FontEncoding::kAdobeSymbol &&
+         base_encoding_ != FontEncoding::kZapfDingbats;
 }
 
 WideString CPDF_SimpleFont::UnicodeFromCharCode(uint32_t charcode) const {
@@ -328,7 +328,7 @@ WideString CPDF_SimpleFont::UnicodeFromCharCode(uint32_t charcode) const {
   if (!unicode.IsEmpty()) {
     return unicode;
   }
-  wchar_t ret = m_Encoding.UnicodeFromCharCode((uint8_t)charcode);
+  wchar_t ret = encoding_.UnicodeFromCharCode((uint8_t)charcode);
   if (ret == 0) {
     return WideString();
   }
@@ -340,9 +340,9 @@ uint32_t CPDF_SimpleFont::CharCodeFromUnicode(wchar_t unicode) const {
   if (ret) {
     return ret;
   }
-  return m_Encoding.CharCodeFromUnicode(unicode);
+  return encoding_.CharCodeFromUnicode(unicode);
 }
 
 bool CPDF_SimpleFont::HasFontWidths() const {
-  return !m_bUseFontWidth;
+  return !use_font_width_;
 }

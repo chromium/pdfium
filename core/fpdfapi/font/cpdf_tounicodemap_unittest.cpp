@@ -339,7 +339,7 @@ TEST(CPDFToUnicodeMapTest, InsertIntoMultimap) {
   }
   {
     // Duplicate mappings of CID 0 to unicode "A". There should be only 1 entry
-    // in `m_Multimap`.
+    // in `multimap_`.
     static constexpr uint8_t kInput3[] =
         "1 beginbfrange<0><0>[<0041>]endbfrange\n"
         "1 beginbfchar<0><0041>endbfchar";

@@ -14,22 +14,22 @@
 namespace fxcmap {
 
 struct DWordCIDMap {
-  uint16_t m_HiWord;
-  uint16_t m_LoWordLow;
-  uint16_t m_LoWordHigh;
-  uint16_t m_CID;
+  uint16_t hi_word_;
+  uint16_t lo_word_low_;
+  uint16_t lo_word_high_;
+  uint16_t cid_;
 };
 
 struct CMap {
   enum class Type : bool { kSingle, kRange };
 
-  UNOWNED_PTR_EXCLUSION const char* m_Name;              // POD struct.
-  UNOWNED_PTR_EXCLUSION const uint16_t* m_pWordMap;      // POD struct.
-  UNOWNED_PTR_EXCLUSION const DWordCIDMap* m_pDWordMap;  // POD struct.
-  uint16_t m_WordCount;
-  uint16_t m_DWordCount;
-  Type m_WordMapType;
-  int8_t m_UseOffset;
+  UNOWNED_PTR_EXCLUSION const char* name_;              // POD struct.
+  UNOWNED_PTR_EXCLUSION const uint16_t* word_map_;      // POD struct.
+  UNOWNED_PTR_EXCLUSION const DWordCIDMap* dword_map_;  // POD struct.
+  uint16_t word_count_;
+  uint16_t dword_count_;
+  Type word_map_type_;
+  int8_t use_offset_;
 };
 
 uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode);

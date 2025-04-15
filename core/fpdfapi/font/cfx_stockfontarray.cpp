@@ -16,26 +16,26 @@
 CFX_StockFontArray::CFX_StockFontArray() = default;
 
 CFX_StockFontArray::~CFX_StockFontArray() {
-  for (size_t i = 0; i < std::size(m_StockFonts); ++i) {
-    if (m_StockFonts[i]) {
-      // Ensure m_StockFonts[i]'s dict is cleared before releasing what
+  for (size_t i = 0; i < std::size(stock_fonts_); ++i) {
+    if (stock_fonts_[i]) {
+      // Ensure stock_fonts_[i]'s dict is cleared before releasing what
       // may be the last reference to it.
       RetainPtr<CPDF_Dictionary> destroy =
-          m_StockFonts[i]->GetMutableFontDict();
-      m_StockFonts[i]->ClearFontDict();
+          stock_fonts_[i]->GetMutableFontDict();
+      stock_fonts_[i]->ClearFontDict();
     }
   }
 }
 
 RetainPtr<CPDF_Font> CFX_StockFontArray::GetFont(
     CFX_FontMapper::StandardFont index) const {
-  CHECK_LT(index, std::size(m_StockFonts));
-  return m_StockFonts[index];
+  CHECK_LT(index, std::size(stock_fonts_));
+  return stock_fonts_[index];
 }
 
 void CFX_StockFontArray::SetFont(CFX_FontMapper::StandardFont index,
                                  RetainPtr<CPDF_Font> pFont) {
-  if (index < std::size(m_StockFonts)) {
-    m_StockFonts[index] = std::move(pFont);
+  if (index < std::size(stock_fonts_)) {
+    stock_fonts_[index] = std::move(pFont);
   }
 }

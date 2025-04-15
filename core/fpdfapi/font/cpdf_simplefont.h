@@ -28,7 +28,7 @@ class CPDF_SimpleFont : public CPDF_Font {
   WideString UnicodeFromCharCode(uint32_t charcode) const override;
   uint32_t CharCodeFromUnicode(wchar_t Unicode) const override;
 
-  const CPDF_FontEncoding* GetEncoding() const { return &m_Encoding; }
+  const CPDF_FontEncoding* GetEncoding() const { return &encoding_; }
 
   bool HasFontWidths() const override;
 
@@ -50,13 +50,13 @@ class CPDF_SimpleFont : public CPDF_Font {
   void LoadDifferences(const CPDF_Dictionary* encoding);
   void LoadPDFEncoding(bool bEmbedded, bool bTrueType);
 
-  CPDF_FontEncoding m_Encoding{FontEncoding::kBuiltin};
-  FontEncoding m_BaseEncoding = FontEncoding::kBuiltin;
-  bool m_bUseFontWidth = false;
-  std::vector<ByteString> m_CharNames;
-  std::array<uint16_t, kInternalTableSize> m_GlyphIndex;
-  std::array<uint16_t, kInternalTableSize> m_CharWidth;
-  std::array<FX_RECT, kInternalTableSize> m_CharBBox;
+  CPDF_FontEncoding encoding_{FontEncoding::kBuiltin};
+  FontEncoding base_encoding_ = FontEncoding::kBuiltin;
+  bool use_font_width_ = false;
+  std::vector<ByteString> char_names_;
+  std::array<uint16_t, kInternalTableSize> glyph_index_;
+  std::array<uint16_t, kInternalTableSize> char_width_;
+  std::array<FX_RECT, kInternalTableSize> char_bbox_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_SIMPLEFONT_H_

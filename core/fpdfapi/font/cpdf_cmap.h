@@ -45,21 +45,21 @@ class CPDF_CMap final : public Retainable {
   };
 
   struct CodeRange {
-    size_t m_CharSize;
-    std::array<uint8_t, 4> m_Lower;
-    std::array<uint8_t, 4> m_Upper;
+    size_t char_size_;
+    std::array<uint8_t, 4> lower_;
+    std::array<uint8_t, 4> upper_;
   };
 
   struct CIDRange {
-    uint32_t m_StartCode;
-    uint32_t m_EndCode;
-    uint16_t m_StartCID;
+    uint32_t start_code_;
+    uint32_t end_code_;
+    uint16_t start_cid_;
   };
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  bool IsLoaded() const { return m_bLoaded; }
-  bool IsVertWriting() const { return m_bVertical; }
+  bool IsLoaded() const { return loaded_; }
+  bool IsVertWriting() const { return vertical_; }
 
   uint16_t CIDFromCharCode(uint32_t charcode) const;
 
@@ -68,21 +68,21 @@ class CPDF_CMap final : public Retainable {
   size_t CountChar(ByteStringView pString) const;
   void AppendChar(ByteString* str, uint32_t charcode) const;
 
-  void SetVertical(bool vert) { m_bVertical = vert; }
-  void SetCodingScheme(CodingScheme scheme) { m_CodingScheme = scheme; }
+  void SetVertical(bool vert) { vertical_ = vert; }
+  void SetCodingScheme(CodingScheme scheme) { coding_scheme_ = scheme; }
   void SetAdditionalMappings(std::vector<CIDRange> mappings);
   void SetMixedFourByteLeadingRanges(std::vector<CodeRange> ranges);
 
-  CIDCoding GetCoding() const { return m_Coding; }
-  const fxcmap::CMap* GetEmbedMap() const { return m_pEmbedMap; }
-  CIDSet GetCharset() const { return m_Charset; }
-  void SetCharset(CIDSet set) { m_Charset = set; }
+  CIDCoding GetCoding() const { return coding_; }
+  const fxcmap::CMap* GetEmbedMap() const { return embed_map_; }
+  CIDSet GetCharset() const { return charset_; }
+  void SetCharset(CIDSet set) { charset_ = set; }
 
   void SetDirectCharcodeToCIDTableRange(uint32_t start_code,
                                         uint32_t end_code,
                                         uint16_t start_cid);
   bool IsDirectCharcodeToCIDTableIsEmpty() const {
-    return m_DirectCharcodeToCIDTable.empty();
+    return direct_charcode_to_cidtable_.empty();
   }
 
  private:
@@ -90,16 +90,16 @@ class CPDF_CMap final : public Retainable {
   explicit CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData);
   ~CPDF_CMap() override;
 
-  bool m_bLoaded = false;
-  bool m_bVertical = false;
-  CIDSet m_Charset = CIDSET_UNKNOWN;
-  CodingScheme m_CodingScheme = TwoBytes;
-  CIDCoding m_Coding = CIDCoding::kUNKNOWN;
-  std::vector<bool> m_MixedTwoByteLeadingBytes;
-  std::vector<CodeRange> m_MixedFourByteLeadingRanges;
-  FixedSizeDataVector<uint16_t> m_DirectCharcodeToCIDTable;
-  std::vector<CIDRange> m_AdditionalCharcodeToCIDMappings;
-  UnownedPtr<const fxcmap::CMap> m_pEmbedMap;
+  bool loaded_ = false;
+  bool vertical_ = false;
+  CIDSet charset_ = CIDSET_UNKNOWN;
+  CodingScheme coding_scheme_ = TwoBytes;
+  CIDCoding coding_ = CIDCoding::kUNKNOWN;
+  std::vector<bool> mixed_two_byte_leading_bytes_;
+  std::vector<CodeRange> mixed_four_byte_leading_ranges_;
+  FixedSizeDataVector<uint16_t> direct_charcode_to_cidtable_;
+  std::vector<CIDRange> additional_charcode_to_cidmappings_;
+  UnownedPtr<const fxcmap::CMap> embed_map_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_CMAP_H_

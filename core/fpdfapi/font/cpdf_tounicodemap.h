@@ -49,13 +49,13 @@ class CPDF_ToUnicodeMap {
   uint32_t GetMultiCharIndexIndicator() const;
   void SetCode(uint32_t srccode, WideString destcode);
 
-  // Inserts a new entry which hasn't not been inserted into `m_Multimap`
+  // Inserts a new entry which hasn't not been inserted into `multimap_`
   // before.
   void InsertIntoMultimap(uint32_t code, uint32_t destcode);
 
-  std::map<uint32_t, std::set<uint32_t>> m_Multimap;
-  UnownedPtr<const CPDF_CID2UnicodeMap> m_pBaseMap;
-  std::vector<WideString> m_MultiCharVec;
+  std::map<uint32_t, std::set<uint32_t>> multimap_;
+  UnownedPtr<const CPDF_CID2UnicodeMap> base_map_;
+  std::vector<WideString> multi_char_vec_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TOUNICODEMAP_H_
