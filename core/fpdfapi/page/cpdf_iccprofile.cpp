@@ -25,15 +25,15 @@ bool DetectSRGB(pdfium::span<const uint8_t> span) {
 
 CPDF_IccProfile::CPDF_IccProfile(RetainPtr<const CPDF_StreamAcc> stream_acc,
                                  uint32_t expected_components)
-    : m_pStreamAcc(std::move(stream_acc)),
-      m_bsRGB(expected_components == 3 && DetectSRGB(m_pStreamAcc->GetSpan())) {
-  if (m_bsRGB) {
-    m_nSrcComponents = 3;
+    : stream_acc_(std::move(stream_acc)),
+      is_srgb_(expected_components == 3 && DetectSRGB(stream_acc_->GetSpan())) {
+  if (is_srgb_) {
+    src_components_ = 3;
     return;
   }
 
   auto transform =
-      fxcodec::IccTransform::CreateTransformSRGB(m_pStreamAcc->GetSpan());
+      fxcodec::IccTransform::CreateTransformSRGB(stream_acc_->GetSpan());
   if (!transform) {
     return;
   }
@@ -43,27 +43,27 @@ CPDF_IccProfile::CPDF_IccProfile(RetainPtr<const CPDF_StreamAcc> stream_acc,
     return;
   }
 
-  m_nSrcComponents = components;
-  m_Transform = std::move(transform);
+  src_components_ = components;
+  transform_ = std::move(transform);
 }
 
 CPDF_IccProfile::~CPDF_IccProfile() = default;
 
 bool CPDF_IccProfile::IsNormal() const {
-  return m_Transform->IsNormal();
+  return transform_->IsNormal();
 }
 
 void CPDF_IccProfile::Translate(pdfium::span<const float> pSrcValues,
                                 pdfium::span<float> pDestValues) {
-  m_Transform->Translate(pSrcValues, pDestValues);
+  transform_->Translate(pSrcValues, pDestValues);
 }
 
 void CPDF_IccProfile::TranslateScanline(pdfium::span<uint8_t> pDest,
                                         pdfium::span<const uint8_t> pSrc,
                                         int pixels) {
-  m_Transform->TranslateScanline(pDest, pSrc, pixels);
+  transform_->TranslateScanline(pDest, pSrc, pixels);
 }
 
 RetainPtr<const CPDF_StreamAcc> CPDF_IccProfile::GetStreamAcc() const {
-  return m_pStreamAcc;
+  return stream_acc_;
 }

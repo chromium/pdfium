@@ -22,75 +22,75 @@ CPDF_TextState& CPDF_TextState::operator=(const CPDF_TextState&) = default;
 CPDF_TextState::~CPDF_TextState() = default;
 
 void CPDF_TextState::Emplace() {
-  m_Ref.Emplace();
+  ref_.Emplace();
 }
 
 RetainPtr<CPDF_Font> CPDF_TextState::GetFont() const {
-  return m_Ref.GetObject()->font_;
+  return ref_.GetObject()->font_;
 }
 
 void CPDF_TextState::SetFont(RetainPtr<CPDF_Font> pFont) {
-  m_Ref.GetPrivateCopy()->SetFont(std::move(pFont));
+  ref_.GetPrivateCopy()->SetFont(std::move(pFont));
 }
 
 float CPDF_TextState::GetFontSize() const {
-  return m_Ref.GetObject()->font_size_;
+  return ref_.GetObject()->font_size_;
 }
 
 void CPDF_TextState::SetFontSize(float size) {
-  if (!m_Ref || GetFontSize() != size) {
-    m_Ref.GetPrivateCopy()->font_size_ = size;
+  if (!ref_ || GetFontSize() != size) {
+    ref_.GetPrivateCopy()->font_size_ = size;
   }
 }
 
 pdfium::span<const float> CPDF_TextState::GetMatrix() const {
-  return m_Ref.GetObject()->matrix_;
+  return ref_.GetObject()->matrix_;
 }
 
 pdfium::span<float> CPDF_TextState::GetMutableMatrix() {
-  return m_Ref.GetPrivateCopy()->matrix_;
+  return ref_.GetPrivateCopy()->matrix_;
 }
 
 float CPDF_TextState::GetCharSpace() const {
-  return m_Ref.GetObject()->char_space_;
+  return ref_.GetObject()->char_space_;
 }
 
 void CPDF_TextState::SetCharSpace(float sp) {
-  if (!m_Ref || GetCharSpace() != sp) {
-    m_Ref.GetPrivateCopy()->char_space_ = sp;
+  if (!ref_ || GetCharSpace() != sp) {
+    ref_.GetPrivateCopy()->char_space_ = sp;
   }
 }
 
 float CPDF_TextState::GetWordSpace() const {
-  return m_Ref.GetObject()->word_space_;
+  return ref_.GetObject()->word_space_;
 }
 
 void CPDF_TextState::SetWordSpace(float sp) {
-  if (!m_Ref || GetWordSpace() != sp) {
-    m_Ref.GetPrivateCopy()->word_space_ = sp;
+  if (!ref_ || GetWordSpace() != sp) {
+    ref_.GetPrivateCopy()->word_space_ = sp;
   }
 }
 
 float CPDF_TextState::GetFontSizeH() const {
-  return m_Ref.GetObject()->GetFontSizeH();
+  return ref_.GetObject()->GetFontSizeH();
 }
 
 TextRenderingMode CPDF_TextState::GetTextMode() const {
-  return m_Ref.GetObject()->text_rendering_mode_;
+  return ref_.GetObject()->text_rendering_mode_;
 }
 
 void CPDF_TextState::SetTextMode(TextRenderingMode mode) {
-  if (!m_Ref || GetTextMode() != mode) {
-    m_Ref.GetPrivateCopy()->text_rendering_mode_ = mode;
+  if (!ref_ || GetTextMode() != mode) {
+    ref_.GetPrivateCopy()->text_rendering_mode_ = mode;
   }
 }
 
 pdfium::span<const float> CPDF_TextState::GetCTM() const {
-  return m_Ref.GetObject()->ctm_;
+  return ref_.GetObject()->ctm_;
 }
 
 pdfium::span<float> CPDF_TextState::GetMutableCTM() {
-  return m_Ref.GetPrivateCopy()->ctm_;
+  return ref_.GetPrivateCopy()->ctm_;
 }
 
 CPDF_TextState::TextData::TextData() = default;

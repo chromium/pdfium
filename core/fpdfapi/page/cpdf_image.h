@@ -39,14 +39,14 @@ class CPDF_Image final : public Retainable {
   RetainPtr<const CPDF_Dictionary> GetOC() const;
 
   // Never returns nullptr.
-  CPDF_Document* GetDocument() const { return m_pDocument; }
+  CPDF_Document* GetDocument() const { return document_; }
 
-  int32_t GetPixelHeight() const { return m_Height; }
-  int32_t GetPixelWidth() const { return m_Width; }
-  uint32_t GetMatteColor() const { return m_MatteColor; }
-  bool IsInline() const { return m_bIsInline; }
-  bool IsMask() const { return m_bIsMask; }
-  bool IsInterpol() const { return m_bInterpolate; }
+  int32_t GetPixelHeight() const { return height_; }
+  int32_t GetPixelWidth() const { return width_; }
+  uint32_t GetMatteColor() const { return matte_color_; }
+  bool IsInline() const { return is_inline_; }
+  bool IsMask() const { return is_mask_; }
+  bool IsInterpol() const { return interpolate_; }
 
   RetainPtr<CPDF_DIB> CreateNewDIB() const;
   RetainPtr<CFX_DIBBase> LoadDIBBase() const;
@@ -58,7 +58,7 @@ class CPDF_Image final : public Retainable {
   void ResetCache(CPDF_Page* pPage);
 
   void WillBeDestroyed();
-  bool IsGoingToBeDestroyed() const { return m_bWillBeDestroyed; }
+  bool IsGoingToBeDestroyed() const { return will_be_destroyed_; }
 
   // Returns whether to Continue() or not.
   bool StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
@@ -84,18 +84,18 @@ class CPDF_Image final : public Retainable {
   RetainPtr<CPDF_Dictionary> InitJPEG(pdfium::span<uint8_t> src_span);
   RetainPtr<CPDF_Dictionary> CreateXObjectImageDict(int width, int height);
 
-  int32_t m_Height = 0;
-  int32_t m_Width = 0;
-  uint32_t m_MatteColor = 0;
-  bool m_bIsInline = false;
-  bool m_bIsMask = false;
-  bool m_bInterpolate = false;
-  bool m_bWillBeDestroyed = false;
-  UnownedPtr<CPDF_Document> const m_pDocument;
-  RetainPtr<CFX_DIBBase> m_pDIBBase;
-  RetainPtr<CFX_DIBBase> m_pMask;
-  RetainPtr<CPDF_Stream> m_pStream;
-  RetainPtr<const CPDF_Dictionary> m_pOC;
+  int32_t height_ = 0;
+  int32_t width_ = 0;
+  uint32_t matte_color_ = 0;
+  bool is_inline_ = false;
+  bool is_mask_ = false;
+  bool interpolate_ = false;
+  bool will_be_destroyed_ = false;
+  UnownedPtr<CPDF_Document> const document_;
+  RetainPtr<CFX_DIBBase> dibbase_;
+  RetainPtr<CFX_DIBBase> mask_;
+  RetainPtr<CPDF_Stream> stream_;
+  RetainPtr<const CPDF_Dictionary> oc_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGE_H_

@@ -29,12 +29,12 @@ class CPDF_ShadingObject final : public CPDF_PageObject {
 
   void CalcBoundingBox();
 
-  const CPDF_ShadingPattern* pattern() const { return m_pShading.Get(); }
-  const CFX_Matrix& matrix() const { return m_Matrix; }
+  const CPDF_ShadingPattern* pattern() const { return shading_.Get(); }
+  const CFX_Matrix& matrix() const { return matrix_; }
 
  private:
-  RetainPtr<CPDF_ShadingPattern> m_pShading;
-  CFX_Matrix m_Matrix;
+  RetainPtr<CPDF_ShadingPattern> shading_;
+  CFX_Matrix matrix_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_SHADINGOBJECT_H_

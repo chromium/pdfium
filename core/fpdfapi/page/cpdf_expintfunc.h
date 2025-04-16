@@ -24,19 +24,19 @@ class CPDF_ExpIntFunc final : public CPDF_Function {
   bool v_Call(pdfium::span<const float> inputs,
               pdfium::span<float> results) const override;
 
-  uint32_t GetOrigOutputs() const { return m_nOrigOutputs; }
-  float GetExponent() const { return m_Exponent; }
+  uint32_t GetOrigOutputs() const { return orig_outputs_; }
+  float GetExponent() const { return exponent_; }
 
 #if defined(PDF_USE_SKIA)
-  pdfium::span<const float> GetBeginValues() const { return m_BeginValues; }
-  pdfium::span<const float> GetEndValues() const { return m_EndValues; }
+  pdfium::span<const float> GetBeginValues() const { return begin_values_; }
+  pdfium::span<const float> GetEndValues() const { return end_values_; }
 #endif
 
  private:
-  uint32_t m_nOrigOutputs = 0;
-  float m_Exponent = 0.0f;
-  DataVector<float> m_BeginValues;
-  DataVector<float> m_EndValues;
+  uint32_t orig_outputs_ = 0;
+  float exponent_ = 0.0f;
+  DataVector<float> begin_values_;
+  DataVector<float> end_values_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_

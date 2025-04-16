@@ -27,8 +27,8 @@ class CPDF_GeneralState {
   CPDF_GeneralState(const CPDF_GeneralState& that);
   ~CPDF_GeneralState();
 
-  void Emplace() { m_Ref.Emplace(); }
-  bool HasRef() const { return !!m_Ref; }
+  void Emplace() { ref_.Emplace(); }
+  bool HasRef() const { return !!ref_; }
 
   void SetRenderIntent(const ByteString& ri);
 
@@ -90,28 +90,28 @@ class CPDF_GeneralState {
 
     RetainPtr<StateData> Clone() const;
 
-    ByteString m_BlendMode = pdfium::transparency::kNormal;
-    BlendMode m_BlendType = BlendMode::kNormal;
-    RetainPtr<CPDF_Dictionary> m_pSoftMask;
-    CFX_Matrix m_SMaskMatrix;
-    float m_StrokeAlpha = 1.0f;
-    float m_FillAlpha = 1.0f;
-    RetainPtr<const CPDF_Object> m_pTR;
-    RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
-    int m_RenderIntent = 0;
-    bool m_StrokeAdjust = false;
-    bool m_AlphaSource = false;
-    bool m_TextKnockout = false;
-    bool m_StrokeOP = false;
-    bool m_FillOP = false;
-    int m_OPMode = 0;
-    RetainPtr<const CPDF_Object> m_pBG;
-    RetainPtr<const CPDF_Object> m_pUCR;
-    RetainPtr<const CPDF_Object> m_pHT;
-    float m_Flatness = 1.0f;
-    float m_Smoothness = 0.0f;
+    ByteString blend_mode_ = pdfium::transparency::kNormal;
+    BlendMode blend_type_ = BlendMode::kNormal;
+    RetainPtr<CPDF_Dictionary> soft_mask_;
+    CFX_Matrix smask_matrix_;
+    float stroke_alpha_ = 1.0f;
+    float fill_alpha_ = 1.0f;
+    RetainPtr<const CPDF_Object> tr_;
+    RetainPtr<CPDF_TransferFunc> transfer_func_;
+    int render_intent_ = 0;
+    bool stroke_adjust_ = false;
+    bool alpha_source_ = false;
+    bool text_knockout_ = false;
+    bool stroke_op_ = false;
+    bool fill_op_ = false;
+    int opmode_ = 0;
+    RetainPtr<const CPDF_Object> bg_;
+    RetainPtr<const CPDF_Object> ucr_;
+    RetainPtr<const CPDF_Object> ht_;
+    float flatness_ = 1.0f;
+    float smoothness_ = 0.0f;
     // The resource names of the graphics states that apply to this object.
-    std::vector<ByteString> m_GraphicsResourceNames;
+    std::vector<ByteString> graphics_resource_names_;
 
    private:
     StateData();
@@ -119,7 +119,7 @@ class CPDF_GeneralState {
     ~StateData() override;
   };
 
-  SharedCopyOnWrite<StateData> m_Ref;
+  SharedCopyOnWrite<StateData> ref_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_

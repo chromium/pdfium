@@ -41,26 +41,26 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   }
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
-  m_pBaseCS =
+  base_cs_ =
       pDocPageData->GetColorSpaceGuarded(pBaseObj.Get(), nullptr, pVisited);
-  if (!m_pBaseCS) {
+  if (!base_cs_) {
     return 0;
   }
 
   // The base color space cannot be a Pattern or Indexed space, according to ISO
   // 32000-1:2008 section 8.6.6.3.
-  Family family = m_pBaseCS->GetFamily();
+  Family family = base_cs_->GetFamily();
   if (family == Family::kIndexed || family == Family::kPattern) {
     return 0;
   }
 
-  uint32_t base_component_count = m_pBaseCS->ComponentCount();
+  uint32_t base_component_count = base_cs_->ComponentCount();
   DCHECK(base_component_count);
   component_min_max_ = DataVector<IndexedColorMinMax>(base_component_count);
   float defvalue;
   for (uint32_t i = 0; i < component_min_max_.size(); i++) {
     IndexedColorMinMax& comp = component_min_max_[i];
-    m_pBaseCS->GetDefaultValue(i, &defvalue, &comp.min, &comp.max);
+    base_cs_->GetDefaultValue(i, &defvalue, &comp.min, &comp.max);
     comp.max -= comp.min;
   }
 
@@ -96,7 +96,7 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_IndexedCS::GetRGB(
   }
 
   DCHECK(!component_min_max_.empty());
-  DCHECK_EQ(component_min_max_.size(), m_pBaseCS->ComponentCount());
+  DCHECK_EQ(component_min_max_.size(), base_cs_->ComponentCount());
 
   FX_SAFE_SIZE_T length = index;
   length += 1;
@@ -112,5 +112,5 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_IndexedCS::GetRGB(
         comp.min +
         comp.max * lookup_table_[index * component_min_max_.size() + i] / 255;
   }
-  return m_pBaseCS->GetRGB(comps);
+  return base_cs_->GetRGB(comps);
 }

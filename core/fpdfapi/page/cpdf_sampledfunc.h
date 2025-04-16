@@ -36,20 +36,20 @@ class CPDF_SampledFunc final : public CPDF_Function {
               pdfium::span<float> results) const override;
 
   const std::vector<SampleEncodeInfo>& GetEncodeInfo() const {
-    return m_EncodeInfo;
+    return encode_info_;
   }
-  uint32_t GetBitsPerSample() const { return m_nBitsPerSample; }
+  uint32_t GetBitsPerSample() const { return bits_per_sample_; }
 
 #if defined(PDF_USE_SKIA)
   RetainPtr<CPDF_StreamAcc> GetSampleStream() const;
 #endif
 
  private:
-  std::vector<SampleEncodeInfo> m_EncodeInfo;
-  std::vector<SampleDecodeInfo> m_DecodeInfo;
-  uint32_t m_nBitsPerSample = 0;
-  uint32_t m_SampleMax = 0;
-  RetainPtr<CPDF_StreamAcc> m_pSampleStream;
+  std::vector<SampleEncodeInfo> encode_info_;
+  std::vector<SampleDecodeInfo> decode_info_;
+  uint32_t bits_per_sample_ = 0;
+  uint32_t sample_max_ = 0;
+  RetainPtr<CPDF_StreamAcc> sample_stream_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_SAMPLEDFUNC_H_

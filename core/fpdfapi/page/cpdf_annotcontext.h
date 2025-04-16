@@ -23,20 +23,20 @@ class CPDF_AnnotContext {
   ~CPDF_AnnotContext();
 
   void SetForm(RetainPtr<CPDF_Stream> pStream);
-  bool HasForm() const { return !!m_pAnnotForm; }
-  CPDF_Form* GetForm() const { return m_pAnnotForm.get(); }
+  bool HasForm() const { return !!annot_form_; }
+  CPDF_Form* GetForm() const { return annot_form_.get(); }
 
   // Never nullptr.
-  RetainPtr<CPDF_Dictionary> GetMutableAnnotDict() { return m_pAnnotDict; }
-  const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
+  RetainPtr<CPDF_Dictionary> GetMutableAnnotDict() { return annot_dict_; }
+  const CPDF_Dictionary* GetAnnotDict() const { return annot_dict_.Get(); }
 
   // Never nullptr.
-  IPDF_Page* GetPage() const { return m_pPage; }
+  IPDF_Page* GetPage() const { return page_; }
 
  private:
-  std::unique_ptr<CPDF_Form> m_pAnnotForm;
-  RetainPtr<CPDF_Dictionary> const m_pAnnotDict;
-  UnownedPtr<IPDF_Page> const m_pPage;
+  std::unique_ptr<CPDF_Form> annot_form_;
+  RetainPtr<CPDF_Dictionary> const annot_dict_;
+  UnownedPtr<IPDF_Page> const page_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_ANNOTCONTEXT_H_

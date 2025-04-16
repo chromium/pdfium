@@ -81,7 +81,7 @@ CPDF_GeneralState::CPDF_GeneralState(const CPDF_GeneralState& that) = default;
 CPDF_GeneralState::~CPDF_GeneralState() = default;
 
 void CPDF_GeneralState::SetRenderIntent(const ByteString& ri) {
-  m_Ref.GetPrivateCopy()->m_RenderIntent = RI_StringToId(ri);
+  ref_.GetPrivateCopy()->render_intent_ = RI_StringToId(ri);
 }
 
 ByteString CPDF_GeneralState::GetBlendMode() const {
@@ -123,189 +123,189 @@ ByteString CPDF_GeneralState::GetBlendMode() const {
 }
 
 BlendMode CPDF_GeneralState::GetBlendType() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_BlendType : BlendMode::kNormal;
+  const StateData* pData = ref_.GetObject();
+  return pData ? pData->blend_type_ : BlendMode::kNormal;
 }
 
 void CPDF_GeneralState::SetBlendType(BlendMode type) {
   if (GetBlendType() != type) {
-    m_Ref.GetPrivateCopy()->m_BlendType = type;
+    ref_.GetPrivateCopy()->blend_type_ = type;
   }
 }
 
 float CPDF_GeneralState::GetFillAlpha() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_FillAlpha : 1.0f;
+  const StateData* pData = ref_.GetObject();
+  return pData ? pData->fill_alpha_ : 1.0f;
 }
 
 void CPDF_GeneralState::SetFillAlpha(float alpha) {
   if (GetFillAlpha() != alpha) {
-    m_Ref.GetPrivateCopy()->m_FillAlpha = alpha;
+    ref_.GetPrivateCopy()->fill_alpha_ = alpha;
   }
 }
 
 float CPDF_GeneralState::GetStrokeAlpha() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_StrokeAlpha : 1.0f;
+  const StateData* pData = ref_.GetObject();
+  return pData ? pData->stroke_alpha_ : 1.0f;
 }
 
 void CPDF_GeneralState::SetStrokeAlpha(float alpha) {
   if (GetStrokeAlpha() != alpha) {
-    m_Ref.GetPrivateCopy()->m_StrokeAlpha = alpha;
+    ref_.GetPrivateCopy()->stroke_alpha_ = alpha;
   }
 }
 
 RetainPtr<const CPDF_Dictionary> CPDF_GeneralState::GetSoftMask() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_pSoftMask : nullptr;
+  const StateData* pData = ref_.GetObject();
+  return pData ? pData->soft_mask_ : nullptr;
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_GeneralState::GetMutableSoftMask() {
-  const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_pSoftMask : nullptr;
+  const StateData* pData = ref_.GetObject();
+  return pData ? pData->soft_mask_ : nullptr;
 }
 
 void CPDF_GeneralState::SetSoftMask(RetainPtr<CPDF_Dictionary> pDict) {
-  m_Ref.GetPrivateCopy()->m_pSoftMask = std::move(pDict);
+  ref_.GetPrivateCopy()->soft_mask_ = std::move(pDict);
 }
 
 RetainPtr<const CPDF_Object> CPDF_GeneralState::GetTR() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_pTR : nullptr;
+  const StateData* pData = ref_.GetObject();
+  return pData ? pData->tr_ : nullptr;
 }
 
 void CPDF_GeneralState::SetTR(RetainPtr<const CPDF_Object> pObject) {
-  m_Ref.GetPrivateCopy()->m_pTR = std::move(pObject);
+  ref_.GetPrivateCopy()->tr_ = std::move(pObject);
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_GeneralState::GetTransferFunc() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_pTransferFunc : nullptr;
+  const StateData* pData = ref_.GetObject();
+  return pData ? pData->transfer_func_ : nullptr;
 }
 
 void CPDF_GeneralState::SetTransferFunc(RetainPtr<CPDF_TransferFunc> pFunc) {
-  m_Ref.GetPrivateCopy()->m_pTransferFunc = std::move(pFunc);
+  ref_.GetPrivateCopy()->transfer_func_ = std::move(pFunc);
 }
 
 void CPDF_GeneralState::SetBlendMode(const ByteString& mode) {
-  StateData* pData = m_Ref.GetPrivateCopy();
-  pData->m_BlendMode = mode;
-  pData->m_BlendType = GetBlendTypeInternal(mode);
+  StateData* pData = ref_.GetPrivateCopy();
+  pData->blend_mode_ = mode;
+  pData->blend_type_ = GetBlendTypeInternal(mode);
 }
 
 const CFX_Matrix* CPDF_GeneralState::GetSMaskMatrix() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData ? &pData->m_SMaskMatrix : nullptr;
+  const StateData* pData = ref_.GetObject();
+  return pData ? &pData->smask_matrix_ : nullptr;
 }
 
 void CPDF_GeneralState::SetSMaskMatrix(const CFX_Matrix& matrix) {
-  m_Ref.GetPrivateCopy()->m_SMaskMatrix = matrix;
+  ref_.GetPrivateCopy()->smask_matrix_ = matrix;
 }
 
 bool CPDF_GeneralState::GetFillOP() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData && pData->m_FillOP;
+  const StateData* pData = ref_.GetObject();
+  return pData && pData->fill_op_;
 }
 
 void CPDF_GeneralState::SetFillOP(bool op) {
-  m_Ref.GetPrivateCopy()->m_FillOP = op;
+  ref_.GetPrivateCopy()->fill_op_ = op;
 }
 
 void CPDF_GeneralState::SetStrokeOP(bool op) {
-  m_Ref.GetPrivateCopy()->m_StrokeOP = op;
+  ref_.GetPrivateCopy()->stroke_op_ = op;
 }
 
 bool CPDF_GeneralState::GetStrokeOP() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData && pData->m_StrokeOP;
+  const StateData* pData = ref_.GetObject();
+  return pData && pData->stroke_op_;
 }
 
 int CPDF_GeneralState::GetOPMode() const {
-  return m_Ref.GetObject()->m_OPMode;
+  return ref_.GetObject()->opmode_;
 }
 
 void CPDF_GeneralState::SetOPMode(int mode) {
-  m_Ref.GetPrivateCopy()->m_OPMode = mode;
+  ref_.GetPrivateCopy()->opmode_ = mode;
 }
 
 void CPDF_GeneralState::SetBG(RetainPtr<const CPDF_Object> pObject) {
-  m_Ref.GetPrivateCopy()->m_pBG = std::move(pObject);
+  ref_.GetPrivateCopy()->bg_ = std::move(pObject);
 }
 
 void CPDF_GeneralState::SetUCR(RetainPtr<const CPDF_Object> pObject) {
-  m_Ref.GetPrivateCopy()->m_pUCR = std::move(pObject);
+  ref_.GetPrivateCopy()->ucr_ = std::move(pObject);
 }
 
 void CPDF_GeneralState::SetHT(RetainPtr<const CPDF_Object> pObject) {
-  m_Ref.GetPrivateCopy()->m_pHT = std::move(pObject);
+  ref_.GetPrivateCopy()->ht_ = std::move(pObject);
 }
 
 void CPDF_GeneralState::SetFlatness(float flatness) {
-  m_Ref.GetPrivateCopy()->m_Flatness = flatness;
+  ref_.GetPrivateCopy()->flatness_ = flatness;
 }
 
 void CPDF_GeneralState::SetSmoothness(float smoothness) {
-  m_Ref.GetPrivateCopy()->m_Smoothness = smoothness;
+  ref_.GetPrivateCopy()->smoothness_ = smoothness;
 }
 
 bool CPDF_GeneralState::GetStrokeAdjust() const {
-  const StateData* pData = m_Ref.GetObject();
-  return pData && pData->m_StrokeAdjust;
+  const StateData* pData = ref_.GetObject();
+  return pData && pData->stroke_adjust_;
 }
 
 void CPDF_GeneralState::SetStrokeAdjust(bool adjust) {
-  m_Ref.GetPrivateCopy()->m_StrokeAdjust = adjust;
+  ref_.GetPrivateCopy()->stroke_adjust_ = adjust;
 }
 
 void CPDF_GeneralState::SetAlphaSource(bool source) {
-  m_Ref.GetPrivateCopy()->m_AlphaSource = source;
+  ref_.GetPrivateCopy()->alpha_source_ = source;
 }
 
 void CPDF_GeneralState::SetTextKnockout(bool knockout) {
-  m_Ref.GetPrivateCopy()->m_TextKnockout = knockout;
+  ref_.GetPrivateCopy()->text_knockout_ = knockout;
 }
 
 void CPDF_GeneralState::SetGraphicsResourceNames(
     std::vector<ByteString> names) {
-  m_Ref.GetPrivateCopy()->m_GraphicsResourceNames = std::move(names);
+  ref_.GetPrivateCopy()->graphics_resource_names_ = std::move(names);
 }
 
 void CPDF_GeneralState::AppendGraphicsResourceName(ByteString name) {
-  m_Ref.GetPrivateCopy()->m_GraphicsResourceNames.push_back(std::move(name));
+  ref_.GetPrivateCopy()->graphics_resource_names_.push_back(std::move(name));
 }
 
 pdfium::span<const ByteString> CPDF_GeneralState::GetGraphicsResourceNames()
     const {
-  const StateData* data = m_Ref.GetObject();
+  const StateData* data = ref_.GetObject();
   if (!data) {
     return {};
   }
-  return data->m_GraphicsResourceNames;
+  return data->graphics_resource_names_;
 }
 
 CPDF_GeneralState::StateData::StateData() = default;
 
 CPDF_GeneralState::StateData::StateData(const StateData& that)
-    : m_BlendMode(that.m_BlendMode),
-      m_BlendType(that.m_BlendType),
-      m_pSoftMask(that.m_pSoftMask),
-      m_SMaskMatrix(that.m_SMaskMatrix),
-      m_StrokeAlpha(that.m_StrokeAlpha),
-      m_FillAlpha(that.m_FillAlpha),
-      m_pTR(that.m_pTR),
-      m_pTransferFunc(that.m_pTransferFunc),
-      m_RenderIntent(that.m_RenderIntent),
-      m_StrokeAdjust(that.m_StrokeAdjust),
-      m_AlphaSource(that.m_AlphaSource),
-      m_TextKnockout(that.m_TextKnockout),
-      m_StrokeOP(that.m_StrokeOP),
-      m_FillOP(that.m_FillOP),
-      m_OPMode(that.m_OPMode),
-      m_pBG(that.m_pBG),
-      m_pUCR(that.m_pUCR),
-      m_pHT(that.m_pHT),
-      m_Flatness(that.m_Flatness),
-      m_Smoothness(that.m_Smoothness) {}
+    : blend_mode_(that.blend_mode_),
+      blend_type_(that.blend_type_),
+      soft_mask_(that.soft_mask_),
+      smask_matrix_(that.smask_matrix_),
+      stroke_alpha_(that.stroke_alpha_),
+      fill_alpha_(that.fill_alpha_),
+      tr_(that.tr_),
+      transfer_func_(that.transfer_func_),
+      render_intent_(that.render_intent_),
+      stroke_adjust_(that.stroke_adjust_),
+      alpha_source_(that.alpha_source_),
+      text_knockout_(that.text_knockout_),
+      stroke_op_(that.stroke_op_),
+      fill_op_(that.fill_op_),
+      opmode_(that.opmode_),
+      bg_(that.bg_),
+      ucr_(that.ucr_),
+      ht_(that.ht_),
+      flatness_(that.flatness_),
+      smoothness_(that.smoothness_) {}
 
 CPDF_GeneralState::StateData::~StateData() = default;
 

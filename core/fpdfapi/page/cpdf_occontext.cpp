@@ -92,7 +92,7 @@ ByteString GetUsageTypeString(CPDF_OCContext::UsageType eType) {
 }  // namespace
 
 CPDF_OCContext::CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType)
-    : m_pDocument(pDoc), m_eUsageType(eUsageType) {
+    : document_(pDoc), usage_type_(eUsageType) {
   DCHECK(pDoc);
 }
 
@@ -101,7 +101,7 @@ CPDF_OCContext::~CPDF_OCContext() = default;
 bool CPDF_OCContext::LoadOCGStateFromConfig(
     const ByteString& csConfig,
     const CPDF_Dictionary* pOCGDict) const {
-  RetainPtr<const CPDF_Dictionary> pConfig = GetConfig(m_pDocument, pOCGDict);
+  RetainPtr<const CPDF_Dictionary> pConfig = GetConfig(document_, pOCGDict);
   if (!pConfig) {
     return true;
   }
@@ -157,7 +157,7 @@ bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
     return true;
   }
 
-  ByteString csState = GetUsageTypeString(m_eUsageType);
+  ByteString csState = GetUsageTypeString(usage_type_);
   RetainPtr<const CPDF_Dictionary> pUsage = pOCGDict->GetDictFor("Usage");
   if (pUsage) {
     RetainPtr<const CPDF_Dictionary> pState = pUsage->GetDictFor(csState);
@@ -182,13 +182,13 @@ bool CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) const {
     return false;
   }
 
-  const auto it = m_OGCStateCache.find(pOCGDict);
-  if (it != m_OGCStateCache.end()) {
+  const auto it = ogcstate_cache_.find(pOCGDict);
+  if (it != ogcstate_cache_.end()) {
     return it->second;
   }
 
   bool bState = LoadOCGState(pOCGDict);
-  m_OGCStateCache[pdfium::WrapRetain(pOCGDict)] = bState;
+  ogcstate_cache_[pdfium::WrapRetain(pOCGDict)] = bState;
   return bState;
 }
 

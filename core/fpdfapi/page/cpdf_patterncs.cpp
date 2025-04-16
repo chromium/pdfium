@@ -30,21 +30,21 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
   }
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
-  m_pBaseCS =
+  base_cs_ =
       pDocPageData->GetColorSpaceGuarded(pBaseCS.Get(), nullptr, pVisited);
-  if (!m_pBaseCS) {
+  if (!base_cs_) {
     return 1;
   }
 
-  if (m_pBaseCS->GetFamily() == Family::kPattern) {
+  if (base_cs_->GetFamily() == Family::kPattern) {
     return 0;
   }
 
-  if (m_pBaseCS->ComponentCount() > kMaxPatternColorComps) {
+  if (base_cs_->ComponentCount() > kMaxPatternColorComps) {
     return 0;
   }
 
-  return m_pBaseCS->ComponentCount() + 1;
+  return base_cs_->ComponentCount() + 1;
 }
 
 std::optional<FX_RGB_STRUCT<float>> CPDF_PatternCS::GetRGB(
@@ -58,9 +58,9 @@ const CPDF_PatternCS* CPDF_PatternCS::AsPatternCS() const {
 
 std::optional<FX_RGB_STRUCT<float>> CPDF_PatternCS::GetPatternRGB(
     const PatternValue& value) const {
-  if (!m_pBaseCS) {
+  if (!base_cs_) {
     return std::nullopt;
   }
 
-  return m_pBaseCS->GetRGB(value.GetComps());
+  return base_cs_->GetRGB(value.GetComps());
 }

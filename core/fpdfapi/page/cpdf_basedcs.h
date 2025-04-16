@@ -23,7 +23,7 @@ class CPDF_BasedCS : public CPDF_ColorSpace {
  protected:
   explicit CPDF_BasedCS(Family family);
 
-  RetainPtr<CPDF_ColorSpace> m_pBaseCS;  // May be fallback CS in some cases.
+  RetainPtr<CPDF_ColorSpace> base_cs_;  // May be fallback CS in some cases.
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_BASEDCS_H_

@@ -11,7 +11,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 
 CPDF_PageObject::CPDF_PageObject(int32_t content_stream)
-    : m_ContentStream(content_stream) {}
+    : content_stream_(content_stream) {}
 
 CPDF_PageObject::~CPDF_PageObject() = default;
 
@@ -81,23 +81,23 @@ pdfium::span<const ByteString> CPDF_PageObject::GetGraphicsResourceNames()
 }
 
 void CPDF_PageObject::SetDefaultStates() {
-  m_GraphicStates.SetDefaultStates();
+  graphic_states_.SetDefaultStates();
 }
 
 void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
-  m_GraphicStates = pSrc->m_GraphicStates;
-  m_Rect = pSrc->m_Rect;
-  m_bDirty = true;
+  graphic_states_ = pSrc->graphic_states_;
+  rect_ = pSrc->rect_;
+  dirty_ = true;
 }
 
 void CPDF_PageObject::InitializeOriginalMatrix(const CFX_Matrix& matrix) {
-  m_OriginalMatrix = matrix;
+  original_matrix_ = matrix;
 }
 
 void CPDF_PageObject::SetIsActive(bool value) {
-  if (m_bIsActive != value) {
-    m_bIsActive = value;
-    m_bDirty = true;
+  if (is_active_ != value) {
+    is_active_ = value;
+    dirty_ = true;
   }
 }
 

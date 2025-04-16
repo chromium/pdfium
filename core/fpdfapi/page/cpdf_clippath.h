@@ -26,13 +26,11 @@ class CPDF_ClipPath {
   CPDF_ClipPath& operator=(const CPDF_ClipPath& that);
   ~CPDF_ClipPath();
 
-  void Emplace() { m_Ref.Emplace(); }
-  void SetNull() { m_Ref.SetNull(); }
+  void Emplace() { ref_.Emplace(); }
+  void SetNull() { ref_.SetNull(); }
 
-  bool HasRef() const { return !!m_Ref; }
-  bool operator==(const CPDF_ClipPath& that) const {
-    return m_Ref == that.m_Ref;
-  }
+  bool HasRef() const { return !!ref_; }
+  bool operator==(const CPDF_ClipPath& that) const { return ref_ == that.ref_; }
   bool operator!=(const CPDF_ClipPath& that) const { return !(*this == that); }
 
   size_t GetPathCount() const;
@@ -58,8 +56,8 @@ class CPDF_ClipPath {
     using PathAndTypeData =
         std::pair<CPDF_Path, CFX_FillRenderOptions::FillType>;
 
-    std::vector<PathAndTypeData> m_PathAndTypeList;
-    std::vector<std::unique_ptr<CPDF_TextObject>> m_TextList;
+    std::vector<PathAndTypeData> path_and_type_list_;
+    std::vector<std::unique_ptr<CPDF_TextObject>> text_list_;
 
    private:
     PathData();
@@ -67,7 +65,7 @@ class CPDF_ClipPath {
     ~PathData() override;
   };
 
-  SharedCopyOnWrite<PathData> m_Ref;
+  SharedCopyOnWrite<PathData> ref_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CLIPPATH_H_

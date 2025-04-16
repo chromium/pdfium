@@ -36,19 +36,19 @@ class CPDF_ImageLoader {
   RetainPtr<CFX_DIBBase> TranslateImage(
       RetainPtr<CPDF_TransferFunc> pTransferFunc);
 
-  const RetainPtr<CFX_DIBBase>& GetBitmap() const { return m_pBitmap; }
-  const RetainPtr<CFX_DIBBase>& GetMask() const { return m_pMask; }
-  uint32_t MatteColor() const { return m_MatteColor; }
+  const RetainPtr<CFX_DIBBase>& GetBitmap() const { return bitmap_; }
+  const RetainPtr<CFX_DIBBase>& GetMask() const { return mask_; }
+  uint32_t MatteColor() const { return matte_color_; }
 
  private:
   void Finish();
 
-  uint32_t m_MatteColor = 0;
-  bool m_bCached = false;
-  RetainPtr<CFX_DIBBase> m_pBitmap;
-  RetainPtr<CFX_DIBBase> m_pMask;
-  UnownedPtr<CPDF_PageImageCache> m_pCache;
-  UnownedPtr<const CPDF_ImageObject> m_pImageObject;
+  uint32_t matte_color_ = 0;
+  bool cached_ = false;
+  RetainPtr<CFX_DIBBase> bitmap_;
+  RetainPtr<CFX_DIBBase> mask_;
+  UnownedPtr<CPDF_PageImageCache> cache_;
+  UnownedPtr<const CPDF_ImageObject> image_object_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGELOADER_H_

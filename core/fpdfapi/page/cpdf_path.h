@@ -18,8 +18,8 @@ class CPDF_Path {
   CPDF_Path(const CPDF_Path& that);
   ~CPDF_Path();
 
-  void Emplace() { m_Ref.Emplace(); }
-  bool HasRef() const { return !!m_Ref; }
+  void Emplace() { ref_.Emplace(); }
+  bool HasRef() const { return !!ref_; }
 
   const std::vector<CFX_Path::Point>& GetPoints() const;
   void ClosePath();
@@ -39,10 +39,10 @@ class CPDF_Path {
   void AppendPointAndClose(const CFX_PointF& point, CFX_Path::Point::Type type);
 
   // TODO(tsepez): Remove when all access thru this class.
-  const CFX_Path* GetObject() const { return m_Ref.GetObject(); }
+  const CFX_Path* GetObject() const { return ref_.GetObject(); }
 
  private:
-  SharedCopyOnWrite<CFX_RetainablePath> m_Ref;
+  SharedCopyOnWrite<CFX_RetainablePath> ref_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATH_H_

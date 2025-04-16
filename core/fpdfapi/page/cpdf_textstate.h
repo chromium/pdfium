@@ -89,7 +89,7 @@ class CPDF_TextState {
     ~TextData() override;
   };
 
-  SharedCopyOnWrite<TextData> m_Ref;
+  SharedCopyOnWrite<TextData> ref_;
 };
 
 bool SetTextRenderingModeFromInt(int iMode, TextRenderingMode* mode);

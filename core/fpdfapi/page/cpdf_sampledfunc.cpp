@@ -56,30 +56,30 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
     return false;
   }
 
-  m_nBitsPerSample = pDict->GetIntegerFor("BitsPerSample");
-  if (!IsValidBitsPerSample(m_nBitsPerSample)) {
+  bits_per_sample_ = pDict->GetIntegerFor("BitsPerSample");
+  if (!IsValidBitsPerSample(bits_per_sample_)) {
     return false;
   }
 
-  FX_SAFE_UINT32 nTotalSampleBits = m_nBitsPerSample;
-  nTotalSampleBits *= m_nOutputs;
+  FX_SAFE_UINT32 nTotalSampleBits = bits_per_sample_;
+  nTotalSampleBits *= outputs_;
   RetainPtr<const CPDF_Array> pEncode = pDict->GetArrayFor("Encode");
-  m_EncodeInfo.resize(m_nInputs);
-  for (uint32_t i = 0; i < m_nInputs; i++) {
+  encode_info_.resize(inputs_);
+  for (uint32_t i = 0; i < inputs_; i++) {
     int size = pSize->GetIntegerAt(i);
     if (size <= 0) {
       return false;
     }
 
-    m_EncodeInfo[i].sizes = size;
-    nTotalSampleBits *= m_EncodeInfo[i].sizes;
+    encode_info_[i].sizes = size;
+    nTotalSampleBits *= encode_info_[i].sizes;
     if (pEncode) {
-      m_EncodeInfo[i].encode_min = pEncode->GetFloatAt(i * 2);
-      m_EncodeInfo[i].encode_max = pEncode->GetFloatAt(i * 2 + 1);
+      encode_info_[i].encode_min = pEncode->GetFloatAt(i * 2);
+      encode_info_[i].encode_max = pEncode->GetFloatAt(i * 2 + 1);
     } else {
-      m_EncodeInfo[i].encode_min = 0;
-      m_EncodeInfo[i].encode_max =
-          m_EncodeInfo[i].sizes == 1 ? 1 : m_EncodeInfo[i].sizes - 1;
+      encode_info_[i].encode_min = 0;
+      encode_info_[i].encode_max =
+          encode_info_[i].sizes == 1 ? 1 : encode_info_[i].sizes - 1;
     }
   }
   FX_SAFE_UINT32 nTotalSampleBytes = (nTotalSampleBits + 7) / 8;
@@ -87,22 +87,22 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
     return false;
   }
 
-  m_SampleMax = 0xffffffff >> (32 - m_nBitsPerSample);
-  m_pSampleStream = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
-  m_pSampleStream->LoadAllDataFiltered();
-  if (nTotalSampleBytes.ValueOrDie() > m_pSampleStream->GetSize()) {
+  sample_max_ = 0xffffffff >> (32 - bits_per_sample_);
+  sample_stream_ = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
+  sample_stream_->LoadAllDataFiltered();
+  if (nTotalSampleBytes.ValueOrDie() > sample_stream_->GetSize()) {
     return false;
   }
 
   RetainPtr<const CPDF_Array> pDecode = pDict->GetArrayFor("Decode");
-  m_DecodeInfo.resize(m_nOutputs);
-  for (uint32_t i = 0; i < m_nOutputs; i++) {
+  decode_info_.resize(outputs_);
+  for (uint32_t i = 0; i < outputs_; i++) {
     if (pDecode) {
-      m_DecodeInfo[i].decode_min = pDecode->GetFloatAt(2 * i);
-      m_DecodeInfo[i].decode_max = pDecode->GetFloatAt(2 * i + 1);
+      decode_info_[i].decode_min = pDecode->GetFloatAt(2 * i);
+      decode_info_[i].decode_max = pDecode->GetFloatAt(2 * i + 1);
     } else {
-      m_DecodeInfo[i].decode_min = m_Ranges[i * 2];
-      m_DecodeInfo[i].decode_max = m_Ranges[i * 2 + 1];
+      decode_info_[i].decode_min = ranges_[i * 2];
+      decode_info_[i].decode_max = ranges_[i * 2 + 1];
     }
   }
   return true;
@@ -112,28 +112,28 @@ bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
                               pdfium::span<float> results) const {
   int pos = 0;
   absl::InlinedVector<float, 16, FxAllocAllocator<float>> encoded_input_buf(
-      m_nInputs);
+      inputs_);
   absl::InlinedVector<uint32_t, 32, FxAllocAllocator<uint32_t>> int_buf(
-      m_nInputs * 2);
+      inputs_ * 2);
   UNSAFE_TODO({
     float* encoded_input = encoded_input_buf.data();
     uint32_t* index = int_buf.data();
-    uint32_t* blocksize = index + m_nInputs;
-    for (uint32_t i = 0; i < m_nInputs; i++) {
+    uint32_t* blocksize = index + inputs_;
+    for (uint32_t i = 0; i < inputs_; i++) {
       if (i == 0) {
         blocksize[i] = 1;
       } else {
-        blocksize[i] = blocksize[i - 1] * m_EncodeInfo[i - 1].sizes;
+        blocksize[i] = blocksize[i - 1] * encode_info_[i - 1].sizes;
       }
       encoded_input[i] =
-          Interpolate(inputs[i], m_Domains[i * 2], m_Domains[i * 2 + 1],
-                      m_EncodeInfo[i].encode_min, m_EncodeInfo[i].encode_max);
+          Interpolate(inputs[i], domains_[i * 2], domains_[i * 2 + 1],
+                      encode_info_[i].encode_min, encode_info_[i].encode_max);
       index[i] = std::clamp(static_cast<uint32_t>(encoded_input[i]), 0U,
-                            m_EncodeInfo[i].sizes - 1);
+                            encode_info_[i].sizes - 1);
       pos += index[i] * blocksize[i];
     }
-    FX_SAFE_INT32 bits_to_output = m_nOutputs;
-    bits_to_output *= m_nBitsPerSample;
+    FX_SAFE_INT32 bits_to_output = outputs_;
+    bits_to_output *= bits_per_sample_;
     if (!bits_to_output.IsValid()) {
       return false;
     }
@@ -154,27 +154,27 @@ bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
       }
     }
 
-    pdfium::span<const uint8_t> pSampleData = m_pSampleStream->GetSpan();
+    pdfium::span<const uint8_t> pSampleData = sample_stream_->GetSpan();
     if (pSampleData.empty()) {
       return false;
     }
 
     CFX_BitStream bitstream(pSampleData);
     bitstream.SkipBits(bits_to_skip);
-    for (uint32_t i = 0; i < m_nOutputs; ++i) {
-      uint32_t sample = bitstream.GetBits(m_nBitsPerSample);
+    for (uint32_t i = 0; i < outputs_; ++i) {
+      uint32_t sample = bitstream.GetBits(bits_per_sample_);
       float encoded = sample;
-      for (uint32_t j = 0; j < m_nInputs; ++j) {
-        if (index[j] == m_EncodeInfo[j].sizes - 1) {
+      for (uint32_t j = 0; j < inputs_; ++j) {
+        if (index[j] == encode_info_[j].sizes - 1) {
           if (index[j] == 0) {
             encoded = encoded_input[j] * sample;
           }
         } else {
           FX_SAFE_INT32 bitpos2 = blocksize[j];
           bitpos2 += pos;
-          bitpos2 *= m_nOutputs;
+          bitpos2 *= outputs_;
           bitpos2 += i;
-          bitpos2 *= m_nBitsPerSample;
+          bitpos2 *= bits_per_sample_;
           int bits_to_skip2 = bitpos2.ValueOrDefault(-1);
           if (bits_to_skip2 < 0) {
             return false;
@@ -183,13 +183,13 @@ bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
           CFX_BitStream bitstream2(pSampleData);
           bitstream2.SkipBits(bits_to_skip2);
           float sample2 =
-              static_cast<float>(bitstream2.GetBits(m_nBitsPerSample));
+              static_cast<float>(bitstream2.GetBits(bits_per_sample_));
           encoded += (encoded_input[j] - index[j]) * (sample2 - sample);
         }
       }
       results[i] =
-          Interpolate(encoded, 0, m_SampleMax, m_DecodeInfo[i].decode_min,
-                      m_DecodeInfo[i].decode_max);
+          Interpolate(encoded, 0, sample_max_, decode_info_[i].decode_min,
+                      decode_info_[i].decode_max);
     }
   });
   return true;
@@ -197,6 +197,6 @@ bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
 
 #if defined(PDF_USE_SKIA)
 RetainPtr<CPDF_StreamAcc> CPDF_SampledFunc::GetSampleStream() const {
-  return m_pSampleStream;
+  return sample_stream_;
 }
 #endif

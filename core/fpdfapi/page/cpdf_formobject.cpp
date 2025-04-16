@@ -14,13 +14,13 @@ CPDF_FormObject::CPDF_FormObject(int32_t content_stream,
                                  std::unique_ptr<CPDF_Form> pForm,
                                  const CFX_Matrix& matrix)
     : CPDF_PageObject(content_stream),
-      m_pForm(std::move(pForm)),
-      m_FormMatrix(matrix) {}
+      form_(std::move(pForm)),
+      form_matrix_(matrix) {}
 
 CPDF_FormObject::~CPDF_FormObject() = default;
 
 void CPDF_FormObject::Transform(const CFX_Matrix& matrix) {
-  m_FormMatrix.Concat(matrix);
+  form_matrix_.Concat(matrix);
   CalcBoundingBox();
   SetDirty(true);
 }
@@ -42,10 +42,10 @@ CPDF_PageObject::Type CPDF_FormObject::GetType() const {
 }
 
 void CPDF_FormObject::CalcBoundingBox() {
-  SetRect(m_FormMatrix.TransformRect(m_pForm->CalcBoundingBox()));
+  SetRect(form_matrix_.TransformRect(form_->CalcBoundingBox()));
 }
 
 void CPDF_FormObject::SetFormMatrix(const CFX_Matrix& matrix) {
-  m_FormMatrix = matrix;
+  form_matrix_ = matrix;
   CalcBoundingBox();
 }

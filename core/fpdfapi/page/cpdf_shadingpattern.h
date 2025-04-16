@@ -45,19 +45,19 @@ class CPDF_ShadingPattern final : public CPDF_Pattern {
   CPDF_ShadingPattern* AsShadingPattern() override;
 
   bool IsMeshShading() const {
-    return m_ShadingType == kFreeFormGouraudTriangleMeshShading ||
-           m_ShadingType == kLatticeFormGouraudTriangleMeshShading ||
-           m_ShadingType == kCoonsPatchMeshShading ||
-           m_ShadingType == kTensorProductPatchMeshShading;
+    return shading_type_ == kFreeFormGouraudTriangleMeshShading ||
+           shading_type_ == kLatticeFormGouraudTriangleMeshShading ||
+           shading_type_ == kCoonsPatchMeshShading ||
+           shading_type_ == kTensorProductPatchMeshShading;
   }
   bool Load();
 
-  ShadingType GetShadingType() const { return m_ShadingType; }
-  bool IsShadingObject() const { return m_bShading; }
+  ShadingType GetShadingType() const { return shading_type_; }
+  bool IsShadingObject() const { return shading_; }
   RetainPtr<const CPDF_Object> GetShadingObject() const;
-  RetainPtr<CPDF_ColorSpace> GetCS() const { return m_pCS; }
+  RetainPtr<CPDF_ColorSpace> GetCS() const { return cs_; }
   const std::vector<std::unique_ptr<CPDF_Function>>& GetFuncs() const {
-    return m_pFunctions;
+    return functions_;
   }
 
  private:
@@ -74,10 +74,10 @@ class CPDF_ShadingPattern final : public CPDF_Pattern {
                          uint32_t nExpectedNumInputs,
                          uint32_t nExpectedNumOutputs) const;
 
-  ShadingType m_ShadingType = kInvalidShading;
-  const bool m_bShading;
-  RetainPtr<CPDF_ColorSpace> m_pCS;
-  std::vector<std::unique_ptr<CPDF_Function>> m_pFunctions;
+  ShadingType shading_type_ = kInvalidShading;
+  const bool shading_;
+  RetainPtr<CPDF_ColorSpace> cs_;
+  std::vector<std::unique_ptr<CPDF_Function>> functions_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_SHADINGPATTERN_H_

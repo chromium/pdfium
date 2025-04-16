@@ -25,10 +25,10 @@ class CPDF_Stream;
 class CPDF_StreamAcc;
 
 struct DIB_COMP_DATA {
-  float m_DecodeMin;
-  float m_DecodeStep;
-  int m_ColorKeyMin;
-  int m_ColorKeyMax;
+  float decode_min_;
+  float decode_step_;
+  int color_key_min_;
+  int color_key_max_;
 };
 
 namespace fxcodec {
@@ -49,8 +49,8 @@ class CPDF_DIB final : public CFX_DIBBase {
   bool SkipToScanline(int line, PauseIndicatorIface* pPause) const override;
   size_t GetEstimatedImageMemoryBurden() const override;
 
-  RetainPtr<CPDF_ColorSpace> GetColorSpace() const { return m_pColorSpace; }
-  uint32_t GetMatteColor() const { return m_MatteColor; }
+  RetainPtr<CPDF_ColorSpace> GetColorSpace() const { return color_space_; }
+  uint32_t GetMatteColor() const { return matte_color_; }
   bool IsJBigImage() const;
 
   bool Load();
@@ -104,37 +104,37 @@ class CPDF_DIB final : public CFX_DIBBase {
   uint32_t Get1BitSetValue() const;
   uint32_t Get1BitResetValue() const;
 
-  UnownedPtr<CPDF_Document> const m_pDocument;
-  RetainPtr<const CPDF_Stream> const m_pStream;
-  RetainPtr<const CPDF_Dictionary> m_pDict;
-  RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
-  RetainPtr<CPDF_ColorSpace> m_pColorSpace;
-  uint32_t m_bpc = 0;
-  uint32_t m_bpc_orig = 0;
-  uint32_t m_nComponents = 0;
-  CPDF_ColorSpace::Family m_Family = CPDF_ColorSpace::Family::kUnknown;
-  CPDF_ColorSpace::Family m_GroupFamily = CPDF_ColorSpace::Family::kUnknown;
-  uint32_t m_MatteColor = 0;
-  LoadState m_Status = LoadState::kFail;
-  bool m_bLoadMask = false;
-  bool m_bDefaultDecode = true;
-  bool m_bImageMask = false;
-  bool m_bDoBpcCheck = true;
-  bool m_bColorKey = false;
-  bool m_bHasMask = false;
-  bool m_bStdCS = false;
-  std::vector<DIB_COMP_DATA> m_CompData;
-  mutable DataVector<uint8_t> m_LineBuf;
-  mutable DataVector<uint8_t> m_MaskBuf;
-  RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
+  UnownedPtr<CPDF_Document> const document_;
+  RetainPtr<const CPDF_Stream> const stream_;
+  RetainPtr<const CPDF_Dictionary> dict_;
+  RetainPtr<CPDF_StreamAcc> stream_acc_;
+  RetainPtr<CPDF_ColorSpace> color_space_;
+  uint32_t bpc_ = 0;
+  uint32_t bpc_orig_ = 0;
+  uint32_t components_ = 0;
+  CPDF_ColorSpace::Family family_ = CPDF_ColorSpace::Family::kUnknown;
+  CPDF_ColorSpace::Family group_family_ = CPDF_ColorSpace::Family::kUnknown;
+  uint32_t matte_color_ = 0;
+  LoadState status_ = LoadState::kFail;
+  bool load_mask_ = false;
+  bool default_decode_ = true;
+  bool image_mask_ = false;
+  bool do_bpc_check_ = true;
+  bool color_key_ = false;
+  bool has_mask_ = false;
+  bool std_cs_ = false;
+  std::vector<DIB_COMP_DATA> comp_data_;
+  mutable DataVector<uint8_t> line_buf_;
+  mutable DataVector<uint8_t> mask_buf_;
+  RetainPtr<CFX_DIBitmap> cached_bitmap_;
   // Note: Must not create a cycle between CPDF_DIB instances.
-  RetainPtr<CPDF_DIB> m_pMask;
-  RetainPtr<CPDF_StreamAcc> m_pGlobalAcc;
-  std::unique_ptr<fxcodec::ScanlineDecoder> m_pDecoder;
-  JpxSMaskInlineData m_JpxInlineData;
+  RetainPtr<CPDF_DIB> mask_;
+  RetainPtr<CPDF_StreamAcc> global_acc_;
+  std::unique_ptr<fxcodec::ScanlineDecoder> decoder_;
+  JpxSMaskInlineData jpx_inline_data_;
 
-  // Must come after |m_pCachedBitmap|.
-  std::unique_ptr<fxcodec::Jbig2Context> m_pJbig2Context;
+  // Must come after |cached_bitmap_|.
+  std::unique_ptr<fxcodec::Jbig2Context> jbig_2context_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DIB_H_

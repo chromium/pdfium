@@ -26,8 +26,8 @@ class CPDF_TextObject final : public CPDF_PageObject {
     Item(const Item& that);
     ~Item();
 
-    uint32_t m_CharCode = 0;
-    CFX_PointF m_Origin;
+    uint32_t char_code_ = 0;
+    CFX_PointF origin_;
   };
 
   explicit CPDF_TextObject(int32_t content_stream);
@@ -53,7 +53,7 @@ class CPDF_TextObject final : public CPDF_PageObject {
   int CountWords() const;
   WideString GetWordString(int nWordIndex) const;
 
-  CFX_PointF GetPos() const { return m_Pos; }
+  CFX_PointF GetPos() const { return pos_; }
   CFX_Matrix GetTextMatrix() const;
 
   RetainPtr<CPDF_Font> GetFont() const;
@@ -63,10 +63,10 @@ class CPDF_TextObject final : public CPDF_PageObject {
   void SetTextRenderMode(TextRenderingMode mode);
 
   void SetText(const ByteString& str);
-  void SetPosition(const CFX_PointF& pos) { m_Pos = pos; }
+  void SetPosition(const CFX_PointF& pos) { pos_ = pos; }
 
-  const std::vector<uint32_t>& GetCharCodes() const { return m_CharCodes; }
-  const std::vector<float>& GetCharPositions() const { return m_CharPos; }
+  const std::vector<uint32_t>& GetCharCodes() const { return char_codes_; }
+  const std::vector<float>& GetCharPositions() const { return char_pos_; }
 
   // Caller is expected to call SetDirty(true) when done changing the object.
   void SetTextMatrix(const CFX_Matrix& matrix);
@@ -79,9 +79,9 @@ class CPDF_TextObject final : public CPDF_PageObject {
  private:
   float CalcPositionDataInternal(const RetainPtr<CPDF_Font>& pFont);
 
-  CFX_PointF m_Pos;
-  std::vector<uint32_t> m_CharCodes;
-  std::vector<float> m_CharPos;
+  CFX_PointF pos_;
+  std::vector<uint32_t> char_codes_;
+  std::vector<float> char_pos_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TEXTOBJECT_H_

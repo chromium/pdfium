@@ -34,11 +34,11 @@ class CPDF_StreamParser {
 
   ElementType ParseNextElement();
   ByteStringView GetWord() const {
-    return ByteStringView(m_WordBuffer).First(m_WordSize);
+    return ByteStringView(word_buffer_).First(word_size_);
   }
-  uint32_t GetPos() const { return m_Pos; }
-  void SetPos(uint32_t pos) { m_Pos = pos; }
-  const RetainPtr<CPDF_Object>& GetObject() const { return m_pLastObj; }
+  uint32_t GetPos() const { return pos_; }
+  void SetPos(uint32_t pos) { pos_ = pos; }
+  const RetainPtr<CPDF_Object>& GetObject() const { return last_obj_; }
   RetainPtr<CPDF_Object> ReadNextObject(bool bAllowNestedArray,
                                         bool bInArray,
                                         uint32_t dwRecursionLevel);
@@ -55,13 +55,13 @@ class CPDF_StreamParser {
   DataVector<uint8_t> ReadHexString();
   bool PositionIsInBounds() const;
 
-  uint32_t m_Pos = 0;       // Current byte position within |m_pBuf|.
-  uint32_t m_WordSize = 0;  // Current byte position within |m_WordBuffer|.
-  WeakPtr<ByteStringPool> m_pPool;
-  RetainPtr<CPDF_Object> m_pLastObj;
-  pdfium::raw_span<const uint8_t> m_pBuf;
+  uint32_t pos_ = 0;        // Current byte position within |buf_|.
+  uint32_t word_size_ = 0;  // Current byte position within |word_buffer_|.
+  WeakPtr<ByteStringPool> pool_;
+  RetainPtr<CPDF_Object> last_obj_;
+  pdfium::raw_span<const uint8_t> buf_;
   // Include space for NUL.
-  std::array<uint8_t, kMaxWordLength + 1> m_WordBuffer = {};
+  std::array<uint8_t, kMaxWordLength + 1> word_buffer_ = {};
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_

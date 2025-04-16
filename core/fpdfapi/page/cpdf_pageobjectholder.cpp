@@ -42,11 +42,11 @@ CPDF_PageObjectHolder::CPDF_PageObjectHolder(
     RetainPtr<CPDF_Dictionary> pDict,
     RetainPtr<CPDF_Dictionary> pPageResources,
     RetainPtr<CPDF_Dictionary> pResources)
-    : m_pPageResources(std::move(pPageResources)),
-      m_pResources(std::move(pResources)),
-      m_pDict(std::move(pDict)),
-      m_pDocument(pDoc) {
-  DCHECK(m_pDict);
+    : page_resources_(std::move(pPageResources)),
+      resources_(std::move(pResources)),
+      dict_(std::move(pDict)),
+      document_(pDoc) {
+  DCHECK(dict_);
 }
 
 CPDF_PageObjectHolder::~CPDF_PageObjectHolder() = default;
@@ -57,42 +57,42 @@ bool CPDF_PageObjectHolder::IsPage() const {
 
 void CPDF_PageObjectHolder::StartParse(
     std::unique_ptr<CPDF_ContentParser> pParser) {
-  DCHECK_EQ(m_ParseState, ParseState::kNotParsed);
-  m_pParser = std::move(pParser);
-  m_ParseState = ParseState::kParsing;
+  DCHECK_EQ(parse_state_, ParseState::kNotParsed);
+  parser_ = std::move(pParser);
+  parse_state_ = ParseState::kParsing;
 }
 
 void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
-  if (m_ParseState == ParseState::kParsed) {
+  if (parse_state_ == ParseState::kParsed) {
     return;
   }
 
-  DCHECK_EQ(m_ParseState, ParseState::kParsing);
-  if (m_pParser->Continue(pPause)) {
+  DCHECK_EQ(parse_state_, ParseState::kParsing);
+  if (parser_->Continue(pPause)) {
     return;
   }
 
-  m_ParseState = ParseState::kParsed;
-  m_pDocument->IncrementParsedPageCount();
-  m_AllCTMs = m_pParser->TakeAllCTMs();
+  parse_state_ = ParseState::kParsed;
+  document_->IncrementParsedPageCount();
+  all_ctms_ = parser_->TakeAllCTMs();
 
-  m_pParser.reset();
+  parser_.reset();
 }
 
 void CPDF_PageObjectHolder::AddImageMaskBoundingBox(const CFX_FloatRect& box) {
-  m_MaskBoundingBoxes.push_back(box);
+  mask_bounding_boxes_.push_back(box);
 }
 
 std::set<int32_t> CPDF_PageObjectHolder::TakeDirtyStreams() {
-  auto dirty_streams = std::move(m_DirtyStreams);
-  m_DirtyStreams.clear();
+  auto dirty_streams = std::move(dirty_streams_);
+  dirty_streams_.clear();
   return dirty_streams;
 }
 
 std::optional<ByteString> CPDF_PageObjectHolder::GraphicsMapSearch(
     const GraphicsData& gd) {
-  auto it = m_GraphicsMap.find(gd);
-  if (it == m_GraphicsMap.end()) {
+  auto it = graphics_map_.find(gd);
+  if (it == graphics_map_.end()) {
     return std::nullopt;
   }
 
@@ -101,13 +101,13 @@ std::optional<ByteString> CPDF_PageObjectHolder::GraphicsMapSearch(
 
 void CPDF_PageObjectHolder::GraphicsMapInsert(const GraphicsData& gd,
                                               const ByteString& str) {
-  m_GraphicsMap[gd] = str;
+  graphics_map_[gd] = str;
 }
 
 std::optional<ByteString> CPDF_PageObjectHolder::FontsMapSearch(
     const FontData& fd) {
-  auto it = m_FontsMap.find(fd);
-  if (it == m_FontsMap.end()) {
+  auto it = fonts_map_.find(fd);
+  if (it == fonts_map_.end()) {
     return std::nullopt;
   }
 
@@ -116,18 +116,18 @@ std::optional<ByteString> CPDF_PageObjectHolder::FontsMapSearch(
 
 void CPDF_PageObjectHolder::FontsMapInsert(const FontData& fd,
                                            const ByteString& str) {
-  m_FontsMap[fd] = str;
+  fonts_map_[fd] = str;
 }
 
 CFX_Matrix CPDF_PageObjectHolder::GetCTMAtBeginningOfStream(int32_t stream) {
   CHECK(stream >= 0 || stream == CPDF_PageObject::kNoContentStream);
 
-  if (stream == 0 || m_AllCTMs.empty()) {
+  if (stream == 0 || all_ctms_.empty()) {
     return CFX_Matrix();
   }
 
   if (stream == CPDF_PageObject::kNoContentStream) {
-    return m_AllCTMs.rbegin()->second;
+    return all_ctms_.rbegin()->second;
   }
 
   // For all other cases, CTM at beginning of `stream` is the same value as CTM
@@ -141,16 +141,16 @@ CFX_Matrix CPDF_PageObjectHolder::GetCTMAtEndOfStream(int32_t stream) {
   // All other streams have a non-negative index.
   CHECK_GE(stream, 0);
 
-  if (m_AllCTMs.empty()) {
+  if (all_ctms_.empty()) {
     return CFX_Matrix();
   }
 
-  const auto it = m_AllCTMs.lower_bound(stream);
-  return it != m_AllCTMs.end() ? it->second : m_AllCTMs.rbegin()->second;
+  const auto it = all_ctms_.lower_bound(stream);
+  return it != all_ctms_.end() ? it->second : all_ctms_.rbegin()->second;
 }
 
 void CPDF_PageObjectHolder::LoadTransparencyInfo() {
-  RetainPtr<const CPDF_Dictionary> pGroup = m_pDict->GetDictFor("Group");
+  RetainPtr<const CPDF_Dictionary> pGroup = dict_->GetDictFor("Group");
   if (!pGroup) {
     return;
   }
@@ -159,15 +159,15 @@ void CPDF_PageObjectHolder::LoadTransparencyInfo() {
       pdfium::transparency::kTransparency) {
     return;
   }
-  m_Transparency.SetGroup();
+  transparency_.SetGroup();
   if (pGroup->GetIntegerFor(pdfium::transparency::kI)) {
-    m_Transparency.SetIsolated();
+    transparency_.SetIsolated();
   }
 }
 
 size_t CPDF_PageObjectHolder::GetActivePageObjectCount() const {
   size_t count = 0;
-  for (const auto& page_object : m_PageObjectList) {
+  for (const auto& page_object : page_object_list_) {
     if (page_object->IsActive()) {
       ++count;
     }
@@ -177,41 +177,42 @@ size_t CPDF_PageObjectHolder::GetActivePageObjectCount() const {
 
 CPDF_PageObject* CPDF_PageObjectHolder::GetPageObjectByIndex(
     size_t index) const {
-  return fxcrt::IndexInBounds(m_PageObjectList, index)
-             ? m_PageObjectList[index].get()
+  return fxcrt::IndexInBounds(page_object_list_, index)
+             ? page_object_list_[index].get()
              : nullptr;
 }
 
 void CPDF_PageObjectHolder::AppendPageObject(
     std::unique_ptr<CPDF_PageObject> pPageObj) {
   CHECK(pPageObj);
-  m_PageObjectList.push_back(std::move(pPageObj));
+  page_object_list_.push_back(std::move(pPageObj));
 }
 
 std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
     CPDF_PageObject* pPageObj) {
-  auto it = std::find(std::begin(m_PageObjectList), std::end(m_PageObjectList),
-                      fxcrt::MakeFakeUniquePtr(pPageObj));
-  if (it == std::end(m_PageObjectList)) {
+  auto it =
+      std::find(std::begin(page_object_list_), std::end(page_object_list_),
+                fxcrt::MakeFakeUniquePtr(pPageObj));
+  if (it == std::end(page_object_list_)) {
     return nullptr;
   }
 
   std::unique_ptr<CPDF_PageObject> result = std::move(*it);
-  m_PageObjectList.erase(it);
+  page_object_list_.erase(it);
 
   int32_t content_stream = pPageObj->GetContentStream();
   if (content_stream >= 0) {
-    m_DirtyStreams.insert(content_stream);
+    dirty_streams_.insert(content_stream);
   }
 
   return result;
 }
 
 bool CPDF_PageObjectHolder::ErasePageObjectAtIndex(size_t index) {
-  if (index >= m_PageObjectList.size()) {
+  if (index >= page_object_list_.size()) {
     return false;
   }
 
-  m_PageObjectList.erase(m_PageObjectList.begin() + index);
+  page_object_list_.erase(page_object_list_.begin() + index);
   return true;
 }

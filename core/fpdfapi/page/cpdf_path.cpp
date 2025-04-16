@@ -13,45 +13,44 @@ CPDF_Path::CPDF_Path(const CPDF_Path& that) = default;
 CPDF_Path::~CPDF_Path() = default;
 
 const std::vector<CFX_Path::Point>& CPDF_Path::GetPoints() const {
-  return m_Ref.GetObject()->GetPoints();
+  return ref_.GetObject()->GetPoints();
 }
 
 void CPDF_Path::ClosePath() {
-  m_Ref.GetPrivateCopy()->ClosePath();
+  ref_.GetPrivateCopy()->ClosePath();
 }
 
 CFX_PointF CPDF_Path::GetPoint(int index) const {
-  return m_Ref.GetObject()->GetPoint(index);
+  return ref_.GetObject()->GetPoint(index);
 }
 
 CFX_FloatRect CPDF_Path::GetBoundingBox() const {
-  return m_Ref.GetObject()->GetBoundingBox();
+  return ref_.GetObject()->GetBoundingBox();
 }
 
 CFX_FloatRect CPDF_Path::GetBoundingBoxForStrokePath(float line_width,
                                                      float miter_limit) const {
-  return m_Ref.GetObject()->GetBoundingBoxForStrokePath(line_width,
-                                                        miter_limit);
+  return ref_.GetObject()->GetBoundingBoxForStrokePath(line_width, miter_limit);
 }
 
 bool CPDF_Path::IsRect() const {
-  return m_Ref.GetObject()->IsRect();
+  return ref_.GetObject()->IsRect();
 }
 
 void CPDF_Path::Transform(const CFX_Matrix& matrix) {
-  m_Ref.GetPrivateCopy()->Transform(matrix);
+  ref_.GetPrivateCopy()->Transform(matrix);
 }
 
 void CPDF_Path::Append(const CFX_Path& path, const CFX_Matrix* pMatrix) {
-  m_Ref.GetPrivateCopy()->Append(path, pMatrix);
+  ref_.GetPrivateCopy()->Append(path, pMatrix);
 }
 
 void CPDF_Path::AppendFloatRect(const CFX_FloatRect& rect) {
-  m_Ref.GetPrivateCopy()->AppendFloatRect(rect);
+  ref_.GetPrivateCopy()->AppendFloatRect(rect);
 }
 
 void CPDF_Path::AppendRect(float left, float bottom, float right, float top) {
-  m_Ref.GetPrivateCopy()->AppendRect(left, bottom, right, top);
+  ref_.GetPrivateCopy()->AppendRect(left, bottom, right, top);
 }
 
 void CPDF_Path::AppendPoint(const CFX_PointF& point,

@@ -12,15 +12,15 @@ class CPDF_Transparency {
   CPDF_Transparency(const CPDF_Transparency& other);
   CPDF_Transparency& operator=(const CPDF_Transparency& other);
 
-  bool IsGroup() const { return m_bGroup; }
-  bool IsIsolated() const { return m_bIsolated; }
+  bool IsGroup() const { return group_; }
+  bool IsIsolated() const { return isolated_; }
 
-  void SetGroup() { m_bGroup = true; }
-  void SetIsolated() { m_bIsolated = true; }
+  void SetGroup() { group_ = true; }
+  void SetIsolated() { isolated_ = true; }
 
  private:
-  bool m_bGroup = false;
-  bool m_bIsolated = false;
+  bool group_ = false;
+  bool isolated_ = false;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TRANSPARENCY_H_

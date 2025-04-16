@@ -112,19 +112,19 @@ RetainPtr<CFX_DIBBase> MakeCachedImage(RetainPtr<CFX_DIBBase> image,
 
 }  // namespace
 
-CPDF_PageImageCache::CPDF_PageImageCache(CPDF_Page* pPage) : m_pPage(pPage) {}
+CPDF_PageImageCache::CPDF_PageImageCache(CPDF_Page* pPage) : page_(pPage) {}
 
 CPDF_PageImageCache::~CPDF_PageImageCache() = default;
 
 void CPDF_PageImageCache::CacheOptimization(int32_t dwLimitCacheSize) {
-  if (m_nCacheSize <= (uint32_t)dwLimitCacheSize) {
+  if (cache_size_ <= (uint32_t)dwLimitCacheSize) {
     return;
   }
 
-  uint32_t nCount = fxcrt::CollectionSize<uint32_t>(m_ImageCache);
+  uint32_t nCount = fxcrt::CollectionSize<uint32_t>(image_cache_);
   std::vector<CacheInfo> cache_info;
   cache_info.reserve(nCount);
-  for (const auto& it : m_ImageCache) {
+  for (const auto& it : image_cache_) {
     cache_info.emplace_back(it.second->GetTimeCount(),
                             it.second->GetImage()->GetStream());
   }
@@ -132,12 +132,12 @@ void CPDF_PageImageCache::CacheOptimization(int32_t dwLimitCacheSize) {
 
   // Check if time value is about to roll over and reset all entries.
   // The comparison is legal because uint32_t is an unsigned type.
-  uint32_t nTimeCount = m_nTimeCount;
+  uint32_t nTimeCount = time_count_;
   if (nTimeCount + 1 < nTimeCount) {
     for (uint32_t i = 0; i < nCount; i++) {
-      m_ImageCache[cache_info[i].pStream]->SetTimeCount(i);
+      image_cache_[cache_info[i].pStream]->SetTimeCount(i);
     }
-    m_nTimeCount = nCount;
+    time_count_ = nCount;
   }
 
   size_t i = 0;
@@ -145,26 +145,26 @@ void CPDF_PageImageCache::CacheOptimization(int32_t dwLimitCacheSize) {
     ClearImageCacheEntry(cache_info[i++].pStream);
   }
 
-  while (i < nCount && m_nCacheSize > (uint32_t)dwLimitCacheSize) {
+  while (i < nCount && cache_size_ > (uint32_t)dwLimitCacheSize) {
     ClearImageCacheEntry(cache_info[i++].pStream);
   }
 }
 
 void CPDF_PageImageCache::ClearImageCacheEntry(const CPDF_Stream* pStream) {
-  auto it = m_ImageCache.find(pStream);
-  if (it == m_ImageCache.end()) {
+  auto it = image_cache_.find(pStream);
+  if (it == image_cache_.end()) {
     return;
   }
 
-  m_nCacheSize -= it->second->EstimateSize();
+  cache_size_ -= it->second->EstimateSize();
 
-  // Avoid leaving `m_pCurImageCacheEntry` as a dangling pointer when `it` is
+  // Avoid leaving `cur_image_cache_entry_` as a dangling pointer when `it` is
   // about to be deleted.
-  if (m_pCurImageCacheEntry.Get() == it->second.get()) {
-    DCHECK(!m_pCurImageCacheEntry.IsOwned());
-    m_pCurImageCacheEntry.Reset();
+  if (cur_image_cache_entry_.Get() == it->second.get()) {
+    DCHECK(!cur_image_cache_entry_.IsOwned());
+    cur_image_cache_entry_.Reset();
   }
-  m_ImageCache.erase(it);
+  image_cache_.erase(it);
 }
 
 bool CPDF_PageImageCache::StartGetCachedBitmap(
@@ -176,93 +176,93 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
     bool bLoadMask,
     const CFX_Size& max_size_required) {
   // A cross-document image may have come from the embedder.
-  if (m_pPage->GetDocument() != pImage->GetDocument()) {
+  if (page_->GetDocument() != pImage->GetDocument()) {
     return false;
   }
 
   RetainPtr<const CPDF_Stream> pStream = pImage->GetStream();
-  const auto it = m_ImageCache.find(pStream);
-  m_bCurFindCache = it != m_ImageCache.end();
-  if (m_bCurFindCache) {
-    m_pCurImageCacheEntry = it->second.get();
+  const auto it = image_cache_.find(pStream);
+  cur_find_cache_ = it != image_cache_.end();
+  if (cur_find_cache_) {
+    cur_image_cache_entry_ = it->second.get();
   } else {
-    m_pCurImageCacheEntry = std::make_unique<Entry>(std::move(pImage));
+    cur_image_cache_entry_ = std::make_unique<Entry>(std::move(pImage));
   }
-  CPDF_DIB::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
+  CPDF_DIB::LoadState ret = cur_image_cache_entry_->StartGetCachedBitmap(
       this, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask,
       max_size_required);
   if (ret == CPDF_DIB::LoadState::kContinue) {
     return true;
   }
 
-  m_nTimeCount++;
-  if (!m_bCurFindCache) {
-    m_ImageCache[pStream] = m_pCurImageCacheEntry.Release();
+  time_count_++;
+  if (!cur_find_cache_) {
+    image_cache_[pStream] = cur_image_cache_entry_.Release();
   }
 
   if (ret == CPDF_DIB::LoadState::kFail) {
-    m_nCacheSize += m_pCurImageCacheEntry->EstimateSize();
+    cache_size_ += cur_image_cache_entry_->EstimateSize();
   }
 
   return false;
 }
 
 bool CPDF_PageImageCache::Continue(PauseIndicatorIface* pPause) {
-  bool ret = m_pCurImageCacheEntry->Continue(pPause, this);
+  bool ret = cur_image_cache_entry_->Continue(pPause, this);
   if (ret) {
     return true;
   }
 
-  m_nTimeCount++;
-  if (!m_bCurFindCache) {
-    m_ImageCache[m_pCurImageCacheEntry->GetImage()->GetStream()] =
-        m_pCurImageCacheEntry.Release();
+  time_count_++;
+  if (!cur_find_cache_) {
+    image_cache_[cur_image_cache_entry_->GetImage()->GetStream()] =
+        cur_image_cache_entry_.Release();
   }
-  m_nCacheSize += m_pCurImageCacheEntry->EstimateSize();
+  cache_size_ += cur_image_cache_entry_->EstimateSize();
   return false;
 }
 
 void CPDF_PageImageCache::ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) {
   RetainPtr<const CPDF_Stream> pStream = pImage->GetStream();
-  const auto it = m_ImageCache.find(pStream);
-  if (it == m_ImageCache.end()) {
+  const auto it = image_cache_.find(pStream);
+  if (it == image_cache_.end()) {
     return;
   }
 
   Entry* pEntry = it->second.get();
-  m_nCacheSize -= pEntry->EstimateSize();
+  cache_size_ -= pEntry->EstimateSize();
   pEntry->Reset();
-  m_nCacheSize += pEntry->EstimateSize();
+  cache_size_ += pEntry->EstimateSize();
 }
 
 uint32_t CPDF_PageImageCache::GetCurMatteColor() const {
-  return m_pCurImageCacheEntry->GetMatteColor();
+  return cur_image_cache_entry_->GetMatteColor();
 }
 
 RetainPtr<CFX_DIBBase> CPDF_PageImageCache::DetachCurBitmap() {
-  return m_pCurImageCacheEntry->DetachBitmap();
+  return cur_image_cache_entry_->DetachBitmap();
 }
 
 RetainPtr<CFX_DIBBase> CPDF_PageImageCache::DetachCurMask() {
-  return m_pCurImageCacheEntry->DetachMask();
+  return cur_image_cache_entry_->DetachMask();
 }
 
 CPDF_PageImageCache::Entry::Entry(RetainPtr<CPDF_Image> pImage)
-    : m_pImage(std::move(pImage)) {}
+    : image_(std::move(pImage)) {}
 
 CPDF_PageImageCache::Entry::~Entry() = default;
 
 void CPDF_PageImageCache::Entry::Reset() {
-  m_pCachedBitmap.Reset();
+  cached_bitmap_.Reset();
   CalcSize();
 }
 
 RetainPtr<CFX_DIBBase> CPDF_PageImageCache::Entry::DetachBitmap() {
-  return std::move(m_pCurBitmap);
+  return std::move(cur_bitmap_);
 }
 
 RetainPtr<CFX_DIBBase> CPDF_PageImageCache::Entry::DetachMask() {
-  return std::move(m_pCurMask);
+  return std::move(cur_mask_);
 }
 
 CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
@@ -273,17 +273,17 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
     CPDF_ColorSpace::Family eFamily,
     bool bLoadMask,
     const CFX_Size& max_size_required) {
-  if (m_pCachedBitmap && IsCacheValid(max_size_required)) {
-    m_pCurBitmap = m_pCachedBitmap;
-    m_pCurMask = m_pCachedMask;
+  if (cached_bitmap_ && IsCacheValid(max_size_required)) {
+    cur_bitmap_ = cached_bitmap_;
+    cur_mask_ = cached_mask_;
     return CPDF_DIB::LoadState::kSuccess;
   }
 
-  m_pCurBitmap = m_pImage->CreateNewDIB();
-  CPDF_DIB::LoadState ret = m_pCurBitmap.AsRaw<CPDF_DIB>()->StartLoadDIBBase(
+  cur_bitmap_ = image_->CreateNewDIB();
+  CPDF_DIB::LoadState ret = cur_bitmap_.AsRaw<CPDF_DIB>()->StartLoadDIBBase(
       true, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask,
       max_size_required);
-  m_bCachedSetMaxSizeRequired =
+  cached_set_max_size_required_ =
       (max_size_required.width != 0 && max_size_required.height != 0);
   if (ret == CPDF_DIB::LoadState::kContinue) {
     return CPDF_DIB::LoadState::kContinue;
@@ -292,7 +292,7 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
   if (ret == CPDF_DIB::LoadState::kSuccess) {
     ContinueGetCachedBitmap(pPageImageCache);
   } else {
-    m_pCurBitmap.Reset();
+    cur_bitmap_.Reset();
   }
   return CPDF_DIB::LoadState::kFail;
 }
@@ -301,7 +301,7 @@ bool CPDF_PageImageCache::Entry::Continue(
     PauseIndicatorIface* pPause,
     CPDF_PageImageCache* pPageImageCache) {
   CPDF_DIB::LoadState ret =
-      m_pCurBitmap.AsRaw<CPDF_DIB>()->ContinueLoadDIBBase(pPause);
+      cur_bitmap_.AsRaw<CPDF_DIB>()->ContinueLoadDIBBase(pPause);
   if (ret == CPDF_DIB::LoadState::kContinue) {
     return true;
   }
@@ -309,50 +309,50 @@ bool CPDF_PageImageCache::Entry::Continue(
   if (ret == CPDF_DIB::LoadState::kSuccess) {
     ContinueGetCachedBitmap(pPageImageCache);
   } else {
-    m_pCurBitmap.Reset();
+    cur_bitmap_.Reset();
   }
   return false;
 }
 
 void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
     CPDF_PageImageCache* pPageImageCache) {
-  m_MatteColor = m_pCurBitmap.AsRaw<CPDF_DIB>()->GetMatteColor();
-  m_pCurMask = m_pCurBitmap.AsRaw<CPDF_DIB>()->DetachMask();
-  m_dwTimeCount = pPageImageCache->GetTimeCount();
-  if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() < kHugeImageSize) {
-    m_pCachedBitmap = MakeCachedImage(m_pCurBitmap, /*realize_hint=*/true);
-    m_pCurBitmap.Reset();
+  matte_color_ = cur_bitmap_.AsRaw<CPDF_DIB>()->GetMatteColor();
+  cur_mask_ = cur_bitmap_.AsRaw<CPDF_DIB>()->DetachMask();
+  time_count_ = pPageImageCache->GetTimeCount();
+  if (cur_bitmap_->GetPitch() * cur_bitmap_->GetHeight() < kHugeImageSize) {
+    cached_bitmap_ = MakeCachedImage(cur_bitmap_, /*realize_hint=*/true);
+    cur_bitmap_.Reset();
   } else {
-    m_pCachedBitmap = MakeCachedImage(m_pCurBitmap, /*realize_hint=*/false);
+    cached_bitmap_ = MakeCachedImage(cur_bitmap_, /*realize_hint=*/false);
   }
-  if (m_pCurMask) {
-    m_pCachedMask = MakeCachedImage(m_pCurMask, /*realize_hint=*/true);
-    m_pCurMask.Reset();
+  if (cur_mask_) {
+    cached_mask_ = MakeCachedImage(cur_mask_, /*realize_hint=*/true);
+    cur_mask_.Reset();
   }
-  m_pCurBitmap = m_pCachedBitmap;
-  m_pCurMask = m_pCachedMask;
+  cur_bitmap_ = cached_bitmap_;
+  cur_mask_ = cached_mask_;
   CalcSize();
 }
 
 void CPDF_PageImageCache::Entry::CalcSize() {
-  m_dwCacheSize = 0;
-  if (m_pCachedBitmap) {
-    m_dwCacheSize += m_pCachedBitmap->GetEstimatedImageMemoryBurden();
+  cache_size_ = 0;
+  if (cached_bitmap_) {
+    cache_size_ += cached_bitmap_->GetEstimatedImageMemoryBurden();
   }
-  if (m_pCachedMask) {
-    m_dwCacheSize += m_pCachedMask->GetEstimatedImageMemoryBurden();
+  if (cached_mask_) {
+    cache_size_ += cached_mask_->GetEstimatedImageMemoryBurden();
   }
 }
 
 bool CPDF_PageImageCache::Entry::IsCacheValid(
     const CFX_Size& max_size_required) const {
-  if (!m_bCachedSetMaxSizeRequired) {
+  if (!cached_set_max_size_required_) {
     return true;
   }
   if (max_size_required.width == 0 && max_size_required.height == 0) {
     return false;
   }
 
-  return (m_pCachedBitmap->GetWidth() >= max_size_required.width) &&
-         (m_pCachedBitmap->GetHeight() >= max_size_required.height);
+  return (cached_bitmap_->GetWidth() >= max_size_required.width) &&
+         (cached_bitmap_->GetHeight() >= max_size_required.height);
 }

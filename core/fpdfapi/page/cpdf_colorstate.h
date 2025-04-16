@@ -51,7 +51,7 @@ class CPDF_ColorState {
   void SetStrokePattern(RetainPtr<CPDF_Pattern> pattern,
                         pdfium::span<float> values);
 
-  bool HasRef() const { return !!m_Ref; }
+  bool HasRef() const { return !!ref_; }
 
  private:
   class ColorData final : public Retainable {
@@ -62,10 +62,10 @@ class CPDF_ColorState {
 
     void SetDefault();
 
-    FX_COLORREF m_FillColorRef = 0;
-    FX_COLORREF m_StrokeColorRef = 0;
-    CPDF_Color m_FillColor;
-    CPDF_Color m_StrokeColor;
+    FX_COLORREF fill_color_ref_ = 0;
+    FX_COLORREF stroke_color_ref_ = 0;
+    CPDF_Color fill_color_;
+    CPDF_Color stroke_color_;
 
    private:
     ColorData();
@@ -80,7 +80,7 @@ class CPDF_ColorState {
                          pdfium::span<float> values,
                          CPDF_Color& color);
 
-  SharedCopyOnWrite<ColorData> m_Ref;
+  SharedCopyOnWrite<ColorData> ref_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_COLORSTATE_H_

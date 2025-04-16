@@ -23,7 +23,7 @@ class CPDF_PSFunc final : public CPDF_Function {
               pdfium::span<float> results) const override;
 
  private:
-  mutable CPDF_PSEngine m_PS;  // Pre-initialized scratch space for v_Call().
+  mutable CPDF_PSEngine ps_;  // Pre-initialized scratch space for v_Call().
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PSFUNC_H_

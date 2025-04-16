@@ -19,23 +19,23 @@ CPDF_ClipPath& CPDF_ClipPath::operator=(const CPDF_ClipPath& that) = default;
 CPDF_ClipPath::~CPDF_ClipPath() = default;
 
 size_t CPDF_ClipPath::GetPathCount() const {
-  return m_Ref.GetObject()->m_PathAndTypeList.size();
+  return ref_.GetObject()->path_and_type_list_.size();
 }
 
 CPDF_Path CPDF_ClipPath::GetPath(size_t i) const {
-  return m_Ref.GetObject()->m_PathAndTypeList[i].first;
+  return ref_.GetObject()->path_and_type_list_[i].first;
 }
 
 CFX_FillRenderOptions::FillType CPDF_ClipPath::GetClipType(size_t i) const {
-  return m_Ref.GetObject()->m_PathAndTypeList[i].second;
+  return ref_.GetObject()->path_and_type_list_[i].second;
 }
 
 size_t CPDF_ClipPath::GetTextCount() const {
-  return m_Ref.GetObject()->m_TextList.size();
+  return ref_.GetObject()->text_list_.size();
 }
 
 CPDF_TextObject* CPDF_ClipPath::GetText(size_t i) const {
-  return m_Ref.GetObject()->m_TextList[i].get();
+  return ref_.GetObject()->text_list_[i].get();
 }
 
 CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
@@ -76,23 +76,23 @@ CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
 
 void CPDF_ClipPath::AppendPath(CPDF_Path path,
                                CFX_FillRenderOptions::FillType type) {
-  PathData* pData = m_Ref.GetPrivateCopy();
-  pData->m_PathAndTypeList.emplace_back(path, type);
+  PathData* pData = ref_.GetPrivateCopy();
+  pData->path_and_type_list_.emplace_back(path, type);
 }
 
 void CPDF_ClipPath::AppendPathWithAutoMerge(
     CPDF_Path path,
     CFX_FillRenderOptions::FillType type) {
-  PathData* pData = m_Ref.GetPrivateCopy();
-  if (!pData->m_PathAndTypeList.empty()) {
-    const CPDF_Path& old_path = pData->m_PathAndTypeList.back().first;
+  PathData* pData = ref_.GetPrivateCopy();
+  if (!pData->path_and_type_list_.empty()) {
+    const CPDF_Path& old_path = pData->path_and_type_list_.back().first;
     if (old_path.IsRect()) {
       CFX_PointF point0 = old_path.GetPoint(0);
       CFX_PointF point2 = old_path.GetPoint(2);
       CFX_FloatRect old_rect(point0.x, point0.y, point2.x, point2.y);
       CFX_FloatRect new_rect = path.GetBoundingBox();
       if (old_rect.Contains(new_rect)) {
-        pData->m_PathAndTypeList.pop_back();
+        pData->path_and_type_list_.pop_back();
       }
     }
   }
@@ -102,12 +102,12 @@ void CPDF_ClipPath::AppendPathWithAutoMerge(
 void CPDF_ClipPath::AppendTexts(
     std::vector<std::unique_ptr<CPDF_TextObject>>* pTexts) {
   static constexpr size_t kMaxTextObjects = 1024;
-  PathData* pData = m_Ref.GetPrivateCopy();
-  if (pData->m_TextList.size() + pTexts->size() <= kMaxTextObjects) {
+  PathData* pData = ref_.GetPrivateCopy();
+  if (pData->text_list_.size() + pTexts->size() <= kMaxTextObjects) {
     for (size_t i = 0; i < pTexts->size(); i++) {
-      pData->m_TextList.push_back(std::move((*pTexts)[i]));
+      pData->text_list_.push_back(std::move((*pTexts)[i]));
     }
-    pData->m_TextList.push_back(nullptr);
+    pData->text_list_.push_back(nullptr);
   }
   pTexts->clear();
 }
@@ -123,12 +123,12 @@ void CPDF_ClipPath::CopyClipPath(const CPDF_ClipPath& that) {
 }
 
 void CPDF_ClipPath::Transform(const CFX_Matrix& matrix) {
-  PathData* pData = m_Ref.GetPrivateCopy();
-  for (auto& obj : pData->m_PathAndTypeList) {
+  PathData* pData = ref_.GetPrivateCopy();
+  for (auto& obj : pData->path_and_type_list_) {
     obj.first.Transform(matrix);
   }
 
-  for (auto& text : pData->m_TextList) {
+  for (auto& text : pData->text_list_) {
     if (text) {
       text->Transform(matrix);
     }
@@ -138,11 +138,11 @@ void CPDF_ClipPath::Transform(const CFX_Matrix& matrix) {
 CPDF_ClipPath::PathData::PathData() = default;
 
 CPDF_ClipPath::PathData::PathData(const PathData& that)
-    : m_PathAndTypeList(that.m_PathAndTypeList),
-      m_TextList(that.m_TextList.size()) {
-  for (size_t i = 0; i < that.m_TextList.size(); ++i) {
-    if (that.m_TextList[i]) {
-      m_TextList[i] = that.m_TextList[i]->Clone();
+    : path_and_type_list_(that.path_and_type_list_),
+      text_list_(that.text_list_.size()) {
+  for (size_t i = 0; i < that.text_list_.size(); ++i) {
+    if (that.text_list_[i]) {
+      text_list_[i] = that.text_list_[i]->Clone();
     }
   }
 }

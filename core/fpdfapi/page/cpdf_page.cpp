@@ -23,18 +23,18 @@
 CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
                      RetainPtr<CPDF_Dictionary> pPageDict)
     : CPDF_PageObjectHolder(pDocument, std::move(pPageDict), nullptr, nullptr),
-      m_PageSize(100, 100),
-      m_pPDFDocument(pDocument) {
-  // Cannot initialize |m_pResources| and |m_pPageResources| via the
+      page_size_(100, 100),
+      pdf_document_(pDocument) {
+  // Cannot initialize |resources_| and |page_resources_| via the
   // CPDF_PageObjectHolder ctor because GetPageAttr() requires
   // CPDF_PageObjectHolder to finish initializing first.
   RetainPtr<CPDF_Object> pPageAttr =
       GetMutablePageAttr(pdfium::page_object::kResources);
-  m_pResources = pPageAttr ? pPageAttr->GetMutableDict() : nullptr;
-  m_pPageResources = m_pResources;
+  resources_ = pPageAttr ? pPageAttr->GetMutableDict() : nullptr;
+  page_resources_ = resources_;
 
   UpdateDimensions();
-  m_Transparency.SetIsolated();
+  transparency_.SetIsolated();
   LoadTransparencyInfo();
 }
 
@@ -49,15 +49,15 @@ CPDFXFA_Page* CPDF_Page::AsXFAPage() {
 }
 
 CPDF_Document* CPDF_Page::GetDocument() const {
-  return m_pPDFDocument;
+  return pdf_document_;
 }
 
 float CPDF_Page::GetPageWidth() const {
-  return m_PageSize.width;
+  return page_size_.width;
 }
 
 float CPDF_Page::GetPageHeight() const {
-  return m_PageSize.height;
+  return page_size_.height;
 }
 
 bool CPDF_Page::IsPage() const {
@@ -124,7 +124,7 @@ std::optional<CFX_PointF> CPDF_Page::PageToDevice(
 }
 
 CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
-  if (m_PageSize.width == 0 || m_PageSize.height == 0) {
+  if (page_size_.width == 0 || page_size_.height == 0) {
     return CFX_Matrix();
   }
 
@@ -175,10 +175,10 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
       y2 = rect.top;
       break;
   }
-  CFX_Matrix matrix((x2 - x0) / m_PageSize.width, (y2 - y0) / m_PageSize.width,
-                    (x1 - x0) / m_PageSize.height,
-                    (y1 - y0) / m_PageSize.height, x0, y0);
-  return m_PageMatrix * matrix;
+  CFX_Matrix matrix((x2 - x0) / page_size_.width, (y2 - y0) / page_size_.width,
+                    (x1 - x0) / page_size_.height,
+                    (y1 - y0) / page_size_.height, x0, y0);
+  return page_matrix_ * matrix;
 }
 
 int CPDF_Page::GetPageRotation() const {
@@ -201,22 +201,22 @@ RetainPtr<const CPDF_Array> CPDF_Page::GetAnnotsArray() const {
 }
 
 void CPDF_Page::AddPageImageCache() {
-  m_pPageImageCache = std::make_unique<CPDF_PageImageCache>(this);
+  page_image_cache_ = std::make_unique<CPDF_PageImageCache>(this);
 }
 
 void CPDF_Page::SetRenderContext(std::unique_ptr<RenderContextIface> pContext) {
-  DCHECK(!m_pRenderContext);
+  DCHECK(!render_context_);
   DCHECK(pContext);
-  m_pRenderContext = std::move(pContext);
+  render_context_ = std::move(pContext);
 }
 
 void CPDF_Page::ClearRenderContext() {
-  m_pRenderContext.reset();
+  render_context_.reset();
 }
 
 void CPDF_Page::ClearView() {
-  if (m_pView) {
-    m_pView->ClearPage(this);
+  if (view_) {
+    view_->ClearPage(this);
   }
 }
 
@@ -226,40 +226,39 @@ void CPDF_Page::UpdateDimensions() {
     mediabox = CFX_FloatRect(0, 0, 612, 792);
   }
 
-  m_BBox = GetBox(pdfium::page_object::kCropBox);
-  if (m_BBox.IsEmpty()) {
-    m_BBox = mediabox;
+  bbox_ = GetBox(pdfium::page_object::kCropBox);
+  if (bbox_.IsEmpty()) {
+    bbox_ = mediabox;
   } else {
-    m_BBox.Intersect(mediabox);
+    bbox_.Intersect(mediabox);
   }
 
-  m_PageSize.width = m_BBox.Width();
-  m_PageSize.height = m_BBox.Height();
+  page_size_.width = bbox_.Width();
+  page_size_.height = bbox_.Height();
 
   switch (GetPageRotation()) {
     case 0:
-      m_PageMatrix = CFX_Matrix(1.0f, 0, 0, 1.0f, -m_BBox.left, -m_BBox.bottom);
+      page_matrix_ = CFX_Matrix(1.0f, 0, 0, 1.0f, -bbox_.left, -bbox_.bottom);
       break;
     case 1:
-      std::swap(m_PageSize.width, m_PageSize.height);
-      m_PageMatrix =
-          CFX_Matrix(0, -1.0f, 1.0f, 0, -m_BBox.bottom, m_BBox.right);
+      std::swap(page_size_.width, page_size_.height);
+      page_matrix_ = CFX_Matrix(0, -1.0f, 1.0f, 0, -bbox_.bottom, bbox_.right);
       break;
     case 2:
-      m_PageMatrix = CFX_Matrix(-1.0f, 0, 0, -1.0f, m_BBox.right, m_BBox.top);
+      page_matrix_ = CFX_Matrix(-1.0f, 0, 0, -1.0f, bbox_.right, bbox_.top);
       break;
     case 3:
-      std::swap(m_PageSize.width, m_PageSize.height);
-      m_PageMatrix = CFX_Matrix(0, 1.0f, -1.0f, 0, m_BBox.top, -m_BBox.left);
+      std::swap(page_size_.width, page_size_.height);
+      page_matrix_ = CFX_Matrix(0, 1.0f, -1.0f, 0, bbox_.top, -bbox_.left);
       break;
   }
 }
 
 CPDF_Page::RenderContextClearer::RenderContextClearer(CPDF_Page* pPage)
-    : m_pPage(pPage) {}
+    : page_(pPage) {}
 
 CPDF_Page::RenderContextClearer::~RenderContextClearer() {
-  if (m_pPage) {
-    m_pPage->ClearRenderContext();
+  if (page_) {
+    page_->ClearRenderContext();
   }
 }

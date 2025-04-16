@@ -17,21 +17,21 @@ bool CPDF_PSFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   auto pAcc =
       pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pObj->AsStream()));
   pAcc->LoadAllDataFiltered();
-  return m_PS.Parse(pAcc->GetSpan());
+  return ps_.Parse(pAcc->GetSpan());
 }
 
 bool CPDF_PSFunc::v_Call(pdfium::span<const float> inputs,
                          pdfium::span<float> results) const {
-  m_PS.Reset();
-  for (uint32_t i = 0; i < m_nInputs; i++) {
-    m_PS.Push(inputs[i]);
+  ps_.Reset();
+  for (uint32_t i = 0; i < inputs_; i++) {
+    ps_.Push(inputs[i]);
   }
-  m_PS.Execute();
-  if (m_PS.GetStackSize() < m_nOutputs) {
+  ps_.Execute();
+  if (ps_.GetStackSize() < outputs_) {
     return false;
   }
-  for (uint32_t i = 0; i < m_nOutputs; i++) {
-    results[m_nOutputs - i - 1] = m_PS.Pop();
+  for (uint32_t i = 0; i < outputs_; i++) {
+    results[outputs_ - i - 1] = ps_.Pop();
   }
   return true;
 }

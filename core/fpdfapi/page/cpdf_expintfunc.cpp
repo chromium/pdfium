@@ -29,42 +29,42 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
     return false;
   }
 
-  m_Exponent = pExponent->GetNumber();
+  exponent_ = pExponent->GetNumber();
 
   RetainPtr<const CPDF_Array> pArray0 = pDict->GetArrayFor("C0");
-  if (pArray0 && m_nOutputs == 0) {
-    m_nOutputs = fxcrt::CollectionSize<uint32_t>(*pArray0);
+  if (pArray0 && outputs_ == 0) {
+    outputs_ = fxcrt::CollectionSize<uint32_t>(*pArray0);
   }
-  if (m_nOutputs == 0) {
-    m_nOutputs = 1;
+  if (outputs_ == 0) {
+    outputs_ = 1;
   }
 
   RetainPtr<const CPDF_Array> pArray1 = pDict->GetArrayFor("C1");
-  m_BeginValues = DataVector<float>(Fx2DSizeOrDie(m_nOutputs, 2));
-  m_EndValues = DataVector<float>(m_BeginValues.size());
-  for (uint32_t i = 0; i < m_nOutputs; i++) {
-    m_BeginValues[i] = pArray0 ? pArray0->GetFloatAt(i) : 0.0f;
-    m_EndValues[i] = pArray1 ? pArray1->GetFloatAt(i) : 1.0f;
+  begin_values_ = DataVector<float>(Fx2DSizeOrDie(outputs_, 2));
+  end_values_ = DataVector<float>(begin_values_.size());
+  for (uint32_t i = 0; i < outputs_; i++) {
+    begin_values_[i] = pArray0 ? pArray0->GetFloatAt(i) : 0.0f;
+    end_values_[i] = pArray1 ? pArray1->GetFloatAt(i) : 1.0f;
   }
 
-  FX_SAFE_UINT32 nOutputs = m_nOutputs;
-  nOutputs *= m_nInputs;
+  FX_SAFE_UINT32 nOutputs = outputs_;
+  nOutputs *= inputs_;
   if (!nOutputs.IsValid()) {
     return false;
   }
 
-  m_nOrigOutputs = m_nOutputs;
-  m_nOutputs = nOutputs.ValueOrDie();
+  orig_outputs_ = outputs_;
+  outputs_ = nOutputs.ValueOrDie();
   return true;
 }
 
 bool CPDF_ExpIntFunc::v_Call(pdfium::span<const float> inputs,
                              pdfium::span<float> results) const {
-  for (uint32_t i = 0; i < m_nInputs; i++) {
-    for (uint32_t j = 0; j < m_nOrigOutputs; j++) {
-      results[i * m_nOrigOutputs + j] =
-          m_BeginValues[j] +
-          powf(inputs[i], m_Exponent) * (m_EndValues[j] - m_BeginValues[j]);
+  for (uint32_t i = 0; i < inputs_; i++) {
+    for (uint32_t j = 0; j < orig_outputs_; j++) {
+      results[i * orig_outputs_ + j] =
+          begin_values_[j] +
+          powf(inputs[i], exponent_) * (end_values_[j] - begin_values_[j]);
     }
   }
   return true;

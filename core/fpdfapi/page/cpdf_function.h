@@ -38,10 +38,10 @@ class CPDF_Function {
 
   std::optional<uint32_t> Call(pdfium::span<const float> inputs,
                                pdfium::span<float> results) const;
-  uint32_t InputCount() const { return m_nInputs; }
-  uint32_t OutputCount() const { return m_nOutputs; }
-  float GetDomain(int i) const { return m_Domains[i]; }
-  float GetRange(int i) const { return m_Ranges[i]; }
+  uint32_t InputCount() const { return inputs_; }
+  uint32_t OutputCount() const { return outputs_; }
+  float GetDomain(int i) const { return domains_[i]; }
+  float GetRange(int i) const { return ranges_[i]; }
   float Interpolate(float x,
                     float xmin,
                     float xmax,
@@ -67,11 +67,11 @@ class CPDF_Function {
   virtual bool v_Call(pdfium::span<const float> inputs,
                       pdfium::span<float> results) const = 0;
 
-  const Type m_Type;
-  uint32_t m_nInputs = 0;
-  uint32_t m_nOutputs = 0;
-  std::vector<float> m_Domains;
-  std::vector<float> m_Ranges;
+  const Type type_;
+  uint32_t inputs_ = 0;
+  uint32_t outputs_ = 0;
+  std::vector<float> domains_;
+  std::vector<float> ranges_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_FUNCTION_H_

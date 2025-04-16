@@ -22,27 +22,27 @@ class CPDF_GraphicStates {
 
   void SetDefaultStates();
 
-  const CPDF_ClipPath& clip_path() const { return m_ClipPath; }
-  CPDF_ClipPath& mutable_clip_path() { return m_ClipPath; }
+  const CPDF_ClipPath& clip_path() const { return clip_path_; }
+  CPDF_ClipPath& mutable_clip_path() { return clip_path_; }
 
-  const CFX_GraphState& graph_state() const { return m_GraphState; }
-  CFX_GraphState& mutable_graph_state() { return m_GraphState; }
+  const CFX_GraphState& graph_state() const { return graph_state_; }
+  CFX_GraphState& mutable_graph_state() { return graph_state_; }
 
-  const CPDF_ColorState& color_state() const { return m_ColorState; }
-  CPDF_ColorState& mutable_color_state() { return m_ColorState; }
+  const CPDF_ColorState& color_state() const { return color_state_; }
+  CPDF_ColorState& mutable_color_state() { return color_state_; }
 
-  const CPDF_TextState& text_state() const { return m_TextState; }
-  CPDF_TextState& mutable_text_state() { return m_TextState; }
+  const CPDF_TextState& text_state() const { return text_state_; }
+  CPDF_TextState& mutable_text_state() { return text_state_; }
 
-  const CPDF_GeneralState& general_state() const { return m_GeneralState; }
-  CPDF_GeneralState& mutable_general_state() { return m_GeneralState; }
+  const CPDF_GeneralState& general_state() const { return general_state_; }
+  CPDF_GeneralState& mutable_general_state() { return general_state_; }
 
  private:
-  CPDF_ClipPath m_ClipPath;
-  CFX_GraphState m_GraphState;
-  CPDF_ColorState m_ColorState;
-  CPDF_TextState m_TextState;
-  CPDF_GeneralState m_GeneralState;
+  CPDF_ClipPath clip_path_;
+  CFX_GraphState graph_state_;
+  CPDF_ColorState color_state_;
+  CPDF_TextState text_state_;
+  CPDF_GeneralState general_state_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_GRAPHICSTATES_H_

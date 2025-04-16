@@ -86,34 +86,34 @@ float RoundHalfUp(float f) {
 }  // namespace
 
 CPDF_PSOP::CPDF_PSOP()
-    : m_op(PSOP_PROC), m_value(0), m_proc(std::make_unique<CPDF_PSProc>()) {}
+    : op_(PSOP_PROC), value_(0), proc_(std::make_unique<CPDF_PSProc>()) {}
 
-CPDF_PSOP::CPDF_PSOP(PDF_PSOP op) : m_op(op), m_value(0) {
-  DCHECK(m_op != PSOP_CONST);
-  DCHECK(m_op != PSOP_PROC);
+CPDF_PSOP::CPDF_PSOP(PDF_PSOP op) : op_(op), value_(0) {
+  DCHECK(op_ != PSOP_CONST);
+  DCHECK(op_ != PSOP_PROC);
 }
 
-CPDF_PSOP::CPDF_PSOP(float value) : m_op(PSOP_CONST), m_value(value) {}
+CPDF_PSOP::CPDF_PSOP(float value) : op_(PSOP_CONST), value_(value) {}
 
 CPDF_PSOP::~CPDF_PSOP() = default;
 
 bool CPDF_PSOP::Parse(CPDF_SimpleParser* parser, int depth) {
-  CHECK_EQ(m_op, PSOP_PROC);
-  return m_proc->Parse(parser, depth);
+  CHECK_EQ(op_, PSOP_PROC);
+  return proc_->Parse(parser, depth);
 }
 
 void CPDF_PSOP::Execute(CPDF_PSEngine* pEngine) {
-  CHECK_EQ(m_op, PSOP_PROC);
-  m_proc->Execute(pEngine);
+  CHECK_EQ(op_, PSOP_PROC);
+  proc_->Execute(pEngine);
 }
 
 float CPDF_PSOP::GetFloatValue() const {
-  CHECK_EQ(m_op, PSOP_CONST);
-  return m_value;
+  CHECK_EQ(op_, PSOP_CONST);
+  return value_;
 }
 
 bool CPDF_PSEngine::Execute() {
-  return m_MainProc.Execute(this);
+  return main_proc_.Execute(this);
 }
 
 CPDF_PSProc::CPDF_PSProc() = default;
@@ -136,8 +136,8 @@ bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
     }
 
     if (word == "{") {
-      m_Operators.push_back(std::make_unique<CPDF_PSOP>());
-      if (!m_Operators.back()->Parse(parser, depth + 1)) {
+      operators_.push_back(std::make_unique<CPDF_PSOP>());
+      if (!operators_.back()->Parse(parser, depth + 1)) {
         return false;
       }
       continue;
@@ -148,32 +148,32 @@ bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
 }
 
 bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
-  for (size_t i = 0; i < m_Operators.size(); ++i) {
-    const PDF_PSOP op = m_Operators[i]->GetOp();
+  for (size_t i = 0; i < operators_.size(); ++i) {
+    const PDF_PSOP op = operators_[i]->GetOp();
     if (op == PSOP_PROC) {
       continue;
     }
 
     if (op == PSOP_CONST) {
-      pEngine->Push(m_Operators[i]->GetFloatValue());
+      pEngine->Push(operators_[i]->GetFloatValue());
       continue;
     }
 
     if (op == PSOP_IF) {
-      if (i == 0 || m_Operators[i - 1]->GetOp() != PSOP_PROC) {
+      if (i == 0 || operators_[i - 1]->GetOp() != PSOP_PROC) {
         return false;
       }
 
       if (pEngine->PopInt()) {
-        m_Operators[i - 1]->Execute(pEngine);
+        operators_[i - 1]->Execute(pEngine);
       }
     } else if (op == PSOP_IFELSE) {
-      if (i < 2 || m_Operators[i - 1]->GetOp() != PSOP_PROC ||
-          m_Operators[i - 2]->GetOp() != PSOP_PROC) {
+      if (i < 2 || operators_[i - 1]->GetOp() != PSOP_PROC ||
+          operators_[i - 2]->GetOp() != PSOP_PROC) {
         return false;
       }
       size_t offset = pEngine->PopInt() ? 2 : 1;
-      m_Operators[i - offset]->Execute(pEngine);
+      operators_[i - offset]->Execute(pEngine);
     } else {
       pEngine->DoOperator(op);
     }
@@ -192,9 +192,9 @@ void CPDF_PSProc::AddOperator(ByteStringView word) {
                          return name.name < word;
                        });
   if (pFound != std::end(kPsOpNames) && pFound->name == word) {
-    m_Operators.push_back(std::make_unique<CPDF_PSOP>(pFound->op));
+    operators_.push_back(std::make_unique<CPDF_PSOP>(pFound->op));
   } else {
-    m_Operators.push_back(std::make_unique<CPDF_PSOP>(StringToFloat(word)));
+    operators_.push_back(std::make_unique<CPDF_PSOP>(StringToFloat(word)));
   }
 }
 
@@ -203,13 +203,13 @@ CPDF_PSEngine::CPDF_PSEngine() = default;
 CPDF_PSEngine::~CPDF_PSEngine() = default;
 
 void CPDF_PSEngine::Push(float v) {
-  if (m_StackCount < kPSEngineStackSize) {
-    m_Stack[m_StackCount++] = v;
+  if (stack_count_ < kPSEngineStackSize) {
+    stack_[stack_count_++] = v;
   }
 }
 
 float CPDF_PSEngine::Pop() {
-  return m_StackCount > 0 ? m_Stack[--m_StackCount] : 0;
+  return stack_count_ > 0 ? stack_[--stack_count_] : 0;
 }
 
 int CPDF_PSEngine::PopInt() {
@@ -218,7 +218,7 @@ int CPDF_PSEngine::PopInt() {
 
 bool CPDF_PSEngine::Parse(pdfium::span<const uint8_t> input) {
   CPDF_SimpleParser parser(input);
-  return parser.GetWord() == "{" && m_MainProc.Parse(&parser, 0);
+  return parser.GetWord() == "{" && main_proc_.Parse(&parser, 0);
 }
 
 bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
@@ -418,31 +418,31 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       break;
     case PSOP_COPY: {
       int n = PopInt();
-      if (n < 0 || m_StackCount + n > kPSEngineStackSize ||
-          n > static_cast<int>(m_StackCount)) {
+      if (n < 0 || stack_count_ + n > kPSEngineStackSize ||
+          n > static_cast<int>(stack_count_)) {
         break;
       }
       for (int i = 0; i < n; i++) {
-        m_Stack[m_StackCount + i] = m_Stack[m_StackCount + i - n];
+        stack_[stack_count_ + i] = stack_[stack_count_ + i - n];
       }
-      m_StackCount += n;
+      stack_count_ += n;
       break;
     }
     case PSOP_INDEX: {
       int n = PopInt();
-      if (n < 0 || n >= static_cast<int>(m_StackCount)) {
+      if (n < 0 || n >= static_cast<int>(stack_count_)) {
         break;
       }
-      Push(m_Stack[m_StackCount - n - 1]);
+      Push(stack_[stack_count_ - n - 1]);
       break;
     }
     case PSOP_ROLL: {
       int j = PopInt();
       int n = PopInt();
-      if (j == 0 || n == 0 || m_StackCount == 0) {
+      if (j == 0 || n == 0 || stack_count_ == 0) {
         break;
       }
-      if (n < 0 || n > static_cast<int>(m_StackCount)) {
+      if (n < 0 || n > static_cast<int>(stack_count_)) {
         break;
       }
 
@@ -450,9 +450,9 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       if (j > 0) {
         j -= n;
       }
-      auto begin_it = std::begin(m_Stack) + m_StackCount - n;
+      auto begin_it = std::begin(stack_) + stack_count_ - n;
       auto middle_it = begin_it - j;
-      auto end_it = std::begin(m_Stack) + m_StackCount;
+      auto end_it = std::begin(stack_) + stack_count_;
       std::rotate(begin_it, middle_it, end_it);
       break;
     }

@@ -86,7 +86,7 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
   return pFunc;
 }
 
-CPDF_Function::CPDF_Function(Type type) : m_Type(type) {}
+CPDF_Function::CPDF_Function(Type type) : type_(type) {}
 
 CPDF_Function::~CPDF_Function() = default;
 
@@ -100,53 +100,53 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
     return false;
   }
 
-  m_nInputs = fxcrt::CollectionSize<uint32_t>(*pDomains) / 2;
-  if (m_nInputs == 0) {
+  inputs_ = fxcrt::CollectionSize<uint32_t>(*pDomains) / 2;
+  if (inputs_ == 0) {
     return false;
   }
 
-  size_t nInputs = m_nInputs * 2;
-  m_Domains = ReadArrayElementsToVector(pDomains.Get(), nInputs);
+  size_t nInputs = inputs_ * 2;
+  domains_ = ReadArrayElementsToVector(pDomains.Get(), nInputs);
 
   RetainPtr<const CPDF_Array> pRanges = pDict->GetArrayFor("Range");
-  m_nOutputs = pRanges ? fxcrt::CollectionSize<uint32_t>(*pRanges) / 2 : 0;
+  outputs_ = pRanges ? fxcrt::CollectionSize<uint32_t>(*pRanges) / 2 : 0;
 
   // Ranges are required for type 0 and type 4 functions. A non-zero
-  // |m_nOutputs| here implied Ranges meets the requirements.
+  // |outputs_| here implied Ranges meets the requirements.
   bool bRangeRequired =
-      m_Type == Type::kType0Sampled || m_Type == Type::kType4PostScript;
-  if (bRangeRequired && m_nOutputs == 0) {
+      type_ == Type::kType0Sampled || type_ == Type::kType4PostScript;
+  if (bRangeRequired && outputs_ == 0) {
     return false;
   }
 
-  if (m_nOutputs > 0) {
-    size_t nOutputs = m_nOutputs * 2;
-    m_Ranges = ReadArrayElementsToVector(pRanges.Get(), nOutputs);
+  if (outputs_ > 0) {
+    size_t nOutputs = outputs_ * 2;
+    ranges_ = ReadArrayElementsToVector(pRanges.Get(), nOutputs);
   }
 
-  uint32_t old_outputs = m_nOutputs;
+  uint32_t old_outputs = outputs_;
   if (!v_Init(pObj, pVisited)) {
     return false;
   }
 
-  if (!m_Ranges.empty() && m_nOutputs > old_outputs) {
-    FX_SAFE_SIZE_T nOutputs = m_nOutputs;
+  if (!ranges_.empty() && outputs_ > old_outputs) {
+    FX_SAFE_SIZE_T nOutputs = outputs_;
     nOutputs *= 2;
-    m_Ranges.resize(nOutputs.ValueOrDie());
+    ranges_.resize(nOutputs.ValueOrDie());
   }
   return true;
 }
 
 std::optional<uint32_t> CPDF_Function::Call(pdfium::span<const float> inputs,
                                             pdfium::span<float> results) const {
-  if (m_nInputs != inputs.size()) {
+  if (inputs_ != inputs.size()) {
     return std::nullopt;
   }
 
-  std::vector<float> clamped_inputs(m_nInputs);
-  for (uint32_t i = 0; i < m_nInputs; i++) {
-    float domain1 = m_Domains[i * 2];
-    float domain2 = m_Domains[i * 2 + 1];
+  std::vector<float> clamped_inputs(inputs_);
+  for (uint32_t i = 0; i < inputs_; i++) {
+    float domain1 = domains_[i * 2];
+    float domain2 = domains_[i * 2 + 1];
     if (domain1 > domain2) {
       return std::nullopt;
     }
@@ -157,20 +157,20 @@ std::optional<uint32_t> CPDF_Function::Call(pdfium::span<const float> inputs,
     return std::nullopt;
   }
 
-  if (m_Ranges.empty()) {
-    return m_nOutputs;
+  if (ranges_.empty()) {
+    return outputs_;
   }
 
-  for (uint32_t i = 0; i < m_nOutputs; i++) {
-    float range1 = m_Ranges[i * 2];
-    float range2 = m_Ranges[i * 2 + 1];
+  for (uint32_t i = 0; i < outputs_; i++) {
+    float range1 = ranges_[i * 2];
+    float range2 = ranges_[i * 2 + 1];
     if (range1 > range2) {
       return std::nullopt;
     }
 
     results[i] = std::clamp(results[i], range1, range2);
   }
-  return m_nOutputs;
+  return outputs_;
 }
 
 // See PDF Reference 1.7, page 170.
@@ -185,19 +185,19 @@ float CPDF_Function::Interpolate(float x,
 
 #if defined(PDF_USE_SKIA)
 const CPDF_SampledFunc* CPDF_Function::ToSampledFunc() const {
-  return m_Type == Type::kType0Sampled
+  return type_ == Type::kType0Sampled
              ? static_cast<const CPDF_SampledFunc*>(this)
              : nullptr;
 }
 
 const CPDF_ExpIntFunc* CPDF_Function::ToExpIntFunc() const {
-  return m_Type == Type::kType2ExponentialInterpolation
+  return type_ == Type::kType2ExponentialInterpolation
              ? static_cast<const CPDF_ExpIntFunc*>(this)
              : nullptr;
 }
 
 const CPDF_StitchFunc* CPDF_Function::ToStitchFunc() const {
-  return m_Type == Type::kType3Stitching
+  return type_ == Type::kType3Stitching
              ? static_cast<const CPDF_StitchFunc*>(this)
              : nullptr;
 }

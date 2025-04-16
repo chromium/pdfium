@@ -179,10 +179,10 @@ CPDF_DocPageData* CPDF_DocPageData::FromDocument(const CPDF_Document* pDoc) {
 CPDF_DocPageData::CPDF_DocPageData() = default;
 
 CPDF_DocPageData::~CPDF_DocPageData() {
-  for (auto& it : m_ImageMap) {
+  for (auto& it : image_map_) {
     it.second->WillBeDestroyed();
   }
-  for (auto& it : m_FontMap) {
+  for (auto& it : font_map_) {
     it.second->WillBeDestroyed();
   }
 }
@@ -215,8 +215,8 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetFont(
     return nullptr;
   }
 
-  auto it = m_FontMap.find(pFontDict);
-  if (it != m_FontMap.end() && it->second) {
+  auto it = font_map_.find(pFontDict);
+  if (it != font_map_.end() && it->second) {
     return pdfium::WrapRetain(it->second.Get());
   }
 
@@ -226,7 +226,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetFont(
     return nullptr;
   }
 
-  m_FontMap[std::move(pFontDict)].Reset(pFont.Get());
+  font_map_[std::move(pFontDict)].Reset(pFont.Get());
   return pFont;
 }
 
@@ -237,7 +237,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetStandardFont(
     return nullptr;
   }
 
-  for (auto& it : m_FontMap) {
+  for (auto& it : font_map_) {
     CPDF_Font* pFont = it.second.Get();
     if (!pFont) {
       continue;
@@ -278,7 +278,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetStandardFont(
     return nullptr;
   }
 
-  m_FontMap[std::move(pDict)].Reset(pFont.Get());
+  font_map_[std::move(pDict)].Reset(pFont.Get());
   return pFont;
 }
 
@@ -365,8 +365,8 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
                                  pVisited, pVisitedInternal);
   }
 
-  auto it = m_ColorSpaceMap.find(pArray);
-  if (it != m_ColorSpaceMap.end() && it->second) {
+  auto it = color_space_map_.find(pArray);
+  if (it != color_space_map_.end() && it->second) {
     return pdfium::WrapRetain(it->second.Get());
   }
 
@@ -376,7 +376,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
     return nullptr;
   }
 
-  m_ColorSpaceMap[std::move(pArray)].Reset(pCS.Get());
+  color_space_map_[std::move(pArray)].Reset(pCS.Get());
   return pCS;
 }
 
@@ -385,8 +385,8 @@ RetainPtr<CPDF_Pattern> CPDF_DocPageData::GetPattern(
     const CFX_Matrix& matrix) {
   CHECK(pPatternObj->IsDictionary() || pPatternObj->IsStream());
 
-  auto it = m_PatternMap.find(pPatternObj);
-  if (it != m_PatternMap.end() && it->second) {
+  auto it = pattern_map_.find(pPatternObj);
+  if (it != pattern_map_.end() && it->second) {
     return pdfium::WrapRetain(it->second.Get());
   }
 
@@ -403,7 +403,7 @@ RetainPtr<CPDF_Pattern> CPDF_DocPageData::GetPattern(
     default:
       return nullptr;
   }
-  m_PatternMap[pPatternObj].Reset(pattern.Get());
+  pattern_map_[pPatternObj].Reset(pattern.Get());
   return pattern;
 }
 
@@ -412,34 +412,34 @@ RetainPtr<CPDF_ShadingPattern> CPDF_DocPageData::GetShading(
     const CFX_Matrix& matrix) {
   CHECK(pPatternObj->IsDictionary() || pPatternObj->IsStream());
 
-  auto it = m_PatternMap.find(pPatternObj);
-  if (it != m_PatternMap.end() && it->second) {
+  auto it = pattern_map_.find(pPatternObj);
+  if (it != pattern_map_.end() && it->second) {
     return pdfium::WrapRetain(it->second->AsShadingPattern());
   }
 
   auto pPattern = pdfium::MakeRetain<CPDF_ShadingPattern>(
       GetDocument(), pPatternObj, true, matrix);
-  m_PatternMap[pPatternObj].Reset(pPattern.Get());
+  pattern_map_[pPatternObj].Reset(pPattern.Get());
   return pPattern;
 }
 
 RetainPtr<CPDF_Image> CPDF_DocPageData::GetImage(uint32_t dwStreamObjNum) {
   DCHECK(dwStreamObjNum);
-  auto it = m_ImageMap.find(dwStreamObjNum);
-  if (it != m_ImageMap.end()) {
+  auto it = image_map_.find(dwStreamObjNum);
+  if (it != image_map_.end()) {
     return it->second;
   }
 
   auto pImage = pdfium::MakeRetain<CPDF_Image>(GetDocument(), dwStreamObjNum);
-  m_ImageMap[dwStreamObjNum] = pImage;
+  image_map_[dwStreamObjNum] = pImage;
   return pImage;
 }
 
 void CPDF_DocPageData::MaybePurgeImage(uint32_t dwStreamObjNum) {
   DCHECK(dwStreamObjNum);
-  auto it = m_ImageMap.find(dwStreamObjNum);
-  if (it != m_ImageMap.end() && it->second->HasOneRef()) {
-    m_ImageMap.erase(it);
+  auto it = image_map_.find(dwStreamObjNum);
+  if (it != image_map_.end() && it->second->HasOneRef()) {
+    image_map_.erase(it);
   }
 }
 
@@ -447,8 +447,8 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
     RetainPtr<const CPDF_Stream> pProfileStream) {
   CHECK(pProfileStream);
 
-  auto it = m_IccProfileMap.find(pProfileStream);
-  if (it != m_IccProfileMap.end()) {
+  auto it = icc_profile_map_.find(pProfileStream);
+  if (it != icc_profile_map_.end()) {
     return it->second;
   }
 
@@ -464,25 +464,25 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
   // consideration, in addition to the digest value.
   const HashIccProfileKey hash_profile_key(pAccessor->ComputeDigest(),
                                            expected_components);
-  auto hash_it = m_HashIccProfileMap.find(hash_profile_key);
-  if (hash_it != m_HashIccProfileMap.end()) {
-    auto it_copied_stream = m_IccProfileMap.find(hash_it->second);
-    if (it_copied_stream != m_IccProfileMap.end()) {
+  auto hash_it = hash_icc_profile_map_.find(hash_profile_key);
+  if (hash_it != hash_icc_profile_map_.end()) {
+    auto it_copied_stream = icc_profile_map_.find(hash_it->second);
+    if (it_copied_stream != icc_profile_map_.end()) {
       return it_copied_stream->second;
     }
   }
   auto pProfile =
       pdfium::MakeRetain<CPDF_IccProfile>(pAccessor, expected_components);
-  m_IccProfileMap[pProfileStream] = pProfile;
-  m_HashIccProfileMap[hash_profile_key] = std::move(pProfileStream);
+  icc_profile_map_[pProfileStream] = pProfile;
+  hash_icc_profile_map_[hash_profile_key] = std::move(pProfileStream);
   return pProfile;
 }
 
 RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
     RetainPtr<const CPDF_Stream> pFontStream) {
   DCHECK(pFontStream);
-  auto it = m_FontFileMap.find(pFontStream);
-  if (it != m_FontFileMap.end()) {
+  auto it = font_file_map_.find(pFontStream);
+  if (it != font_file_map_.end()) {
     return it->second;
   }
 
@@ -500,7 +500,7 @@ RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
 
   auto pFontAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pFontStream);
   pFontAcc->LoadAllDataFilteredWithEstimatedSize(org_size);
-  m_FontFileMap[std::move(pFontStream)] = pFontAcc;
+  font_file_map_[std::move(pFontStream)] = pFontAcc;
   return pFontAcc;
 }
 
@@ -516,9 +516,9 @@ void CPDF_DocPageData::MaybePurgeFontFileStreamAcc(
   }
 
   pStreamAcc.Reset();  // Drop moved caller's reference.
-  auto it = m_FontFileMap.find(pFontStream);
-  if (it != m_FontFileMap.end() && it->second->HasOneRef()) {
-    m_FontFileMap.erase(it);
+  auto it = font_file_map_.find(pFontStream);
+  if (it != font_file_map_.end() && it->second->HasOneRef()) {
+    font_file_map_.erase(it);
   }
 }
 

@@ -14,11 +14,11 @@
 CPDF_Pattern::CPDF_Pattern(CPDF_Document* pDoc,
                            RetainPtr<CPDF_Object> pObj,
                            const CFX_Matrix& parentMatrix)
-    : m_pDocument(pDoc),
-      m_pPatternObj(std::move(pObj)),
-      m_ParentMatrix(parentMatrix) {
-  DCHECK(m_pDocument);
-  DCHECK(m_pPatternObj);
+    : document_(pDoc),
+      pattern_obj_(std::move(pObj)),
+      parent_matrix_(parentMatrix) {
+  DCHECK(document_);
+  DCHECK(pattern_obj_);
 }
 
 CPDF_Pattern::~CPDF_Pattern() = default;
@@ -33,5 +33,5 @@ CPDF_ShadingPattern* CPDF_Pattern::AsShadingPattern() {
 
 void CPDF_Pattern::SetPatternToFormMatrix() {
   RetainPtr<const CPDF_Dictionary> pDict = pattern_obj()->GetDict();
-  m_Pattern2Form = pDict->GetMatrixFor("Matrix") * m_ParentMatrix;
+  pattern_to_form_ = pDict->GetMatrixFor("Matrix") * parent_matrix_;
 }

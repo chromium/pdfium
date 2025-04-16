@@ -18,11 +18,11 @@ class CPDF_ContentMarkItem final : public Retainable {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  const ByteString& GetName() const { return m_MarkName; }
-  ParamType GetParamType() const { return m_ParamType; }
+  const ByteString& GetName() const { return mark_name_; }
+  ParamType GetParamType() const { return param_type_; }
   RetainPtr<const CPDF_Dictionary> GetParam() const;
   RetainPtr<CPDF_Dictionary> GetParam();
-  const ByteString& GetPropertyName() const { return m_PropertyName; }
+  const ByteString& GetPropertyName() const { return property_name_; }
 
   void SetDirectDict(RetainPtr<CPDF_Dictionary> pDict);
   void SetPropertiesHolder(RetainPtr<CPDF_Dictionary> pHolder,
@@ -32,11 +32,11 @@ class CPDF_ContentMarkItem final : public Retainable {
   explicit CPDF_ContentMarkItem(ByteString name);
   ~CPDF_ContentMarkItem() override;
 
-  ParamType m_ParamType = kNone;
-  ByteString m_MarkName;
-  ByteString m_PropertyName;
-  RetainPtr<CPDF_Dictionary> m_pPropertiesHolder;
-  RetainPtr<CPDF_Dictionary> m_pDirectDict;
+  ParamType param_type_ = kNone;
+  ByteString mark_name_;
+  ByteString property_name_;
+  RetainPtr<CPDF_Dictionary> properties_holder_;
+  RetainPtr<CPDF_Dictionary> direct_dict_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTMARKITEM_H_

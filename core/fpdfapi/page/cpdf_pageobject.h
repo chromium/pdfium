@@ -60,24 +60,24 @@ class CPDF_PageObject {
   virtual CPDF_FormObject* AsForm();
   virtual const CPDF_FormObject* AsForm() const;
 
-  void SetDirty(bool value) { m_bDirty = value; }
-  bool IsDirty() const { return m_bDirty || m_bMatrixDirty; }
-  void SetMatrixDirty(bool value) { m_bMatrixDirty = value; }
+  void SetDirty(bool value) { dirty_ = value; }
+  bool IsDirty() const { return dirty_ || matrix_dirty_; }
+  void SetMatrixDirty(bool value) { matrix_dirty_ = value; }
   void SetIsActive(bool value);
-  bool IsActive() const { return m_bIsActive; }
+  bool IsActive() const { return is_active_; }
   void TransformClipPath(const CFX_Matrix& matrix);
 
-  void SetOriginalRect(const CFX_FloatRect& rect) { m_OriginalRect = rect; }
-  const CFX_FloatRect& GetOriginalRect() const { return m_OriginalRect; }
-  void SetRect(const CFX_FloatRect& rect) { m_Rect = rect; }
-  const CFX_FloatRect& GetRect() const { return m_Rect; }
+  void SetOriginalRect(const CFX_FloatRect& rect) { original_rect_ = rect; }
+  const CFX_FloatRect& GetOriginalRect() const { return original_rect_; }
+  void SetRect(const CFX_FloatRect& rect) { rect_ = rect; }
+  const CFX_FloatRect& GetRect() const { return rect_; }
   FX_RECT GetBBox() const;
   FX_RECT GetTransformedBBox(const CFX_Matrix& matrix) const;
 
-  CPDF_ContentMarks* GetContentMarks() { return &m_ContentMarks; }
-  const CPDF_ContentMarks* GetContentMarks() const { return &m_ContentMarks; }
+  CPDF_ContentMarks* GetContentMarks() { return &content_marks_; }
+  const CPDF_ContentMarks* GetContentMarks() const { return &content_marks_; }
   void SetContentMarks(const CPDF_ContentMarks& marks) {
-    m_ContentMarks = marks;
+    content_marks_ = marks;
   }
 
   // Get what content stream the object was parsed from in its page. This number
@@ -87,81 +87,81 @@ class CPDF_PageObject {
   //
   // If the object is spread among more than one content stream, this is the
   // index of the last stream.
-  int32_t GetContentStream() const { return m_ContentStream; }
+  int32_t GetContentStream() const { return content_stream_; }
   void SetContentStream(int32_t new_content_stream) {
-    m_ContentStream = new_content_stream;
+    content_stream_ = new_content_stream;
   }
 
-  const ByteString& GetResourceName() const { return m_ResourceName; }
+  const ByteString& GetResourceName() const { return resource_name_; }
   void SetResourceName(const ByteString& resource_name) {
-    m_ResourceName = resource_name;
+    resource_name_ = resource_name;
   }
 
   pdfium::span<const ByteString> GetGraphicsResourceNames() const;
 
-  const CPDF_ClipPath& clip_path() const { return m_GraphicStates.clip_path(); }
+  const CPDF_ClipPath& clip_path() const { return graphic_states_.clip_path(); }
   CPDF_ClipPath& mutable_clip_path() {
-    return m_GraphicStates.mutable_clip_path();
+    return graphic_states_.mutable_clip_path();
   }
 
   const CFX_GraphState& graph_state() const {
-    return m_GraphicStates.graph_state();
+    return graphic_states_.graph_state();
   }
   CFX_GraphState& mutable_graph_state() {
-    return m_GraphicStates.mutable_graph_state();
+    return graphic_states_.mutable_graph_state();
   }
 
   const CPDF_ColorState& color_state() const {
-    return m_GraphicStates.color_state();
+    return graphic_states_.color_state();
   }
   CPDF_ColorState& mutable_color_state() {
-    return m_GraphicStates.mutable_color_state();
+    return graphic_states_.mutable_color_state();
   }
 
   const CPDF_TextState& text_state() const {
-    return m_GraphicStates.text_state();
+    return graphic_states_.text_state();
   }
   CPDF_TextState& mutable_text_state() {
-    return m_GraphicStates.mutable_text_state();
+    return graphic_states_.mutable_text_state();
   }
 
   const CPDF_GeneralState& general_state() const {
-    return m_GraphicStates.general_state();
+    return graphic_states_.general_state();
   }
   CPDF_GeneralState& mutable_general_state() {
-    return m_GraphicStates.mutable_general_state();
+    return graphic_states_.mutable_general_state();
   }
 
-  const CPDF_GraphicStates& graphic_states() const { return m_GraphicStates; }
+  const CPDF_GraphicStates& graphic_states() const { return graphic_states_; }
 
   void SetDefaultStates();
 
-  const CFX_Matrix& original_matrix() const { return m_OriginalMatrix; }
+  const CFX_Matrix& original_matrix() const { return original_matrix_; }
 
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);
   void InitializeOriginalMatrix(const CFX_Matrix& matrix);
 
  private:
-  CPDF_GraphicStates m_GraphicStates;
-  CFX_FloatRect m_Rect;
-  CFX_FloatRect m_OriginalRect;
+  CPDF_GraphicStates graphic_states_;
+  CFX_FloatRect rect_;
+  CFX_FloatRect original_rect_;
   // Only used with `CPDF_ImageObject` for now.
   // TODO(thestig): Use with `CPDF_FormObject` and `CPDF_PageObject` as well.
-  CFX_Matrix m_OriginalMatrix;
-  CPDF_ContentMarks m_ContentMarks;
-  // Modifying `m_bIsActive` automatically set `m_bDirty` to be true, but
-  // otherwise `m_bDirty` and `m_bIsActive` are independent.  A
+  CFX_Matrix original_matrix_;
+  CPDF_ContentMarks content_marks_;
+  // Modifying `is_active_` automatically set `dirty_` to be true, but
+  // otherwise `dirty_` and `is_active_` are independent.  A
   // `CPDF_PageObject` can remain dirty until page object processing completes
   // and marks it no longer dirty.
-  bool m_bDirty = false;
+  bool dirty_ = false;
   // Separately track if the current matrix is different from
-  // `m_OriginalMatrix`.
-  bool m_bMatrixDirty = false;
-  bool m_bIsActive = true;
-  int32_t m_ContentStream;
+  // `original_matrix_`.
+  bool matrix_dirty_ = false;
+  bool is_active_ = true;
+  int32_t content_stream_;
   // The resource name for this object.
-  ByteString m_ResourceName;
+  ByteString resource_name_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_

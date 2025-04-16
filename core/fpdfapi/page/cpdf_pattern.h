@@ -25,7 +25,7 @@ class CPDF_Pattern : public Retainable, public Observable {
   virtual CPDF_TilingPattern* AsTilingPattern();
   virtual CPDF_ShadingPattern* AsShadingPattern();
 
-  const CFX_Matrix& pattern_to_form() const { return m_Pattern2Form; }
+  const CFX_Matrix& pattern_to_form() const { return pattern_to_form_; }
 
  protected:
   CPDF_Pattern(CPDF_Document* pDoc,
@@ -34,17 +34,17 @@ class CPDF_Pattern : public Retainable, public Observable {
   ~CPDF_Pattern() override;
 
   // All the getters that return pointers return non-NULL pointers.
-  CPDF_Document* document() const { return m_pDocument; }
-  RetainPtr<CPDF_Object> pattern_obj() const { return m_pPatternObj; }
-  const CFX_Matrix& parent_matrix() const { return m_ParentMatrix; }
+  CPDF_Document* document() const { return document_; }
+  RetainPtr<CPDF_Object> pattern_obj() const { return pattern_obj_; }
+  const CFX_Matrix& parent_matrix() const { return parent_matrix_; }
 
   void SetPatternToFormMatrix();
 
  private:
-  UnownedPtr<CPDF_Document> const m_pDocument;
-  RetainPtr<CPDF_Object> const m_pPatternObj;
-  CFX_Matrix m_Pattern2Form;
-  const CFX_Matrix m_ParentMatrix;
+  UnownedPtr<CPDF_Document> const document_;
+  RetainPtr<CPDF_Object> const pattern_obj_;
+  CFX_Matrix pattern_to_form_;
+  const CFX_Matrix parent_matrix_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_

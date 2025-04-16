@@ -29,7 +29,7 @@ CPDF_PageObject::Type CPDF_ImageObject::GetType() const {
 }
 
 void CPDF_ImageObject::Transform(const CFX_Matrix& matrix) {
-  m_Matrix.Concat(matrix);
+  matrix_.Concat(matrix);
   CalcBoundingBox();
   SetDirty(true);
 }
@@ -49,16 +49,16 @@ const CPDF_ImageObject* CPDF_ImageObject::AsImage() const {
 void CPDF_ImageObject::CalcBoundingBox() {
   static constexpr CFX_FloatRect kRect(0.0f, 0.0f, 1.0f, 1.0f);
   SetOriginalRect(kRect);
-  SetRect(m_Matrix.TransformRect(kRect));
+  SetRect(matrix_.TransformRect(kRect));
 }
 
 void CPDF_ImageObject::SetImage(RetainPtr<CPDF_Image> pImage) {
   MaybePurgeCache();
-  m_pImage = std::move(pImage);
+  image_ = std::move(pImage);
 }
 
 RetainPtr<CPDF_Image> CPDF_ImageObject::GetImage() const {
-  return m_pImage;
+  return image_;
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_ImageObject::GetIndependentBitmap() const {
@@ -79,16 +79,16 @@ void CPDF_ImageObject::SetInitialImageMatrix(const CFX_Matrix& matrix) {
 }
 
 void CPDF_ImageObject::SetImageMatrix(const CFX_Matrix& matrix) {
-  m_Matrix = matrix;
+  matrix_ = matrix;
   CalcBoundingBox();
 }
 
 void CPDF_ImageObject::MaybePurgeCache() {
-  if (!m_pImage || m_pImage->IsGoingToBeDestroyed()) {
+  if (!image_ || image_->IsGoingToBeDestroyed()) {
     return;
   }
 
-  RetainPtr<const CPDF_Stream> pStream = m_pImage->GetStream();
+  RetainPtr<const CPDF_Stream> pStream = image_->GetStream();
   if (!pStream) {
     return;
   }
@@ -98,9 +98,9 @@ void CPDF_ImageObject::MaybePurgeCache() {
     return;
   }
 
-  auto* pDoc = m_pImage->GetDocument();
+  auto* pDoc = image_->GetDocument();
   CHECK(pDoc);
 
-  m_pImage.Reset();  // Clear my reference before asking the cache.
+  image_.Reset();  // Clear my reference before asking the cache.
   pDoc->MaybePurgeImage(objnum);
 }

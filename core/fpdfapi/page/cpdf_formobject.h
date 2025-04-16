@@ -29,13 +29,13 @@ class CPDF_FormObject final : public CPDF_PageObject {
   const CPDF_FormObject* AsForm() const override;
 
   void CalcBoundingBox();
-  const CPDF_Form* form() const { return m_pForm.get(); }
-  const CFX_Matrix& form_matrix() const { return m_FormMatrix; }
+  const CPDF_Form* form() const { return form_.get(); }
+  const CFX_Matrix& form_matrix() const { return form_matrix_; }
   void SetFormMatrix(const CFX_Matrix& matrix);
 
  private:
-  std::unique_ptr<CPDF_Form> const m_pForm;
-  CFX_Matrix m_FormMatrix;
+  std::unique_ptr<CPDF_Form> const form_;
+  CFX_Matrix form_matrix_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_FORMOBJECT_H_

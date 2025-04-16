@@ -14,8 +14,8 @@ CPDF_ShadingObject::CPDF_ShadingObject(int32_t content_stream,
                                        RetainPtr<CPDF_ShadingPattern> pattern,
                                        const CFX_Matrix& matrix)
     : CPDF_PageObject(content_stream),
-      m_pShading(std::move(pattern)),
-      m_Matrix(matrix) {}
+      shading_(std::move(pattern)),
+      matrix_(matrix) {}
 
 CPDF_ShadingObject::~CPDF_ShadingObject() = default;
 
@@ -29,7 +29,7 @@ void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {
     clip_path.Transform(matrix);
   }
 
-  m_Matrix.Concat(matrix);
+  matrix_.Concat(matrix);
   if (clip_path.HasRef()) {
     CalcBoundingBox();
   } else {

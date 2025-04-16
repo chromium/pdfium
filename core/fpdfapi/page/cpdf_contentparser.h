@@ -65,25 +65,25 @@ class CPDF_ContentParser {
   void HandlePageContentFailure();
 
   bool is_owned() const {
-    return std::holds_alternative<FixedSizeDataVector<uint8_t>>(m_Data);
+    return std::holds_alternative<FixedSizeDataVector<uint8_t>>(data_);
   }
   pdfium::span<const uint8_t> GetData() const;
 
-  Stage m_CurrentStage;
-  UnownedPtr<CPDF_PageObjectHolder> const m_pPageObjectHolder;
-  UnownedPtr<CPDF_Type3Char> m_pType3Char;  // Only used when parsing forms.
-  RetainPtr<CPDF_StreamAcc> m_pSingleStream;
-  std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
-  std::vector<uint32_t> m_StreamSegmentOffsets;
+  Stage current_stage_;
+  UnownedPtr<CPDF_PageObjectHolder> const page_object_holder_;
+  UnownedPtr<CPDF_Type3Char> type3_char_;  // Only used when parsing forms.
+  RetainPtr<CPDF_StreamAcc> single_stream_;
+  std::vector<RetainPtr<CPDF_StreamAcc>> stream_array_;
+  std::vector<uint32_t> stream_segment_offsets_;
   std::variant<pdfium::raw_span<const uint8_t>, FixedSizeDataVector<uint8_t>>
-      m_Data;
-  uint32_t m_nStreams = 0;
-  uint32_t m_CurrentOffset = 0;
+      data_;
+  uint32_t streams_ = 0;
+  uint32_t current_offset_ = 0;
   // Only used when parsing pages.
-  CPDF_Form::RecursionState m_RecursionState;
+  CPDF_Form::RecursionState recursion_state_;
 
-  // Must not outlive |m_RecursionState|.
-  std::unique_ptr<CPDF_StreamContentParser> m_pParser;
+  // Must not outlive |recursion_state_|.
+  std::unique_ptr<CPDF_StreamContentParser> parser_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTPARSER_H_

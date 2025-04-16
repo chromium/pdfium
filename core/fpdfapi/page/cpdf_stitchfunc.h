@@ -23,15 +23,15 @@ class CPDF_StitchFunc final : public CPDF_Function {
               pdfium::span<float> results) const override;
 
   const std::vector<std::unique_ptr<CPDF_Function>>& GetSubFunctions() const {
-    return m_pSubFunctions;
+    return sub_functions_;
   }
-  float GetBound(size_t i) const { return m_bounds[i]; }
-  float GetEncode(size_t i) const { return m_encode[i]; }
+  float GetBound(size_t i) const { return bounds_[i]; }
+  float GetEncode(size_t i) const { return encode_[i]; }
 
  private:
-  std::vector<std::unique_ptr<CPDF_Function>> m_pSubFunctions;
-  std::vector<float> m_bounds;
-  std::vector<float> m_encode;
+  std::vector<std::unique_ptr<CPDF_Function>> sub_functions_;
+  std::vector<float> bounds_;
+  std::vector<float> encode_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STITCHFUNC_H_

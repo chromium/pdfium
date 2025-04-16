@@ -78,23 +78,23 @@ class CPDF_PageObjectHolder {
 
   void StartParse(std::unique_ptr<CPDF_ContentParser> pParser);
   void ContinueParse(PauseIndicatorIface* pPause);
-  ParseState GetParseState() const { return m_ParseState; }
+  ParseState GetParseState() const { return parse_state_; }
 
-  CPDF_Document* GetDocument() const { return m_pDocument; }
-  RetainPtr<const CPDF_Dictionary> GetDict() const { return m_pDict; }
-  RetainPtr<CPDF_Dictionary> GetMutableDict() { return m_pDict; }
-  RetainPtr<const CPDF_Dictionary> GetResources() const { return m_pResources; }
-  RetainPtr<CPDF_Dictionary> GetMutableResources() { return m_pResources; }
+  CPDF_Document* GetDocument() const { return document_; }
+  RetainPtr<const CPDF_Dictionary> GetDict() const { return dict_; }
+  RetainPtr<CPDF_Dictionary> GetMutableDict() { return dict_; }
+  RetainPtr<const CPDF_Dictionary> GetResources() const { return resources_; }
+  RetainPtr<CPDF_Dictionary> GetMutableResources() { return resources_; }
   void SetResources(RetainPtr<CPDF_Dictionary> pDict) {
-    m_pResources = std::move(pDict);
+    resources_ = std::move(pDict);
   }
   RetainPtr<const CPDF_Dictionary> GetPageResources() const {
-    return m_pPageResources;
+    return page_resources_;
   }
   RetainPtr<CPDF_Dictionary> GetMutablePageResources() {
-    return m_pPageResources;
+    return page_resources_;
   }
-  size_t GetPageObjectCount() const { return m_PageObjectList.size(); }
+  size_t GetPageObjectCount() const { return page_object_list_.size(); }
   size_t GetActivePageObjectCount() const;
   CPDF_PageObject* GetPageObjectByIndex(size_t index) const;
   void AppendPageObject(std::unique_ptr<CPDF_PageObject> pPageObj);
@@ -103,26 +103,26 @@ class CPDF_PageObjectHolder {
   std::unique_ptr<CPDF_PageObject> RemovePageObject(CPDF_PageObject* pPageObj);
   bool ErasePageObjectAtIndex(size_t index);
 
-  iterator begin() { return m_PageObjectList.begin(); }
-  const_iterator begin() const { return m_PageObjectList.begin(); }
+  iterator begin() { return page_object_list_.begin(); }
+  const_iterator begin() const { return page_object_list_.begin(); }
 
-  iterator end() { return m_PageObjectList.end(); }
-  const_iterator end() const { return m_PageObjectList.end(); }
+  iterator end() { return page_object_list_.end(); }
+  const_iterator end() const { return page_object_list_.end(); }
 
-  const CFX_FloatRect& GetBBox() const { return m_BBox; }
+  const CFX_FloatRect& GetBBox() const { return bbox_; }
 
-  const CPDF_Transparency& GetTransparency() const { return m_Transparency; }
-  bool BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
+  const CPDF_Transparency& GetTransparency() const { return transparency_; }
+  bool BackgroundAlphaNeeded() const { return background_alpha_needed_; }
   void SetBackgroundAlphaNeeded(bool needed) {
-    m_bBackgroundAlphaNeeded = needed;
+    background_alpha_needed_ = needed;
   }
 
-  bool HasImageMask() const { return !m_MaskBoundingBoxes.empty(); }
+  bool HasImageMask() const { return !mask_bounding_boxes_.empty(); }
   const std::vector<CFX_FloatRect>& GetMaskBoundingBoxes() const {
-    return m_MaskBoundingBoxes;
+    return mask_bounding_boxes_;
   }
   void AddImageMaskBoundingBox(const CFX_FloatRect& box);
-  bool HasDirtyStreams() const { return !m_DirtyStreams.empty(); }
+  bool HasDirtyStreams() const { return !dirty_streams_.empty(); }
   std::set<int32_t> TakeDirtyStreams();
 
   std::optional<ByteString> GraphicsMapSearch(const GraphicsData& gd);
@@ -138,36 +138,36 @@ class CPDF_PageObjectHolder {
   CFX_Matrix GetCTMAtEndOfStream(int32_t stream);
 
   AllRemovedResourcesMap& all_removed_resources_map() {
-    return m_AllRemovedResourcesMap;
+    return all_removed_resources_map_;
   }
 
  protected:
   void LoadTransparencyInfo();
 
-  RetainPtr<CPDF_Dictionary> m_pPageResources;
-  RetainPtr<CPDF_Dictionary> m_pResources;
-  std::map<GraphicsData, ByteString> m_GraphicsMap;
-  std::map<FontData, ByteString> m_FontsMap;
-  CFX_FloatRect m_BBox;
-  CPDF_Transparency m_Transparency;
+  RetainPtr<CPDF_Dictionary> page_resources_;
+  RetainPtr<CPDF_Dictionary> resources_;
+  std::map<GraphicsData, ByteString> graphics_map_;
+  std::map<FontData, ByteString> fonts_map_;
+  CFX_FloatRect bbox_;
+  CPDF_Transparency transparency_;
 
  private:
-  bool m_bBackgroundAlphaNeeded = false;
-  ParseState m_ParseState = ParseState::kNotParsed;
-  RetainPtr<CPDF_Dictionary> const m_pDict;
-  UnownedPtr<CPDF_Document> m_pDocument;
-  std::vector<CFX_FloatRect> m_MaskBoundingBoxes;
-  std::unique_ptr<CPDF_ContentParser> m_pParser;
-  std::deque<std::unique_ptr<CPDF_PageObject>> m_PageObjectList;
+  bool background_alpha_needed_ = false;
+  ParseState parse_state_ = ParseState::kNotParsed;
+  RetainPtr<CPDF_Dictionary> const dict_;
+  UnownedPtr<CPDF_Document> document_;
+  std::vector<CFX_FloatRect> mask_bounding_boxes_;
+  std::unique_ptr<CPDF_ContentParser> parser_;
+  std::deque<std::unique_ptr<CPDF_PageObject>> page_object_list_;
 
-  CTMMap m_AllCTMs;
+  CTMMap all_ctms_;
 
   // The indexes of Content streams that are dirty and need to be regenerated.
-  std::set<int32_t> m_DirtyStreams;
+  std::set<int32_t> dirty_streams_;
 
-  // All the resources from `m_pResources` that are unused. Hold on to them here
+  // All the resources from `resources_` that are unused. Hold on to them here
   // in case they need to be restored.
-  AllRemovedResourcesMap m_AllRemovedResourcesMap;
+  AllRemovedResourcesMap all_removed_resources_map_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECTHOLDER_H_

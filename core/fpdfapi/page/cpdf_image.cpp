@@ -48,50 +48,50 @@ bool CPDF_Image::IsValidJpegBitsPerComponent(int32_t bpc) {
   return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
 }
 
-CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {
-  DCHECK(m_pDocument);
+CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : document_(pDoc) {
+  DCHECK(document_);
 }
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, RetainPtr<CPDF_Stream> pStream)
-    : m_bIsInline(true), m_pDocument(pDoc), m_pStream(std::move(pStream)) {
-  DCHECK(m_pDocument);
+    : is_inline_(true), document_(pDoc), stream_(std::move(pStream)) {
+  DCHECK(document_);
   FinishInitialization();
 }
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
-    : m_pDocument(pDoc),
-      m_pStream(ToStream(pDoc->GetMutableIndirectObject(dwStreamObjNum))) {
-  DCHECK(m_pDocument);
+    : document_(pDoc),
+      stream_(ToStream(pDoc->GetMutableIndirectObject(dwStreamObjNum))) {
+  DCHECK(document_);
   FinishInitialization();
 }
 
 CPDF_Image::~CPDF_Image() = default;
 
 void CPDF_Image::FinishInitialization() {
-  RetainPtr<const CPDF_Dictionary> pStreamDict = m_pStream->GetDict();
-  m_pOC = pStreamDict->GetDictFor("OC");
-  m_bIsMask = !pStreamDict->KeyExist("ColorSpace") ||
-              pStreamDict->GetBooleanFor("ImageMask", /*bDefault=*/false);
-  m_bInterpolate = !!pStreamDict->GetIntegerFor("Interpolate");
-  m_Height = pStreamDict->GetIntegerFor("Height");
-  m_Width = pStreamDict->GetIntegerFor("Width");
+  RetainPtr<const CPDF_Dictionary> pStreamDict = stream_->GetDict();
+  oc_ = pStreamDict->GetDictFor("OC");
+  is_mask_ = !pStreamDict->KeyExist("ColorSpace") ||
+             pStreamDict->GetBooleanFor("ImageMask", /*bDefault=*/false);
+  interpolate_ = !!pStreamDict->GetIntegerFor("Interpolate");
+  height_ = pStreamDict->GetIntegerFor("Height");
+  width_ = pStreamDict->GetIntegerFor("Width");
 }
 
 void CPDF_Image::ConvertStreamToIndirectObject() {
-  CHECK(m_pStream->IsInline());
-  m_pDocument->AddIndirectObject(m_pStream);
+  CHECK(stream_->IsInline());
+  document_->AddIndirectObject(stream_);
 }
 
 RetainPtr<const CPDF_Dictionary> CPDF_Image::GetDict() const {
-  return m_pStream ? m_pStream->GetDict() : nullptr;
+  return stream_ ? stream_->GetDict() : nullptr;
 }
 
 RetainPtr<const CPDF_Stream> CPDF_Image::GetStream() const {
-  return m_pStream;
+  return stream_;
 }
 
 RetainPtr<const CPDF_Dictionary> CPDF_Image::GetOC() const {
-  return m_pOC;
+  return oc_;
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
@@ -131,9 +131,9 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
         pDict->SetNewFor<CPDF_Dictionary>(pdfium::stream::kDecodeParms);
     pParms->SetNewFor<CPDF_Number>("ColorTransform", 0);
   }
-  m_bIsMask = false;
-  m_Width = info.width;
-  m_Height = info.height;
+  is_mask_ = false;
+  width_ = info.width;
+  height_ = info.height;
   return pDict;
 }
 
@@ -160,8 +160,7 @@ void CPDF_Image::SetJpegImage(RetainPtr<IFX_SeekableReadStream> pFile) {
     return;
   }
 
-  m_pStream =
-      pdfium::MakeRetain<CPDF_Stream>(std::move(pFile), std::move(dict));
+  stream_ = pdfium::MakeRetain<CPDF_Stream>(std::move(pFile), std::move(dict));
 }
 
 void CPDF_Image::SetJpegImageInline(RetainPtr<IFX_SeekableReadStream> pFile) {
@@ -180,7 +179,7 @@ void CPDF_Image::SetJpegImageInline(RetainPtr<IFX_SeekableReadStream> pFile) {
     return;
   }
 
-  m_pStream = pdfium::MakeRetain<CPDF_Stream>(std::move(data), std::move(dict));
+  stream_ = pdfium::MakeRetain<CPDF_Stream>(std::move(data), std::move(dict));
 }
 
 void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
@@ -224,7 +223,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     size_t palette_size = pBitmap->GetRequiredPaletteSize();
     if (palette_size > 0) {
       DCHECK(palette_size <= 256);
-      auto pCS = m_pDocument->NewIndirect<CPDF_Array>();
+      auto pCS = document_->NewIndirect<CPDF_Array>();
       pCS->AppendNew<CPDF_Name>("Indexed");
       pCS->AppendNew<CPDF_Name>("DeviceRGB");
       pCS->AppendNew<CPDF_Number>(static_cast<int>(palette_size - 1));
@@ -237,11 +236,11 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
         color_table_span[2] = FXARGB_B(argb);
         color_table_span = color_table_span.subspan(3);
       }
-      auto pNewDict = m_pDocument->New<CPDF_Dictionary>();
-      auto pCTS = m_pDocument->NewIndirect<CPDF_Stream>(std::move(color_table),
-                                                        std::move(pNewDict));
-      pCS->AppendNew<CPDF_Reference>(m_pDocument, pCTS->GetObjNum());
-      pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument,
+      auto pNewDict = document_->New<CPDF_Dictionary>();
+      auto pCTS = document_->NewIndirect<CPDF_Stream>(std::move(color_table),
+                                                      std::move(pNewDict));
+      pCS->AppendNew<CPDF_Reference>(document_, pCTS->GetObjNum());
+      pDict->SetNewFor<CPDF_Reference>("ColorSpace", document_,
                                        pCS->GetObjNum());
     } else {
       pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
@@ -277,9 +276,9 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     }
     pMaskDict->SetNewFor<CPDF_Number>(
         "Length", pdfium::checked_cast<int>(mask_buf.size()));
-    auto pNewStream = m_pDocument->NewIndirect<CPDF_Stream>(
-        std::move(mask_buf), std::move(pMaskDict));
-    pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument,
+    auto pNewStream = document_->NewIndirect<CPDF_Stream>(std::move(mask_buf),
+                                                          std::move(pMaskDict));
+    pDict->SetNewFor<CPDF_Reference>("SMask", document_,
                                      pNewStream->GetObjNum());
   }
 
@@ -311,11 +310,11 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     }
   }
 
-  m_pStream =
+  stream_ =
       pdfium::MakeRetain<CPDF_Stream>(std::move(dest_buf), std::move(pDict));
-  m_bIsMask = pBitmap->IsMaskFormat();
-  m_Width = BitmapWidth;
-  m_Height = BitmapHeight;
+  is_mask_ = pBitmap->IsMaskFormat();
+  width_ = BitmapWidth;
+  height_ = BitmapHeight;
 }
 
 void CPDF_Image::ResetCache(CPDF_Page* pPage) {
@@ -324,7 +323,7 @@ void CPDF_Image::ResetCache(CPDF_Page* pPage) {
 }
 
 void CPDF_Image::WillBeDestroyed() {
-  m_bWillBeDestroyed = true;
+  will_be_destroyed_ = true;
 }
 
 RetainPtr<CPDF_DIB> CPDF_Image::CreateNewDIB() const {
@@ -349,11 +348,11 @@ RetainPtr<CFX_DIBBase> CPDF_Image::LoadDIBBase() const {
 }
 
 RetainPtr<CFX_DIBBase> CPDF_Image::DetachBitmap() {
-  return std::move(m_pDIBBase);
+  return std::move(dibbase_);
 }
 
 RetainPtr<CFX_DIBBase> CPDF_Image::DetachMask() {
-  return std::move(m_pMask);
+  return std::move(mask_);
 }
 
 bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
@@ -367,38 +366,38 @@ bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
       source->StartLoadDIBBase(true, pFormResource, pPageResource, bStdCS,
                                GroupFamily, bLoadMask, max_size_required);
   if (ret == CPDF_DIB::LoadState::kFail) {
-    m_pDIBBase.Reset();
+    dibbase_.Reset();
     return false;
   }
-  m_pDIBBase = source;
+  dibbase_ = source;
   if (ret == CPDF_DIB::LoadState::kContinue) {
     return true;
   }
 
-  m_pMask = source->DetachMask();
-  m_MatteColor = source->GetMatteColor();
+  mask_ = source->DetachMask();
+  matte_color_ = source->GetMatteColor();
   return false;
 }
 
 bool CPDF_Image::Continue(PauseIndicatorIface* pPause) {
-  RetainPtr<CPDF_DIB> pSource = m_pDIBBase.As<CPDF_DIB>();
+  RetainPtr<CPDF_DIB> pSource = dibbase_.As<CPDF_DIB>();
   CPDF_DIB::LoadState ret = pSource->ContinueLoadDIBBase(pPause);
   if (ret == CPDF_DIB::LoadState::kContinue) {
     return true;
   }
 
   if (ret == CPDF_DIB::LoadState::kSuccess) {
-    m_pMask = pSource->DetachMask();
-    m_MatteColor = pSource->GetMatteColor();
+    mask_ = pSource->DetachMask();
+    matte_color_ = pSource->GetMatteColor();
   } else {
-    m_pDIBBase.Reset();
+    dibbase_.Reset();
   }
   return false;
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Image::CreateXObjectImageDict(int width,
                                                               int height) {
-  auto dict = m_pDocument->New<CPDF_Dictionary>();
+  auto dict = document_->New<CPDF_Dictionary>();
   dict->SetNewFor<CPDF_Name>("Type", "XObject");
   dict->SetNewFor<CPDF_Name>("Subtype", "Image");
   dict->SetNewFor<CPDF_Number>("Width", width);

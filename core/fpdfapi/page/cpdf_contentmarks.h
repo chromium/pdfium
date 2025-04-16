@@ -63,12 +63,12 @@ class CPDF_ContentMarks {
     MarkData(const MarkData& src);
     ~MarkData() override;
 
-    std::vector<RetainPtr<CPDF_ContentMarkItem>> m_Marks;
+    std::vector<RetainPtr<CPDF_ContentMarkItem>> marks_;
   };
 
   void EnsureMarkDataExists();
 
-  RetainPtr<MarkData> m_pMarkData;
+  RetainPtr<MarkData> mark_data_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTMARKS_H_

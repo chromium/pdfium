@@ -28,15 +28,15 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
                              CPDF_ColorSpace::Family eFamily,
                              bool bLoadMask,
                              const CFX_Size& max_size_required) {
-  m_pCache = pPageImageCache;
-  m_pImageObject = pImage;
+  cache_ = pPageImageCache;
+  image_object_ = pImage;
   bool should_continue;
-  if (m_pCache) {
-    should_continue = m_pCache->StartGetCachedBitmap(
-        m_pImageObject->GetImage(), pFormResource, pPageResource, bStdCS,
+  if (cache_) {
+    should_continue = cache_->StartGetCachedBitmap(
+        image_object_->GetImage(), pFormResource, pPageResource, bStdCS,
         eFamily, bLoadMask, max_size_required);
   } else {
-    should_continue = m_pImageObject->GetImage()->StartLoadDIBBase(
+    should_continue = image_object_->GetImage()->StartLoadDIBBase(
         pFormResource, pPageResource, bStdCS, eFamily, bLoadMask,
         max_size_required);
   }
@@ -47,9 +47,8 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
 }
 
 bool CPDF_ImageLoader::Continue(PauseIndicatorIface* pPause) {
-  bool should_continue = m_pCache
-                             ? m_pCache->Continue(pPause)
-                             : m_pImageObject->GetImage()->Continue(pPause);
+  bool should_continue = cache_ ? cache_->Continue(pPause)
+                                : image_object_->GetImage()->Continue(pPause);
   if (!should_continue) {
     Finish();
   }
@@ -60,25 +59,25 @@ RetainPtr<CFX_DIBBase> CPDF_ImageLoader::TranslateImage(
     RetainPtr<CPDF_TransferFunc> pTransferFunc) {
   DCHECK(pTransferFunc);
   DCHECK(!pTransferFunc->GetIdentity());
-  m_pBitmap = pTransferFunc->TranslateImage(std::move(m_pBitmap));
-  if (m_bCached && m_pMask) {
-    m_pMask = m_pMask->Realize();
+  bitmap_ = pTransferFunc->TranslateImage(std::move(bitmap_));
+  if (cached_ && mask_) {
+    mask_ = mask_->Realize();
   }
-  m_bCached = false;
-  return m_pBitmap;
+  cached_ = false;
+  return bitmap_;
 }
 
 void CPDF_ImageLoader::Finish() {
-  if (m_pCache) {
-    m_bCached = true;
-    m_pBitmap = m_pCache->DetachCurBitmap();
-    m_pMask = m_pCache->DetachCurMask();
-    m_MatteColor = m_pCache->GetCurMatteColor();
+  if (cache_) {
+    cached_ = true;
+    bitmap_ = cache_->DetachCurBitmap();
+    mask_ = cache_->DetachCurMask();
+    matte_color_ = cache_->GetCurMatteColor();
     return;
   }
-  RetainPtr<CPDF_Image> pImage = m_pImageObject->GetImage();
-  m_bCached = false;
-  m_pBitmap = pImage->DetachBitmap();
-  m_pMask = pImage->DetachMask();
-  m_MatteColor = pImage->GetMatteColor();
+  RetainPtr<CPDF_Image> pImage = image_object_->GetImage();
+  cached_ = false;
+  bitmap_ = pImage->DetachBitmap();
+  mask_ = pImage->DetachMask();
+  matte_color_ = pImage->GetMatteColor();
 }

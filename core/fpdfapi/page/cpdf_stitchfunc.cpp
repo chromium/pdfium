@@ -25,7 +25,7 @@ CPDF_StitchFunc::CPDF_StitchFunc() : CPDF_Function(Type::kType3Stitching) {}
 CPDF_StitchFunc::~CPDF_StitchFunc() = default;
 
 bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
-  if (m_nInputs != kRequiredNumInputs) {
+  if (inputs_ != kRequiredNumInputs) {
     return false;
   }
 
@@ -102,19 +102,19 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
       } else {
         nOutputs = nFuncOutputs;
       }
-      m_pSubFunctions.push_back(std::move(pFunc));
+      sub_functions_.push_back(std::move(pFunc));
     }
-    m_nOutputs = nOutputs.value();
+    outputs_ = nOutputs.value();
   }
 
-  m_bounds.reserve(nSubs + 1);
-  m_bounds.push_back(m_Domains[0]);
+  bounds_.reserve(nSubs + 1);
+  bounds_.push_back(domains_[0]);
   for (uint32_t i = 0; i < nSubs - 1; i++) {
-    m_bounds.push_back(pBoundsArray->GetFloatAt(i));
+    bounds_.push_back(pBoundsArray->GetFloatAt(i));
   }
-  m_bounds.push_back(m_Domains[1]);
+  bounds_.push_back(domains_[1]);
 
-  m_encode = ReadArrayElementsToVector(pEncodeArray.Get(), nSubs * 2);
+  encode_ = ReadArrayElementsToVector(pEncodeArray.Get(), nSubs * 2);
   return true;
 }
 
@@ -122,14 +122,14 @@ bool CPDF_StitchFunc::v_Call(pdfium::span<const float> inputs,
                              pdfium::span<float> results) const {
   float input = inputs[0];
   size_t i;
-  for (i = 0; i + 1 < m_pSubFunctions.size(); i++) {
-    if (input < m_bounds[i + 1]) {
+  for (i = 0; i + 1 < sub_functions_.size(); i++) {
+    if (input < bounds_[i + 1]) {
       break;
     }
   }
-  input = Interpolate(input, m_bounds[i], m_bounds[i + 1], m_encode[i * 2],
-                      m_encode[i * 2 + 1]);
-  return m_pSubFunctions[i]
+  input = Interpolate(input, bounds_[i], bounds_[i + 1], encode_[i * 2],
+                      encode_[i * 2 + 1]);
+  return sub_functions_[i]
       ->Call(pdfium::span_from_ref(input), results)
       .has_value();
 }

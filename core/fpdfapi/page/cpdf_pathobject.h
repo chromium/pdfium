@@ -29,46 +29,46 @@ class CPDF_PathObject final : public CPDF_PageObject {
 
   void CalcBoundingBox();
 
-  bool stroke() const { return m_bStroke; }
-  void set_stroke(bool stroke) { m_bStroke = stroke; }
+  bool stroke() const { return stroke_; }
+  void set_stroke(bool stroke) { stroke_ = stroke; }
 
   // Layering, avoid caller knowledge of CFX_FillRenderOptions::FillType values.
   bool has_no_filltype() const {
-    return m_FillType == CFX_FillRenderOptions::FillType::kNoFill;
+    return fill_type_ == CFX_FillRenderOptions::FillType::kNoFill;
   }
   bool has_winding_filltype() const {
-    return m_FillType == CFX_FillRenderOptions::FillType::kWinding;
+    return fill_type_ == CFX_FillRenderOptions::FillType::kWinding;
   }
   bool has_alternate_filltype() const {
-    return m_FillType == CFX_FillRenderOptions::FillType::kEvenOdd;
+    return fill_type_ == CFX_FillRenderOptions::FillType::kEvenOdd;
   }
   void set_no_filltype() {
-    m_FillType = CFX_FillRenderOptions::FillType::kNoFill;
+    fill_type_ = CFX_FillRenderOptions::FillType::kNoFill;
   }
   void set_winding_filltype() {
-    m_FillType = CFX_FillRenderOptions::FillType::kWinding;
+    fill_type_ = CFX_FillRenderOptions::FillType::kWinding;
   }
   void set_alternate_filltype() {
-    m_FillType = CFX_FillRenderOptions::FillType::kEvenOdd;
+    fill_type_ = CFX_FillRenderOptions::FillType::kEvenOdd;
   }
 
-  CFX_FillRenderOptions::FillType filltype() const { return m_FillType; }
+  CFX_FillRenderOptions::FillType filltype() const { return fill_type_; }
   void set_filltype(CFX_FillRenderOptions::FillType fill_type) {
-    m_FillType = fill_type;
+    fill_type_ = fill_type;
   }
 
-  CPDF_Path& path() { return m_Path; }
-  const CPDF_Path& path() const { return m_Path; }
+  CPDF_Path& path() { return path_; }
+  const CPDF_Path& path() const { return path_; }
 
-  const CFX_Matrix& matrix() const { return m_Matrix; }
+  const CFX_Matrix& matrix() const { return matrix_; }
   void SetPathMatrix(const CFX_Matrix& matrix);
 
  private:
-  bool m_bStroke = false;
-  CFX_FillRenderOptions::FillType m_FillType =
+  bool stroke_ = false;
+  CFX_FillRenderOptions::FillType fill_type_ =
       CFX_FillRenderOptions::FillType::kNoFill;
-  CPDF_Path m_Path;
-  CFX_Matrix m_Matrix;
+  CPDF_Path path_;
+  CFX_Matrix matrix_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATHOBJECT_H_

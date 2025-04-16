@@ -35,13 +35,13 @@ class CPDF_ImageObject final : public CPDF_PageObject {
   void SetInitialImageMatrix(const CFX_Matrix& matrix);
 
   void SetImageMatrix(const CFX_Matrix& matrix);
-  const CFX_Matrix& matrix() const { return m_Matrix; }
+  const CFX_Matrix& matrix() const { return matrix_; }
 
  private:
   void MaybePurgeCache();
 
-  CFX_Matrix m_Matrix;
-  RetainPtr<CPDF_Image> m_pImage;
+  CFX_Matrix matrix_;
+  RetainPtr<CPDF_Image> image_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGEOBJECT_H_
