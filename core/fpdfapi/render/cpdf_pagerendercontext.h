@@ -29,11 +29,11 @@ class CPDF_PageRenderContext final : public CPDF_Page::RenderContextIface {
   ~CPDF_PageRenderContext() override;
 
   // Specific destruction order required.
-  std::unique_ptr<AnnotListIface> m_pAnnots;
-  std::unique_ptr<CPDF_RenderOptions> m_pOptions;
-  std::unique_ptr<CFX_RenderDevice> m_pDevice;
-  std::unique_ptr<CPDF_RenderContext> m_pContext;
-  std::unique_ptr<CPDF_ProgressiveRenderer> m_pRenderer;
+  std::unique_ptr<AnnotListIface> annots_;
+  std::unique_ptr<CPDF_RenderOptions> options_;
+  std::unique_ptr<CFX_RenderDevice> device_;
+  std::unique_ptr<CPDF_RenderContext> context_;
+  std::unique_ptr<CPDF_ProgressiveRenderer> renderer_;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_PAGERENDERCONTEXT_H_

@@ -47,7 +47,7 @@ class CPDF_ImageRenderer {
              bool bStdCS);
 
   bool Continue(PauseIndicatorIface* pPause);
-  bool GetResult() const { return m_Result; }
+  bool GetResult() const { return result_; }
 
  private:
   enum class Mode {
@@ -89,25 +89,25 @@ class CPDF_ImageRenderer {
                                  int* width,
                                  int* height) const;
 
-  UnownedPtr<CPDF_RenderStatus> const m_pRenderStatus;
-  UnownedPtr<CPDF_ImageObject> m_pImageObject;
-  RetainPtr<CPDF_Pattern> m_pPattern;
-  RetainPtr<CFX_DIBBase> m_pDIBBase;
-  CFX_Matrix m_mtObj2Device;
-  CFX_Matrix m_ImageMatrix;
-  std::unique_ptr<CPDF_ImageLoader> const m_pLoader;
+  UnownedPtr<CPDF_RenderStatus> const render_status_;
+  UnownedPtr<CPDF_ImageObject> image_object_;
+  RetainPtr<CPDF_Pattern> pattern_;
+  RetainPtr<CFX_DIBBase> dibbase_;
+  CFX_Matrix obj_to_device_;
+  CFX_Matrix image_matrix_;
+  std::unique_ptr<CPDF_ImageLoader> const loader_;
 #if BUILDFLAG(IS_WIN)
-  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
+  std::unique_ptr<CFX_ImageTransformer> transformer_;
 #endif
-  std::unique_ptr<CFX_AggImageRenderer> m_DeviceHandle;
-  Mode m_Mode = Mode::kNone;
-  float m_Alpha = 0.0f;
-  BlendMode m_BlendType = BlendMode::kNormal;
-  FX_ARGB m_FillArgb = 0;
-  FXDIB_ResampleOptions m_ResampleOptions;
-  bool m_bPatternColor = false;
-  bool m_bStdCS = false;
-  bool m_Result = true;
+  std::unique_ptr<CFX_AggImageRenderer> device_handle_;
+  Mode mode_ = Mode::kNone;
+  float alpha_ = 0.0f;
+  BlendMode blend_type_ = BlendMode::kNormal;
+  FX_ARGB fill_argb_ = 0;
+  FXDIB_ResampleOptions resample_options_;
+  bool pattern_color_ = false;
+  bool std_cs_ = false;
+  bool result_ = true;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_IMAGERENDERER_H_

@@ -38,7 +38,7 @@ class CPDF_ProgressiveRenderer {
                            const CPDF_RenderOptions* pOptions);
   ~CPDF_ProgressiveRenderer();
 
-  Status GetStatus() const { return m_Status; }
+  Status GetStatus() const { return status_; }
   void Start(PauseIndicatorIface* pPause);
   void Continue(PauseIndicatorIface* pPause);
 
@@ -46,15 +46,15 @@ class CPDF_ProgressiveRenderer {
   // Maximum page objects to render before checking for pause.
   static constexpr int kStepLimit = 100;
 
-  Status m_Status = kReady;
-  UnownedPtr<CPDF_RenderContext> const m_pContext;
-  UnownedPtr<CFX_RenderDevice> const m_pDevice;
-  UnownedPtr<const CPDF_RenderOptions> const m_pOptions;
-  std::unique_ptr<CPDF_RenderStatus> m_pRenderStatus;
-  CFX_FloatRect m_ClipRect;
-  uint32_t m_LayerIndex = 0;
-  UnownedPtr<CPDF_RenderContext::Layer> m_pCurrentLayer;
-  CPDF_PageObjectHolder::const_iterator m_LastObjectRendered;
+  Status status_ = kReady;
+  UnownedPtr<CPDF_RenderContext> const context_;
+  UnownedPtr<CFX_RenderDevice> const device_;
+  UnownedPtr<const CPDF_RenderOptions> const options_;
+  std::unique_ptr<CPDF_RenderStatus> render_status_;
+  CFX_FloatRect clip_rect_;
+  uint32_t layer_index_ = 0;
+  UnownedPtr<CPDF_RenderContext::Layer> current_layer_;
+  CPDF_PageObjectHolder::const_iterator last_object_rendered_;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_PROGRESSIVERENDERER_H_

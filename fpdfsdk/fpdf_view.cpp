@@ -631,7 +631,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   const bool bHasMask = pPage->HasImageMask() && !bNewBitmap;
   auto* render_data = CPDF_DocRenderData::FromDocument(pPage->GetDocument());
   if (!bNewBitmap && !bHasMask) {
-    context->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
+    context->device_ = std::make_unique<CPDF_WindowsRenderDevice>(
         dc, render_data->GetPSFontTracker());
     CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                   size_y, rotate, flags,
@@ -651,10 +651,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
 
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->Attach(pBitmap);
-  context->m_pDevice = std::move(device);
+  context->device_ = std::move(device);
   if (bHasMask) {
-    context->m_pOptions = std::make_unique<CPDF_RenderOptions>();
-    context->m_pOptions->GetOptions().bBreakForMasks = true;
+    context->options_ = std::make_unique<CPDF_RenderOptions>();
+    context->options_->GetOptions().bBreakForMasks = true;
   }
 
   CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
@@ -691,7 +691,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   for (size_t i = 0; i < mask_boxes.size(); i++) {
     bitmaps[i] = GetMaskBitmap(pPage, start_x, start_y, size_x, size_y, rotate,
                                pBitmap, mask_boxes[i], &bitmap_areas[i]);
-    context->m_pRenderer->Continue(nullptr);
+    context->renderer_->Continue(nullptr);
   }
 
   // Begin rendering to the printer. Add flag to indicate the renderer should
@@ -700,10 +700,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   owned_context = std::make_unique<CPDF_PageRenderContext>();
   context = owned_context.get();
   pPage->SetRenderContext(std::move(owned_context));
-  context->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
+  context->device_ = std::make_unique<CPDF_WindowsRenderDevice>(
       dc, render_data->GetPSFontTracker());
-  context->m_pOptions = std::make_unique<CPDF_RenderOptions>();
-  context->m_pOptions->GetOptions().bBreakForMasks = true;
+  context->options_ = std::make_unique<CPDF_RenderOptions>();
+  context->options_->GetOptions().bBreakForMasks = true;
 
   CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                 size_y, rotate, flags,
@@ -714,11 +714,11 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   for (size_t i = 0; i < mask_boxes.size(); i++) {
     // Render the bitmap for the mask and free the bitmap.
     if (bitmaps[i]) {  // will be null if mask has zero area
-      RenderBitmap(context->m_pDevice.get(), std::move(bitmaps[i]),
+      RenderBitmap(context->device_.get(), std::move(bitmaps[i]),
                    bitmap_areas[i]);
     }
     // Render the next portion of page.
-    context->m_pRenderer->Continue(nullptr);
+    context->renderer_->Continue(nullptr);
   }
 
   return true;
@@ -755,7 +755,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(std::move(pBitmap),
                                  !!(flags & FPDF_REVERSE_BYTE_ORDER));
-  context->m_pDevice = std::move(device);
+  context->device_ = std::move(device);
 
   CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                 size_y, rotate, flags, /*color_scheme=*/nullptr,
@@ -791,7 +791,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(std::move(pBitmap),
                                  !!(flags & FPDF_REVERSE_BYTE_ORDER));
-  context->m_pDevice = std::move(device);
+  context->device_ = std::move(device);
 
   CFX_FloatRect clipping_rect;
   if (clipping) {
@@ -832,7 +832,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageSkia(FPDF_SKIA_CANVAS canvas,
   if (!device->AttachCanvas(*sk_canvas)) {
     return;
   }
-  context->m_pDevice = std::move(device);
+  context->device_ = std::move(device);
 
   CPDFSDK_RenderPageWithContext(context, cpdf_page, 0, 0, size_x, size_y, 0, 0,
                                 /*color_scheme=*/nullptr,

@@ -55,32 +55,32 @@ class CPDF_RenderOptions {
                                      CPDF_PageObject::Type object_type) const;
 
   void SetColorScheme(const ColorScheme& color_scheme) {
-    m_ColorScheme = color_scheme;
+    color_scheme_ = color_scheme;
   }
 
-  void SetColorMode(Type mode) { m_ColorMode = mode; }
-  bool ColorModeIs(Type mode) const { return m_ColorMode == mode; }
+  void SetColorMode(Type mode) { color_mode_ = mode; }
+  bool ColorModeIs(Type mode) const { return color_mode_ == mode; }
 
-  const Options& GetOptions() const { return m_Options; }
-  Options& GetOptions() { return m_Options; }
+  const Options& GetOptions() const { return options_; }
+  Options& GetOptions() { return options_; }
 
   uint32_t GetCacheSizeLimit() const;
   bool CheckOCGDictVisible(const CPDF_Dictionary* pOC) const;
   bool CheckPageObjectVisible(const CPDF_PageObject* pPageObj) const;
 
-  void SetDrawAnnots(bool draw) { m_bDrawAnnots = draw; }
-  bool GetDrawAnnots() const { return m_bDrawAnnots; }
+  void SetDrawAnnots(bool draw) { draw_annots_ = draw; }
+  bool GetDrawAnnots() const { return draw_annots_; }
 
   void SetOCContext(RetainPtr<CPDF_OCContext> context) {
-    m_pOCContext = context;
+    oc_context_ = context;
   }
 
  private:
-  Type m_ColorMode = kNormal;
-  bool m_bDrawAnnots = false;
-  Options m_Options;
-  ColorScheme m_ColorScheme = {};
-  RetainPtr<CPDF_OCContext> m_pOCContext;
+  Type color_mode_ = kNormal;
+  bool draw_annots_ = false;
+  Options options_;
+  ColorScheme color_scheme_ = {};
+  RetainPtr<CPDF_OCContext> oc_context_;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_RENDEROPTIONS_H_

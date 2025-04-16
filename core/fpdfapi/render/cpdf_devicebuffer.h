@@ -35,17 +35,17 @@ class CPDF_DeviceBuffer {
   // On failure, the returned result is null.
   [[nodiscard]] RetainPtr<CFX_DIBitmap> Initialize();
   void OutputToDevice();
-  const CFX_Matrix& GetMatrix() const { return m_Matrix; }
+  const CFX_Matrix& GetMatrix() const { return matrix_; }
 
  private:
-  UnownedPtr<CFX_RenderDevice> const m_pDevice;
+  UnownedPtr<CFX_RenderDevice> const device_;
 #if BUILDFLAG(IS_WIN)
-  UnownedPtr<CPDF_RenderContext> const m_pContext;
+  UnownedPtr<CPDF_RenderContext> const context_;
 #endif
-  UnownedPtr<const CPDF_PageObject> const m_pObject;
-  RetainPtr<CFX_DIBitmap> const m_pBitmap;
-  const FX_RECT m_Rect;
-  const CFX_Matrix m_Matrix;
+  UnownedPtr<const CPDF_PageObject> const object_;
+  RetainPtr<CFX_DIBitmap> const bitmap_;
+  const FX_RECT rect_;
+  const CFX_Matrix matrix_;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_DEVICEBUFFER_H_

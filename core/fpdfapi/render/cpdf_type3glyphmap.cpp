@@ -46,16 +46,16 @@ CPDF_Type3GlyphMap::CPDF_Type3GlyphMap() = default;
 CPDF_Type3GlyphMap::~CPDF_Type3GlyphMap() = default;
 
 std::pair<int, int> CPDF_Type3GlyphMap::AdjustBlue(float top, float bottom) {
-  return std::make_pair(AdjustBlueHelper(top, &m_TopBlue),
-                        AdjustBlueHelper(bottom, &m_BottomBlue));
+  return std::make_pair(AdjustBlueHelper(top, &top_blue_),
+                        AdjustBlueHelper(bottom, &bottom_blue_));
 }
 
 const CFX_GlyphBitmap* CPDF_Type3GlyphMap::GetBitmap(uint32_t charcode) const {
-  auto it = m_GlyphMap.find(charcode);
-  return it != m_GlyphMap.end() ? it->second.get() : nullptr;
+  auto it = glyph_map_.find(charcode);
+  return it != glyph_map_.end() ? it->second.get() : nullptr;
 }
 
 void CPDF_Type3GlyphMap::SetBitmap(uint32_t charcode,
                                    std::unique_ptr<CFX_GlyphBitmap> pMap) {
-  m_GlyphMap[charcode] = std::move(pMap);
+  glyph_map_[charcode] = std::move(pMap);
 }

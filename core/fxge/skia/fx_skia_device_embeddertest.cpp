@@ -184,7 +184,7 @@ void RenderPageToSkCanvas(FPDF_PAGE page,
 
   auto default_device = std::make_unique<CFX_DefaultRenderDevice>();
   CHECK(default_device->AttachCanvas(canvas));
-  unowned_context->m_pDevice = std::move(default_device);
+  unowned_context->device_ = std::move(default_device);
 
   CPDFSDK_RenderPageWithContext(unowned_context, cpdf_page, start_x, start_y,
                                 size_x, size_y, /*rotate=*/0, /*flags=*/0,

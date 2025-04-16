@@ -46,35 +46,35 @@ CPDF_DocRenderData::~CPDF_DocRenderData() = default;
 RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
     CPDF_Type3Font* font) {
   CHECK(font);
-  auto it = m_Type3FaceMap.find(font);
-  if (it != m_Type3FaceMap.end() && it->second) {
+  auto it = type3_face_map_.find(font);
+  if (it != type3_face_map_.end() && it->second) {
     return pdfium::WrapRetain(it->second.Get());
   }
 
   auto cache = pdfium::MakeRetain<CPDF_Type3Cache>(font);
-  m_Type3FaceMap[font].Reset(cache.Get());
+  type3_face_map_[font].Reset(cache.Get());
   return cache;
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
     RetainPtr<const CPDF_Object> obj) {
   CHECK(obj);
-  auto it = m_TransferFuncMap.find(obj);
-  if (it != m_TransferFuncMap.end() && it->second) {
+  auto it = transfer_func_map_.find(obj);
+  if (it != transfer_func_map_.end() && it->second) {
     return pdfium::WrapRetain(it->second.Get());
   }
 
   auto func = CreateTransferFunc(obj);
-  m_TransferFuncMap[obj].Reset(func.Get());
+  transfer_func_map_[obj].Reset(func.Get());
   return func;
 }
 
 #if BUILDFLAG(IS_WIN)
 CFX_PSFontTracker* CPDF_DocRenderData::GetPSFontTracker() {
-  if (!m_PSFontTracker) {
-    m_PSFontTracker = std::make_unique<CFX_PSFontTracker>();
+  if (!psfont_tracker_) {
+    psfont_tracker_ = std::make_unique<CFX_PSFontTracker>();
   }
-  return m_PSFontTracker.get();
+  return psfont_tracker_.get();
 }
 #endif
 

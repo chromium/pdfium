@@ -829,14 +829,14 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
 
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   CFX_DefaultRenderDevice* device_ptr = device.get();
-  render_context_ptr->m_pDevice = std::move(device);
-  render_context_ptr->m_pContext = std::make_unique<CPDF_RenderContext>(
+  render_context_ptr->device_ = std::move(device);
+  render_context_ptr->context_ = std::make_unique<CPDF_RenderContext>(
       doc, std::move(page_resources), /*pPageCache=*/nullptr);
 
   device_ptr->Attach(result_bitmap);
 
   CFX_Matrix device_matrix(rect.Width(), 0, 0, rect.Height(), 0, 0);
-  CPDF_RenderStatus status(render_context_ptr->m_pContext.get(), device_ptr);
+  CPDF_RenderStatus status(render_context_ptr->context_.get(), device_ptr);
   status.SetDeviceMatrix(device_matrix);
   status.Initialize(nullptr, nullptr);
 

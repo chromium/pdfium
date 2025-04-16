@@ -81,7 +81,7 @@ int DetectLastScan(const RetainPtr<CFX_DIBitmap>& pBitmap) {
 
 }  // namespace
 
-CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {}
+CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : font_(pFont) {}
 
 CPDF_Type3Cache::~CPDF_Type3Cache() = default;
 
@@ -94,11 +94,11 @@ const CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
       FXSYS_roundf(mtMatrix.d * 10000),
   };
   CPDF_Type3GlyphMap* pSizeCache;
-  auto it = m_SizeMap.find(keygen);
-  if (it == m_SizeMap.end()) {
+  auto it = size_map_.find(keygen);
+  if (it == size_map_.end()) {
     auto pNew = std::make_unique<CPDF_Type3GlyphMap>();
     pSizeCache = pNew.get();
-    m_SizeMap[keygen] = std::move(pNew);
+    size_map_[keygen] = std::move(pNew);
   } else {
     pSizeCache = it->second.get();
   }
@@ -118,7 +118,7 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
     CPDF_Type3GlyphMap* pSize,
     uint32_t charcode,
     const CFX_Matrix& mtMatrix) {
-  CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
+  CPDF_Type3Char* pChar = font_->LoadChar(charcode);
   if (!pChar) {
     return nullptr;
   }

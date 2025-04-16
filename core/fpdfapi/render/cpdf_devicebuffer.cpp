@@ -64,40 +64,40 @@ CPDF_DeviceBuffer::CPDF_DeviceBuffer(CPDF_RenderContext* pContext,
                                      const FX_RECT& rect,
                                      const CPDF_PageObject* pObj,
                                      int max_dpi)
-    : m_pDevice(pDevice),
+    : device_(pDevice),
 #if BUILDFLAG(IS_WIN)
-      m_pContext(pContext),
+      context_(pContext),
 #endif
-      m_pObject(pObj),
-      m_pBitmap(pdfium::MakeRetain<CFX_DIBitmap>()),
-      m_Rect(rect),
-      m_Matrix(CalculateMatrix(pDevice, rect, max_dpi, kScaleDeviceBuffer)) {
+      object_(pObj),
+      bitmap_(pdfium::MakeRetain<CFX_DIBitmap>()),
+      rect_(rect),
+      matrix_(CalculateMatrix(pDevice, rect, max_dpi, kScaleDeviceBuffer)) {
 }
 
 CPDF_DeviceBuffer::~CPDF_DeviceBuffer() = default;
 
 RetainPtr<CFX_DIBitmap> CPDF_DeviceBuffer::Initialize() {
   FX_RECT bitmap_rect =
-      m_Matrix.TransformRect(CFX_FloatRect(m_Rect)).GetOuterRect();
+      matrix_.TransformRect(CFX_FloatRect(rect_)).GetOuterRect();
   // TODO(crbug.com/355630557): Consider adding support for
   // `FXDIB_Format::kBgraPremul`
-  if (!m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(),
-                         FXDIB_Format::kBgra)) {
+  if (!bitmap_->Create(bitmap_rect.Width(), bitmap_rect.Height(),
+                       FXDIB_Format::kBgra)) {
     return nullptr;
   }
-  return m_pBitmap;
+  return bitmap_;
 }
 
 void CPDF_DeviceBuffer::OutputToDevice() {
-  if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
-    if (m_Matrix.a == 1.0f && m_Matrix.d == 1.0f) {
-      m_pDevice->SetDIBits(m_pBitmap, m_Rect.left, m_Rect.top);
+  if (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
+    if (matrix_.a == 1.0f && matrix_.d == 1.0f) {
+      device_->SetDIBits(bitmap_, rect_.left, rect_.top);
       return;
     }
 
 #if BUILDFLAG(IS_WIN)
-    m_pDevice->StretchDIBits(m_pBitmap, m_Rect.left, m_Rect.top, m_Rect.Width(),
-                             m_Rect.Height());
+    device_->StretchDIBits(bitmap_, rect_.left, rect_.top, rect_.Width(),
+                           rect_.Height());
     return;
 #else
     NOTREACHED();
@@ -106,15 +106,15 @@ void CPDF_DeviceBuffer::OutputToDevice() {
 
 #if BUILDFLAG(IS_WIN)
   auto buffer = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!m_pDevice->CreateCompatibleBitmap(buffer, m_pBitmap->GetWidth(),
-                                         m_pBitmap->GetHeight())) {
+  if (!device_->CreateCompatibleBitmap(buffer, bitmap_->GetWidth(),
+                                       bitmap_->GetHeight())) {
     return;
   }
-  m_pContext->GetBackgroundToBitmap(buffer, m_pObject, m_Matrix);
+  context_->GetBackgroundToBitmap(buffer, object_, matrix_);
   buffer->CompositeBitmap(0, 0, buffer->GetWidth(), buffer->GetHeight(),
-                          m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
-  m_pDevice->StretchDIBits(std::move(buffer), m_Rect.left, m_Rect.top,
-                           m_Rect.Width(), m_Rect.Height());
+                          bitmap_, 0, 0, BlendMode::kNormal, nullptr, false);
+  device_->StretchDIBits(std::move(buffer), rect_.left, rect_.top,
+                         rect_.Width(), rect_.Height());
 #else
   NOTREACHED();
 #endif
