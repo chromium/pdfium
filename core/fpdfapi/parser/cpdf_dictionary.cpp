@@ -26,13 +26,13 @@ CPDF_Dictionary::CPDF_Dictionary()
     : CPDF_Dictionary(WeakPtr<ByteStringPool>()) {}
 
 CPDF_Dictionary::CPDF_Dictionary(const WeakPtr<ByteStringPool>& pPool)
-    : m_pPool(pPool) {}
+    : pool_(pPool) {}
 
 CPDF_Dictionary::~CPDF_Dictionary() {
   // Mark the object as deleted so that it will not be deleted again,
   // and break cyclic references.
-  m_ObjNum = kInvalidObjNum;
-  for (auto& it : m_Map) {
+  obj_num_ = kInvalidObjNum;
+  for (auto& it : map_) {
     if (it.second->GetObjNum() == kInvalidObjNum) {
       it.second.Leak();
     }
@@ -55,14 +55,14 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  auto pCopy = pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
+  auto pCopy = pdfium::MakeRetain<CPDF_Dictionary>(pool_);
   CPDF_DictionaryLocker locker(this);
   for (const auto& it : locker) {
     if (!pdfium::Contains(*pVisited, it.second.Get())) {
       std::set<const CPDF_Object*> visited(*pVisited);
       auto obj = it.second->CloneNonCyclic(bDirect, &visited);
       if (obj) {
-        pCopy->m_Map.insert(std::make_pair(it.first, std::move(obj)));
+        pCopy->map_.insert(std::make_pair(it.first, std::move(obj)));
       }
     }
   }
@@ -71,8 +71,8 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
 
 const CPDF_Object* CPDF_Dictionary::GetObjectForInternal(
     const ByteString& key) const {
-  auto it = m_Map.find(key);
-  return it != m_Map.end() ? it->second.Get() : nullptr;
+  auto it = map_.find(key);
+  return it != map_.end() ? it->second.Get() : nullptr;
 }
 
 RetainPtr<const CPDF_Object> CPDF_Dictionary::GetObjectFor(
@@ -260,7 +260,7 @@ CFX_Matrix CPDF_Dictionary::GetMatrixFor(const ByteString& key) const {
 }
 
 bool CPDF_Dictionary::KeyExist(const ByteString& key) const {
-  return pdfium::Contains(m_Map, key);
+  return pdfium::Contains(map_, key);
 }
 
 std::vector<ByteString> CPDF_Dictionary::GetKeys() const {
@@ -281,13 +281,13 @@ CPDF_Object* CPDF_Dictionary::SetForInternal(const ByteString& key,
                                              RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   if (!pObj) {
-    m_Map.erase(key);
+    map_.erase(key);
     return nullptr;
   }
   CHECK(pObj->IsInline());
   CHECK(!pObj->IsStream());
   CPDF_Object* pRet = pObj.Get();
-  m_Map[MaybeIntern(key)] = std::move(pObj);
+  map_[MaybeIntern(key)] = std::move(pObj);
   return pRet;
 }
 
@@ -295,8 +295,8 @@ void CPDF_Dictionary::ConvertToIndirectObjectFor(
     const ByteString& key,
     CPDF_IndirectObjectHolder* pHolder) {
   CHECK(!IsLocked());
-  auto it = m_Map.find(key);
-  if (it == m_Map.end() || it->second->IsReference()) {
+  auto it = map_.find(key);
+  if (it == map_.end() || it->second->IsReference()) {
     return;
   }
 
@@ -307,10 +307,10 @@ void CPDF_Dictionary::ConvertToIndirectObjectFor(
 RetainPtr<CPDF_Object> CPDF_Dictionary::RemoveFor(ByteStringView key) {
   CHECK(!IsLocked());
   RetainPtr<CPDF_Object> result;
-  auto it = m_Map.find(key);
-  if (it != m_Map.end()) {
+  auto it = map_.find(key);
+  if (it != map_.end()) {
     result = std::move(it->second);
-    m_Map.erase(it);
+    map_.erase(it);
   }
   return result;
 }
@@ -318,18 +318,18 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::RemoveFor(ByteStringView key) {
 void CPDF_Dictionary::ReplaceKey(const ByteString& oldkey,
                                  const ByteString& newkey) {
   CHECK(!IsLocked());
-  auto old_it = m_Map.find(oldkey);
-  if (old_it == m_Map.end()) {
+  auto old_it = map_.find(oldkey);
+  if (old_it == map_.end()) {
     return;
   }
 
-  auto new_it = m_Map.find(newkey);
+  auto new_it = map_.find(newkey);
   if (new_it == old_it) {
     return;
   }
 
-  m_Map[MaybeIntern(newkey)] = std::move(old_it->second);
-  m_Map.erase(old_it);
+  map_[MaybeIntern(newkey)] = std::move(old_it->second);
+  map_.erase(old_it);
 }
 
 void CPDF_Dictionary::SetRectFor(const ByteString& key,
@@ -353,7 +353,7 @@ void CPDF_Dictionary::SetMatrixFor(const ByteString& key,
 }
 
 ByteString CPDF_Dictionary::MaybeIntern(const ByteString& str) {
-  return m_pPool ? m_pPool->Intern(str) : str;
+  return pool_ ? pool_->Intern(str) : str;
 }
 
 bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive,
@@ -382,22 +382,22 @@ bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive,
 }
 
 CPDF_DictionaryLocker::CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary)
-    : m_pDictionary(pDictionary) {
-  m_pDictionary->m_LockCount++;
+    : dictionary_(pDictionary) {
+  dictionary_->lock_count_++;
 }
 
 CPDF_DictionaryLocker::CPDF_DictionaryLocker(
     RetainPtr<CPDF_Dictionary> pDictionary)
-    : m_pDictionary(std::move(pDictionary)) {
-  m_pDictionary->m_LockCount++;
+    : dictionary_(std::move(pDictionary)) {
+  dictionary_->lock_count_++;
 }
 
 CPDF_DictionaryLocker::CPDF_DictionaryLocker(
     RetainPtr<const CPDF_Dictionary> pDictionary)
-    : m_pDictionary(std::move(pDictionary)) {
-  m_pDictionary->m_LockCount++;
+    : dictionary_(std::move(pDictionary)) {
+  dictionary_->lock_count_++;
 }
 
 CPDF_DictionaryLocker::~CPDF_DictionaryLocker() {
-  m_pDictionary->m_LockCount--;
+  dictionary_->lock_count_--;
 }

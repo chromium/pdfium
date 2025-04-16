@@ -30,7 +30,7 @@ class CPDF_Boolean final : public CPDF_Object {
   explicit CPDF_Boolean(bool value);
   ~CPDF_Boolean() override;
 
-  bool m_bValue = false;
+  bool value_ = false;
 };
 
 inline CPDF_Boolean* ToBoolean(CPDF_Object* obj) {

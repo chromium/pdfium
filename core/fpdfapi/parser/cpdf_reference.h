@@ -31,8 +31,8 @@ class CPDF_Reference final : public CPDF_Object {
   RetainPtr<CPDF_Reference> MakeReference(
       CPDF_IndirectObjectHolder* holder) const override;
 
-  uint32_t GetRefObjNum() const { return m_RefObjNum; }
-  bool HasIndirectObjectHolder() const { return !!m_pObjList; }
+  uint32_t GetRefObjNum() const { return ref_obj_num_; }
+  bool HasIndirectObjectHolder() const { return !!obj_list_; }
   void SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
 
  private:
@@ -49,8 +49,8 @@ class CPDF_Reference final : public CPDF_Object {
 
   const CPDF_Object* FastGetDirect() const;
 
-  UnownedPtr<CPDF_IndirectObjectHolder> m_pObjList;
-  uint32_t m_RefObjNum;
+  UnownedPtr<CPDF_IndirectObjectHolder> obj_list_;
+  uint32_t ref_obj_num_;
 };
 
 inline CPDF_Reference* ToReference(CPDF_Object* obj) {

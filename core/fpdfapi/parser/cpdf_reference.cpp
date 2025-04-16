@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_stream.h"
 
 CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum)
-    : m_pObjList(pDoc), m_RefObjNum(objnum) {}
+    : obj_list_(pDoc), ref_obj_num_(objnum) {}
 
 CPDF_Reference::~CPDF_Reference() = default;
 
@@ -54,7 +54,7 @@ RetainPtr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
   if (!bDirect) {
-    return pdfium::MakeRetain<CPDF_Reference>(m_pObjList, m_RefObjNum);
+    return pdfium::MakeRetain<CPDF_Reference>(obj_list_, ref_obj_num_);
   }
   RetainPtr<const CPDF_Object> pDirect = GetDirect();
   return pDirect && !pdfium::Contains(*pVisited, pDirect.Get())
@@ -63,22 +63,22 @@ RetainPtr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
 }
 
 const CPDF_Object* CPDF_Reference::FastGetDirect() const {
-  if (!m_pObjList) {
+  if (!obj_list_) {
     return nullptr;
   }
   const CPDF_Object* obj =
-      m_pObjList->GetOrParseIndirectObjectInternal(m_RefObjNum);
+      obj_list_->GetOrParseIndirectObjectInternal(ref_obj_num_);
   return (obj && !obj->IsReference()) ? obj : nullptr;
 }
 
 void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum) {
-  m_pObjList = pDoc;
-  m_RefObjNum = objnum;
+  obj_list_ = pDoc;
+  ref_obj_num_ = objnum;
 }
 
 const CPDF_Object* CPDF_Reference::GetDirectInternal() const {
-  return m_pObjList ? m_pObjList->GetOrParseIndirectObjectInternal(m_RefObjNum)
-                    : nullptr;
+  return obj_list_ ? obj_list_->GetOrParseIndirectObjectInternal(ref_obj_num_)
+                   : nullptr;
 }
 
 bool CPDF_Reference::WriteTo(IFX_ArchiveStream* archive,
@@ -89,7 +89,7 @@ bool CPDF_Reference::WriteTo(IFX_ArchiveStream* archive,
 
 RetainPtr<CPDF_Reference> CPDF_Reference::MakeReference(
     CPDF_IndirectObjectHolder* holder) const {
-  DCHECK_EQ(holder, m_pObjList);
+  DCHECK_EQ(holder, obj_list_);
   // Do not allow reference to reference, just create other reference for same
   // object.
   return pdfium::MakeRetain<CPDF_Reference>(holder, GetRefObjNum());

@@ -91,7 +91,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
       const ByteString& password);
 
   const CPDF_HintTables* GetHintTablesForTest() const {
-    return m_pHintTables.get();
+    return hint_tables_.get();
   }
 
  private:
@@ -118,9 +118,9 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
     PageNode();
     ~PageNode();
 
-    Type m_type = Type::kUnknown;
-    uint32_t m_dwPageNo = 0;
-    std::vector<std::unique_ptr<PageNode>> m_ChildNodes;
+    Type type_ = Type::kUnknown;
+    uint32_t page_no_ = 0;
+    std::vector<std::unique_ptr<PageNode>> child_nodes_;
   };
 
   static constexpr int kMaxPageRecursionDepth = 1024;
@@ -165,37 +165,37 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   bool ValidatePage(uint32_t dwPage) const;
   CPDF_SyntaxParser* GetSyntaxParser() const;
 
-  RetainPtr<CPDF_ReadValidator> m_pFileRead;
-  CPDF_Parser m_parser;
-  RetainPtr<CPDF_Dictionary> m_pRoot;
-  std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
-  bool m_bDocAvail = false;
-  InternalStatus m_internalStatus = InternalStatus::kHeader;
-  std::unique_ptr<CPDF_CrossRefAvail> m_pCrossRefAvail;
-  const FX_FILESIZE m_dwFileLen;
-  UnownedPtr<CPDF_Document> m_pDocument;
-  std::vector<uint32_t> m_PageObjList;
-  std::set<uint32_t> m_SeenPageObjList;
-  uint32_t m_PagesObjNum = 0;
-  bool m_bLinearedDataOK = false;
-  bool m_bMainXRefLoadTried = false;
-  bool m_bMainXRefLoadedOK = false;
-  bool m_bPagesTreeLoad = false;
-  bool m_bPagesLoad = false;
-  std::unique_ptr<CPDF_PageObjectAvail> m_pFormAvail;
-  std::vector<RetainPtr<CPDF_Object>> m_PagesArray;
-  bool m_bTotalLoadPageTree = false;
-  bool m_bCurPageDictLoadOK = false;
-  bool m_bHeaderAvail = false;
-  PageNode m_PageNode;
-  std::set<uint32_t> m_pageMapCheckState;
-  std::set<uint32_t> m_pagesLoadState;
-  std::unique_ptr<CPDF_HintTables> m_pHintTables;
-  std::map<uint32_t, std::unique_ptr<CPDF_PageObjectAvail>> m_PagesObjAvail;
+  RetainPtr<CPDF_ReadValidator> file_read_;
+  CPDF_Parser parser_;
+  RetainPtr<CPDF_Dictionary> root_;
+  std::unique_ptr<CPDF_LinearizedHeader> linearized_;
+  bool doc_avail_ = false;
+  InternalStatus internal_status_ = InternalStatus::kHeader;
+  std::unique_ptr<CPDF_CrossRefAvail> cross_ref_avail_;
+  const FX_FILESIZE file_len_;
+  UnownedPtr<CPDF_Document> document_;
+  std::vector<uint32_t> page_obj_list_;
+  std::set<uint32_t> seen_page_obj_list_;
+  uint32_t pages_obj_num_ = 0;
+  bool lineared_data_ok_ = false;
+  bool main_xref_load_tried_ = false;
+  bool main_xref_loaded_ok_ = false;
+  bool pages_tree_load_ = false;
+  bool pages_load_ = false;
+  std::unique_ptr<CPDF_PageObjectAvail> form_avail_;
+  std::vector<RetainPtr<CPDF_Object>> pages_array_;
+  bool total_load_page_tree_ = false;
+  bool cur_page_dict_load_ok_ = false;
+  bool header_avail_ = false;
+  PageNode page_node_;
+  std::set<uint32_t> page_map_check_state_;
+  std::set<uint32_t> pages_load_state_;
+  std::unique_ptr<CPDF_HintTables> hint_tables_;
+  std::map<uint32_t, std::unique_ptr<CPDF_PageObjectAvail>> pages_obj_avail_;
   std::map<RetainPtr<const CPDF_Object>,
            std::unique_ptr<CPDF_PageObjectAvail>,
            std::less<>>
-      m_PagesResourcesAvail;
+      pages_resources_avail_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_

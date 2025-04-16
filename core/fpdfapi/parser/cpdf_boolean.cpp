@@ -10,7 +10,7 @@
 
 CPDF_Boolean::CPDF_Boolean() = default;
 
-CPDF_Boolean::CPDF_Boolean(bool value) : m_bValue(value) {}
+CPDF_Boolean::CPDF_Boolean(bool value) : value_(value) {}
 
 CPDF_Boolean::~CPDF_Boolean() = default;
 
@@ -19,19 +19,19 @@ CPDF_Object::Type CPDF_Boolean::GetType() const {
 }
 
 RetainPtr<CPDF_Object> CPDF_Boolean::Clone() const {
-  return pdfium::MakeRetain<CPDF_Boolean>(m_bValue);
+  return pdfium::MakeRetain<CPDF_Boolean>(value_);
 }
 
 ByteString CPDF_Boolean::GetString() const {
-  return m_bValue ? "true" : "false";
+  return value_ ? "true" : "false";
 }
 
 int CPDF_Boolean::GetInteger() const {
-  return m_bValue;
+  return value_;
 }
 
 void CPDF_Boolean::SetString(const ByteString& str) {
-  m_bValue = (str == "true");
+  value_ = (str == "true");
 }
 
 CPDF_Boolean* CPDF_Boolean::AsMutableBoolean() {

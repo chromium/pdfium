@@ -21,35 +21,35 @@
 
 CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
                                      bool bFlateEncode)
-    : m_pAcc(pdfium::MakeRetain<CPDF_StreamAcc>(pStream)) {
-  m_pAcc->LoadAllDataRaw();
+    : acc_(pdfium::MakeRetain<CPDF_StreamAcc>(pStream)) {
+  acc_->LoadAllDataRaw();
 
   bool bHasFilter = pStream->HasFilter();
   if (bHasFilter && !bFlateEncode) {
     auto pDestAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
     pDestAcc->LoadAllDataFiltered();
 
-    m_Data = m_pAcc->GetSpan();
-    m_pClonedDict = ToDictionary(pStream->GetDict()->Clone());
-    m_pClonedDict->RemoveFor("Filter");
-    DCHECK(!m_pDict);
+    data_ = acc_->GetSpan();
+    cloned_dict_ = ToDictionary(pStream->GetDict()->Clone());
+    cloned_dict_->RemoveFor("Filter");
+    DCHECK(!dict_);
     return;
   }
   if (bHasFilter || !bFlateEncode) {
-    m_Data = m_pAcc->GetSpan();
-    m_pDict = pStream->GetDict();
-    DCHECK(!m_pClonedDict);
+    data_ = acc_->GetSpan();
+    dict_ = pStream->GetDict();
+    DCHECK(!cloned_dict_);
     return;
   }
 
-  m_Data = FlateModule::Encode(m_pAcc->GetSpan());
+  data_ = FlateModule::Encode(acc_->GetSpan());
   CHECK(!GetSpan().empty());
-  m_pClonedDict = ToDictionary(pStream->GetDict()->Clone());
-  m_pClonedDict->SetNewFor<CPDF_Number>(
+  cloned_dict_ = ToDictionary(pStream->GetDict()->Clone());
+  cloned_dict_->SetNewFor<CPDF_Number>(
       "Length", pdfium::checked_cast<int>(GetSpan().size()));
-  m_pClonedDict->SetNewFor<CPDF_Name>("Filter", "FlateDecode");
-  m_pClonedDict->RemoveFor(pdfium::stream::kDecodeParms);
-  DCHECK(!m_pDict);
+  cloned_dict_->SetNewFor<CPDF_Name>("Filter", "FlateDecode");
+  cloned_dict_->RemoveFor(pdfium::stream::kDecodeParms);
+  DCHECK(!dict_);
 }
 
 CPDF_FlateEncoder::~CPDF_FlateEncoder() = default;
@@ -59,13 +59,13 @@ void CPDF_FlateEncoder::UpdateLength(size_t size) {
     return;
   }
 
-  if (!m_pClonedDict) {
-    m_pClonedDict = ToDictionary(m_pDict->Clone());
-    m_pDict.Reset();
+  if (!cloned_dict_) {
+    cloned_dict_ = ToDictionary(dict_->Clone());
+    dict_.Reset();
   }
-  DCHECK(m_pClonedDict);
-  DCHECK(!m_pDict);
-  m_pClonedDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
+  DCHECK(cloned_dict_);
+  DCHECK(!dict_);
+  cloned_dict_->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
 }
 
 bool CPDF_FlateEncoder::WriteDictTo(IFX_ArchiveStream* archive,
@@ -74,16 +74,16 @@ bool CPDF_FlateEncoder::WriteDictTo(IFX_ArchiveStream* archive,
 }
 
 const CPDF_Dictionary* CPDF_FlateEncoder::GetDict() const {
-  if (m_pClonedDict) {
-    DCHECK(!m_pDict);
-    return m_pClonedDict.Get();
+  if (cloned_dict_) {
+    DCHECK(!dict_);
+    return cloned_dict_.Get();
   }
-  return m_pDict.Get();
+  return dict_.Get();
 }
 
 pdfium::span<const uint8_t> CPDF_FlateEncoder::GetSpan() const {
   if (is_owned()) {
-    return std::get<DataVector<uint8_t>>(m_Data);
+    return std::get<DataVector<uint8_t>>(data_);
   }
-  return std::get<pdfium::raw_span<const uint8_t>>(m_Data);
+  return std::get<pdfium::raw_span<const uint8_t>>(data_);
 }

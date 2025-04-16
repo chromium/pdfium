@@ -47,9 +47,9 @@ class ReadableSubStream final : public IFX_SeekableReadStream {
   ReadableSubStream(RetainPtr<IFX_SeekableReadStream> pFileRead,
                     FX_FILESIZE part_offset,
                     FX_FILESIZE part_size)
-      : m_pFileRead(std::move(pFileRead)),
-        m_PartOffset(part_offset),
-        m_PartSize(part_size) {}
+      : file_read_(std::move(pFileRead)),
+        part_offset_(part_offset),
+        part_size_(part_size) {}
 
   ~ReadableSubStream() override = default;
 
@@ -59,20 +59,20 @@ class ReadableSubStream final : public IFX_SeekableReadStream {
     FX_SAFE_FILESIZE safe_end = offset;
     safe_end += buffer.size();
     // Check that requested range is valid, to prevent calling of ReadBlock
-    // of original m_pFileRead with incorrect params.
-    if (!safe_end.IsValid() || safe_end.ValueOrDie() > m_PartSize) {
+    // of original file_read_ with incorrect params.
+    if (!safe_end.IsValid() || safe_end.ValueOrDie() > part_size_) {
       return false;
     }
 
-    return m_pFileRead->ReadBlockAtOffset(buffer, m_PartOffset + offset);
+    return file_read_->ReadBlockAtOffset(buffer, part_offset_ + offset);
   }
 
-  FX_FILESIZE GetSize() override { return m_PartSize; }
+  FX_FILESIZE GetSize() override { return part_size_; }
 
  private:
-  RetainPtr<IFX_SeekableReadStream> m_pFileRead;
-  FX_FILESIZE m_PartOffset;
-  FX_FILESIZE m_PartSize;
+  RetainPtr<IFX_SeekableReadStream> file_read_;
+  FX_FILESIZE part_offset_;
+  FX_FILESIZE part_size_;
 };
 
 }  // namespace
@@ -98,44 +98,44 @@ CPDF_SyntaxParser::CPDF_SyntaxParser(
 
 CPDF_SyntaxParser::CPDF_SyntaxParser(RetainPtr<CPDF_ReadValidator> validator,
                                      FX_FILESIZE HeaderOffset)
-    : m_pFileAccess(std::move(validator)),
-      m_HeaderOffset(HeaderOffset),
-      m_FileLen(m_pFileAccess->GetSize()) {
-  DCHECK(m_HeaderOffset <= m_FileLen);
+    : file_access_(std::move(validator)),
+      header_offset_(HeaderOffset),
+      file_len_(file_access_->GetSize()) {
+  DCHECK(header_offset_ <= file_len_);
 }
 
 CPDF_SyntaxParser::~CPDF_SyntaxParser() = default;
 
 bool CPDF_SyntaxParser::GetCharAt(FX_FILESIZE pos, uint8_t& ch) {
-  AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
-  m_Pos = pos;
+  AutoRestorer<FX_FILESIZE> save_pos(&pos_);
+  pos_ = pos;
   return GetNextChar(ch);
 }
 
 bool CPDF_SyntaxParser::ReadBlockAt(FX_FILESIZE read_pos) {
-  if (read_pos >= m_FileLen) {
+  if (read_pos >= file_len_) {
     return false;
   }
-  size_t read_size = m_ReadBufferSize;
+  size_t read_size = read_buffer_size_;
   FX_SAFE_FILESIZE safe_end = read_pos;
   safe_end += read_size;
-  if (!safe_end.IsValid() || safe_end.ValueOrDie() > m_FileLen) {
-    read_size = m_FileLen - read_pos;
+  if (!safe_end.IsValid() || safe_end.ValueOrDie() > file_len_) {
+    read_size = file_len_ - read_pos;
   }
 
-  m_pFileBuf.resize(read_size);
-  if (!m_pFileAccess->ReadBlockAtOffset(m_pFileBuf, read_pos)) {
-    m_pFileBuf.clear();
+  file_buf_.resize(read_size);
+  if (!file_access_->ReadBlockAtOffset(file_buf_, read_pos)) {
+    file_buf_.clear();
     return false;
   }
 
-  m_BufOffset = read_pos;
+  buf_offset_ = read_pos;
   return true;
 }
 
 bool CPDF_SyntaxParser::GetNextChar(uint8_t& ch) {
-  FX_FILESIZE pos = m_Pos + m_HeaderOffset;
-  if (pos >= m_FileLen) {
+  FX_FILESIZE pos = pos_ + header_offset_;
+  if (pos >= file_len_) {
     return false;
   }
 
@@ -143,18 +143,18 @@ bool CPDF_SyntaxParser::GetNextChar(uint8_t& ch) {
     return false;
   }
 
-  ch = m_pFileBuf[pos - m_BufOffset];
-  m_Pos++;
+  ch = file_buf_[pos - buf_offset_];
+  pos_++;
   return true;
 }
 
 FX_FILESIZE CPDF_SyntaxParser::GetDocumentSize() const {
-  return m_FileLen - m_HeaderOffset;
+  return file_len_ - header_offset_;
 }
 
 bool CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch) {
-  pos += m_HeaderOffset;
-  if (pos >= m_FileLen) {
+  pos += header_offset_;
+  if (pos >= file_len_) {
     return false;
   }
 
@@ -167,20 +167,20 @@ bool CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch) {
       return false;
     }
   }
-  *ch = m_pFileBuf[pos - m_BufOffset];
+  *ch = file_buf_[pos - buf_offset_];
   return true;
 }
 
 bool CPDF_SyntaxParser::ReadBlock(pdfium::span<uint8_t> buffer) {
-  if (!m_pFileAccess->ReadBlockAtOffset(buffer, m_Pos + m_HeaderOffset)) {
+  if (!file_access_->ReadBlockAtOffset(buffer, pos_ + header_offset_)) {
     return false;
   }
-  m_Pos += buffer.size();
+  pos_ += buffer.size();
   return true;
 }
 
 CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
-  m_WordSize = 0;
+  word_size_ = 0;
   WordType word_type = WordType::kNumber;
 
   ToNextWord();
@@ -192,7 +192,7 @@ CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
   if (PDFCharIsDelimiter(ch)) {
     word_type = WordType::kWord;
 
-    m_WordBuffer[m_WordSize++] = ch;
+    word_buffer_[word_size_++] = ch;
     if (ch == '/') {
       while (true) {
         if (!GetNextChar(ch)) {
@@ -200,12 +200,12 @@ CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
         }
 
         if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
-          m_Pos--;
+          pos_--;
           return word_type;
         }
 
-        if (m_WordSize < sizeof(m_WordBuffer) - 1) {
-          m_WordBuffer[m_WordSize++] = ch;
+        if (word_size_ < sizeof(word_buffer_) - 1) {
+          word_buffer_[word_size_++] = ch;
         }
       }
     } else if (ch == '<') {
@@ -214,9 +214,9 @@ CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
       }
 
       if (ch == '<') {
-        m_WordBuffer[m_WordSize++] = ch;
+        word_buffer_[word_size_++] = ch;
       } else {
-        m_Pos--;
+        pos_--;
       }
     } else if (ch == '>') {
       if (!GetNextChar(ch)) {
@@ -224,17 +224,17 @@ CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
       }
 
       if (ch == '>') {
-        m_WordBuffer[m_WordSize++] = ch;
+        word_buffer_[word_size_++] = ch;
       } else {
-        m_Pos--;
+        pos_--;
       }
     }
     return word_type;
   }
 
   while (true) {
-    if (m_WordSize < sizeof(m_WordBuffer) - 1) {
-      m_WordBuffer[m_WordSize++] = ch;
+    if (word_size_ < sizeof(word_buffer_) - 1) {
+      word_buffer_[word_size_++] = ch;
     }
 
     if (!PDFCharIsNumeric(ch)) {
@@ -246,7 +246,7 @@ CPDF_SyntaxParser::WordType CPDF_SyntaxParser::GetNextWordInternal() {
     }
 
     if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
-      m_Pos--;
+      pos_--;
       break;
     }
   }
@@ -390,7 +390,7 @@ void CPDF_SyntaxParser::ToNextLine() {
     if (ch == '\r') {
       GetNextChar(ch);
       if (ch != '\n') {
-        --m_Pos;
+        --pos_;
       }
       break;
     }
@@ -398,7 +398,7 @@ void CPDF_SyntaxParser::ToNextLine() {
 }
 
 void CPDF_SyntaxParser::ToNextWord() {
-  if (m_TrailerEnds) {
+  if (trailer_ends_) {
     RecordingToNextWord();
     return;
   }
@@ -428,7 +428,7 @@ void CPDF_SyntaxParser::ToNextWord() {
       }
     }
   }
-  m_Pos--;
+  pos_--;
 }
 
 // A state machine which goes % -> E -> O -> F -> line ending.
@@ -443,7 +443,7 @@ enum class EofState {
 };
 
 void CPDF_SyntaxParser::RecordingToNextWord() {
-  DCHECK(m_TrailerEnds);
+  DCHECK(trailer_ends_);
 
   EofState eof_state = EofState::kInitial;
   // Find the first character which is neither whitespace, nor part of a
@@ -480,12 +480,12 @@ void CPDF_SyntaxParser::RecordingToNextWord() {
           // immediately.
           if (GetNextChar(ch) && ch != '\n') {
             ch = '\r';
-            m_Pos--;
+            pos_--;
           }
         }
         // If we now have a \r, that's not followed by a \n, so both are OK.
         if (ch == '\r' || ch == '\n') {
-          m_TrailerEnds->push_back(m_Pos);
+          trailer_ends_->push_back(pos_);
         }
         eof_state = EofState::kInvalid;
         break;
@@ -499,7 +499,7 @@ void CPDF_SyntaxParser::RecordingToNextWord() {
       break;
     }
   }
-  m_Pos--;
+  pos_--;
 }
 
 CPDF_SyntaxParser::WordResult CPDF_SyntaxParser::GetNextWord() {
@@ -507,13 +507,13 @@ CPDF_SyntaxParser::WordResult CPDF_SyntaxParser::GetNextWord() {
   WordType word_type = GetNextWordInternal();
   ByteStringView word;
   if (!GetValidator()->has_read_problems()) {
-    word = ByteStringView(pdfium::make_span(m_WordBuffer).first(m_WordSize));
+    word = ByteStringView(pdfium::make_span(word_buffer_).first(word_size_));
   }
   return {ByteString(word), word_type == WordType::kNumber};
 }
 
 ByteString CPDF_SyntaxParser::PeekNextWord() {
-  AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
+  AutoRestorer<FX_FILESIZE> save_pos(&pos_);
   return GetNextWord().word;
 }
 
@@ -523,7 +523,7 @@ ByteString CPDF_SyntaxParser::GetKeyword() {
 
 void CPDF_SyntaxParser::SetPos(FX_FILESIZE pos) {
   DCHECK_GE(pos, 0);
-  m_Pos = std::min(pos, m_FileLen);
+  pos_ = std::min(pos, file_len_);
 }
 
 RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBody(
@@ -544,7 +544,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
     return nullptr;
   }
 
-  FX_FILESIZE SavedObjPos = m_Pos;
+  FX_FILESIZE SavedObjPos = pos_;
   WordResult word_result = GetNextWord();
   const ByteString& word = word_result.word;
   if (word.IsEmpty()) {
@@ -552,7 +552,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
   }
 
   if (word_result.is_number) {
-    AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
+    AutoRestorer<FX_FILESIZE> pos_restorer(&pos_);
     WordResult nextword = GetNextWord();
     if (!nextword.is_number) {
       return pdfium::MakeRetain<CPDF_Number>(word.AsStringView());
@@ -581,10 +581,10 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
   }
 
   if (word == "(") {
-    return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadString());
+    return pdfium::MakeRetain<CPDF_String>(pool_, ReadString());
   }
   if (word == "<") {
-    return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadHexString(),
+    return pdfium::MakeRetain<CPDF_String>(pool_, ReadHexString(),
                                            CPDF_String::DataType::kIsHex);
   }
   if (word == "[") {
@@ -596,18 +596,18 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
         pArray->Append(std::move(pObj));
       }
     }
-    return (parse_type == ParseType::kLoose || m_WordBuffer[0] == ']')
+    return (parse_type == ParseType::kLoose || word_buffer_[0] == ']')
                ? std::move(pArray)
                : nullptr;
   }
   if (word[0] == '/') {
-    auto word_span = pdfium::make_span(m_WordBuffer).first(m_WordSize);
+    auto word_span = pdfium::make_span(word_buffer_).first(word_size_);
     return pdfium::MakeRetain<CPDF_Name>(
-        m_pPool, PDF_NameDecode(ByteStringView(word_span).Substr(1)));
+        pool_, PDF_NameDecode(ByteStringView(word_span).Substr(1)));
   }
   if (word == "<<") {
     RetainPtr<CPDF_Dictionary> pDict =
-        pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
+        pdfium::MakeRetain<CPDF_Dictionary>(pool_);
     while (true) {
       WordResult inner_word_result = GetNextWord();
       const ByteString& inner_word = inner_word_result.word;
@@ -615,13 +615,13 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
         return nullptr;
       }
 
-      FX_FILESIZE SavedPos = m_Pos - inner_word.GetLength();
+      FX_FILESIZE SavedPos = pos_ - inner_word.GetLength();
       if (inner_word == ">>") {
         break;
       }
 
       if (inner_word == "endobj") {
-        m_Pos = SavedPos;
+        pos_ = SavedPos;
         break;
       }
       if (inner_word[0] != '/') {
@@ -651,7 +651,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
       }
     }
 
-    AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
+    AutoRestorer<FX_FILESIZE> pos_restorer(&pos_);
     if (GetNextWord().word != "stream") {
       return pDict;
     }
@@ -659,7 +659,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
     return ReadStream(std::move(pDict));
   }
   if (word == ">>") {
-    m_Pos = SavedObjPos;
+    pos_ = SavedObjPos;
   }
 
   return nullptr;
@@ -719,11 +719,11 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
 }
 
 FX_FILESIZE CPDF_SyntaxParser::FindWordPos(ByteStringView word) {
-  AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
+  AutoRestorer<FX_FILESIZE> pos_restorer(&pos_);
   FX_FILESIZE end_offset = FindTag(word);
   while (end_offset >= 0) {
     // Stop searching when word is found.
-    if (IsWholeWord(GetPos() - word.GetLength(), m_FileLen, word, true)) {
+    if (IsWholeWord(GetPos() - word.GetLength(), file_len_, word, true)) {
       return GetPos() - word.GetLength();
     }
 
@@ -782,7 +782,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   if (len > 0) {
     FX_SAFE_FILESIZE pos = GetPos();
     pos += len;
-    if (!pos.IsValid() || pos.ValueOrDie() >= m_FileLen) {
+    if (!pos.IsValid() || pos.ValueOrDie() >= file_len_) {
       len = -1;
     }
   }
@@ -792,12 +792,12 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     // Check data availability first to allow the Validator to request data
     // smoothly, without jumps.
     if (!GetValidator()->CheckDataRangeAndRequestIfUnavailable(
-            m_HeaderOffset + GetPos(), len)) {
+            header_offset_ + GetPos(), len)) {
       return nullptr;
     }
 
     substream = pdfium::MakeRetain<ReadableSubStream>(
-        GetValidator(), m_HeaderOffset + GetPos(), len);
+        GetValidator(), header_offset_ + GetPos(), len);
     SetPos(GetPos() + len);
   }
 
@@ -808,9 +808,9 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   // are importing pages into a new document.
   if (len >= 0) {
     CPDF_ReadValidator::ScopedSession read_session(GetValidator());
-    m_Pos += ReadEOLMarkers(GetPos());
+    pos_ += ReadEOLMarkers(GetPos());
     const size_t zap_length = kEndStreamStr.GetLength() + 1;
-    fxcrt::Fill(pdfium::make_span(m_WordBuffer).first(zap_length), 0);
+    fxcrt::Fill(pdfium::make_span(word_buffer_).first(zap_length), 0);
     GetNextWordInternal();
     if (GetValidator()->has_read_problems()) {
       return nullptr;
@@ -819,7 +819,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     // Earlier version of PDF specification doesn't require EOL marker before
     // 'endstream' keyword. If keyword 'endstream' follows the bytes in
     // specified length, it signals the end of stream.
-    if (UNSAFE_TODO(memcmp(m_WordBuffer.data(),
+    if (UNSAFE_TODO(memcmp(word_buffer_.data(),
                            kEndStreamStr.unterminated_unsigned_str(),
                            kEndStreamStr.GetLength())) != 0) {
       substream.Reset();
@@ -843,12 +843,12 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
       // Check data availability first to allow the Validator to request data
       // smoothly, without jumps.
       if (!GetValidator()->CheckDataRangeAndRequestIfUnavailable(
-              m_HeaderOffset + GetPos(), len)) {
+              header_offset_ + GetPos(), len)) {
         return nullptr;
       }
 
       substream = pdfium::MakeRetain<ReadableSubStream>(
-          GetValidator(), m_HeaderOffset + GetPos(), len);
+          GetValidator(), header_offset_ + GetPos(), len);
       SetPos(GetPos() + len);
     }
   }
@@ -873,7 +873,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   }
   const FX_FILESIZE end_stream_offset = GetPos();
   const size_t zap_length = kEndObjStr.GetLength() + 1;
-  fxcrt::Fill(pdfium::make_span(m_WordBuffer).first(zap_length), 0);
+  fxcrt::Fill(pdfium::make_span(word_buffer_).first(zap_length), 0);
   GetNextWordInternal();
 
   // Allow whitespace after endstream and before a newline.
@@ -886,9 +886,9 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   SetPos(GetPos() - 1);
 
   int numMarkers = ReadEOLMarkers(GetPos());
-  if (m_WordSize == static_cast<unsigned int>(kEndObjStr.GetLength()) &&
+  if (word_size_ == static_cast<unsigned int>(kEndObjStr.GetLength()) &&
       numMarkers != 0 &&
-      UNSAFE_TODO(memcmp(m_WordBuffer.data(),
+      UNSAFE_TODO(memcmp(word_buffer_.data(),
                          kEndObjStr.unterminated_unsigned_str(),
                          kEndObjStr.GetLength())) == 0) {
     SetPos(end_stream_offset);
@@ -901,12 +901,12 @@ uint32_t CPDF_SyntaxParser::GetDirectNum() {
     return 0;
   }
 
-  m_WordBuffer[m_WordSize] = 0;
-  return FXSYS_atoui(pdfium::as_chars(pdfium::make_span(m_WordBuffer)).data());
+  word_buffer_[word_size_] = 0;
+  return FXSYS_atoui(pdfium::as_chars(pdfium::make_span(word_buffer_)).data());
 }
 
 RetainPtr<CPDF_ReadValidator> CPDF_SyntaxParser::GetValidator() const {
-  return m_pFileAccess;
+  return file_access_;
 }
 
 bool CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
@@ -944,10 +944,10 @@ bool CPDF_SyntaxParser::BackwardsSearchToWord(ByteStringView word,
     return false;
   }
 
-  FX_FILESIZE pos = m_Pos;
+  FX_FILESIZE pos = pos_;
   int32_t offset = taglen - 1;
   while (true) {
-    if (limit && pos <= m_Pos - limit) {
+    if (limit && pos <= pos_ - limit) {
       return false;
     }
 
@@ -963,7 +963,7 @@ bool CPDF_SyntaxParser::BackwardsSearchToWord(ByteStringView word,
         continue;
       }
       if (IsWholeWord(pos, limit, word, false)) {
-        m_Pos = pos;
+        pos_ = pos;
         return true;
       }
     }
@@ -1007,6 +1007,6 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(ByteStringView tag) {
 }
 
 bool CPDF_SyntaxParser::IsPositionRead(FX_FILESIZE pos) const {
-  return m_BufOffset <= pos &&
-         pos < static_cast<FX_FILESIZE>(m_BufOffset + m_pFileBuf.size());
+  return buf_offset_ <= pos &&
+         pos < static_cast<FX_FILESIZE>(buf_offset_ + file_buf_.size());
 }

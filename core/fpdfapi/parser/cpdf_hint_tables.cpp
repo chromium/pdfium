@@ -79,19 +79,19 @@ std::unique_ptr<CPDF_HintTables> CPDF_HintTables::Parse(
 
 CPDF_HintTables::CPDF_HintTables(CPDF_ReadValidator* pValidator,
                                  const CPDF_LinearizedHeader* pLinearized)
-    : m_pValidator(pValidator), m_pLinearized(pLinearized) {
-  DCHECK(m_pLinearized);
+    : validator_(pValidator), linearized_(pLinearized) {
+  DCHECK(linearized_);
 }
 
 CPDF_HintTables::~CPDF_HintTables() = default;
 
 bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
-  const uint32_t nPages = m_pLinearized->GetPageCount();
+  const uint32_t nPages = linearized_->GetPageCount();
   if (nPages < 1 || nPages >= CPDF_Document::kPageMaxNum) {
     return false;
   }
 
-  const uint32_t nFirstPageNum = m_pLinearized->GetFirstPageNo();
+  const uint32_t nFirstPageNum = linearized_->GetFirstPageNo();
   if (nFirstPageNum >= nPages) {
     return false;
   }
@@ -118,7 +118,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     return false;
   }
 
-  m_szFirstPageObjOffset = szFirstObjLoc;
+  first_page_obj_offset_ = szFirstObjLoc;
 
   // Item 3: The number of bits needed to represent the difference
   // between the greatest and least number of objects in a page.
@@ -175,9 +175,9 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     return false;
   }
 
-  m_PageInfos = std::vector<PageInfo>(nPages);
-  m_PageInfos[nFirstPageNum].set_start_obj_num(
-      m_pLinearized->GetFirstPageObjNum());
+  page_infos_ = std::vector<PageInfo>(nPages);
+  page_infos_[nFirstPageNum].set_start_obj_num(
+      linearized_->GetFirstPageObjNum());
   // The object number of remaining pages starts from 1.
   FX_SAFE_UINT32 dwStartObjNum = 1;
   for (uint32_t i = 0; i < nPages; ++i) {
@@ -186,12 +186,12 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     if (!safeDeltaObj.IsValid()) {
       return false;
     }
-    m_PageInfos[i].set_objects_count(safeDeltaObj.ValueOrDie());
+    page_infos_[i].set_objects_count(safeDeltaObj.ValueOrDie());
     if (i == nFirstPageNum) {
       continue;
     }
-    m_PageInfos[i].set_start_obj_num(dwStartObjNum.ValueOrDie());
-    dwStartObjNum += m_PageInfos[i].objects_count();
+    page_infos_[i].set_start_obj_num(dwStartObjNum.ValueOrDie());
+    dwStartObjNum += page_infos_[i].objects_count();
     if (!dwStartObjNum.IsValid() ||
         dwStartObjNum.ValueOrDie() >= CPDF_Parser::kMaxObjectNumber) {
       return false;
@@ -211,18 +211,18 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     if (!safePageLen.IsValid()) {
       return false;
     }
-    m_PageInfos[i].set_page_length(safePageLen.ValueOrDie());
+    page_infos_[i].set_page_length(safePageLen.ValueOrDie());
   }
 
-  DCHECK(m_szFirstPageObjOffset);
-  m_PageInfos[nFirstPageNum].set_page_offset(m_szFirstPageObjOffset);
-  FX_FILESIZE prev_page_end = m_pLinearized->GetFirstPageEndOffset();
+  DCHECK(first_page_obj_offset_);
+  page_infos_[nFirstPageNum].set_page_offset(first_page_obj_offset_);
+  FX_FILESIZE prev_page_end = linearized_->GetFirstPageEndOffset();
   for (uint32_t i = 0; i < nPages; ++i) {
     if (i == nFirstPageNum) {
       continue;
     }
-    m_PageInfos[i].set_page_offset(prev_page_end);
-    prev_page_end += m_PageInfos[i].page_length();
+    page_infos_[i].set_page_offset(prev_page_end);
+    prev_page_end += page_infos_[i].page_length();
   }
   hStream->ByteAlign();
 
@@ -248,7 +248,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     }
 
     for (uint32_t j = 0; j < dwNSharedObjsArray[i]; j++) {
-      m_PageInfos[i].AddIdentifier(hStream->GetBits(dwSharedIdBits));
+      page_infos_[i].AddIdentifier(hStream->GetBits(dwSharedIdBits));
     }
   }
   hStream->ByteAlign();
@@ -310,7 +310,7 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   }
 
   // Item 3: The number of shared object entries for the first page.
-  m_nFirstPageSharedObjs = hStream->GetBits(32);
+  first_page_shared_objs_ = hStream->GetBits(32);
 
   // Item 4: The number of shared object entries for the shared objects
   // section, including the number of shared object entries for the first page.
@@ -337,7 +337,7 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   }
 
   if (dwFirstSharedObjNum >= CPDF_Parser::kMaxObjectNumber ||
-      m_nFirstPageSharedObjs >= CPDF_Parser::kMaxObjectNumber ||
+      first_page_shared_objs_ >= CPDF_Parser::kMaxObjectNumber ||
       dwSharedObjTotal >= CPDF_Parser::kMaxObjectNumber) {
     return false;
   }
@@ -350,22 +350,22 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
 
   if (dwSharedObjTotal > 0) {
     uint32_t dwLastSharedObj = dwSharedObjTotal - 1;
-    if (dwLastSharedObj > m_nFirstPageSharedObjs) {
+    if (dwLastSharedObj > first_page_shared_objs_) {
       FX_SAFE_UINT32 safeObjNum = dwFirstSharedObjNum;
-      safeObjNum += dwLastSharedObj - m_nFirstPageSharedObjs;
+      safeObjNum += dwLastSharedObj - first_page_shared_objs_;
       if (!safeObjNum.IsValid()) {
         return false;
       }
     }
   }
 
-  m_SharedObjGroupInfos.resize(dwSharedObjTotal);
+  shared_obj_group_infos_.resize(dwSharedObjTotal);
   // Table F.6 - Shared object hint table, shared object group entries:
   // Item 1: A number that, when added to the least shared object
   // group length.
-  FX_SAFE_FILESIZE prev_shared_group_end_offset = m_szFirstPageObjOffset;
+  FX_SAFE_FILESIZE prev_shared_group_end_offset = first_page_obj_offset_;
   for (uint32_t i = 0; i < dwSharedObjTotal; ++i) {
-    if (i == m_nFirstPageSharedObjs) {
+    if (i == first_page_shared_objs_) {
       prev_shared_group_end_offset = szFirstSharedObjLoc;
     }
 
@@ -375,10 +375,10 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
       return false;
     }
 
-    m_SharedObjGroupInfos[i].m_dwLength = safeObjLen.ValueOrDie();
-    m_SharedObjGroupInfos[i].m_szOffset =
+    shared_obj_group_infos_[i].length_ = safeObjLen.ValueOrDie();
+    shared_obj_group_infos_[i].offset_ =
         prev_shared_group_end_offset.ValueOrDie();
-    prev_shared_group_end_offset += m_SharedObjGroupInfos[i].m_dwLength;
+    prev_shared_group_end_offset += shared_obj_group_infos_[i].length_;
     if (!prev_shared_group_end_offset.IsValid()) {
       return false;
     }
@@ -408,9 +408,9 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
     }
   }
   // Item 4: A number equal to 1 less than the number of objects in the group.
-  FX_SAFE_UINT32 cur_obj_num = m_pLinearized->GetFirstPageObjNum();
+  FX_SAFE_UINT32 cur_obj_num = linearized_->GetFirstPageObjNum();
   for (uint32_t i = 0; i < dwSharedObjTotal; ++i) {
-    if (i == m_nFirstPageSharedObjs) {
+    if (i == first_page_shared_objs_) {
       cur_obj_num = dwFirstSharedObjNum;
     }
 
@@ -427,8 +427,8 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
       return false;
     }
 
-    m_SharedObjGroupInfos[i].m_dwStartObjNum = obj_num;
-    m_SharedObjGroupInfos[i].m_dwObjectsCount = obj_count.ValueOrDie();
+    shared_obj_group_infos_[i].start_obj_num_ = obj_num;
+    shared_obj_group_infos_[i].objects_count_ = obj_count.ValueOrDie();
   }
 
   hStream->ByteAlign();
@@ -439,49 +439,49 @@ bool CPDF_HintTables::GetPagePos(uint32_t index,
                                  FX_FILESIZE* szPageStartPos,
                                  FX_FILESIZE* szPageLength,
                                  uint32_t* dwObjNum) const {
-  if (index >= m_pLinearized->GetPageCount()) {
+  if (index >= linearized_->GetPageCount()) {
     return false;
   }
 
-  *szPageStartPos = m_PageInfos[index].page_offset();
-  *szPageLength = m_PageInfos[index].page_length();
-  *dwObjNum = m_PageInfos[index].start_obj_num();
+  *szPageStartPos = page_infos_[index].page_offset();
+  *szPageLength = page_infos_[index].page_length();
+  *dwObjNum = page_infos_[index].start_obj_num();
   return true;
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
-  if (index == m_pLinearized->GetFirstPageNo()) {
+  if (index == linearized_->GetFirstPageNo()) {
     return CPDF_DataAvail::kDataAvailable;
   }
 
-  if (index >= m_pLinearized->GetPageCount()) {
+  if (index >= linearized_->GetPageCount()) {
     return CPDF_DataAvail::kDataError;
   }
 
-  const uint32_t dwLength = m_PageInfos[index].page_length();
+  const uint32_t dwLength = page_infos_[index].page_length();
   if (!dwLength) {
     return CPDF_DataAvail::kDataError;
   }
 
-  if (!m_pValidator->CheckDataRangeAndRequestIfUnavailable(
-          m_PageInfos[index].page_offset(), dwLength)) {
+  if (!validator_->CheckDataRangeAndRequestIfUnavailable(
+          page_infos_[index].page_offset(), dwLength)) {
     return CPDF_DataAvail::kDataNotAvailable;
   }
 
   // Download data of shared objects in the page.
-  for (const uint32_t dwIndex : m_PageInfos[index].Identifiers()) {
-    if (dwIndex >= m_SharedObjGroupInfos.size()) {
+  for (const uint32_t dwIndex : page_infos_[index].Identifiers()) {
+    if (dwIndex >= shared_obj_group_infos_.size()) {
       continue;
     }
     const SharedObjGroupInfo& shared_group_info =
-        m_SharedObjGroupInfos[dwIndex];
+        shared_obj_group_infos_[dwIndex];
 
-    if (!shared_group_info.m_szOffset || !shared_group_info.m_dwLength) {
+    if (!shared_group_info.offset_ || !shared_group_info.length_) {
       return CPDF_DataAvail::kDataError;
     }
 
-    if (!m_pValidator->CheckDataRangeAndRequestIfUnavailable(
-            shared_group_info.m_szOffset, shared_group_info.m_dwLength)) {
+    if (!validator_->CheckDataRangeAndRequestIfUnavailable(
+            shared_group_info.offset_, shared_group_info.length_)) {
       return CPDF_DataAvail::kDataNotAvailable;
     }
   }
@@ -489,7 +489,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
 }
 
 bool CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
-  if (!pHintStream || !m_pLinearized->HasHintTable()) {
+  if (!pHintStream || !linearized_->HasHintTable()) {
     return false;
   }
 
@@ -544,8 +544,8 @@ FX_FILESIZE CPDF_HintTables::HintsOffsetToFileOffset(
   // stream offset also need to have the hint stream length added to it. e.g.
   // There exists linearized PDFs generated by Adobe software that have this
   // property.
-  if (file_offset.ValueOrDie() >= m_pLinearized->GetHintStart()) {
-    file_offset += m_pLinearized->GetHintLength();
+  if (file_offset.ValueOrDie() >= linearized_->GetHintStart()) {
+    file_offset += linearized_->GetHintLength();
   }
 
   return file_offset.ValueOrDefault(0);

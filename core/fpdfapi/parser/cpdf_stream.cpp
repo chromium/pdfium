@@ -68,7 +68,7 @@ CPDF_Stream::CPDF_Stream(DataVector<uint8_t> data,
 }
 
 CPDF_Stream::~CPDF_Stream() {
-  m_ObjNum = kInvalidObjNum;
+  obj_num_ = kInvalidObjNum;
   if (dict_->GetObjNum() == kInvalidObjNum) {
     dict_.Leak();  // lowercase release, release ownership.
   }

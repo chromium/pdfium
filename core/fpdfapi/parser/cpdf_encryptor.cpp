@@ -13,8 +13,8 @@
 #include "core/fxcrt/data_vector.h"
 
 CPDF_Encryptor::CPDF_Encryptor(const CPDF_CryptoHandler* pHandler, int objnum)
-    : m_pHandler(pHandler), m_ObjNum(objnum) {
-  DCHECK(m_pHandler);
+    : handler_(pHandler), obj_num_(objnum) {
+  DCHECK(handler_);
 }
 
 DataVector<uint8_t> CPDF_Encryptor::Encrypt(
@@ -22,7 +22,7 @@ DataVector<uint8_t> CPDF_Encryptor::Encrypt(
   if (src_data.empty()) {
     return DataVector<uint8_t>();
   }
-  return m_pHandler->EncryptContent(m_ObjNum, 0, src_data);
+  return handler_->EncryptContent(obj_num_, 0, src_data);
 }
 
 CPDF_Encryptor::~CPDF_Encryptor() = default;

@@ -26,14 +26,14 @@ class CFDF_Document final : public CPDF_IndirectObjectHolder {
   ~CFDF_Document() override;
 
   ByteString WriteToString() const;
-  const CPDF_Dictionary* GetRoot() const { return m_pRootDict.Get(); }
-  RetainPtr<CPDF_Dictionary> GetMutableRoot() const { return m_pRootDict; }
+  const CPDF_Dictionary* GetRoot() const { return root_dict_.Get(); }
+  RetainPtr<CPDF_Dictionary> GetMutableRoot() const { return root_dict_; }
 
  private:
   void ParseStream(RetainPtr<IFX_SeekableReadStream> pFile);
 
-  RetainPtr<CPDF_Dictionary> m_pRootDict;
-  RetainPtr<IFX_SeekableReadStream> m_pFile;
+  RetainPtr<CPDF_Dictionary> root_dict_;
+  RetainPtr<IFX_SeekableReadStream> file_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CFDF_DOCUMENT_H_

@@ -57,13 +57,13 @@ class CPDF_Document : public Observable,
         RetainPtr<CPDF_StreamAcc>&& pStreamAcc) = 0;
     virtual void MaybePurgeImage(uint32_t objnum) = 0;
 
-    void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
+    void SetDocument(CPDF_Document* pDoc) { doc_ = pDoc; }
 
    protected:
-    CPDF_Document* GetDocument() const { return m_pDoc; }
+    CPDF_Document* GetDocument() const { return doc_; }
 
    private:
-    UnownedPtr<CPDF_Document> m_pDoc;
+    UnownedPtr<CPDF_Document> doc_;
   };
 
   class RenderDataIface {
@@ -71,13 +71,13 @@ class CPDF_Document : public Observable,
     RenderDataIface();
     virtual ~RenderDataIface();
 
-    void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
+    void SetDocument(CPDF_Document* pDoc) { doc_ = pDoc; }
 
    protected:
-    CPDF_Document* GetDocument() const { return m_pDoc; }
+    CPDF_Document* GetDocument() const { return doc_; }
 
    private:
-    UnownedPtr<CPDF_Document> m_pDoc;
+    UnownedPtr<CPDF_Document> doc_;
   };
 
   static constexpr int kPageMaxNum = 0xFFFFF;
@@ -88,14 +88,14 @@ class CPDF_Document : public Observable,
                 std::unique_ptr<PageDataIface> pPageData);
   ~CPDF_Document() override;
 
-  Extension* GetExtension() const { return m_pExtension.get(); }
+  Extension* GetExtension() const { return extension_.get(); }
   void SetExtension(std::unique_ptr<Extension> pExt) {
-    m_pExtension = std::move(pExt);
+    extension_ = std::move(pExt);
   }
 
-  CPDF_Parser* GetParser() const { return m_pParser.get(); }
-  const CPDF_Dictionary* GetRoot() const { return m_pRootDict.Get(); }
-  RetainPtr<CPDF_Dictionary> GetMutableRoot() { return m_pRootDict; }
+  CPDF_Parser* GetParser() const { return parser_.get(); }
+  const CPDF_Dictionary* GetRoot() const { return root_dict_.Get(); }
+  RetainPtr<CPDF_Dictionary> GetMutableRoot() { return root_dict_; }
   RetainPtr<CPDF_Dictionary> GetInfo();
   RetainPtr<const CPDF_Array> GetFileIdentifier() const;
 
@@ -123,15 +123,15 @@ class CPDF_Document : public Observable,
   void MaybePurgeImage(uint32_t objnum);
 
   // Returns a valid pointer, unless it is called during destruction.
-  PageDataIface* GetPageData() const { return m_pDocPage.get(); }
-  RenderDataIface* GetRenderData() const { return m_pDocRender.get(); }
+  PageDataIface* GetPageData() const { return doc_page_.get(); }
+  RenderDataIface* GetRenderData() const { return doc_render_.get(); }
 
   void SetPageObjNum(int iPage, uint32_t objNum);
 
   JBig2_DocumentContext* GetOrCreateCodecContext();
-  LinkListIface* GetLinksContext() const { return m_pLinksContext.get(); }
+  LinkListIface* GetLinksContext() const { return links_context_.get(); }
   void SetLinksContext(std::unique_ptr<LinkListIface> pContext) {
-    m_pLinksContext = std::move(pContext);
+    links_context_ = std::move(pContext);
   }
 
   // Behaves like NewIndirect<CPDF_Stream>(dict), but keeps track of the object
@@ -151,15 +151,15 @@ class CPDF_Document : public Observable,
   CPDF_Parser::Error LoadLinearizedDoc(RetainPtr<CPDF_ReadValidator> validator,
                                        const ByteString& password);
   bool has_valid_cross_reference_table() const {
-    return m_bHasValidCrossReferenceTable;
+    return has_valid_cross_reference_table_;
   }
 
   void LoadPages();
   void CreateNewDoc();
   RetainPtr<CPDF_Dictionary> CreateNewPage(int iPage);
 
-  void IncrementParsedPageCount() { ++m_ParsedPageCount; }
-  uint32_t GetParsedPageCountForTesting() { return m_ParsedPageCount; }
+  void IncrementParsedPageCount() { ++parsed_page_count_; }
+  uint32_t GetParsedPageCountForTesting() { return parsed_page_count_; }
 
   void SetRootForTesting(RetainPtr<CPDF_Dictionary> root);
 
@@ -177,13 +177,13 @@ class CPDF_Document : public Observable,
     ~StockFontClearer();
 
    private:
-    UnownedPtr<CPDF_Document::PageDataIface> const m_pPageData;
+    UnownedPtr<CPDF_Document::PageDataIface> const page_data_;
   };
 
   // Retrieve page count information by getting count value from the tree nodes
   int RetrievePageCount();
 
-  // When this method is called, m_pTreeTraversal[level] exists.
+  // When this method is called, tree_traversal_[level] exists.
   RetainPtr<CPDF_Dictionary> TraversePDFPages(int iPage,
                                               int* nPagesToGo,
                                               size_t level);
@@ -201,38 +201,38 @@ class CPDF_Document : public Observable,
   void ResetTraversal();
   CPDF_Parser::Error HandleLoadResult(CPDF_Parser::Error error);
 
-  std::unique_ptr<CPDF_Parser> m_pParser;
-  RetainPtr<CPDF_Dictionary> m_pRootDict;
-  RetainPtr<CPDF_Dictionary> m_pInfoDict;
+  std::unique_ptr<CPDF_Parser> parser_;
+  RetainPtr<CPDF_Dictionary> root_dict_;
+  RetainPtr<CPDF_Dictionary> info_dict_;
 
   // Vector of pairs to know current position in the page tree. The index in the
   // vector corresponds to the level being described. The pair contains a
   // pointer to the dictionary being processed at the level, and an index of the
   // of the child being processed within the dictionary's /Kids array.
-  std::vector<std::pair<RetainPtr<CPDF_Dictionary>, size_t>> m_pTreeTraversal;
+  std::vector<std::pair<RetainPtr<CPDF_Dictionary>, size_t>> tree_traversal_;
 
   // True if the CPDF_Parser succeeded without having to rebuild the cross
   // reference table.
-  bool m_bHasValidCrossReferenceTable = false;
+  bool has_valid_cross_reference_table_ = false;
 
   // Index of the next page that will be traversed from the page tree.
-  bool m_bReachedMaxPageLevel = false;
-  int m_iNextPageToTraverse = 0;
-  uint32_t m_ParsedPageCount = 0;
+  bool reached_max_page_level_ = false;
+  int next_page_to_traverse_ = 0;
+  uint32_t parsed_page_count_ = 0;
 
-  std::unique_ptr<RenderDataIface> const m_pDocRender;
-  // Must be after `m_pDocRender`.
-  std::unique_ptr<PageDataIface> const m_pDocPage;
-  std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
-  std::unique_ptr<LinkListIface> m_pLinksContext;
-  std::set<uint32_t> m_ModifiedAPStreamIDs;
-  std::vector<uint32_t> m_PageList;  // Page number to page's dict objnum.
+  std::unique_ptr<RenderDataIface> const doc_render_;
+  // Must be after `doc_render_`.
+  std::unique_ptr<PageDataIface> const doc_page_;
+  std::unique_ptr<JBig2_DocumentContext> codec_context_;
+  std::unique_ptr<LinkListIface> links_context_;
+  std::set<uint32_t> modified_apstream_ids_;
+  std::vector<uint32_t> page_list_;  // Page number to page's dict objnum.
 
   // Must be second to last.
-  StockFontClearer m_StockFontClearer;
+  StockFontClearer stock_font_clearer_;
 
   // Must be last. Destroy the extension before any non-extension teardown.
-  std::unique_ptr<Extension> m_pExtension;
+  std::unique_ptr<Extension> extension_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DOCUMENT_H_

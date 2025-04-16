@@ -40,7 +40,7 @@ class CPDF_StreamAcc final : public Retainable {
   pdfium::span<const uint8_t> GetSpan() const;
   uint64_t KeyForCache() const;
   DataVector<uint8_t> ComputeDigest() const;
-  ByteString GetImageDecoder() const { return m_ImageDecoder; }
+  ByteString GetImageDecoder() const { return image_decoder_; }
   DataVector<uint8_t> DetachData();
 
   int GetLength1ForTest() const;
@@ -53,18 +53,18 @@ class CPDF_StreamAcc final : public Retainable {
   void ProcessRawData();
   void ProcessFilteredData(uint32_t estimated_size, bool bImageAcc);
 
-  // Returns the raw data from `m_pStream`, or no data on failure.
+  // Returns the raw data from `stream_`, or no data on failure.
   DataVector<uint8_t> ReadRawStream() const;
 
   bool is_owned() const {
-    return std::holds_alternative<DataVector<uint8_t>>(m_Data);
+    return std::holds_alternative<DataVector<uint8_t>>(data_);
   }
 
-  ByteString m_ImageDecoder;
-  RetainPtr<const CPDF_Dictionary> m_pImageParam;
-  // Needs to outlive `m_Data` when the data is not owned.
-  RetainPtr<const CPDF_Stream> const m_pStream;
-  std::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> m_Data;
+  ByteString image_decoder_;
+  RetainPtr<const CPDF_Dictionary> image_param_;
+  // Needs to outlive `data_` when the data is not owned.
+  RetainPtr<const CPDF_Stream> const stream_;
+  std::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> data_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_

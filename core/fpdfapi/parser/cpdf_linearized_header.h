@@ -23,39 +23,39 @@ class CPDF_LinearizedHeader {
       CPDF_SyntaxParser* parser);
 
   // Will only return values > 0.
-  FX_FILESIZE GetFileSize() const { return m_szFileSize; }
-  uint32_t GetFirstPageNo() const { return m_dwFirstPageNo; }
+  FX_FILESIZE GetFileSize() const { return file_size_; }
+  uint32_t GetFirstPageNo() const { return first_page_no_; }
   // Will only return values > 0.
   FX_FILESIZE GetMainXRefTableFirstEntryOffset() const {
-    return m_szMainXRefTableFirstEntryOffset;
+    return main_xref_table_first_entry_offset_;
   }
-  uint32_t GetPageCount() const { return m_PageCount; }
+  uint32_t GetPageCount() const { return page_count_; }
   // Will only return values > 0.
-  FX_FILESIZE GetFirstPageEndOffset() const { return m_szFirstPageEndOffset; }
+  FX_FILESIZE GetFirstPageEndOffset() const { return first_page_end_offset_; }
   // Will only return values in the range [1, `CPDF_Parser::kMaxObjectNumber`).
-  uint32_t GetFirstPageObjNum() const { return m_FirstPageObjNum; }
+  uint32_t GetFirstPageObjNum() const { return first_page_obj_num_; }
   // Will only return values > 0.
-  FX_FILESIZE GetLastXRefOffset() const { return m_szLastXRefOffset; }
+  FX_FILESIZE GetLastXRefOffset() const { return last_xref_offset_; }
 
   bool HasHintTable() const;
   // Will only return values > 0.
-  FX_FILESIZE GetHintStart() const { return m_szHintStart; }
-  uint32_t GetHintLength() const { return m_HintLength; }
+  FX_FILESIZE GetHintStart() const { return hint_start_; }
+  uint32_t GetHintLength() const { return hint_length_; }
 
  protected:
   CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
                         FX_FILESIZE szLastXRefOffset);
 
  private:
-  const FX_FILESIZE m_szFileSize;
-  const uint32_t m_dwFirstPageNo;
-  const FX_FILESIZE m_szMainXRefTableFirstEntryOffset;
-  const uint32_t m_PageCount;
-  const FX_FILESIZE m_szFirstPageEndOffset;
-  const uint32_t m_FirstPageObjNum;
-  const FX_FILESIZE m_szLastXRefOffset;
-  FX_FILESIZE m_szHintStart = 0;
-  uint32_t m_HintLength = 0;
+  const FX_FILESIZE file_size_;
+  const uint32_t first_page_no_;
+  const FX_FILESIZE main_xref_table_first_entry_offset_;
+  const uint32_t page_count_;
+  const FX_FILESIZE first_page_end_offset_;
+  const uint32_t first_page_obj_num_;
+  const FX_FILESIZE last_xref_offset_;
+  FX_FILESIZE hint_start_ = 0;
+  uint32_t hint_length_ = 0;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_LINEARIZED_HEADER_H_

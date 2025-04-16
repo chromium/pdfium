@@ -30,7 +30,7 @@ class CPDF_Name final : public CPDF_Object {
   CPDF_Name(WeakPtr<ByteStringPool> pPool, const ByteString& str);
   ~CPDF_Name() override;
 
-  ByteString m_Name;
+  ByteString name_;
 };
 
 inline CPDF_Name* ToName(CPDF_Object* obj) {

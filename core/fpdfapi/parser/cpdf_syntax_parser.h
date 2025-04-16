@@ -48,10 +48,10 @@ class CPDF_SyntaxParser {
   ~CPDF_SyntaxParser();
 
   void SetReadBufferSize(uint32_t read_buffer_size) {
-    m_ReadBufferSize = read_buffer_size;
+    read_buffer_size_ = read_buffer_size;
   }
 
-  FX_FILESIZE GetPos() const { return m_Pos; }
+  FX_FILESIZE GetPos() const { return pos_; }
   void SetPos(FX_FILESIZE pos);
 
   RetainPtr<CPDF_Object> GetObjectBody(CPDF_IndirectObjectHolder* pObjList);
@@ -75,7 +75,7 @@ class CPDF_SyntaxParser {
 
   // The document size may be smaller than the file size.
   // The syntax parser use position relative to document
-  // offset (|m_HeaderOffset|).
+  // offset (|header_offset_|).
   // The document size will be FileSize - "Header offset".
   // All offsets was readed from document, should not be great than document
   // size. Use it for checks instead of real file size.
@@ -85,7 +85,7 @@ class CPDF_SyntaxParser {
   DataVector<uint8_t> ReadHexString();
 
   void SetTrailerEnds(std::vector<unsigned int>* trailer_ends) {
-    m_TrailerEnds = trailer_ends;
+    trailer_ends_ = trailer_ends;
   }
 
  private:
@@ -116,22 +116,22 @@ class CPDF_SyntaxParser {
       CPDF_IndirectObjectHolder* pObjList,
       ParseType parse_type);
 
-  RetainPtr<CPDF_ReadValidator> m_pFileAccess;
+  RetainPtr<CPDF_ReadValidator> file_access_;
   // The syntax parser use position relative to header offset.
   // The header contains at file start, and can follow after some stuff. We
   // ignore this stuff.
-  const FX_FILESIZE m_HeaderOffset;
-  const FX_FILESIZE m_FileLen;
-  FX_FILESIZE m_Pos = 0;
-  WeakPtr<ByteStringPool> m_pPool;
-  DataVector<uint8_t> m_pFileBuf;
-  FX_FILESIZE m_BufOffset = 0;
-  uint32_t m_WordSize = 0;
-  uint32_t m_ReadBufferSize = CPDF_Stream::kFileBufSize;
-  std::array<uint8_t, 257> m_WordBuffer = {};
+  const FX_FILESIZE header_offset_;
+  const FX_FILESIZE file_len_;
+  FX_FILESIZE pos_ = 0;
+  WeakPtr<ByteStringPool> pool_;
+  DataVector<uint8_t> file_buf_;
+  FX_FILESIZE buf_offset_ = 0;
+  uint32_t word_size_ = 0;
+  uint32_t read_buffer_size_ = CPDF_Stream::kFileBufSize;
+  std::array<uint8_t, 257> word_buffer_ = {};
 
   // The syntax parser records traversed trailer end byte offsets here.
-  UnownedPtr<std::vector<unsigned int>> m_TrailerEnds;
+  UnownedPtr<std::vector<unsigned int>> trailer_ends_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_

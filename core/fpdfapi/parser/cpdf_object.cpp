@@ -30,8 +30,8 @@ uint64_t CPDF_Object::KeyForCache() const {
     return (static_cast<uint64_t>(1) << 63) | reinterpret_cast<uint64_t>(this);
   }
 
-  return (static_cast<uint64_t>(m_ObjNum) << 32) |
-         static_cast<uint64_t>(m_GenNum);
+  return (static_cast<uint64_t>(obj_num_) << 32) |
+         static_cast<uint64_t>(gen_num_);
 }
 
 RetainPtr<CPDF_Object> CPDF_Object::GetMutableDirect() {

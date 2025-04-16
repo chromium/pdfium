@@ -62,11 +62,11 @@ class CPDF_Object : public Retainable {
     kReference
   };
 
-  uint32_t GetObjNum() const { return m_ObjNum; }
-  void SetObjNum(uint32_t objnum) { m_ObjNum = objnum; }
-  uint32_t GetGenNum() const { return m_GenNum; }
-  void SetGenNum(uint32_t gennum) { m_GenNum = gennum; }
-  bool IsInline() const { return m_ObjNum == 0; }
+  uint32_t GetObjNum() const { return obj_num_; }
+  void SetObjNum(uint32_t objnum) { obj_num_ = objnum; }
+  uint32_t GetGenNum() const { return gen_num_; }
+  void SetGenNum(uint32_t gennum) { gen_num_ = gennum; }
+  bool IsInline() const { return obj_num_ == 0; }
   uint64_t KeyForCache() const;
 
   virtual Type GetType() const = 0;
@@ -154,8 +154,8 @@ class CPDF_Object : public Retainable {
   virtual const CPDF_Dictionary* GetDictInternal() const;
   RetainPtr<CPDF_Object> CloneObjectNonCyclic(bool bDirect) const;
 
-  uint32_t m_ObjNum = 0;
-  uint32_t m_GenNum = 0;
+  uint32_t obj_num_ = 0;
+  uint32_t gen_num_ = 0;
 };
 
 template <typename T>

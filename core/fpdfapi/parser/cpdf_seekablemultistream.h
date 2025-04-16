@@ -31,7 +31,7 @@ class CPDF_SeekableMultiStream final : public IFX_SeekableStream {
   bool Flush() override;
 
  private:
-  std::vector<RetainPtr<CPDF_StreamAcc>> m_Data;
+  std::vector<RetainPtr<CPDF_StreamAcc>> data_;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SEEKABLEMULTISTREAM_H_

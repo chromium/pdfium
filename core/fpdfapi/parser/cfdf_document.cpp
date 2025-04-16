@@ -23,8 +23,8 @@ CFDF_Document::~CFDF_Document() = default;
 
 std::unique_ptr<CFDF_Document> CFDF_Document::CreateNewDoc() {
   auto pDoc = std::make_unique<CFDF_Document>();
-  pDoc->m_pRootDict = pDoc->NewIndirect<CPDF_Dictionary>();
-  pDoc->m_pRootDict->SetNewFor<CPDF_Dictionary>("FDF");
+  pDoc->root_dict_ = pDoc->NewIndirect<CPDF_Dictionary>();
+  pDoc->root_dict_->SetNewFor<CPDF_Dictionary>("FDF");
   return pDoc;
 }
 
@@ -32,15 +32,15 @@ std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(
     pdfium::span<const uint8_t> span) {
   auto pDoc = std::make_unique<CFDF_Document>();
   pDoc->ParseStream(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(span));
-  if (!pDoc->m_pRootDict) {
+  if (!pDoc->root_dict_) {
     return nullptr;
   }
   return pDoc;
 }
 
 void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
-  m_pFile = std::move(pFile);
-  CPDF_SyntaxParser parser(m_pFile);
+  file_ = std::move(pFile);
+  CPDF_SyntaxParser parser(file_);
   while (true) {
     CPDF_SyntaxParser::WordResult word_result = parser.GetNextWord();
     if (word_result.is_number) {
@@ -77,7 +77,7 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
       RetainPtr<CPDF_Dictionary> pMainDict =
           ToDictionary(parser.GetObjectBody(this));
       if (pMainDict) {
-        m_pRootDict = pMainDict->GetMutableDictFor("Root");
+        root_dict_ = pMainDict->GetMutableDictFor("Root");
       }
 
       break;
@@ -86,7 +86,7 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
 }
 
 ByteString CFDF_Document::WriteToString() const {
-  if (!m_pRootDict) {
+  if (!root_dict_) {
     return ByteString();
   }
 
@@ -97,7 +97,7 @@ ByteString CFDF_Document::WriteToString() const {
         << pair.second.Get() << "\r\nendobj\r\n\r\n";
   }
 
-  buf << "trailer\r\n<</Root " << m_pRootDict->GetObjNum()
+  buf << "trailer\r\n<</Root " << root_dict_->GetObjNum()
       << " 0 R>>\r\n%%EOF\r\n";
 
   return ByteString(buf);
