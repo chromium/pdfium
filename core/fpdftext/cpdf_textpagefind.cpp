@@ -206,48 +206,48 @@ CPDF_TextPageFind::CPDF_TextPageFind(
     const std::vector<WideString>& findwhat_array,
     const Options& options,
     std::optional<size_t> startPos)
-    : m_pTextPage(pTextPage),
-      m_strText(GetStringCase(pTextPage->GetAllPageText(), options.bMatchCase)),
-      m_csFindWhatArray(findwhat_array),
-      m_options(options) {
-  if (!m_strText.IsEmpty()) {
-    m_findNextStart = startPos;
-    m_findPreStart = startPos.value_or(m_strText.GetLength() - 1);
+    : text_page_(pTextPage),
+      str_text_(GetStringCase(pTextPage->GetAllPageText(), options.bMatchCase)),
+      find_what_array_(findwhat_array),
+      options_(options) {
+  if (!str_text_.IsEmpty()) {
+    find_next_start_ = startPos;
+    find_pre_start_ = startPos.value_or(str_text_.GetLength() - 1);
   }
 }
 
 CPDF_TextPageFind::~CPDF_TextPageFind() = default;
 
 int CPDF_TextPageFind::GetCharIndex(int index) const {
-  return m_pTextPage->CharIndexFromTextIndex(index);
+  return text_page_->CharIndexFromTextIndex(index);
 }
 
 bool CPDF_TextPageFind::FindFirst() {
-  return m_strText.IsEmpty() || !m_csFindWhatArray.empty();
+  return str_text_.IsEmpty() || !find_what_array_.empty();
 }
 
 bool CPDF_TextPageFind::FindNext() {
-  if (m_strText.IsEmpty() || !m_findNextStart.has_value()) {
+  if (str_text_.IsEmpty() || !find_next_start_.has_value()) {
     return false;
   }
 
-  const size_t strLen = m_strText.GetLength();
-  size_t nStartPos = m_findNextStart.value();
+  const size_t strLen = str_text_.GetLength();
+  size_t nStartPos = find_next_start_.value();
   if (nStartPos >= strLen) {
     return false;
   }
 
-  int nCount = fxcrt::CollectionSize<int>(m_csFindWhatArray);
+  int nCount = fxcrt::CollectionSize<int>(find_what_array_);
   std::optional<size_t> nResultPos = 0;
   bool bSpaceStart = false;
   for (int iWord = 0; iWord < nCount; iWord++) {
-    WideString csWord = m_csFindWhatArray[iWord];
+    WideString csWord = find_what_array_[iWord];
     if (csWord.IsEmpty()) {
       if (iWord == nCount - 1) {
         if (nStartPos >= strLen) {
           return false;
         }
-        wchar_t strInsert = m_strText[nStartPos];
+        wchar_t strInsert = str_text_[nStartPos];
         if (strInsert == L'\n' || strInsert == L' ' || strInsert == L'\r' ||
             strInsert == kNonBreakingSpace) {
           nResultPos = nStartPos + 1;
@@ -259,20 +259,20 @@ bool CPDF_TextPageFind::FindNext() {
       }
       continue;
     }
-    nResultPos = m_strText.Find(csWord.AsStringView(), nStartPos);
+    nResultPos = str_text_.Find(csWord.AsStringView(), nStartPos);
     if (!nResultPos.has_value()) {
       return false;
     }
 
     size_t endIndex = nResultPos.value() + csWord.GetLength() - 1;
     if (iWord == 0) {
-      m_resStart = nResultPos.value();
+      res_start_ = nResultPos.value();
     }
     bool bMatch = true;
     if (iWord != 0 && !bSpaceStart) {
       size_t PreResEndPos = nStartPos;
       int curChar = csWord[0];
-      WideString lastWord = m_csFindWhatArray[iWord - 1];
+      WideString lastWord = find_what_array_[iWord - 1];
       int lastChar = lastWord.Back();
       if (nStartPos == nResultPos.value() &&
           !(IsIgnoreSpaceCharacter(lastChar) ||
@@ -280,7 +280,7 @@ bool CPDF_TextPageFind::FindNext() {
         bMatch = false;
       }
       for (size_t d = PreResEndPos; d < nResultPos.value(); d++) {
-        wchar_t strInsert = m_strText[d];
+        wchar_t strInsert = str_text_[d];
         if (strInsert != L'\n' && strInsert != L' ' && strInsert != L'\r' &&
             strInsert != kNonBreakingSpace) {
           bMatch = false;
@@ -289,18 +289,18 @@ bool CPDF_TextPageFind::FindNext() {
       }
     } else if (bSpaceStart) {
       if (nResultPos.value() > 0) {
-        wchar_t strInsert = m_strText[nResultPos.value() - 1];
+        wchar_t strInsert = str_text_[nResultPos.value() - 1];
         if (strInsert != L'\n' && strInsert != L' ' && strInsert != L'\r' &&
             strInsert != kNonBreakingSpace) {
           bMatch = false;
-          m_resStart = nResultPos.value();
+          res_start_ = nResultPos.value();
         } else {
-          m_resStart = nResultPos.value() - 1;
+          res_start_ = nResultPos.value() - 1;
         }
       }
     }
-    if (m_options.bMatchWholeWord && bMatch) {
-      bMatch = IsMatchWholeWord(m_strText, nResultPos.value(), endIndex);
+    if (options_.bMatchWholeWord && bMatch) {
+      bMatch = IsMatchWholeWord(str_text_, nResultPos.value(), endIndex);
     }
 
     if (bMatch) {
@@ -308,26 +308,26 @@ bool CPDF_TextPageFind::FindNext() {
     } else {
       iWord = -1;
       size_t index = bSpaceStart ? 1 : 0;
-      nStartPos = m_resStart + m_csFindWhatArray[index].GetLength();
+      nStartPos = res_start_ + find_what_array_[index].GetLength();
     }
   }
-  m_resEnd = nResultPos.value() + m_csFindWhatArray.back().GetLength() - 1;
-  if (m_options.bConsecutive) {
-    m_findNextStart = m_resStart + 1;
-    m_findPreStart = m_resEnd - 1;
+  res_end_ = nResultPos.value() + find_what_array_.back().GetLength() - 1;
+  if (options_.bConsecutive) {
+    find_next_start_ = res_start_ + 1;
+    find_pre_start_ = res_end_ - 1;
   } else {
-    m_findNextStart = m_resEnd + 1;
-    m_findPreStart = m_resStart - 1;
+    find_next_start_ = res_end_ + 1;
+    find_pre_start_ = res_start_ - 1;
   }
   return true;
 }
 
 bool CPDF_TextPageFind::FindPrev() {
-  if (m_strText.IsEmpty() || !m_findPreStart.has_value()) {
+  if (str_text_.IsEmpty() || !find_pre_start_.has_value()) {
     return false;
   }
 
-  CPDF_TextPageFind find_engine(m_pTextPage, m_csFindWhatArray, m_options, 0);
+  CPDF_TextPageFind find_engine(text_page_, find_what_array_, options_, 0);
   if (!find_engine.FindFirst()) {
     return false;
   }
@@ -338,7 +338,7 @@ bool CPDF_TextPageFind::FindPrev() {
     int cur_order = find_engine.GetCurOrder();
     int cur_match = find_engine.GetMatchedCount();
     int temp = cur_order + cur_match;
-    if (temp < 0 || static_cast<size_t>(temp) > m_findPreStart.value() + 1) {
+    if (temp < 0 || static_cast<size_t>(temp) > find_pre_start_.value() + 1) {
       break;
     }
 
@@ -349,24 +349,24 @@ bool CPDF_TextPageFind::FindPrev() {
     return false;
   }
 
-  m_resStart = m_pTextPage->TextIndexFromCharIndex(order);
-  m_resEnd = m_pTextPage->TextIndexFromCharIndex(order + matches - 1);
-  if (m_options.bConsecutive) {
-    m_findNextStart = m_resStart + 1;
-    m_findPreStart = m_resEnd - 1;
+  res_start_ = text_page_->TextIndexFromCharIndex(order);
+  res_end_ = text_page_->TextIndexFromCharIndex(order + matches - 1);
+  if (options_.bConsecutive) {
+    find_next_start_ = res_start_ + 1;
+    find_pre_start_ = res_end_ - 1;
   } else {
-    m_findNextStart = m_resEnd + 1;
-    m_findPreStart = m_resStart - 1;
+    find_next_start_ = res_end_ + 1;
+    find_pre_start_ = res_start_ - 1;
   }
   return true;
 }
 
 int CPDF_TextPageFind::GetCurOrder() const {
-  return GetCharIndex(m_resStart);
+  return GetCharIndex(res_start_);
 }
 
 int CPDF_TextPageFind::GetMatchedCount() const {
-  int resStart = GetCharIndex(m_resStart);
-  int resEnd = GetCharIndex(m_resEnd);
+  int resStart = GetCharIndex(res_start_);
+  int resEnd = GetCharIndex(res_end_);
   return resEnd - resStart + 1;
 }

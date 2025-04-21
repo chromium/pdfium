@@ -181,7 +181,7 @@ class CFXJS_ObjDefinition {
         obj_type_(eObjType),
         constructor_(pConstructor),
         destructor_(pDestructor),
-        m_pIsolate(isolate) {
+        isolate_(isolate) {
     v8::Isolate::Scope isolate_scope(isolate);
     v8::HandleScope handle_scope(isolate);
     v8::Local<v8::FunctionTemplate> fn = v8::FunctionTemplate::New(isolate);
@@ -214,7 +214,7 @@ class CFXJS_ObjDefinition {
 
   FXJSOBJTYPE GetObjType() const { return obj_type_; }
   const char* GetObjName() const { return obj_name_; }
-  v8::Isolate* GetIsolate() const { return m_pIsolate; }
+  v8::Isolate* GetIsolate() const { return isolate_; }
 
   void DefineConst(const char* sConstName, v8::Local<v8::Value> pDefault) {
     GetInstanceTemplate()->Set(GetIsolate(), sConstName, pDefault);
@@ -276,7 +276,7 @@ class CFXJS_ObjDefinition {
   const FXJSOBJTYPE obj_type_;
   const CFXJS_Engine::Constructor constructor_;
   const CFXJS_Engine::Destructor destructor_;
-  UnownedPtr<v8::Isolate> m_pIsolate;
+  UnownedPtr<v8::Isolate> isolate_;
   v8::Global<v8::FunctionTemplate> function_template_;
   v8::Global<v8::Signature> signature_;
 };

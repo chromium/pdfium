@@ -27,28 +27,28 @@
 
 CFXJSE_ResolveProcessor::CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine,
                                                  CFXJSE_NodeHelper* pHelper)
-    : m_pEngine(pEngine), m_pNodeHelper(pHelper) {}
+    : engine_(pEngine), node_helper_(pHelper) {}
 
 CFXJSE_ResolveProcessor::~CFXJSE_ResolveProcessor() = default;
 
 bool CFXJSE_ResolveProcessor::Resolve(v8::Isolate* pIsolate, NodeData& rnd) {
-  if (!rnd.m_CurObject) {
+  if (!rnd.cur_object_) {
     return false;
   }
 
-  if (!rnd.m_CurObject->IsNode()) {
-    if (rnd.m_dwStyles & XFA_ResolveFlag::kAttributes) {
-      return ResolveForAttributeRs(rnd.m_CurObject, &rnd.m_Result,
-                                   rnd.m_wsName.AsStringView());
+  if (!rnd.cur_object_->IsNode()) {
+    if (rnd.styles_ & XFA_ResolveFlag::kAttributes) {
+      return ResolveForAttributeRs(rnd.cur_object_, &rnd.result_,
+                                   rnd.name_.AsStringView());
     }
     return false;
   }
-  if (rnd.m_dwStyles & XFA_ResolveFlag::kAnyChild) {
+  if (rnd.styles_ & XFA_ResolveFlag::kAnyChild) {
     return ResolveAnyChild(pIsolate, rnd);
   }
 
-  if (rnd.m_wsName.GetLength()) {
-    wchar_t wch = rnd.m_wsName[0];
+  if (rnd.name_.GetLength()) {
+    wchar_t wch = rnd.name_[0];
     switch (wch) {
       case '$':
         return ResolveDollar(pIsolate, rnd);
@@ -65,44 +65,44 @@ bool CFXJSE_ResolveProcessor::Resolve(v8::Isolate* pIsolate, NodeData& rnd) {
         break;
     }
   }
-  if (rnd.m_uHashName == XFA_HASHCODE_This && rnd.m_nLevel == 0) {
-    rnd.m_Result.objects.emplace_back(m_pEngine->GetThisObject());
+  if (rnd.hash_name_ == XFA_HASHCODE_This && rnd.level_ == 0) {
+    rnd.result_.objects.emplace_back(engine_->GetThisObject());
     return true;
   }
-  if (rnd.m_CurObject->GetElementType() == XFA_Element::Xfa) {
+  if (rnd.cur_object_->GetElementType() == XFA_Element::Xfa) {
     CXFA_Object* pObjNode =
-        m_pEngine->GetDocument()->GetXFAObject(rnd.m_uHashName);
+        engine_->GetDocument()->GetXFAObject(rnd.hash_name_);
     if (pObjNode) {
-      rnd.m_Result.objects.emplace_back(pObjNode);
-    } else if (rnd.m_uHashName == XFA_HASHCODE_Xfa) {
-      rnd.m_Result.objects.emplace_back(rnd.m_CurObject);
-    } else if ((rnd.m_dwStyles & XFA_ResolveFlag::kAttributes) &&
-               ResolveForAttributeRs(rnd.m_CurObject, &rnd.m_Result,
-                                     rnd.m_wsName.AsStringView())) {
+      rnd.result_.objects.emplace_back(pObjNode);
+    } else if (rnd.hash_name_ == XFA_HASHCODE_Xfa) {
+      rnd.result_.objects.emplace_back(rnd.cur_object_);
+    } else if ((rnd.styles_ & XFA_ResolveFlag::kAttributes) &&
+               ResolveForAttributeRs(rnd.cur_object_, &rnd.result_,
+                                     rnd.name_.AsStringView())) {
       return true;
     }
-    if (!rnd.m_Result.objects.empty()) {
-      FilterCondition(pIsolate, rnd.m_wsCondition, &rnd);
+    if (!rnd.result_.objects.empty()) {
+      FilterCondition(pIsolate, rnd.condition_, &rnd);
     }
 
-    return !rnd.m_Result.objects.empty();
+    return !rnd.result_.objects.empty();
   }
-  if (!ResolveNormal(pIsolate, rnd) && rnd.m_uHashName == XFA_HASHCODE_Xfa) {
-    rnd.m_Result.objects.emplace_back(m_pEngine->GetDocument()->GetRoot());
+  if (!ResolveNormal(pIsolate, rnd) && rnd.hash_name_ == XFA_HASHCODE_Xfa) {
+    rnd.result_.objects.emplace_back(engine_->GetDocument()->GetRoot());
   }
 
-  return !rnd.m_Result.objects.empty();
+  return !rnd.result_.objects.empty();
 }
 
 bool CFXJSE_ResolveProcessor::ResolveAnyChild(v8::Isolate* pIsolate,
                                               NodeData& rnd) {
-  CXFA_Node* pParent = ToNode(rnd.m_CurObject);
+  CXFA_Node* pParent = ToNode(rnd.cur_object_);
   if (!pParent) {
     return false;
   }
 
-  WideStringView wsName = rnd.m_wsName.AsStringView();
-  WideString wsCondition = rnd.m_wsCondition;
+  WideStringView wsName = rnd.name_.AsStringView();
+  WideString wsCondition = rnd.condition_;
   const bool bClassName = !wsName.IsEmpty() && wsName[0] == '#';
   CXFA_Node* const pChild =
       bClassName
@@ -113,114 +113,114 @@ bool CFXJSE_ResolveProcessor::ResolveAnyChild(v8::Isolate* pIsolate,
   }
 
   if (wsCondition.IsEmpty()) {
-    rnd.m_Result.objects.emplace_back(pChild);
+    rnd.result_.objects.emplace_back(pChild);
     return true;
   }
 
   std::vector<CXFA_Node*> nodes;
-  for (const auto& pObject : rnd.m_Result.objects) {
+  for (const auto& pObject : rnd.result_.objects) {
     nodes.push_back(pObject->AsNode());
   }
 
   std::vector<CXFA_Node*> siblings = pChild->GetSiblings(bClassName);
   nodes.insert(nodes.end(), siblings.begin(), siblings.end());
-  rnd.m_Result.objects =
+  rnd.result_.objects =
       std::vector<cppgc::Member<CXFA_Object>>(nodes.begin(), nodes.end());
   FilterCondition(pIsolate, wsCondition, &rnd);
-  return !rnd.m_Result.objects.empty();
+  return !rnd.result_.objects.empty();
 }
 
 bool CFXJSE_ResolveProcessor::ResolveDollar(v8::Isolate* pIsolate,
                                             NodeData& rnd) {
-  WideString wsName = rnd.m_wsName;
-  WideString wsCondition = rnd.m_wsCondition;
+  WideString wsName = rnd.name_;
+  WideString wsCondition = rnd.condition_;
   size_t nNameLen = wsName.GetLength();
   if (nNameLen == 1) {
-    rnd.m_Result.objects.emplace_back(rnd.m_CurObject);
+    rnd.result_.objects.emplace_back(rnd.cur_object_);
     return true;
   }
-  if (rnd.m_nLevel > 0) {
+  if (rnd.level_ > 0) {
     return false;
   }
 
-  CXFA_Document* pDocument = m_pEngine->GetDocument();
+  CXFA_Document* pDocument = engine_->GetDocument();
   XFA_HashCode dwNameHash = static_cast<XFA_HashCode>(
       FX_HashCode_GetW(wsName.AsStringView().Last(nNameLen - 1)));
   if (dwNameHash == XFA_HASHCODE_Xfa) {
-    rnd.m_Result.objects.emplace_back(pDocument->GetRoot());
+    rnd.result_.objects.emplace_back(pDocument->GetRoot());
   } else {
     CXFA_Object* pObjNode = pDocument->GetXFAObject(dwNameHash);
     if (pObjNode) {
-      rnd.m_Result.objects.emplace_back(pObjNode);
+      rnd.result_.objects.emplace_back(pObjNode);
     }
   }
-  if (!rnd.m_Result.objects.empty()) {
+  if (!rnd.result_.objects.empty()) {
     FilterCondition(pIsolate, wsCondition, &rnd);
   }
-  return !rnd.m_Result.objects.empty();
+  return !rnd.result_.objects.empty();
 }
 
 bool CFXJSE_ResolveProcessor::ResolveExcalmatory(v8::Isolate* pIsolate,
                                                  NodeData& rnd) {
-  if (rnd.m_nLevel > 0) {
+  if (rnd.level_ > 0) {
     return false;
   }
 
   CXFA_Node* datasets =
-      ToNode(m_pEngine->GetDocument()->GetXFAObject(XFA_HASHCODE_Datasets));
+      ToNode(engine_->GetDocument()->GetXFAObject(XFA_HASHCODE_Datasets));
   if (!datasets) {
     return false;
   }
 
   NodeData rndFind;
-  rndFind.m_CurObject = datasets;
-  rndFind.m_wsName = rnd.m_wsName.Last(rnd.m_wsName.GetLength() - 1);
-  rndFind.m_uHashName = static_cast<XFA_HashCode>(
-      FX_HashCode_GetW(rndFind.m_wsName.AsStringView()));
-  rndFind.m_nLevel = rnd.m_nLevel + 1;
-  rndFind.m_dwStyles = XFA_ResolveFlag::kChildren;
-  rndFind.m_wsCondition = rnd.m_wsCondition;
+  rndFind.cur_object_ = datasets;
+  rndFind.name_ = rnd.name_.Last(rnd.name_.GetLength() - 1);
+  rndFind.hash_name_ =
+      static_cast<XFA_HashCode>(FX_HashCode_GetW(rndFind.name_.AsStringView()));
+  rndFind.level_ = rnd.level_ + 1;
+  rndFind.styles_ = XFA_ResolveFlag::kChildren;
+  rndFind.condition_ = rnd.condition_;
   Resolve(pIsolate, rndFind);
 
-  rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
-                              rndFind.m_Result.objects.begin(),
-                              rndFind.m_Result.objects.end());
-  return !rnd.m_Result.objects.empty();
+  rnd.result_.objects.insert(rnd.result_.objects.end(),
+                             rndFind.result_.objects.begin(),
+                             rndFind.result_.objects.end());
+  return !rnd.result_.objects.empty();
 }
 
 bool CFXJSE_ResolveProcessor::ResolveNumberSign(v8::Isolate* pIsolate,
                                                 NodeData& rnd) {
-  WideString wsName = rnd.m_wsName.Last(rnd.m_wsName.GetLength() - 1);
-  WideString wsCondition = rnd.m_wsCondition;
-  CXFA_Node* curNode = ToNode(rnd.m_CurObject);
-  if (ResolveForAttributeRs(curNode, &rnd.m_Result, wsName.AsStringView())) {
+  WideString wsName = rnd.name_.Last(rnd.name_.GetLength() - 1);
+  WideString wsCondition = rnd.condition_;
+  CXFA_Node* curNode = ToNode(rnd.cur_object_);
+  if (ResolveForAttributeRs(curNode, &rnd.result_, wsName.AsStringView())) {
     return true;
   }
 
   NodeData rndFind;
-  rndFind.m_nLevel = rnd.m_nLevel + 1;
-  rndFind.m_dwStyles = rnd.m_dwStyles;
-  rndFind.m_dwStyles |= XFA_ResolveFlag::kTagName;
-  rndFind.m_dwStyles.Clear(XFA_ResolveFlag::kAttributes);
-  rndFind.m_wsName = std::move(wsName);
-  rndFind.m_uHashName = static_cast<XFA_HashCode>(
-      FX_HashCode_GetW(rndFind.m_wsName.AsStringView()));
-  rndFind.m_wsCondition = wsCondition;
-  rndFind.m_CurObject = curNode;
+  rndFind.level_ = rnd.level_ + 1;
+  rndFind.styles_ = rnd.styles_;
+  rndFind.styles_ |= XFA_ResolveFlag::kTagName;
+  rndFind.styles_.Clear(XFA_ResolveFlag::kAttributes);
+  rndFind.name_ = std::move(wsName);
+  rndFind.hash_name_ =
+      static_cast<XFA_HashCode>(FX_HashCode_GetW(rndFind.name_.AsStringView()));
+  rndFind.condition_ = wsCondition;
+  rndFind.cur_object_ = curNode;
   ResolveNormal(pIsolate, rndFind);
-  if (rndFind.m_Result.objects.empty()) {
+  if (rndFind.result_.objects.empty()) {
     return false;
   }
 
   if (wsCondition.IsEmpty() &&
-      pdfium::Contains(rndFind.m_Result.objects, curNode)) {
-    rnd.m_Result.objects.emplace_back(curNode);
+      pdfium::Contains(rndFind.result_.objects, curNode)) {
+    rnd.result_.objects.emplace_back(curNode);
   } else {
-    rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
-                                rndFind.m_Result.objects.begin(),
-                                rndFind.m_Result.objects.end());
+    rnd.result_.objects.insert(rnd.result_.objects.end(),
+                               rndFind.result_.objects.begin(),
+                               rndFind.result_.objects.end());
   }
-  return !rnd.m_Result.objects.empty();
+  return !rnd.result_.objects.empty();
 }
 
 bool CFXJSE_ResolveProcessor::ResolveForAttributeRs(
@@ -241,22 +241,22 @@ bool CFXJSE_ResolveProcessor::ResolveForAttributeRs(
 
 bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
                                             NodeData& rnd) {
-  if (rnd.m_nLevel > 32 || !rnd.m_CurObject->IsNode()) {
+  if (rnd.level_ > 32 || !rnd.cur_object_->IsNode()) {
     return false;
   }
 
-  CXFA_Node* curNode = rnd.m_CurObject->AsNode();
-  size_t nNum = rnd.m_Result.objects.size();
-  Mask<XFA_ResolveFlag> dwStyles = rnd.m_dwStyles;
-  WideString& wsName = rnd.m_wsName;
-  XFA_HashCode uNameHash = rnd.m_uHashName;
-  WideString& wsCondition = rnd.m_wsCondition;
+  CXFA_Node* curNode = rnd.cur_object_->AsNode();
+  size_t nNum = rnd.result_.objects.size();
+  Mask<XFA_ResolveFlag> dwStyles = rnd.styles_;
+  WideString& wsName = rnd.name_;
+  XFA_HashCode uNameHash = rnd.hash_name_;
+  WideString& wsCondition = rnd.condition_;
 
   NodeData rndFind;
-  rndFind.m_wsName = rnd.m_wsName;
-  rndFind.m_wsCondition = rnd.m_wsCondition;
-  rndFind.m_nLevel = rnd.m_nLevel + 1;
-  rndFind.m_uHashName = uNameHash;
+  rndFind.name_ = rnd.name_;
+  rndFind.condition_ = rnd.condition_;
+  rndFind.level_ = rnd.level_ + 1;
+  rndFind.hash_name_ = uNameHash;
 
   std::vector<CXFA_Node*> children;
   std::vector<CXFA_Node*> properties;
@@ -280,21 +280,21 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
   }
   if ((dwStyles & XFA_ResolveFlag::kProperties) && pVariablesNode) {
     if (pVariablesNode->GetClassHashCode() == uNameHash) {
-      rnd.m_Result.objects.emplace_back(pVariablesNode);
+      rnd.result_.objects.emplace_back(pVariablesNode);
     } else {
-      rndFind.m_CurObject = pVariablesNode;
+      rndFind.cur_object_ = pVariablesNode;
       SetStylesForChild(dwStyles, rndFind);
-      WideString wsSaveCondition = std::move(rndFind.m_wsCondition);
+      WideString wsSaveCondition = std::move(rndFind.condition_);
       ResolveNormal(pIsolate, rndFind);
-      rndFind.m_wsCondition = std::move(wsSaveCondition);
-      rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
-                                  rndFind.m_Result.objects.begin(),
-                                  rndFind.m_Result.objects.end());
-      rndFind.m_Result.objects.clear();
+      rndFind.condition_ = std::move(wsSaveCondition);
+      rnd.result_.objects.insert(rnd.result_.objects.end(),
+                                 rndFind.result_.objects.begin(),
+                                 rndFind.result_.objects.end());
+      rndFind.result_.objects.clear();
     }
-    if (rnd.m_Result.objects.size() > nNum) {
+    if (rnd.result_.objects.size() > nNum) {
       FilterCondition(pIsolate, wsCondition, &rnd);
-      return !rnd.m_Result.objects.empty();
+      return !rnd.result_.objects.empty();
     }
   }
 
@@ -307,10 +307,10 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
     for (CXFA_Node* child : children) {
       if (dwStyles & XFA_ResolveFlag::kTagName) {
         if (child->GetClassHashCode() == uNameHash) {
-          rnd.m_Result.objects.emplace_back(child);
+          rnd.result_.objects.emplace_back(child);
         }
       } else if (child->GetNameHash() == uNameHash) {
-        rnd.m_Result.objects.emplace_back(child);
+        rnd.result_.objects.emplace_back(child);
       }
 
       if (child->GetElementType() != XFA_Element::PageSet &&
@@ -319,40 +319,40 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
           SetStylesForChild(dwStyles, rndFind);
           bSetFlag = true;
         }
-        rndFind.m_CurObject = child;
+        rndFind.cur_object_ = child;
 
-        WideString wsSaveCondition = std::move(rndFind.m_wsCondition);
+        WideString wsSaveCondition = std::move(rndFind.condition_);
         ResolveNormal(pIsolate, rndFind);
-        rndFind.m_wsCondition = std::move(wsSaveCondition);
-        rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
-                                    rndFind.m_Result.objects.begin(),
-                                    rndFind.m_Result.objects.end());
-        rndFind.m_Result.objects.clear();
+        rndFind.condition_ = std::move(wsSaveCondition);
+        rnd.result_.objects.insert(rnd.result_.objects.end(),
+                                   rndFind.result_.objects.begin(),
+                                   rndFind.result_.objects.end());
+        rndFind.result_.objects.clear();
       }
     }
-    if (rnd.m_Result.objects.size() > nNum) {
+    if (rnd.result_.objects.size() > nNum) {
       if (!(dwStyles & XFA_ResolveFlag::kALL)) {
         std::vector<CXFA_Node*> upArrayNodes;
         if (curNode->IsTransparent()) {
-          CXFA_Node* pCurrent = ToNode(rnd.m_Result.objects.front().Get());
+          CXFA_Node* pCurrent = ToNode(rnd.result_.objects.front().Get());
           if (pCurrent) {
             upArrayNodes =
                 pCurrent->GetSiblings(!!(dwStyles & XFA_ResolveFlag::kTagName));
           }
         }
-        if (upArrayNodes.size() > rnd.m_Result.objects.size()) {
-          CXFA_Object* pSaveObject = rnd.m_Result.objects.front().Get();
-          rnd.m_Result.objects = std::vector<cppgc::Member<CXFA_Object>>(
+        if (upArrayNodes.size() > rnd.result_.objects.size()) {
+          CXFA_Object* pSaveObject = rnd.result_.objects.front().Get();
+          rnd.result_.objects = std::vector<cppgc::Member<CXFA_Object>>(
               upArrayNodes.begin(), upArrayNodes.end());
-          rnd.m_Result.objects.front() = pSaveObject;
+          rnd.result_.objects.front() = pSaveObject;
         }
       }
       FilterCondition(pIsolate, wsCondition, &rnd);
-      return !rnd.m_Result.objects.empty();
+      return !rnd.result_.objects.empty();
     }
   }
   if (dwStyles & XFA_ResolveFlag::kAttributes) {
-    if (ResolveForAttributeRs(curNode, &rnd.m_Result, wsName.AsStringView())) {
+    if (ResolveForAttributeRs(curNode, &rnd.result_, wsName.AsStringView())) {
       return true;
     }
   }
@@ -360,19 +360,19 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
     for (CXFA_Node* pChildProperty : properties) {
       if (pChildProperty->IsUnnamed()) {
         if (pChildProperty->GetClassHashCode() == uNameHash) {
-          rnd.m_Result.objects.emplace_back(pChildProperty);
+          rnd.result_.objects.emplace_back(pChildProperty);
         }
         continue;
       }
       if (pChildProperty->GetNameHash() == uNameHash &&
           pChildProperty->GetElementType() != XFA_Element::Extras &&
           pChildProperty->GetElementType() != XFA_Element::Items) {
-        rnd.m_Result.objects.emplace_back(pChildProperty);
+        rnd.result_.objects.emplace_back(pChildProperty);
       }
     }
-    if (rnd.m_Result.objects.size() > nNum) {
+    if (rnd.result_.objects.size() > nNum) {
       FilterCondition(pIsolate, wsCondition, &rnd);
-      return !rnd.m_Result.objects.empty();
+      return !rnd.result_.objects.empty();
     }
 
     CXFA_Node* pProp = nullptr;
@@ -392,8 +392,8 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
       }
     }
     if (pProp) {
-      rnd.m_Result.objects.emplace_back(pProp);
-      return !rnd.m_Result.objects.empty();
+      rnd.result_.objects.emplace_back(pProp);
+      return !rnd.result_.objects.empty();
     }
   }
 
@@ -401,9 +401,9 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
   uint32_t uCurClassHash = curNode->GetClassHashCode();
   if (!parentNode) {
     if (uCurClassHash == uNameHash) {
-      rnd.m_Result.objects.emplace_back(curNode);
+      rnd.result_.objects.emplace_back(curNode);
       FilterCondition(pIsolate, wsCondition, &rnd);
-      if (!rnd.m_Result.objects.empty()) {
+      if (!rnd.result_.objects.empty()) {
         return true;
       }
     }
@@ -421,19 +421,19 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
       dwSubStyles |= XFA_ResolveFlag::kALL;
     }
 
-    rndFind.m_dwStyles = dwSubStyles;
+    rndFind.styles_ = dwSubStyles;
     while (child) {
       if (child == curNode) {
         if (dwStyles & XFA_ResolveFlag::kTagName) {
           if (uCurClassHash == uNameHash) {
-            rnd.m_Result.objects.emplace_back(curNode);
+            rnd.result_.objects.emplace_back(curNode);
           }
         } else {
           if (child->GetNameHash() == uNameHash) {
-            rnd.m_Result.objects.emplace_back(curNode);
-            if (rnd.m_nLevel == 0 && wsCondition.IsEmpty()) {
-              rnd.m_Result.objects.clear();
-              rnd.m_Result.objects.emplace_back(curNode);
+            rnd.result_.objects.emplace_back(curNode);
+            if (rnd.level_ == 0 && wsCondition.IsEmpty()) {
+              rnd.result_.objects.clear();
+              rnd.result_.objects.emplace_back(curNode);
               return true;
             }
           }
@@ -444,10 +444,10 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
 
       if (dwStyles & XFA_ResolveFlag::kTagName) {
         if (child->GetClassHashCode() == uNameHash) {
-          rnd.m_Result.objects.emplace_back(child);
+          rnd.result_.objects.emplace_back(child);
         }
       } else if (child->GetNameHash() == uNameHash) {
-        rnd.m_Result.objects.emplace_back(child);
+        rnd.result_.objects.emplace_back(child);
       }
 
       bool bInnerSearch = false;
@@ -460,37 +460,37 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
         bInnerSearch = true;
       }
       if (bInnerSearch) {
-        rndFind.m_CurObject = child;
-        WideString wsOriginCondition = std::move(rndFind.m_wsCondition);
-        Mask<XFA_ResolveFlag> dwOriginStyle = rndFind.m_dwStyles;
-        rndFind.m_dwStyles = dwOriginStyle | XFA_ResolveFlag::kALL;
+        rndFind.cur_object_ = child;
+        WideString wsOriginCondition = std::move(rndFind.condition_);
+        Mask<XFA_ResolveFlag> dwOriginStyle = rndFind.styles_;
+        rndFind.styles_ = dwOriginStyle | XFA_ResolveFlag::kALL;
         ResolveNormal(pIsolate, rndFind);
-        rndFind.m_dwStyles = dwOriginStyle;
-        rndFind.m_wsCondition = std::move(wsOriginCondition);
-        rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
-                                    rndFind.m_Result.objects.begin(),
-                                    rndFind.m_Result.objects.end());
-        rndFind.m_Result.objects.clear();
+        rndFind.styles_ = dwOriginStyle;
+        rndFind.condition_ = std::move(wsOriginCondition);
+        rnd.result_.objects.insert(rnd.result_.objects.end(),
+                                   rndFind.result_.objects.begin(),
+                                   rndFind.result_.objects.end());
+        rndFind.result_.objects.clear();
       }
       child = child->GetNextSibling();
     }
-    if (rnd.m_Result.objects.size() > nNum) {
+    if (rnd.result_.objects.size() > nNum) {
       if (parentNode->IsTransparent()) {
         std::vector<CXFA_Node*> upArrayNodes;
-        CXFA_Node* pCurrent = ToNode(rnd.m_Result.objects.front().Get());
+        CXFA_Node* pCurrent = ToNode(rnd.result_.objects.front().Get());
         if (pCurrent) {
           upArrayNodes =
               pCurrent->GetSiblings(!!(dwStyles & XFA_ResolveFlag::kTagName));
         }
-        if (upArrayNodes.size() > rnd.m_Result.objects.size()) {
-          CXFA_Object* pSaveObject = rnd.m_Result.objects.front().Get();
-          rnd.m_Result.objects = std::vector<cppgc::Member<CXFA_Object>>(
+        if (upArrayNodes.size() > rnd.result_.objects.size()) {
+          CXFA_Object* pSaveObject = rnd.result_.objects.front().Get();
+          rnd.result_.objects = std::vector<cppgc::Member<CXFA_Object>>(
               upArrayNodes.begin(), upArrayNodes.end());
-          rnd.m_Result.objects.front() = pSaveObject;
+          rnd.result_.objects.front() = pSaveObject;
         }
       }
       FilterCondition(pIsolate, wsCondition, &rnd);
-      return !rnd.m_Result.objects.empty();
+      return !rnd.result_.objects.empty();
     }
   }
 
@@ -505,15 +505,15 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
       dwSubStyles |= XFA_ResolveFlag::kALL;
     }
 
-    m_pEngine->AddObjectToUpArray(parentNode);
-    rndFind.m_dwStyles = dwSubStyles;
-    rndFind.m_CurObject = parentNode;
+    engine_->AddObjectToUpArray(parentNode);
+    rndFind.styles_ = dwSubStyles;
+    rndFind.cur_object_ = parentNode;
     ResolveNormal(pIsolate, rndFind);
-    rnd.m_Result.objects.insert(rnd.m_Result.objects.end(),
-                                rndFind.m_Result.objects.begin(),
-                                rndFind.m_Result.objects.end());
-    rndFind.m_Result.objects.clear();
-    if (rnd.m_Result.objects.size() > nNum) {
+    rnd.result_.objects.insert(rnd.result_.objects.end(),
+                               rndFind.result_.objects.begin(),
+                               rndFind.result_.objects.end());
+    rndFind.result_.objects.clear();
+    if (rnd.result_.objects.size() > nNum) {
       return true;
     }
   }
@@ -521,12 +521,12 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(v8::Isolate* pIsolate,
 }
 
 bool CFXJSE_ResolveProcessor::ResolveAsterisk(NodeData& rnd) {
-  CXFA_Node* curNode = ToNode(rnd.m_CurObject);
+  CXFA_Node* curNode = ToNode(rnd.cur_object_);
   std::vector<CXFA_Node*> array = curNode->GetNodeListWithFilter(
       {XFA_NodeFilter::kChildren, XFA_NodeFilter::kProperties});
-  rnd.m_Result.objects.insert(rnd.m_Result.objects.end(), array.begin(),
-                              array.end());
-  return !rnd.m_Result.objects.empty();
+  rnd.result_.objects.insert(rnd.result_.objects.end(), array.begin(),
+                             array.end());
+  return !rnd.result_.objects.empty();
 }
 
 int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
@@ -539,8 +539,8 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
     return 0;
   }
 
-  WideString& wsName = rnd.m_wsName;
-  WideString& wsCondition = rnd.m_wsCondition;
+  WideString& wsName = rnd.name_;
+  WideString& wsCondition = rnd.condition_;
   int32_t nNameCount = 0;
   int32_t nConditionCount = 0;
   {
@@ -558,7 +558,7 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
       wCur = pSrc[nStart++];
       if (wCur == '.') {
         if (nNameCount == 0) {
-          rnd.m_dwStyles |= XFA_ResolveFlag::kAnyChild;
+          rnd.styles_ |= XFA_ResolveFlag::kAnyChild;
           continue;
         }
         if (wPrev == '\\') {
@@ -609,7 +609,7 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
   wsCondition.ReleaseBuffer(nConditionCount);
   wsName.TrimWhitespace();
   wsCondition.TrimWhitespace();
-  rnd.m_uHashName =
+  rnd.hash_name_ =
       static_cast<XFA_HashCode>(FX_HashCode_GetW(wsName.AsStringView()));
   return nStart;
 }
@@ -636,20 +636,20 @@ void CFXJSE_ResolveProcessor::ConditionArray(size_t iCurIndex,
     break;
   }
   if (bAll) {
-    if (pRnd->m_dwStyles & XFA_ResolveFlag::kCreateNode) {
-      if (pRnd->m_dwStyles & XFA_ResolveFlag::kBind) {
-        m_pNodeHelper->m_pCreateParent = ToNode(pRnd->m_CurObject);
-        m_pNodeHelper->m_iCreateCount = 1;
-        pRnd->m_Result.objects.clear();
-        m_pNodeHelper->m_iCurAllStart = -1;
-        m_pNodeHelper->m_pAllStartParent = nullptr;
-      } else if (m_pNodeHelper->m_iCurAllStart == -1) {
-        m_pNodeHelper->m_iCurAllStart = m_iCurStart;
-        m_pNodeHelper->m_pAllStartParent = ToNode(pRnd->m_CurObject);
+    if (pRnd->styles_ & XFA_ResolveFlag::kCreateNode) {
+      if (pRnd->styles_ & XFA_ResolveFlag::kBind) {
+        node_helper_->create_parent_ = ToNode(pRnd->cur_object_);
+        node_helper_->create_count_ = 1;
+        pRnd->result_.objects.clear();
+        node_helper_->cur_all_start_ = -1;
+        node_helper_->all_start_parent_ = nullptr;
+      } else if (node_helper_->cur_all_start_ == -1) {
+        node_helper_->cur_all_start_ = cur_start_;
+        node_helper_->all_start_parent_ = ToNode(pRnd->cur_object_);
       }
-    } else if (pRnd->m_dwStyles & XFA_ResolveFlag::kBindNew) {
-      if (m_pNodeHelper->m_iCurAllStart == -1) {
-        m_pNodeHelper->m_iCurAllStart = m_iCurStart;
+    } else if (pRnd->styles_ & XFA_ResolveFlag::kBindNew) {
+      if (node_helper_->cur_all_start_ == -1) {
+        node_helper_->cur_all_start_ = cur_start_;
       }
     }
     return;
@@ -664,14 +664,14 @@ void CFXJSE_ResolveProcessor::ConditionArray(size_t iCurIndex,
   }
 
   if (iIndex < 0 || static_cast<size_t>(iIndex) >= iFoundCount) {
-    if (pRnd->m_dwStyles & XFA_ResolveFlag::kCreateNode) {
-      m_pNodeHelper->m_pCreateParent = ToNode(pRnd->m_CurObject);
-      m_pNodeHelper->m_iCreateCount = iIndex - iFoundCount + 1;
+    if (pRnd->styles_ & XFA_ResolveFlag::kCreateNode) {
+      node_helper_->create_parent_ = ToNode(pRnd->cur_object_);
+      node_helper_->create_count_ = iIndex - iFoundCount + 1;
     }
-    pRnd->m_Result.objects.clear();
+    pRnd->result_.objects.clear();
   } else {
-    pRnd->m_Result.objects = std::vector<cppgc::Member<CXFA_Object>>(
-        1, pRnd->m_Result.objects[iIndex]);
+    pRnd->result_.objects = std::vector<cppgc::Member<CXFA_Object>>(
+        1, pRnd->result_.objects[iIndex]);
   }
 }
 
@@ -679,7 +679,7 @@ void CFXJSE_ResolveProcessor::FilterCondition(v8::Isolate* pIsolate,
                                               WideString wsCondition,
                                               NodeData* pRnd) {
   size_t iCurIndex = 0;
-  CXFA_Node* pNode = m_pEngine->LastObjectFromUpArray();
+  CXFA_Node* pNode = engine_->LastObjectFromUpArray();
   if (pNode) {
     const bool bIsProperty = pNode->IsProperty();
     const bool bIsClassIndex =
@@ -688,12 +688,12 @@ void CFXJSE_ResolveProcessor::FilterCondition(v8::Isolate* pIsolate,
     iCurIndex = pNode->GetIndex(bIsProperty, bIsClassIndex);
   }
 
-  size_t iFoundCount = pRnd->m_Result.objects.size();
+  size_t iFoundCount = pRnd->result_.objects.size();
   wsCondition.TrimWhitespace();
 
   const size_t nLen = wsCondition.GetLength();
   if (nLen == 0) {
-    if (pRnd->m_dwStyles & XFA_ResolveFlag::kALL) {
+    if (pRnd->styles_ & XFA_ResolveFlag::kALL) {
       return;
     }
     if (iFoundCount == 1) {
@@ -701,16 +701,16 @@ void CFXJSE_ResolveProcessor::FilterCondition(v8::Isolate* pIsolate,
     }
 
     if (iFoundCount <= iCurIndex) {
-      if (pRnd->m_dwStyles & XFA_ResolveFlag::kCreateNode) {
-        m_pNodeHelper->m_pCreateParent = ToNode(pRnd->m_CurObject);
-        m_pNodeHelper->m_iCreateCount = iCurIndex - iFoundCount + 1;
+      if (pRnd->styles_ & XFA_ResolveFlag::kCreateNode) {
+        node_helper_->create_parent_ = ToNode(pRnd->cur_object_);
+        node_helper_->create_count_ = iCurIndex - iFoundCount + 1;
       }
-      pRnd->m_Result.objects.clear();
+      pRnd->result_.objects.clear();
       return;
     }
 
-    pRnd->m_Result.objects = std::vector<cppgc::Member<CXFA_Object>>(
-        1, pRnd->m_Result.objects[iCurIndex]);
+    pRnd->result_.objects = std::vector<cppgc::Member<CXFA_Object>>(
+        1, pRnd->result_.objects[iCurIndex]);
     return;
   }
 
@@ -739,14 +739,14 @@ void CFXJSE_ResolveProcessor::SetStylesForChild(
   if (dwParentStyles & XFA_ResolveFlag::kTagName) {
     dwSubStyles |= XFA_ResolveFlag::kTagName;
   }
-  rnd.m_dwStyles = dwSubStyles;
+  rnd.styles_ = dwSubStyles;
 }
 
 int32_t CFXJSE_ResolveProcessor::IndexForDataBind(
     const WideString& wsNextCondition,
     int32_t iCount) {
-  if (m_pNodeHelper->CreateNodeForCondition(wsNextCondition) &&
-      m_pNodeHelper->m_eLastCreateType == XFA_Element::DataGroup) {
+  if (node_helper_->CreateNodeForCondition(wsNextCondition) &&
+      node_helper_->last_create_type_ == XFA_Element::DataGroup) {
     return 0;
   }
   return iCount - 1;
@@ -756,7 +756,7 @@ void CFXJSE_ResolveProcessor::DoPredicateFilter(v8::Isolate* pIsolate,
                                                 WideString wsCondition,
                                                 size_t iFoundCount,
                                                 NodeData* pRnd) {
-  DCHECK_EQ(iFoundCount, pRnd->m_Result.objects.size());
+  DCHECK_EQ(iFoundCount, pRnd->result_.objects.size());
   CXFA_Script::Type eLangType = CXFA_Script::Type::Unknown;
   if (wsCondition.First(2).EqualsASCII(".[") && wsCondition.Back() == L']') {
     eLangType = CXFA_Script::Type::Formcalc;
@@ -770,10 +770,10 @@ void CFXJSE_ResolveProcessor::DoPredicateFilter(v8::Isolate* pIsolate,
   WideString wsExpression = wsCondition.Substr(2, wsCondition.GetLength() - 3);
   for (size_t i = iFoundCount; i > 0; --i) {
     CFXJSE_Context::ExecutionResult exec_result =
-        m_pEngine->RunScript(eLangType, wsExpression.AsStringView(),
-                             pRnd->m_Result.objects[i - 1].Get());
+        engine_->RunScript(eLangType, wsExpression.AsStringView(),
+                           pRnd->result_.objects[i - 1].Get());
     if (!exec_result.status || !exec_result.value->ToBoolean(pIsolate)) {
-      pRnd->m_Result.objects.erase(pRnd->m_Result.objects.begin() + i - 1);
+      pRnd->result_.objects.erase(pRnd->result_.objects.begin() + i - 1);
     }
   }
 }

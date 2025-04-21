@@ -26,13 +26,13 @@ class CFXJSE_NodeHelper {
   bool CreateNodeForCondition(const WideString& wsCondition);
   void SetCreateNodeType(CXFA_Node* refNode);
 
-  XFA_Element m_eLastCreateType = XFA_Element::DataValue;
-  CFXJSE_Engine::ResolveResult::Type m_iCreateFlag =
+  XFA_Element last_create_type_ = XFA_Element::DataValue;
+  CFXJSE_Engine::ResolveResult::Type create_flag_ =
       CFXJSE_Engine::ResolveResult::Type::kCreateNodeOne;
-  size_t m_iCreateCount = 0;
-  int32_t m_iCurAllStart = -1;
-  cppgc::Persistent<CXFA_Node> m_pCreateParent;
-  cppgc::Persistent<CXFA_Node> m_pAllStartParent;
+  size_t create_count_ = 0;
+  int32_t cur_all_start_ = -1;
+  cppgc::Persistent<CXFA_Node> create_parent_;
+  cppgc::Persistent<CXFA_Node> all_start_parent_;
 };
 
 #endif  // FXJS_XFA_CFXJSE_NODEHELPER_H_

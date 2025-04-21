@@ -43,7 +43,7 @@ class CFXJSE_Context {
 
   ~CFXJSE_Context();
 
-  v8::Isolate* GetIsolate() const { return m_pIsolate; }
+  v8::Isolate* GetIsolate() const { return isolate_; }
   v8::Local<v8::Context> GetContext();
   v8::Local<v8::Object> GetGlobalObject();
 
@@ -60,10 +60,10 @@ class CFXJSE_Context {
   CFXJSE_Context(const CFXJSE_Context&) = delete;
   CFXJSE_Context& operator=(const CFXJSE_Context&) = delete;
 
-  v8::Global<v8::Context> m_hContext;
-  UnownedPtr<v8::Isolate> m_pIsolate;
-  std::vector<std::unique_ptr<CFXJSE_Class>> m_rgClasses;
-  cppgc::Persistent<CXFA_ThisProxy> m_pProxy;
+  v8::Global<v8::Context> context_;
+  UnownedPtr<v8::Isolate> isolate_;
+  std::vector<std::unique_ptr<CFXJSE_Class>> classes_;
+  cppgc::Persistent<CXFA_ThisProxy> this_proxy_;
 };
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,

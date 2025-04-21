@@ -72,24 +72,24 @@ class CPDF_Creator {
 
   CPDF_CryptoHandler* GetCryptoHandler();
 
-  UnownedPtr<CPDF_Document> const m_pDocument;
-  UnownedPtr<CPDF_Parser> const m_pParser;
-  RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
-  RetainPtr<CPDF_Dictionary> m_pNewEncryptDict;
-  RetainPtr<CPDF_SecurityHandler> m_pSecurityHandler;
-  uint32_t m_dwLastObjNum;
-  std::unique_ptr<IFX_ArchiveStream> m_Archive;
-  FX_FILESIZE m_SavedOffset = 0;
-  Stage m_iStage = Stage::kInvalid;
-  uint32_t m_CurObjNum = 0;
-  FX_FILESIZE m_XrefStart = 0;
-  std::map<uint32_t, FX_FILESIZE> m_ObjectOffsets;
-  std::vector<uint32_t> m_NewObjNumArray;  // Sorted, ascending.
-  RetainPtr<CPDF_Array> m_pIDArray;
-  int32_t m_FileVersion = 0;
-  bool m_bSecurityChanged = false;
-  bool m_IsIncremental = false;
-  bool m_IsOriginal = false;
+  UnownedPtr<CPDF_Document> const document_;
+  UnownedPtr<CPDF_Parser> const parser_;
+  RetainPtr<const CPDF_Dictionary> encrypt_dict_;
+  RetainPtr<CPDF_Dictionary> new_encrypt_dict_;
+  RetainPtr<CPDF_SecurityHandler> security_handler_;
+  uint32_t last_obj_num_;
+  std::unique_ptr<IFX_ArchiveStream> archive_;
+  FX_FILESIZE saved_offset_ = 0;
+  Stage stage_ = Stage::kInvalid;
+  uint32_t cur_obj_num_ = 0;
+  FX_FILESIZE xref_start_ = 0;
+  std::map<uint32_t, FX_FILESIZE> object_offsets_;
+  std::vector<uint32_t> new_obj_num_array_;  // Sorted, ascending.
+  RetainPtr<CPDF_Array> id_array_;
+  int32_t file_version_ = 0;
+  bool security_changed_ = false;
+  bool is_incremental_ = false;
+  bool is_original_ = false;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_

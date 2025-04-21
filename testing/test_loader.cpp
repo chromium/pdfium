@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/checked_math.h"
 
-TestLoader::TestLoader(pdfium::span<const uint8_t> span) : m_Span(span) {}
+TestLoader::TestLoader(pdfium::span<const uint8_t> span) : span_(span) {}
 
 // static
 int TestLoader::GetBlock(void* param,
@@ -20,8 +20,8 @@ int TestLoader::GetBlock(void* param,
   TestLoader* pLoader = static_cast<TestLoader*>(param);
   pdfium::CheckedNumeric<size_t> end = pos;
   end += size;
-  CHECK_LE(end.ValueOrDie(), pLoader->m_Span.size());
+  CHECK_LE(end.ValueOrDie(), pLoader->span_.size());
 
-  FXSYS_memcpy(pBuf, &pLoader->m_Span[pos], size);
+  FXSYS_memcpy(pBuf, &pLoader->span_[pos], size);
   return 1;
 }

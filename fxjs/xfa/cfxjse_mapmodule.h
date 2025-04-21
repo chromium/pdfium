@@ -36,9 +36,9 @@ class CFXJSE_MapModule {
 
  private:
   // keyed by result of GetMapKey_*().
-  std::map<uint32_t, int32_t> m_ValueMap;
-  std::map<uint32_t, WideString> m_StringMap;
-  std::map<uint32_t, CXFA_Measurement> m_MeasurementMap;
+  std::map<uint32_t, int32_t> value_map_;
+  std::map<uint32_t, WideString> string_map_;
+  std::map<uint32_t, CXFA_Measurement> measurement_map_;
 };
 
 #endif  // FXJS_XFA_CFXJSE_MAPMODULE_H_

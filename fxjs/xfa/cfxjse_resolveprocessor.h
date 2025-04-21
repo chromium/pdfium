@@ -27,13 +27,13 @@ class CFXJSE_ResolveProcessor {
     NodeData();
     ~NodeData();
 
-    UnownedPtr<CXFA_Object> m_CurObject;  // Ok, stack-only.
-    WideString m_wsName;
-    WideString m_wsCondition;
-    XFA_HashCode m_uHashName = XFA_HASHCODE_None;
-    int32_t m_nLevel = 0;
-    Mask<XFA_ResolveFlag> m_dwStyles = XFA_ResolveFlag::kChildren;
-    CFXJSE_Engine::ResolveResult m_Result;
+    UnownedPtr<CXFA_Object> cur_object_;  // Ok, stack-only.
+    WideString name_;
+    WideString condition_;
+    XFA_HashCode hash_name_ = XFA_HASHCODE_None;
+    int32_t level_ = 0;
+    Mask<XFA_ResolveFlag> styles_ = XFA_ResolveFlag::kChildren;
+    CFXJSE_Engine::ResolveResult result_;
   };
 
   CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine, CFXJSE_NodeHelper* pHelper);
@@ -42,7 +42,7 @@ class CFXJSE_ResolveProcessor {
   bool Resolve(v8::Isolate* pIsolate, NodeData& rnd);
   int32_t GetFilter(WideStringView wsExpression, int32_t nStart, NodeData& rnd);
   int32_t IndexForDataBind(const WideString& wsNextCondition, int32_t iCount);
-  void SetCurStart(int32_t start) { m_iCurStart = start; }
+  void SetCurStart(int32_t start) { cur_start_ = start; }
 
  private:
   bool ResolveForAttributeRs(CXFA_Object* curNode,
@@ -68,9 +68,9 @@ class CFXJSE_ResolveProcessor {
                          size_t iFoundCount,
                          NodeData* pRnd);
 
-  int32_t m_iCurStart = 0;
-  UnownedPtr<CFXJSE_Engine> const m_pEngine;
-  UnownedPtr<CFXJSE_NodeHelper> const m_pNodeHelper;
+  int32_t cur_start_ = 0;
+  UnownedPtr<CFXJSE_Engine> const engine_;
+  UnownedPtr<CFXJSE_NodeHelper> const node_helper_;
 };
 
 #endif  // FXJS_XFA_CFXJSE_RESOLVEPROCESSOR_H_

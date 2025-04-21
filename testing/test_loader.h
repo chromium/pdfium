@@ -20,7 +20,7 @@ class TestLoader {
                       unsigned long size);
 
  private:
-  const pdfium::raw_span<const uint8_t> m_Span;
+  const pdfium::raw_span<const uint8_t> span_;
 };
 
 #endif  // TESTING_TEST_LOADER_H_

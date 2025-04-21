@@ -20,7 +20,7 @@ class CFX_V8 {
   explicit CFX_V8(v8::Isolate* pIsolate);
   virtual ~CFX_V8();
 
-  v8::Isolate* GetIsolate() const { return m_pIsolate; }
+  v8::Isolate* GetIsolate() const { return isolate_; }
 
   v8::Local<v8::Value> NewNull();
   v8::Local<v8::Value> NewUndefined();
@@ -59,11 +59,11 @@ class CFX_V8 {
                          v8::Local<v8::Value> pValue);
 
  protected:
-  void SetIsolate(v8::Isolate* pIsolate) { m_pIsolate = pIsolate; }
+  void SetIsolate(v8::Isolate* isolate) { isolate_ = isolate; }
   void DisposeIsolate();
 
  private:
-  UnownedPtr<v8::Isolate> m_pIsolate;
+  UnownedPtr<v8::Isolate> isolate_;
 };
 
 // Use with std::unique_ptr<v8::Isolate> to dispose of isolates correctly.

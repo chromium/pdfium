@@ -91,7 +91,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
     void Trace(cppgc::Visitor* visitor) const;
 
-    std::vector<cppgc::Member<CXFA_Node>> m_Globals;
+    std::vector<cppgc::Member<CXFA_Node>> globals_;
 
    private:
     CalcData();

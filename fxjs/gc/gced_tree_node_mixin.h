@@ -19,11 +19,11 @@ class GCedTreeNodeMixin : public cppgc::GarbageCollectedMixin,
                           public fxcrt::TreeNodeBase<T> {
  public:
   virtual void Trace(cppgc::Visitor* visitor) const {
-    visitor->Trace(m_pParent);
-    visitor->Trace(m_pFirstChild);
-    visitor->Trace(m_pLastChild);
-    visitor->Trace(m_pNextSibling);
-    visitor->Trace(m_pPrevSibling);
+    visitor->Trace(parent_);
+    visitor->Trace(first_child_);
+    visitor->Trace(last_child_);
+    visitor->Trace(next_sibling_);
+    visitor->Trace(prev_sibling_);
   }
 
  protected:
@@ -34,11 +34,11 @@ class GCedTreeNodeMixin : public cppgc::GarbageCollectedMixin,
  private:
   friend class fxcrt::TreeNodeBase<T>;
 
-  cppgc::Member<T> m_pParent;
-  cppgc::Member<T> m_pFirstChild;
-  cppgc::Member<T> m_pLastChild;
-  cppgc::Member<T> m_pNextSibling;
-  cppgc::Member<T> m_pPrevSibling;
+  cppgc::Member<T> parent_;
+  cppgc::Member<T> first_child_;
+  cppgc::Member<T> last_child_;
+  cppgc::Member<T> next_sibling_;
+  cppgc::Member<T> prev_sibling_;
 };
 
 }  // namespace fxjs

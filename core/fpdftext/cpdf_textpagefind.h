@@ -51,14 +51,14 @@ class CPDF_TextPageFind {
 
   int GetCharIndex(int index) const;
 
-  UnownedPtr<const CPDF_TextPage> const m_pTextPage;
-  const WideString m_strText;
-  const std::vector<WideString> m_csFindWhatArray;
-  std::optional<size_t> m_findNextStart;
-  std::optional<size_t> m_findPreStart;
-  int m_resStart = 0;
-  int m_resEnd = -1;
-  const Options m_options;
+  UnownedPtr<const CPDF_TextPage> const text_page_;
+  const WideString str_text_;
+  const std::vector<WideString> find_what_array_;
+  std::optional<size_t> find_next_start_;
+  std::optional<size_t> find_pre_start_;
+  int res_start_ = 0;
+  int res_end_ = -1;
+  const Options options_;
 };
 
 #endif  // CORE_FPDFTEXT_CPDF_TEXTPAGEFIND_H_

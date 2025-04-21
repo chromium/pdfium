@@ -22,18 +22,18 @@ class TreeNodeBase {
   TreeNodeBase() = default;
   virtual ~TreeNodeBase() = default;
 
-  inline T* GetParent() const { return static_cast<const T*>(this)->m_pParent; }
+  inline T* GetParent() const { return static_cast<const T*>(this)->parent_; }
   inline T* GetFirstChild() const {
-    return static_cast<const T*>(this)->m_pFirstChild;
+    return static_cast<const T*>(this)->first_child_;
   }
   inline T* GetLastChild() const {
-    return static_cast<const T*>(this)->m_pLastChild;
+    return static_cast<const T*>(this)->last_child_;
   }
   inline T* GetNextSibling() const {
-    return static_cast<const T*>(this)->m_pNextSibling;
+    return static_cast<const T*>(this)->next_sibling_;
   }
   inline T* GetPrevSibling() const {
-    return static_cast<const T*>(this)->m_pPrevSibling;
+    return static_cast<const T*>(this)->prev_sibling_;
   }
 
   bool HasChild(const T* child) const {
@@ -94,7 +94,7 @@ class TreeNodeBase {
     } else {
       other->GetPrevSibling()->SetNextSibling(child);
     }
-    other->m_pPrevSibling = child;
+    other->prev_sibling_ = child;
   }
 
   void InsertAfter(T* child, T* other) {
@@ -150,30 +150,30 @@ class TreeNodeBase {
   // These are private because they may leave the tree in an invalid state
   // until subsequent operations restore it.
   inline void SetParent(T* pParent) {
-    static_cast<T*>(this)->m_pParent = pParent;
+    static_cast<T*>(this)->parent_ = pParent;
   }
   inline void SetFirstChild(T* pChild) {
-    static_cast<T*>(this)->m_pFirstChild = pChild;
+    static_cast<T*>(this)->first_child_ = pChild;
   }
   inline void SetLastChild(T* pChild) {
-    static_cast<T*>(this)->m_pLastChild = pChild;
+    static_cast<T*>(this)->last_child_ = pChild;
   }
   inline void SetNextSibling(T* pSibling) {
-    static_cast<T*>(this)->m_pNextSibling = pSibling;
+    static_cast<T*>(this)->next_sibling_ = pSibling;
   }
   inline void SetPrevSibling(T* pSibling) {
-    static_cast<T*>(this)->m_pPrevSibling = pSibling;
+    static_cast<T*>(this)->prev_sibling_ = pSibling;
   }
 
   // Child left in state where sibling members need subsequent adjustment.
   void BecomeParent(T* child) {
     CHECK(child != this);  // Detect attempts at self-insertion.
-    if (child->m_pParent) {
-      child->m_pParent->TreeNodeBase<T>::RemoveChild(child);
+    if (child->parent_) {
+      child->parent_->TreeNodeBase<T>::RemoveChild(child);
     }
-    child->m_pParent = static_cast<T*>(this);
-    CHECK(!child->m_pNextSibling);
-    CHECK(!child->m_pPrevSibling);
+    child->parent_ = static_cast<T*>(this);
+    CHECK(!child->next_sibling_);
+    CHECK(!child->prev_sibling_);
   }
 };
 
@@ -187,11 +187,11 @@ class TreeNode : public TreeNodeBase<T> {
  private:
   friend class TreeNodeBase<T>;
 
-  UNOWNED_PTR_EXCLUSION T* m_pParent = nullptr;       // intra-tree pointer.
-  UNOWNED_PTR_EXCLUSION T* m_pFirstChild = nullptr;   // intra-tree pointer.
-  UNOWNED_PTR_EXCLUSION T* m_pLastChild = nullptr;    // intra-tree pointer.
-  UNOWNED_PTR_EXCLUSION T* m_pNextSibling = nullptr;  // intra-tree pointer.
-  UNOWNED_PTR_EXCLUSION T* m_pPrevSibling = nullptr;  // intra-tree pointer.
+  UNOWNED_PTR_EXCLUSION T* parent_ = nullptr;        // intra-tree pointer.
+  UNOWNED_PTR_EXCLUSION T* first_child_ = nullptr;   // intra-tree pointer.
+  UNOWNED_PTR_EXCLUSION T* last_child_ = nullptr;    // intra-tree pointer.
+  UNOWNED_PTR_EXCLUSION T* next_sibling_ = nullptr;  // intra-tree pointer.
+  UNOWNED_PTR_EXCLUSION T* prev_sibling_ = nullptr;  // intra-tree pointer.
 };
 
 }  // namespace fxcrt

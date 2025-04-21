@@ -110,20 +110,20 @@ size_t TrimExternalBracketsFromWebLink(const WideString& str,
 }  // namespace
 
 CPDF_LinkExtract::CPDF_LinkExtract(const CPDF_TextPage* pTextPage)
-    : m_pTextPage(pTextPage) {}
+    : text_page_(pTextPage) {}
 
 CPDF_LinkExtract::~CPDF_LinkExtract() = default;
 
 void CPDF_LinkExtract::ExtractLinks() {
-  m_LinkArray.clear();
+  link_array_.clear();
   size_t start = 0;
   size_t pos = 0;
   bool bAfterHyphen = false;
   bool bLineBreak = false;
-  const size_t nTotalChar = m_pTextPage->CountChars();
-  const WideString page_text = m_pTextPage->GetAllPageText();
+  const size_t nTotalChar = text_page_->CountChars();
+  const WideString page_text = text_page_->GetAllPageText();
   while (pos < nTotalChar) {
-    const CPDF_TextPage::CharInfo& char_info = m_pTextPage->GetCharInfo(pos);
+    const CPDF_TextPage::CharInfo& char_info = text_page_->GetCharInfo(pos);
     if (char_info.char_type() != CPDF_TextPage::CharType::kGenerated &&
         char_info.unicode() != L' ' && pos != nTotalChar - 1) {
       bAfterHyphen =
@@ -170,10 +170,10 @@ void CPDF_LinkExtract::ExtractLinks() {
       if (nCount > 5) {
         auto maybe_link = CheckWebLink(strBeCheck);
         if (maybe_link.has_value()) {
-          maybe_link.value().m_Start += start;
-          m_LinkArray.push_back(maybe_link.value());
+          maybe_link.value().start_ += start;
+          link_array_.push_back(maybe_link.value());
         } else if (CheckMailLink(&strBeCheck)) {
-          m_LinkArray.push_back(Link{{start, nCount}, strBeCheck});
+          link_array_.push_back(Link{{start, nCount}, strBeCheck});
         }
       }
     }
@@ -307,23 +307,22 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
 }
 
 WideString CPDF_LinkExtract::GetURL(size_t index) const {
-  return index < m_LinkArray.size() ? m_LinkArray[index].m_strUrl
-                                    : WideString();
+  return index < link_array_.size() ? link_array_[index].url_ : WideString();
 }
 
 std::vector<CFX_FloatRect> CPDF_LinkExtract::GetRects(size_t index) const {
-  if (index >= m_LinkArray.size()) {
+  if (index >= link_array_.size()) {
     return std::vector<CFX_FloatRect>();
   }
 
-  return m_pTextPage->GetRectArray(m_LinkArray[index].m_Start,
-                                   m_LinkArray[index].m_Count);
+  return text_page_->GetRectArray(link_array_[index].start_,
+                                  link_array_[index].count_);
 }
 
 std::optional<CPDF_LinkExtract::Range> CPDF_LinkExtract::GetTextRange(
     size_t index) const {
-  if (index >= m_LinkArray.size()) {
+  if (index >= link_array_.size()) {
     return std::nullopt;
   }
-  return m_LinkArray[index];
+  return link_array_[index];
 }

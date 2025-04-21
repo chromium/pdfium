@@ -1503,5 +1503,5 @@ CJX_Object::CalcData::CalcData() = default;
 CJX_Object::CalcData::~CalcData() = default;
 
 void CJX_Object::CalcData::Trace(cppgc::Visitor* visitor) const {
-  ContainerTrace(visitor, m_Globals);
+  ContainerTrace(visitor, globals_);
 }

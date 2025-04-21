@@ -601,8 +601,8 @@ FPDFLink_GetTextRange(FPDF_PAGELINK link_page,
     return false;
   }
 
-  *start_char_index = pdfium::checked_cast<int>(maybe_range.value().m_Start);
-  *char_count = pdfium::checked_cast<int>(maybe_range.value().m_Count);
+  *start_char_index = pdfium::checked_cast<int>(maybe_range.value().start_);
+  *char_count = pdfium::checked_cast<int>(maybe_range.value().count_);
   return true;
 }
 

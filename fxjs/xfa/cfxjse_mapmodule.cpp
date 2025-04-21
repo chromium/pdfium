@@ -14,35 +14,35 @@ CFXJSE_MapModule::CFXJSE_MapModule() = default;
 CFXJSE_MapModule::~CFXJSE_MapModule() = default;
 
 void CFXJSE_MapModule::SetValue(uint32_t key, int32_t value) {
-  m_StringMap.erase(key);
-  m_MeasurementMap.erase(key);
-  m_ValueMap[key] = value;
+  string_map_.erase(key);
+  measurement_map_.erase(key);
+  value_map_[key] = value;
 }
 
 void CFXJSE_MapModule::SetString(uint32_t key, const WideString& wsString) {
-  m_ValueMap.erase(key);
-  m_MeasurementMap.erase(key);
-  m_StringMap[key] = wsString;
+  value_map_.erase(key);
+  measurement_map_.erase(key);
+  string_map_[key] = wsString;
 }
 
 void CFXJSE_MapModule::SetMeasurement(uint32_t key,
                                       const CXFA_Measurement& measurement) {
-  m_ValueMap.erase(key);
-  m_StringMap.erase(key);
-  m_MeasurementMap[key] = measurement;
+  value_map_.erase(key);
+  string_map_.erase(key);
+  measurement_map_[key] = measurement;
 }
 
 std::optional<int32_t> CFXJSE_MapModule::GetValue(uint32_t key) const {
-  auto it = m_ValueMap.find(key);
-  if (it == m_ValueMap.end()) {
+  auto it = value_map_.find(key);
+  if (it == value_map_.end()) {
     return std::nullopt;
   }
   return it->second;
 }
 
 std::optional<WideString> CFXJSE_MapModule::GetString(uint32_t key) const {
-  auto it = m_StringMap.find(key);
-  if (it == m_StringMap.end()) {
+  auto it = string_map_.find(key);
+  if (it == string_map_.end()) {
     return std::nullopt;
   }
   return it->second;
@@ -50,35 +50,35 @@ std::optional<WideString> CFXJSE_MapModule::GetString(uint32_t key) const {
 
 std::optional<CXFA_Measurement> CFXJSE_MapModule::GetMeasurement(
     uint32_t key) const {
-  auto it = m_MeasurementMap.find(key);
-  if (it == m_MeasurementMap.end()) {
+  auto it = measurement_map_.find(key);
+  if (it == measurement_map_.end()) {
     return std::nullopt;
   }
   return it->second;
 }
 
 bool CFXJSE_MapModule::HasKey(uint32_t key) const {
-  return pdfium::Contains(m_ValueMap, key) ||
-         pdfium::Contains(m_StringMap, key) ||
-         pdfium::Contains(m_MeasurementMap, key);
+  return pdfium::Contains(value_map_, key) ||
+         pdfium::Contains(string_map_, key) ||
+         pdfium::Contains(measurement_map_, key);
 }
 
 void CFXJSE_MapModule::RemoveKey(uint32_t key) {
-  m_ValueMap.erase(key);
-  m_StringMap.erase(key);
-  m_MeasurementMap.erase(key);
+  value_map_.erase(key);
+  string_map_.erase(key);
+  measurement_map_.erase(key);
 }
 
 void CFXJSE_MapModule::MergeDataFrom(const CFXJSE_MapModule* pSrc) {
-  for (const auto& pair : pSrc->m_ValueMap) {
+  for (const auto& pair : pSrc->value_map_) {
     SetValue(pair.first, pair.second);
   }
 
-  for (const auto& pair : pSrc->m_StringMap) {
+  for (const auto& pair : pSrc->string_map_) {
     SetString(pair.first, pair.second);
   }
 
-  for (const auto& pair : pSrc->m_MeasurementMap) {
+  for (const auto& pair : pSrc->measurement_map_) {
     SetMeasurement(pair.first, pair.second);
   }
 }

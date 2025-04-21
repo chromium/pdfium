@@ -69,12 +69,12 @@ constexpr std::array<wchar_t, 16> kStrCode = {
      L'c', L'd', L'e', L'f'}};
 
 struct XFA_FMHtmlReserveCode {
-  uint16_t m_uCode;
+  uint16_t code_;
   // Inline string data reduces size for small strings.
-  const char m_htmlReserve[10];
+  const char html_reserve_[10];
 };
 
-// Sorted by |m_htmlReserve|.
+// Sorted by |html_reserve_|.
 const XFA_FMHtmlReserveCode kReservesForDecode[] = {
     {198, "AElig"},   {193, "Aacute"},   {194, "Acirc"},    {192, "Agrave"},
     {913, "Alpha"},   {197, "Aring"},    {195, "Atilde"},   {196, "Auml"},
@@ -141,7 +141,7 @@ const XFA_FMHtmlReserveCode kReservesForDecode[] = {
     {255, "yuml"},    {950, "zeta"},     {8205, "zwj"},     {8204, "zwnj"},
 };
 
-// Sorted by |m_uCode|.
+// Sorted by |code_|.
 const XFA_FMHtmlReserveCode kReservesForEncode[] = {
     {34, "quot"},     {38, "amp"},      {39, "apos"},      {60, "lt"},
     {62, "gt"},       {160, "nbsp"},    {161, "iexcl"},    {162, "cent"},
@@ -553,7 +553,7 @@ void GetLocalTimeZone(int32_t* pHour, int32_t* pMin, int32_t* pSec) {
 
 bool HTMLSTR2Code(const WideString& pData, uint32_t* iCode) {
   auto cmpFunc = [](const XFA_FMHtmlReserveCode& iter, ByteStringView val) {
-    return UNSAFE_TODO(strcmp(val.unterminated_c_str(), iter.m_htmlReserve)) >
+    return UNSAFE_TODO(strcmp(val.unterminated_c_str(), iter.html_reserve_)) >
            0;
   };
   if (!pData.IsASCII()) {
@@ -564,8 +564,8 @@ bool HTMLSTR2Code(const WideString& pData, uint32_t* iCode) {
       std::begin(kReservesForDecode), std::end(kReservesForDecode),
       temp.AsStringView(), cmpFunc);
   if (result != std::end(kReservesForDecode) &&
-      !UNSAFE_TODO(strcmp(temp.c_str(), result->m_htmlReserve))) {
-    *iCode = result->m_uCode;
+      !UNSAFE_TODO(strcmp(temp.c_str(), result->html_reserve_))) {
+    *iCode = result->code_;
     return true;
   }
   return false;
@@ -573,13 +573,13 @@ bool HTMLSTR2Code(const WideString& pData, uint32_t* iCode) {
 
 bool HTMLCode2STR(uint32_t iCode, WideString* wsHTMLReserve) {
   auto cmpFunc = [](const XFA_FMHtmlReserveCode iter, const uint32_t& val) {
-    return iter.m_uCode < val;
+    return iter.code_ < val;
   };
   const XFA_FMHtmlReserveCode* result =
       std::lower_bound(std::begin(kReservesForEncode),
                        std::end(kReservesForEncode), iCode, cmpFunc);
-  if (result != std::end(kReservesForEncode) && result->m_uCode == iCode) {
-    *wsHTMLReserve = WideString::FromASCII(result->m_htmlReserve);
+  if (result != std::end(kReservesForEncode) && result->code_ == iCode) {
+    *wsHTMLReserve = WideString::FromASCII(result->html_reserve_);
     return true;
   }
   return false;
@@ -5116,12 +5116,12 @@ std::optional<WideTextBuffer> CFXJSE_FormCalcContext::Translate(
 CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pIsolate,
                                                CFXJSE_Context* pScriptContext,
                                                CXFA_Document* pDoc)
-    : m_pIsolate(pIsolate), m_pDocument(pDoc) {
-  m_Value.Reset(m_pIsolate,
-                NewBoundV8Object(
-                    m_pIsolate, CFXJSE_Class::Create(
-                                    pScriptContext, &kFormCalcDescriptor, false)
-                                    ->GetTemplate(m_pIsolate)));
+    : isolate_(pIsolate), document_(pDoc) {
+  value_.Reset(isolate_,
+               NewBoundV8Object(
+                   isolate_, CFXJSE_Class::Create(pScriptContext,
+                                                  &kFormCalcDescriptor, false)
+                                 ->GetTemplate(isolate_)));
 }
 
 CFXJSE_FormCalcContext::~CFXJSE_FormCalcContext() = default;
@@ -5131,7 +5131,7 @@ CFXJSE_FormCalcContext* CFXJSE_FormCalcContext::AsFormCalcContext() {
 }
 
 v8::Local<v8::Value> CFXJSE_FormCalcContext::GlobalPropertyGetter() {
-  return v8::Local<v8::Value>::New(m_pIsolate, m_Value);
+  return v8::Local<v8::Value>::New(isolate_, value_);
 }
 
 // static

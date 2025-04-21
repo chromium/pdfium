@@ -30,7 +30,7 @@ namespace {
 
 class FuzzerTestLoader {
  public:
-  explicit FuzzerTestLoader(pdfium::span<const char> span) : m_Span(span) {}
+  explicit FuzzerTestLoader(pdfium::span<const char> span) : span_(span) {}
 
   static int GetBlock(void* param,
                       unsigned long pos,
@@ -39,14 +39,14 @@ class FuzzerTestLoader {
     FuzzerTestLoader* pLoader = static_cast<FuzzerTestLoader*>(param);
     pdfium::CheckedNumeric<size_t> end = pos;
     end += size;
-    CHECK_LE(end.ValueOrDie(), pLoader->m_Span.size());
+    CHECK_LE(end.ValueOrDie(), pLoader->span_.size());
 
-    FXSYS_memcpy(pBuf, &pLoader->m_Span[pos], size);
+    FXSYS_memcpy(pBuf, &pLoader->span_[pos], size);
     return 1;
   }
 
  private:
-  const pdfium::span<const char> m_Span;
+  const pdfium::span<const char> span_;
 };
 
 int ExampleAppAlert(IPDF_JSPLATFORM*,

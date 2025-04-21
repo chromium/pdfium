@@ -90,7 +90,7 @@ class CPDF_TextPage {
 
   int CharIndexFromTextIndex(int text_index) const;
   int TextIndexFromCharIndex(int char_index) const;
-  size_t size() const { return m_CharList.size(); }
+  size_t size() const { return char_list_.size(); }
   int CountChars() const;
 
   // These methods CHECK() to make sure |index| is within bounds.
@@ -104,8 +104,8 @@ class CPDF_TextPage {
   WideString GetTextByRect(const CFX_FloatRect& rect) const;
   WideString GetTextByObject(const CPDF_TextObject* pTextObj) const;
 
-  // Returns string with the text from |m_TextBuf| that are covered by the input
-  // range. |start| and |count| are in terms of the |m_CharIndices|, so the
+  // Returns string with the text from |text_buf_| that are covered by the input
+  // range. |start| and |count| are in terms of the |char_indices_|, so the
   // range will be converted into appropriate indices.
   WideString GetPageText(int start, int count) const;
   WideString GetAllPageText() const { return GetPageText(0, CountChars()); }
@@ -134,8 +134,8 @@ class CPDF_TextPage {
     TransformedTextObject(const TransformedTextObject& that);
     ~TransformedTextObject();
 
-    UnownedPtr<CPDF_TextObject> m_pTextObj;
-    CFX_Matrix m_formMatrix;
+    UnownedPtr<CPDF_TextObject> text_obj_;
+    CFX_Matrix form_matrix_;
   };
 
   void Init();
@@ -181,20 +181,20 @@ class CPDF_TextPage {
   WideString GetTextByPredicate(
       const std::function<bool(const CharInfo&)>& predicate) const;
 
-  UnownedPtr<const CPDF_Page> const m_pPage;
-  DataVector<TextPageCharSegment> m_CharIndices;
-  std::deque<CharInfo> m_CharList;
-  std::deque<CharInfo> m_TempCharList;
-  WideTextBuffer m_TextBuf;
-  WideTextBuffer m_TempTextBuf;
-  UnownedPtr<const CPDF_TextObject> m_pPrevTextObj;
-  CFX_Matrix m_PrevMatrix;
-  const bool m_rtl;
-  const CFX_Matrix m_DisplayMatrix;
-  std::vector<CFX_FloatRect> m_SelRects;
+  UnownedPtr<const CPDF_Page> const page_;
+  DataVector<TextPageCharSegment> char_indices_;
+  std::deque<CharInfo> char_list_;
+  std::deque<CharInfo> temp_char_list_;
+  WideTextBuffer text_buf_;
+  WideTextBuffer temp_text_buf_;
+  UnownedPtr<const CPDF_TextObject> prev_text_obj_;
+  CFX_Matrix prev_matrix_;
+  const bool rtl_;
+  const CFX_Matrix display_matrix_;
+  std::vector<CFX_FloatRect> sel_rects_;
   std::vector<TransformedTextObject> mTextObjects;
-  TextOrientation m_TextlineDir = TextOrientation::kUnknown;
-  CFX_FloatRect m_CurlineRect;
+  TextOrientation textline_dir_ = TextOrientation::kUnknown;
+  CFX_FloatRect curline_rect_;
 };
 
 #endif  // CORE_FPDFTEXT_CPDF_TEXTPAGE_H_

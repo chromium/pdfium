@@ -25,11 +25,11 @@ class ExternalEngineEmbedderTest : public JSEmbedderTest {
   void SetUp() override;
   void TearDown() override;
 
-  CFXJS_Engine* engine() const { return m_Engine.get(); }
+  CFXJS_Engine* engine() const { return engine_.get(); }
   v8::Local<v8::Context> GetV8Context();
 
  private:
-  std::unique_ptr<CFXJS_Engine> m_Engine;
+  std::unique_ptr<CFXJS_Engine> engine_;
 };
 
 #endif  // TESTING_EXTERNAL_ENGINE_EMBEDDER_TEST_H_

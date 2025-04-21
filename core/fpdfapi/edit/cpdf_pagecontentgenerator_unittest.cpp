@@ -41,7 +41,7 @@ class CPDFPageContentGeneratorTest : public TestWithPageModule {
       const ByteString& type,
       const ByteString& name) {
     RetainPtr<const CPDF_Dictionary> pResources =
-        pGen->m_pObjHolder->GetResources();
+        pGen->obj_holder_->GetResources();
     return pResources->GetDictFor(type)->GetDictFor(name);
   }
 

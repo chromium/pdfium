@@ -9,7 +9,7 @@
 #include "fxjs/fxv8.h"
 #include "v8/include/v8-isolate.h"
 
-CFX_V8::CFX_V8(v8::Isolate* isolate) : m_pIsolate(isolate) {}
+CFX_V8::CFX_V8(v8::Isolate* isolate) : isolate_(isolate) {}
 
 CFX_V8::~CFX_V8() = default;
 
@@ -33,8 +33,8 @@ void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
 }
 
 void CFX_V8::DisposeIsolate() {
-  if (m_pIsolate) {
-    m_pIsolate.ExtractAsDangling()->Dispose();
+  if (isolate_) {
+    isolate_.ExtractAsDangling()->Dispose();
   }
 }
 

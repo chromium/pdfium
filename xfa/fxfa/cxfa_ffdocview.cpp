@@ -604,7 +604,7 @@ void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
     return;
   }
 
-  for (auto& pResult : pGlobalData->m_Globals) {
+  for (auto& pResult : pGlobalData->globals_) {
     if (!pResult->HasRemovedChildren() && pResult->IsWidgetReady()) {
       AddCalculateNode(pResult);
     }

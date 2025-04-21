@@ -3000,8 +3000,8 @@ CXFA_Node::BoolScriptResult CXFA_Node::ExecuteBoolScript(
 
         CJX_Object::CalcData* pGlobalData =
             pRefNode->JSObject()->GetOrCreateCalcData(pDoc->GetHeap());
-        if (!pdfium::Contains(pGlobalData->m_Globals, this)) {
-          pGlobalData->m_Globals.push_back(this);
+        if (!pdfium::Contains(pGlobalData->globals_, this)) {
+          pGlobalData->globals_.push_back(this);
         }
       }
     }

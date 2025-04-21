@@ -125,14 +125,14 @@ class CFXJSE_Engine final : public CFX_V8 {
     ~EventParamScope();
 
    private:
-    UnownedPtr<CFXJSE_Engine> m_pEngine;
-    UnownedPtr<CXFA_Node> m_pPrevTarget;
-    UnownedPtr<CXFA_EventParam> m_pPrevEventParam;
+    UnownedPtr<CFXJSE_Engine> engine_;
+    UnownedPtr<CXFA_Node> prev_target_;
+    UnownedPtr<CXFA_EventParam> prev_event_param_;
   };
   friend class EventParamScope;
 
-  CXFA_Node* GetEventTarget() const { return m_pTarget; }
-  CXFA_EventParam* GetEventParam() const { return m_eventParam; }
+  CXFA_Node* GetEventTarget() const { return target_; }
+  CXFA_EventParam* GetEventParam() const { return event_param_; }
 
   CFXJSE_Context::ExecutionResult RunScript(CXFA_Script::Type eScriptType,
                                             WideStringView wsScript,
@@ -150,15 +150,15 @@ class CFXJSE_Engine final : public CFX_V8 {
 
   v8::Local<v8::Object> GetOrCreateJSBindingFromMap(CXFA_Object* pObject);
 
-  CXFA_Object* GetThisObject() const { return m_pThisObject; }
-  CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass; }
-  CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
+  CXFA_Object* GetThisObject() const { return this_object_; }
+  CFXJSE_Class* GetJseNormalClass() const { return js_class_; }
+  CXFA_Document* GetDocument() const { return document_.Get(); }
 
   void SetNodesOfRunScript(std::vector<cppgc::Persistent<CXFA_Node>>* pArray);
   void AddNodesOfRunScript(CXFA_Node* pNode);
 
-  void SetRunAtType(XFA_AttributeValue eRunAt) { m_eRunAtType = eRunAt; }
-  bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeValue::Server; }
+  void SetRunAtType(XFA_AttributeValue eRunAt) { run_at_type_ = eRunAt; }
+  bool IsRunAtClient() { return run_at_type_ != XFA_AttributeValue::Server; }
 
   CXFA_Script::Type GetType();
 
@@ -168,12 +168,12 @@ class CFXJSE_Engine final : public CFX_V8 {
   CXFA_Object* ToXFAObject(v8::Local<v8::Value> obj);
   v8::Local<v8::Object> NewNormalXFAObject(CXFA_Object* obj);
 
-  bool IsResolvingNodes() const { return m_bResolvingNodes; }
+  bool IsResolvingNodes() const { return resolving_nodes_; }
 
   CFXJSE_Context* GetJseContextForTest() const { return GetJseContext(); }
 
  private:
-  CFXJSE_Context* GetJseContext() const { return m_JsContext.get(); }
+  CFXJSE_Context* GetJseContext() const { return js_context_.get(); }
   CFXJSE_Context* CreateVariablesContext(CXFA_Script* pScriptNode,
                                          CXFA_Node* pSubform);
   void RemoveBuiltInObjs(CFXJSE_Context* pContext);
@@ -197,27 +197,27 @@ class CFXJSE_Engine final : public CFX_V8 {
                            v8::Local<v8::Value> pValue);
   void RunVariablesScript(CXFA_Script* pScriptNode);
 
-  UnownedPtr<CJS_Runtime> const m_pSubordinateRuntime;
-  cppgc::WeakPersistent<CXFA_Document> const m_pDocument;
-  std::unique_ptr<CFXJSE_Context> m_JsContext;
-  UnownedPtr<CFXJSE_Class> m_pJsClass;
-  CXFA_Script::Type m_eScriptType = CXFA_Script::Type::Unknown;
-  // |m_mapObjectToValue| is what ensures the v8 object bound to a
+  UnownedPtr<CJS_Runtime> const subordinate_runtime_;
+  cppgc::WeakPersistent<CXFA_Document> const document_;
+  std::unique_ptr<CFXJSE_Context> js_context_;
+  UnownedPtr<CFXJSE_Class> js_class_;
+  CXFA_Script::Type script_type_ = CXFA_Script::Type::Unknown;
+  // |map_object_to_value_| is what ensures the v8 object bound to a
   // CJX_Object remains valid for the lifetime of the engine.
   std::map<cppgc::Persistent<CJX_Object>, v8::Global<v8::Object>>
-      m_mapObjectToObject;
+      map_object_to_object_;
   std::map<cppgc::Persistent<CJX_Object>, std::unique_ptr<CFXJSE_Context>>
-      m_mapVariableToContext;
-  cppgc::Persistent<CXFA_Node> m_pTarget;
-  UnownedPtr<CXFA_EventParam> m_eventParam;
-  std::vector<cppgc::Persistent<CXFA_Node>> m_upObjectArray;
-  UnownedPtr<std::vector<cppgc::Persistent<CXFA_Node>>> m_pScriptNodeArray;
-  std::unique_ptr<CFXJSE_NodeHelper> const m_NodeHelper;
-  std::unique_ptr<CFXJSE_ResolveProcessor> const m_ResolveProcessor;
-  std::unique_ptr<CFXJSE_FormCalcContext> m_FormCalcContext;
-  cppgc::Persistent<CXFA_Object> m_pThisObject;
-  XFA_AttributeValue m_eRunAtType = XFA_AttributeValue::Client;
-  bool m_bResolvingNodes = false;
+      map_variable_to_context_;
+  cppgc::Persistent<CXFA_Node> target_;
+  UnownedPtr<CXFA_EventParam> event_param_;
+  std::vector<cppgc::Persistent<CXFA_Node>> up_object_array_;
+  UnownedPtr<std::vector<cppgc::Persistent<CXFA_Node>>> script_node_array_;
+  std::unique_ptr<CFXJSE_NodeHelper> const node_helper_;
+  std::unique_ptr<CFXJSE_ResolveProcessor> const resolve_processor_;
+  std::unique_ptr<CFXJSE_FormCalcContext> form_calc_context_;
+  cppgc::Persistent<CXFA_Object> this_object_;
+  XFA_AttributeValue run_at_type_ = XFA_AttributeValue::Client;
+  bool resolving_nodes_ = false;
 };
 
 #endif  //  FXJS_XFA_CFXJSE_ENGINE_H_
