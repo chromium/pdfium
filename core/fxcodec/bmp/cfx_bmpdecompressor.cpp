@@ -494,7 +494,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
 
             ReadNextScanline();
             col_num_ = 0;
-            fxcrt::Fill(out_row_buffer_, 0);
+            std::ranges::fill(out_row_buffer_, 0);
             SaveDecodingStatus(DecodeStatus::kData);
             continue;
           }
@@ -518,7 +518,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
             }
 
             while (row_num_ < bmp_row_num__next) {
-              fxcrt::Fill(out_row_buffer_, 0);
+              std::ranges::fill(out_row_buffer_, 0);
               ReadNextScanline();
             }
             break;
@@ -562,7 +562,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
           return BmpDecoder::Status::kContinue;
         }
 
-        fxcrt::Fill(
+        std::ranges::fill(
             pdfium::make_span(out_row_buffer_).subspan(col_num_, first_part),
             second_part);
 
@@ -598,7 +598,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
 
             ReadNextScanline();
             col_num_ = 0;
-            fxcrt::Fill(out_row_buffer_, 0);
+            std::ranges::fill(out_row_buffer_, 0);
             SaveDecodingStatus(DecodeStatus::kData);
             continue;
           }
@@ -622,7 +622,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
             }
 
             while (row_num_ < bmp_row_num__next) {
-              fxcrt::Fill(out_row_buffer_, 0);
+              std::ranges::fill(out_row_buffer_, 0);
               ReadNextScanline();
             }
             break;

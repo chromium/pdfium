@@ -19,7 +19,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxcrt/zip.h"
 #include "core/fxge/agg/cfx_agg_cliprgn.h"
@@ -88,7 +87,7 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& bitmap,
       const int src_abgr = FXARGB_TOBGRORDERDIB(src_argb);
       for (int row = rect.top; row < rect.bottom; row++) {
         auto dest_row_span = bitmap->GetWritableScanlineAs<uint32_t>(row);
-        fxcrt::Fill(dest_row_span.subspan(rect.left, width), src_abgr);
+        std::ranges::fill(dest_row_span.subspan(rect.left, width), src_abgr);
       }
       return;
     }

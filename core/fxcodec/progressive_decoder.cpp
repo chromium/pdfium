@@ -268,7 +268,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num,
   }
   const int32_t left = gif_frame_rect_.left;
   const pdfium::span<uint8_t> decode_span = decode_buf_;
-  fxcrt::Fill(decode_span.first(src_width_), pal_index);
+  std::ranges::fill(decode_span.first(src_width_), pal_index);
   fxcrt::Copy(row_buf.first(img_width), decode_span.subspan(left));
 
   int32_t line = row_num + gif_frame_rect_.top;

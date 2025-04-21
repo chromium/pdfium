@@ -6,6 +6,7 @@
 
 #include "public/fpdfview.h"
 
+#include <algorithm>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -668,9 +669,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     if (win_dc.GetDeviceType() == DeviceType::kPrinter) {
       auto dest_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
       if (dest_bitmap->Create(size_x, size_y, FXDIB_Format::kBgrx)) {
-        fxcrt::Fill(dest_bitmap->GetWritableBuffer().first(pBitmap->GetPitch() *
-                                                           size_y),
-                    -1);
+        std::ranges::fill(dest_bitmap->GetWritableBuffer().first(
+                              pBitmap->GetPitch() * size_y),
+                          -1);
         dest_bitmap->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
                                      BlendMode::kNormal, nullptr, false);
         win_dc.StretchDIBits(std::move(dest_bitmap), 0, 0, size_x, size_y);
@@ -1039,7 +1040,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
     for (int row = fill_rect.top; row < row_end; ++row) {
       auto span32 = pBitmap->GetWritableScanlineAs<uint32_t>(row).subspan(
           fill_rect.left, fill_rect.Width());
-      fxcrt::Fill(span32, static_cast<uint32_t>(color));
+      std::ranges::fill(span32, static_cast<uint32_t>(color));
     }
     return true;
   }
@@ -1052,7 +1053,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
     auto bgr_span =
         pBitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row).subspan(
             fill_rect.left, fill_rect.Width());
-    fxcrt::Fill(bgr_span, bgr);
+    std::ranges::fill(bgr_span, bgr);
   }
   return true;
 }

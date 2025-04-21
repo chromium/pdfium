@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_pagelabel.h"
 
+#include <algorithm>
 #include <array>
 #include <utility>
 
@@ -54,7 +55,7 @@ WideString MakeLetters(int num) {
   WideString result;
   {
     auto result_span = result.GetBuffer(count);
-    fxcrt::Fill(result_span, ch);
+    std::ranges::fill(result_span, ch);
     result.ReleaseBuffer(count);
   }
   return result;

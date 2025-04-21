@@ -8,13 +8,14 @@
 
 #include <stddef.h>
 
+#include <algorithm>
+
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxge/agg/cfx_agg_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
@@ -83,8 +84,8 @@ void CFX_AggBitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
         add_clip_scan_[i] = clip_scan[i] * alpha_;
       }
     } else {
-      fxcrt::Fill(pdfium::make_span(add_clip_scan_).first(dest_width),
-                  FXSYS_roundf(alpha_ * 255));
+      std::ranges::fill(pdfium::make_span(add_clip_scan_).first(dest_width),
+                        FXSYS_roundf(alpha_ * 255));
     }
     clip_scan = add_clip_scan_;
   }

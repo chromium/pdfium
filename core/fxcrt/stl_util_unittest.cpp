@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 
+#include <algorithm>
 #include <array>
 #include <vector>
 
@@ -14,7 +15,7 @@
 
 TEST(fxcrt, FillCArray) {
   uint32_t buf[4];
-  fxcrt::Fill(buf, 0x01020304u);
+  std::ranges::fill(buf, 0x01020304u);
   for (const auto b : buf) {
     EXPECT_EQ(b, 0x01020304u);
   }
@@ -22,7 +23,7 @@ TEST(fxcrt, FillCArray) {
 
 TEST(fxcrt, FillStdArray) {
   std::array<uint16_t, 10> buf;
-  fxcrt::Fill(buf, 0x0102u);
+  std::ranges::fill(buf, 0x0102u);
   for (const auto b : buf) {
     EXPECT_EQ(b, 0x0102u);
   }
@@ -30,7 +31,7 @@ TEST(fxcrt, FillStdArray) {
 
 TEST(fxcrt, FillStdVector) {
   std::vector<uint8_t> buf(15);
-  fxcrt::Fill(buf, 0x32u);
+  std::ranges::fill(buf, 0x32u);
   for (const auto b : buf) {
     EXPECT_EQ(b, 0x32u);
   }
@@ -39,7 +40,7 @@ TEST(fxcrt, FillStdVector) {
 TEST(fxcrt, FillSpan) {
   float buf[12];
   auto buf_span = pdfium::make_span(buf);
-  fxcrt::Fill(buf_span, 123.0f);
+  std::ranges::fill(buf_span, 123.0f);
   for (const auto b : buf) {
     EXPECT_EQ(b, 123.0f);
   }
@@ -49,7 +50,7 @@ TEST(fxcrt, CopyCArray) {
   uint32_t dst[4];
   {
     uint32_t buf[4];
-    fxcrt::Fill(buf, 0x01020304u);
+    std::ranges::fill(buf, 0x01020304u);
     fxcrt::Copy(buf, dst);
   }
   for (const auto b : dst) {
@@ -61,7 +62,7 @@ TEST(fxcrt, CopyStdArray) {
   uint16_t dst[10];
   {
     std::array<uint16_t, 10> buf;
-    fxcrt::Fill(buf, 0x0102u);
+    std::ranges::fill(buf, 0x0102u);
     fxcrt::Copy(buf, dst);
   }
   for (const auto b : dst) {
@@ -73,7 +74,7 @@ TEST(fxcrt, CopyStdVector) {
   uint8_t dst[15];
   {
     std::vector<uint8_t> buf(15);
-    fxcrt::Fill(buf, 0x32u);
+    std::ranges::fill(buf, 0x32u);
     fxcrt::Copy(buf, dst);
   }
   for (const auto b : dst) {
@@ -86,7 +87,7 @@ TEST(fxcrt, CopySpan) {
   {
     float buf[12];
     auto buf_span = pdfium::make_span(buf);
-    fxcrt::Fill(buf_span, 123.0f);
+    std::ranges::fill(buf_span, 123.0f);
     fxcrt::Copy(buf_span, dst);
   }
   for (const auto b : dst) {

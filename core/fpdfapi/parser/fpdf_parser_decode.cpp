@@ -163,7 +163,7 @@ DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
     }
 
     if (ch == 'z') {
-      fxcrt::Fill(dest_span.first(4), 0);
+      std::ranges::fill(dest_span.first(4), 0);
       dest_span = dest_span.subspan(4);
       state = 0;
       res = 0;
@@ -292,7 +292,7 @@ DataAndBytesConsumed RunLengthDecode(pdfium::span<const uint8_t> src_span) {
       if (buf_left < copy_len) {
         uint32_t delta = copy_len - buf_left;
         copy_len = buf_left;
-        fxcrt::Fill(dest_span.subspan(dest_count + copy_len, delta), 0);
+        std::ranges::fill(dest_span.subspan(dest_count + copy_len, delta), 0);
       }
       auto copy_span = src_span.subspan(i + 1, copy_len);
       fxcrt::Copy(copy_span, dest_span.subspan(dest_count));
@@ -301,7 +301,7 @@ DataAndBytesConsumed RunLengthDecode(pdfium::span<const uint8_t> src_span) {
     } else {
       const uint8_t fill = i + 1 < src_span.size() ? src_span[i + 1] : 0;
       const size_t fill_size = 257 - src_span[i];
-      fxcrt::Fill(dest_span.subspan(dest_count, fill_size), fill);
+      std::ranges::fill(dest_span.subspan(dest_count, fill_size), fill);
       dest_count += fill_size;
       i += 2;
     }

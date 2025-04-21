@@ -116,7 +116,7 @@ bool RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
 }
 
 bool RLScanlineDecoder::Rewind() {
-  fxcrt::Fill(scanline_, 0);
+  std::ranges::fill(scanline_, 0);
   src_offset_ = 0;
   eod_ = false;
   operator_ = 0;
@@ -129,7 +129,7 @@ pdfium::span<uint8_t> RLScanlineDecoder::GetNextLine() {
   } else if (eod_) {
     return pdfium::span<uint8_t>();
   }
-  fxcrt::Fill(scanline_, 0);
+  std::ranges::fill(scanline_, 0);
   uint32_t col_pos = 0;
   bool eol = false;
   auto scan_span = pdfium::make_span(scanline_);
@@ -159,7 +159,7 @@ pdfium::span<uint8_t> RLScanlineDecoder::GetNextLine() {
         duplicate_len = pdfium::checked_cast<uint32_t>(line_bytes_ - col_pos);
         eol = true;
       }
-      fxcrt::Fill(scan_span.subspan(col_pos, duplicate_len), fill);
+      std::ranges::fill(scan_span.subspan(col_pos, duplicate_len), fill);
       col_pos += duplicate_len;
       UpdateOperator((uint8_t)duplicate_len);
     } else {

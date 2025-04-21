@@ -803,7 +803,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   if (unicode_range.has_value()) {
     fxcrt::Copy(unicode_range.value(), pFont->usb_);
   } else {
-    fxcrt::Fill(pFont->usb_, 0);
+    std::ranges::fill(pFont->usb_, 0);
   }
 
   std::optional<std::array<uint32_t, 2>> code_page_range =
@@ -811,7 +811,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   if (code_page_range.has_value()) {
     fxcrt::Copy(code_page_range.value(), pFont->csb_);
   } else {
-    fxcrt::Fill(pFont->csb_, 0);
+    std::ranges::fill(pFont->csb_, 0);
   }
 
   static constexpr uint32_t kNameTag =

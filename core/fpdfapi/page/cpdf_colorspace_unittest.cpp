@@ -7,8 +7,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <algorithm>
+
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/stl_util.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -20,7 +21,7 @@ TEST(CPDFCalGrayTest, TranslateImageLine) {
 
   const uint8_t kSrc[12] = {255, 0, 0, 0, 255, 0, 0, 0, 255, 128, 128, 128};
   uint8_t dst[12];
-  fxcrt::Fill(dst, 0xbd);
+  std::ranges::fill(dst, 0xbd);
   // `bTransMask` only applies to CYMK colorspaces.
   pCal->TranslateImageLine(dst, kSrc, 4, 4, 1, /*bTransMask=*/false);
   EXPECT_THAT(dst, ElementsAre(255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0));
@@ -32,7 +33,7 @@ TEST(CPDFCalRGBTest, TranslateImageLine) {
 
   const uint8_t kSrc[12] = {255, 0, 0, 0, 255, 0, 0, 0, 255, 128, 128, 128};
   uint8_t dst[12];
-  fxcrt::Fill(dst, 0xbd);
+  std::ranges::fill(dst, 0xbd);
   // `bTransMask` only applies to CYMK colorspaces.
   pCal->TranslateImageLine(dst, kSrc, 4, 4, 1, /*bTransMask=*/false);
   EXPECT_THAT(dst, ElementsAre(0, 0, 255, 0, 255, 0, 255, 0, 0, 128, 128, 128));

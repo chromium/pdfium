@@ -117,7 +117,7 @@ void ConvertBuffer_1bppMask2Gray(pdfium::span<uint8_t> dest_buf,
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch));
     pdfium::span<const uint8_t> src_span =
         pSrcBitmap->GetScanline(src_top + row);
-    fxcrt::Fill(dest_span.first(width), kResetGray);
+    std::ranges::fill(dest_span.first(width), kResetGray);
     uint8_t* dest_scan = dest_span.data();
     const uint8_t* src_scan = src_span.data();
     UNSAFE_TODO({
@@ -201,7 +201,7 @@ void ConvertBuffer_IndexCopy(pdfium::span<uint8_t> dest_buf,
       pdfium::span<uint8_t> dest_span =
           dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch));
       // Set all destination pixels to be white initially.
-      fxcrt::Fill(dest_span.first(width), 255);
+      std::ranges::fill(dest_span.first(width), 255);
       uint8_t* dest_scan = dest_span.data();
       const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row).data();
       UNSAFE_TODO({
@@ -975,7 +975,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   const int col_start = bYFlip ? GetWidth() - dest_clip.bottom : dest_clip.top;
   const int col_end = bYFlip ? GetWidth() - dest_clip.top : dest_clip.bottom;
   if (GetBPP() == 1) {
-    fxcrt::Fill(dest_span, 0xff);
+    std::ranges::fill(dest_span, 0xff);
     if (bYFlip) {
       dest_span = dest_span.subspan(dest_last_row_offset);
     }

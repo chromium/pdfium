@@ -6,6 +6,7 @@
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 
+#include <algorithm>
 #include <limits>
 #include <memory>
 #include <utility>
@@ -23,7 +24,6 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxge/agg/cfx_agg_cliprgn.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -158,24 +158,25 @@ void CFX_DIBitmap::Clear(uint32_t color) {
     case FXDIB_Format::kInvalid:
       break;
     case FXDIB_Format::k1bppMask:
-      fxcrt::Fill(buffer, (color & 0xff000000) ? 0xff : 0);
+      std::ranges::fill(buffer, (color & 0xff000000) ? 0xff : 0);
       break;
     case FXDIB_Format::k1bppRgb:
-      fxcrt::Fill(buffer, FindPalette(color) ? 0xff : 0);
+      std::ranges::fill(buffer, FindPalette(color) ? 0xff : 0);
       break;
     case FXDIB_Format::k8bppMask:
-      fxcrt::Fill(buffer, color >> 24);
+      std::ranges::fill(buffer, color >> 24);
       break;
     case FXDIB_Format::k8bppRgb:
-      fxcrt::Fill(buffer, FindPalette(color));
+      std::ranges::fill(buffer, FindPalette(color));
       break;
     case FXDIB_Format::kBgr: {
       const FX_BGR_STRUCT<uint8_t> bgr = ArgbToBGRStruct(color);
       if (bgr.red == bgr.green && bgr.green == bgr.blue) {
-        fxcrt::Fill(buffer, bgr.red);
+        std::ranges::fill(buffer, bgr.red);
       } else {
         for (int row = 0; row < GetHeight(); row++) {
-          fxcrt::Fill(GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row), bgr);
+          std::ranges::fill(GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row),
+                            bgr);
         }
       }
       break;
@@ -189,7 +190,7 @@ void CFX_DIBitmap::Clear(uint32_t color) {
       [[fallthrough]];
     case FXDIB_Format::kBgra:
       for (int row = 0; row < GetHeight(); row++) {
-        fxcrt::Fill(GetWritableScanlineAs<uint32_t>(row), color);
+        std::ranges::fill(GetWritableScanlineAs<uint32_t>(row), color);
       }
       break;
 #if defined(PDF_USE_SKIA)
@@ -198,7 +199,8 @@ void CFX_DIBitmap::Clear(uint32_t color) {
       const FX_BGRA_STRUCT<uint8_t> bgra =
           PreMultiplyColor(ArgbToBGRAStruct(color));
       for (int row = 0; row < GetHeight(); row++) {
-        fxcrt::Fill(GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row), bgra);
+        std::ranges::fill(GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row),
+                          bgra);
       }
       break;
     }
@@ -961,7 +963,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   auto dest_span =
       UNSAFE_BUFFERS(pdfium::make_span(dest_buf.get(), dest_buf_size));
   if (dest_format == FXDIB_Format::kBgra) {
-    fxcrt::Fill(dest_span, 0xff);
+    std::ranges::fill(dest_span, 0xff);
   }
 
   RetainPtr<CFX_DIBBase> holder(this);

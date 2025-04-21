@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/ptr_util.h"
-#include "core/fxcrt/stl_util.h"
 
 namespace fxcodec {
 
@@ -150,7 +149,7 @@ void LZWDecompressor::ClearTable() {
   code_size_cur_ = code_size_ + 1;
   code_next_ = code_end_ + 1;
   code_old_ = static_cast<uint16_t>(-1);
-  fxcrt::Fill(code_table_, CodeEntry{});  // Aggregate initialization.
+  std::ranges::fill(code_table_, CodeEntry{});  // Aggregate initialization.
   static_assert(std::is_aggregate_v<CodeEntry>);
   for (uint16_t i = 0; i < code_clear_; i++) {
     code_table_[i].suffix = static_cast<uint8_t>(i);

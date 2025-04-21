@@ -194,7 +194,7 @@ void CompositeRow_Rgb2Mask(pdfium::span<uint8_t> dest_span,
                            int width,
                            pdfium::span<const uint8_t> clip_span) {
   if (clip_span.empty()) {
-    fxcrt::Fill(dest_span.first(width), 0xff);
+    std::ranges::fill(dest_span.first(width), 0xff);
     return;
   }
   uint8_t* dest_scan = dest_span.data();

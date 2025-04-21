@@ -94,8 +94,8 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
 
     std::array<uint8_t, kPaddingSize> padding;
     fxcrt::Copy(source.subspan(source_data_size, source_padding_size), padding);
-    fxcrt::Fill(pdfium::make_span(padding).subspan(source_padding_size),
-                16 - source_padding_size);
+    std::ranges::fill(pdfium::make_span(padding).subspan(source_padding_size),
+                      16 - source_padding_size);
     CRYPT_AESEncrypt(aes_context_.get(), dest_padding_span, padding);
     return dest;
   }

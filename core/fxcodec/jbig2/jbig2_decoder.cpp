@@ -6,11 +6,12 @@
 
 #include "core/fxcodec/jbig2/jbig2_decoder.h"
 
+#include <algorithm>
+
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/span_util.h"
-#include "core/fxcrt/stl_util.h"
 
 namespace fxcodec {
 
@@ -61,7 +62,7 @@ FXCODEC_STATUS Jbig2Decoder::StartDecode(
   pJbig2Context->global_key_ = global_key;
   pJbig2Context->dest_buf_ = dest_buf;
   pJbig2Context->dest_pitch_ = dest_pitch;
-  fxcrt::Fill(dest_buf.first(Fx2DSizeOrDie(height, dest_pitch)), 0);
+  std::ranges::fill(dest_buf.first(Fx2DSizeOrDie(height, dest_pitch)), 0);
   pJbig2Context->context_ =
       CJBig2_Context::Create(global_span, global_key, src_span, src_key,
                              pJBig2DocumentContext->GetSymbolDictCache());

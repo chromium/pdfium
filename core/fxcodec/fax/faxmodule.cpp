@@ -28,7 +28,6 @@
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
 
 #if BUILDFLAG(IS_WIN)
@@ -570,7 +569,7 @@ FaxDecoder::~FaxDecoder() {
 }
 
 bool FaxDecoder::Rewind() {
-  fxcrt::Fill(ref_buf_, 0xff);
+  std::ranges::fill(ref_buf_, 0xff);
   bitpos_ = 0;
   return true;
 }
@@ -582,7 +581,7 @@ pdfium::span<uint8_t> FaxDecoder::GetNextLine() {
     return pdfium::span<uint8_t>();
   }
 
-  fxcrt::Fill(scanline_buf_, 0xff);
+  std::ranges::fill(scanline_buf_, 0xff);
   if (encoding_ < 0) {
     FaxG4GetRow(src_span_.data(), bitsize, &bitpos_, scanline_buf_.data(),
                 ref_buf_, orig_width_);
@@ -862,7 +861,7 @@ DataVector<uint8_t> FaxEncoder::Encode() {
   dest_bitpos_ = 0;
   uint8_t last_byte = 0;
   for (int i = 0; i < rows_; ++i) {
-    fxcrt::Fill(line_buf_, 0);
+    std::ranges::fill(line_buf_, 0);
     line_buf_[0] = last_byte;
     pdfium::span<const uint8_t> scan_line = src_->GetScanline(i);
     FaxEncode2DLine(scan_line);

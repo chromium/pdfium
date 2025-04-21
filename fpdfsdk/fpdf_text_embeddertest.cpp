@@ -87,7 +87,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   ASSERT_TRUE(textpage);
 
   unsigned short buffer[128];
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
 
   // Check that edge cases are handled gracefully
   EXPECT_EQ(0, FPDFText_GetText(textpage.get(), 0, 128, nullptr));
@@ -97,7 +97,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   EXPECT_EQ(0, buffer[0]);
 
   // Keep going and check the next case.
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   EXPECT_EQ(2, FPDFText_GetText(textpage.get(), 0, 1, buffer));
   EXPECT_EQ(kHelloGoodbyeText[0], buffer[0]);
   EXPECT_EQ(0, buffer[1]);
@@ -124,7 +124,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   // the expected string, plus 2 more for the terminating character.
   static const char kSmallExpected[] = "Hello";
   unsigned short small_buffer[12];
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   EXPECT_EQ(6, FPDFText_GetText(textpage.get(), 0, 5, small_buffer));
   EXPECT_THAT(pdfium::make_span(small_buffer).first(sizeof(kSmallExpected)),
               ElementsAreArray(kSmallExpected));
@@ -255,13 +255,13 @@ TEST_F(FPDFTextEmbedderTest, Text) {
                                        nullptr, 0));
 
   // Extract starting at character 4 as above.
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   EXPECT_EQ(1, FPDFText_GetBoundedText(textpage.get(), 41.0, 56.0, 82.0, 48.0,
                                        buffer, 1));
   EXPECT_EQ('o', buffer[0]);  // 5th character in "hello".
   EXPECT_EQ(0xbdbd, buffer[1]);
 
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   EXPECT_EQ(9, FPDFText_GetBoundedText(textpage.get(), 41.0, 56.0, 82.0, 48.0,
                                        buffer, 9));
   EXPECT_THAT(
@@ -269,7 +269,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
       ElementsAreArray(pdfium::make_span(kHelloGoodbyeText).subspan(4u, 9u)));
   EXPECT_EQ(0xbdbd, buffer[9]);
 
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   EXPECT_EQ(10, FPDFText_GetBoundedText(textpage.get(), 41.0, 56.0, 82.0, 48.0,
                                         buffer, 128));
   EXPECT_THAT(
@@ -360,7 +360,7 @@ TEST_F(FPDFTextEmbedderTest, TextHebrewMirrored) {
   ASSERT_EQ(kCharCount, FPDFText_CountChars(textpage.get()));
 
   unsigned short buffer[kCharCount + 1];
-  fxcrt::Fill(buffer, 0x4242);
+  std::ranges::fill(buffer, 0x4242);
   EXPECT_EQ(kCharCount + 1,
             FPDFText_GetText(textpage.get(), 0, kCharCount, buffer));
   EXPECT_EQ(0x05d1, buffer[0]);
@@ -747,13 +747,13 @@ TEST_F(FPDFTextEmbedderTest, WebLinks) {
   // Retrieve a link with too small a buffer.  Buffer will not be
   // NUL-terminated, but must not be modified past indicated length,
   // so pre-fill with a pattern to check write bounds.
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   EXPECT_EQ(1, FPDFLink_GetURL(pagelink, 0, buffer.data(), 1));
   EXPECT_EQ('h', buffer[0]);
   EXPECT_EQ(0xbdbd, buffer[1]);
 
   // Check buffer that doesn't have space for a terminating NUL.
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   auto kExpectedUrlTruncated =
       pdfium::make_span(kExpectedUrl).first(kExpectedLen - 1);
   EXPECT_EQ(static_cast<int>(kExpectedUrlTruncated.size()),
@@ -763,7 +763,7 @@ TEST_F(FPDFTextEmbedderTest, WebLinks) {
   EXPECT_EQ(0xbdbd, buffer[kExpectedLen - 1]);
 
   // Retreive link with exactly-sized buffer.
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   EXPECT_EQ(static_cast<int>(kExpectedLen),
             FPDFLink_GetURL(pagelink, 0, buffer.data(), kExpectedLen));
   EXPECT_THAT(pdfium::make_span(buffer).first(kExpectedLen),
@@ -772,7 +772,7 @@ TEST_F(FPDFTextEmbedderTest, WebLinks) {
   EXPECT_EQ(0xbdbd, buffer[kExpectedLen]);
 
   // Retreive link with ample-sized-buffer.
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   EXPECT_EQ(static_cast<int>(kExpectedLen),
             FPDFLink_GetURL(pagelink, 0, buffer.data(), buffer.size()));
   EXPECT_THAT(pdfium::make_span(buffer).first(kExpectedLen),
@@ -1212,7 +1212,7 @@ TEST_F(FPDFTextEmbedderTest, Bug921) {
     EXPECT_EQ(kData[i], FPDFText_GetUnicode(textpage.get(), kStartIndex + i));
   }
   std::array<unsigned short, std::size(kData) + 1> buffer;
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   int count = FPDFText_GetText(textpage.get(), kStartIndex, kData.size(),
                                buffer.data());
   ASSERT_GT(count, 0);
@@ -1285,7 +1285,7 @@ TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
 
   // Should not include the control characters in the output
   unsigned short buffer[128];
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
   ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
   EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
@@ -1295,7 +1295,7 @@ TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
   static const char kExpectedSubstring[] = "Goodbye, world!";
   // Offset is the length of 'Hello, world!\r\n' + 2 control characters in the
   // original stream
-  fxcrt::Fill(buffer, 0xbdbd);
+  std::ranges::fill(buffer, 0xbdbd);
   num_chars = FPDFText_GetText(textpage.get(), 17, 128, buffer);
 
   ASSERT_GE(num_chars, 0);
@@ -1485,7 +1485,7 @@ TEST_F(FPDFTextEmbedderTest, CroppedText) {
     ASSERT_TRUE(textpage);
 
     unsigned short buffer[128];
-    fxcrt::Fill(buffer, 0xbdbd);
+    std::ranges::fill(buffer, 0xbdbd);
     int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
     ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
     EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
@@ -1496,7 +1496,7 @@ TEST_F(FPDFTextEmbedderTest, CroppedText) {
               FPDFText_GetBoundedText(textpage.get(), box.left, box.top,
                                       box.right, box.bottom, nullptr, 0));
 
-    fxcrt::Fill(buffer, 0xbdbd);
+    std::ranges::fill(buffer, 0xbdbd);
     ASSERT_EQ(static_cast<int>(expected_text.GetLength()) + 1,
               FPDFText_GetBoundedText(textpage.get(), box.left, box.top,
                                       box.right, box.bottom, buffer, 128));

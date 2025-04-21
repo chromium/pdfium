@@ -52,7 +52,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
                     pdfium::span<uint8_t> key,
                     bool ignore_metadata,
                     const ByteString& file_id) {
-  fxcrt::Fill(key, 0);
+  std::ranges::fill(key, 0);
 
   uint8_t passcode[32];
   GetPassCode(password, passcode);
