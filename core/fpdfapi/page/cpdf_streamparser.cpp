@@ -25,7 +25,6 @@
 #include "core/fxcodec/data_and_bytes_consumed.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/scanlinedecoder.h"
-#include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
@@ -140,14 +139,14 @@ CPDF_StreamParser::~CPDF_StreamParser() = default;
 RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     CPDF_Document* pDoc,
     RetainPtr<CPDF_Dictionary> pDict,
-    const CPDF_Object* pCSObj) {
-  auto stream_span = buf_.subspan(pos_);
+    const CPDF_Object* pCSObj,
+    uint32_t stream_length) {
+  auto stream_span = buf_.subspan(pos_).first(stream_length);
   if (stream_span.empty()) {
     return nullptr;
   }
 
   if (PDFCharIsWhitespace(stream_span.front())) {
-    pos_++;
     stream_span = stream_span.subspan<1>();
     if (stream_span.empty()) {
       return nullptr;
@@ -201,7 +200,6 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     auto src_span = stream_span.first(original_size);
     data = DataVector<uint8_t>(src_span.begin(), src_span.end());
     actual_stream_size = original_size;
-    pos_ += original_size;
   } else {
     actual_stream_size =
         DecodeInlineStream(stream_span, width, height, decoder,
@@ -210,26 +208,8 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
       return nullptr;
     }
 
-    {
-      AutoRestorer<uint32_t> saved_position(&pos_);
-      pos_ += actual_stream_size;
-      while (true) {
-        uint32_t saved_iteration_position = pos_;
-        ElementType type = ParseNextElement();
-        if (type == ElementType::kEndOfData) {
-          return nullptr;
-        }
-
-        if (type == ElementType::kKeyword && GetWord() == "EI") {
-          break;
-        }
-
-        actual_stream_size += pos_ - saved_iteration_position;
-      }
-    }
     auto src_span = stream_span.first(actual_stream_size);
     data = DataVector<uint8_t>(src_span.begin(), src_span.end());
-    pos_ += actual_stream_size;
   }
   pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(actual_stream_size));
   return pdfium::MakeRetain<CPDF_Stream>(std::move(data), std::move(pDict));

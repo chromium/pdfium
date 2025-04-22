@@ -10,6 +10,7 @@
 #include <array>
 #include <map>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -41,11 +42,13 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/scoped_set_insertion.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_graphstate.h"
 #include "core/fxge/cfx_graphstatedata.h"
 
@@ -256,6 +259,20 @@ void ReplaceAbbr(RetainPtr<CPDF_Object> pObj) {
     ReplaceAbbrInArray(pArray);
   }
 }
+
+template <typename T>
+class AutoOptionalResetter {
+ public:
+  FX_STACK_ALLOCATED();
+
+  explicit AutoOptionalResetter(std::optional<T>* value) : value_(value) {
+    CHECK(value_);
+  }
+  ~AutoOptionalResetter() { value_->reset(); }
+
+ private:
+  const UnownedPtr<std::optional<T>> value_;
+};
 
 }  // namespace
 
@@ -589,7 +606,25 @@ void CPDF_StreamContentParser::SetGraphicStates(CPDF_PageObject* pObj,
 }
 
 void CPDF_StreamContentParser::OnOperator(ByteStringView op) {
-  auto it = g_opcodes->find(op.GetID());
+  const uint32_t op_id = op.GetID();
+  if (inline_image_context_.has_value()) {
+    switch (inline_image_context_.value().state) {
+      case InlineImageContext::State::kLookingForID:
+        // Also tolerate the case with "ID" missing.
+        if (op_id != FXBSTR_ID('I', 'D', 0, 0) &&
+            op_id != FXBSTR_ID('E', 'I', 0, 0)) {
+          return;
+        }
+        break;
+      case InlineImageContext::State::kLookingForEI:
+        if (op_id != FXBSTR_ID('E', 'I', 0, 0)) {
+          return;
+        }
+        break;
+    }
+  }
+
+  auto it = g_opcodes->find(op_id);
   if (it != g_opcodes->end()) {
     (this->*it->second)();
   }
@@ -640,63 +675,8 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginImage() {
-  FX_FILESIZE savePos = syntax_->GetPos();
-  auto pDict = document_->New<CPDF_Dictionary>();
-  while (true) {
-    CPDF_StreamParser::ElementType type = syntax_->ParseNextElement();
-    if (type == CPDF_StreamParser::ElementType::kKeyword) {
-      if (syntax_->GetWord() != "ID") {
-        syntax_->SetPos(savePos);
-        return;
-      }
-    }
-    if (type != CPDF_StreamParser::ElementType::kName) {
-      break;
-    }
-    // Next `syntax_` read below may invalidate `word`. Must save to `key`.
-    ByteStringView word = syntax_->GetWord();
-    ByteString key(word.Last(word.GetLength() - 1));
-    auto pObj = syntax_->ReadNextObject(false, false, 0);
-    if (pObj && !pObj->IsInline()) {
-      pDict->SetNewFor<CPDF_Reference>(key, document_, pObj->GetObjNum());
-    } else {
-      pDict->SetFor(key, std::move(pObj));
-    }
-  }
-  ReplaceAbbr(pDict);
-  RetainPtr<const CPDF_Object> pCSObj;
-  if (pDict->KeyExist("ColorSpace")) {
-    pCSObj = pDict->GetDirectObjectFor("ColorSpace");
-    if (pCSObj->IsName()) {
-      ByteString name = pCSObj->GetString();
-      if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
-        pCSObj = FindResourceObj("ColorSpace", name);
-        if (pCSObj && pCSObj->IsInline()) {
-          pDict->SetFor("ColorSpace", pCSObj->Clone());
-        }
-      }
-    }
-  }
-  pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
-  RetainPtr<CPDF_Stream> pStream =
-      syntax_->ReadInlineStream(document_, std::move(pDict), pCSObj.Get());
-  while (true) {
-    CPDF_StreamParser::ElementType type = syntax_->ParseNextElement();
-    if (type == CPDF_StreamParser::ElementType::kEndOfData) {
-      return;
-    }
-
-    if (type == CPDF_StreamParser::ElementType::kKeyword &&
-        syntax_->GetWord() == "EI") {
-      break;
-    }
-  }
-  CPDF_ImageObject* pObj = AddImageFromStream(std::move(pStream), /*name=*/"");
-  // Record the bounding box of this image, so rendering code can draw it
-  // properly.
-  if (pObj && pObj->GetImage()->IsMask()) {
-    object_holder_->AddImageMaskBoundingBox(pObj->GetRect());
-  }
+  CHECK(!inline_image_context_.has_value());
+  inline_image_context_.emplace().begin_pos = syntax_->GetPos();
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
@@ -899,7 +879,79 @@ std::vector<float> CPDF_StreamContentParser::GetNamedColors() const {
 
 void CPDF_StreamContentParser::Handle_MarkPlace_Dictionary() {}
 
-void CPDF_StreamContentParser::Handle_EndImage() {}
+void CPDF_StreamContentParser::Handle_EndImage() {
+  if (!inline_image_context_.has_value()) {
+    return;  // No matching "BI" operator.
+  }
+
+  AutoOptionalResetter auto_resetter(&inline_image_context_);
+  const InlineImageContext& inline_image_context =
+      inline_image_context_.value();
+  if (inline_image_context.state != InlineImageContext::State::kLookingForEI) {
+    return;  // No matching "ID" operator.
+  }
+
+  CHECK_LT(inline_image_context.begin_pos, inline_image_context.data_pos);
+
+  const uint32_t saved_position = syntax_->GetPos();
+  auto synthesized_dict = document_->New<CPDF_Dictionary>();
+  syntax_->SetPos(inline_image_context.begin_pos);
+  while (true) {
+    CPDF_StreamParser::ElementType type = syntax_->ParseNextElement();
+    if (syntax_->GetPos() >= inline_image_context.data_pos) {
+      break;  // Reached "ID" operator.
+    }
+    if (type == CPDF_StreamParser::ElementType::kKeyword) {
+      continue;  // Already handled by CPDF_StreamContentParser itself.
+    }
+    if (type != CPDF_StreamParser::ElementType::kName) {
+      break;
+    }
+    // Next `syntax_` read below may invalidate `word`. Must save to `key`.
+    ByteStringView word = syntax_->GetWord();
+    ByteString key(word.Last(word.GetLength() - 1));
+    auto value_object = syntax_->ReadNextObject(false, false, 0);
+    if (value_object && !value_object->IsInline()) {
+      synthesized_dict->SetNewFor<CPDF_Reference>(key, document_,
+                                                  value_object->GetObjNum());
+    } else {
+      synthesized_dict->SetFor(key, std::move(value_object));
+    }
+  }
+  ReplaceAbbr(synthesized_dict);
+  synthesized_dict->SetNewFor<CPDF_Name>("Subtype", "Image");
+
+  RetainPtr<const CPDF_Object> colorspace;
+  if (synthesized_dict->KeyExist("ColorSpace")) {
+    colorspace = synthesized_dict->GetDirectObjectFor("ColorSpace");
+    if (colorspace->IsName()) {
+      ByteString name = colorspace->GetString();
+      if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
+        colorspace = FindResourceObj("ColorSpace", name);
+        if (colorspace && colorspace->IsInline()) {
+          synthesized_dict->SetFor("ColorSpace", colorspace->Clone());
+        }
+      }
+    }
+  }
+
+  syntax_->SetPos(inline_image_context.data_pos);
+  FX_SAFE_UINT32 stream_length = saved_position;
+  stream_length -= inline_image_context.data_pos;
+  stream_length -= 2;  // Account for "EI" operator.
+  RetainPtr<CPDF_Stream> inline_stream =
+      syntax_->ReadInlineStream(document_, std::move(synthesized_dict),
+                                colorspace, stream_length.ValueOrDie());
+  CPDF_ImageObject* new_image_object =
+      AddImageFromStream(std::move(inline_stream), /*name=*/"");
+  // Record the bounding box of this image, so rendering code can draw it
+  // properly.
+  if (new_image_object && new_image_object->GetImage()->IsMask()) {
+    object_holder_->AddImageMaskBoundingBox(new_image_object->GetRect());
+  }
+
+  syntax_->SetPos(saved_position);
+}
 
 void CPDF_StreamContentParser::Handle_EndMarkedContent() {
   // First element is a sentinel, so do not pop it, ever. This may come up if
@@ -975,7 +1027,20 @@ void CPDF_StreamContentParser::Handle_SetFlat() {
   cur_states_->mutable_general_state().SetFlatness(GetNumber(0));
 }
 
-void CPDF_StreamContentParser::Handle_BeginImageData() {}
+void CPDF_StreamContentParser::Handle_BeginImageData() {
+  InlineImageContext& inline_image_context = inline_image_context_.value();
+  CHECK_EQ(inline_image_context.state,
+           InlineImageContext::State::kLookingForID);
+  CHECK_EQ(inline_image_context.data_pos, 0u);
+
+  inline_image_context.state = InlineImageContext::State::kLookingForEI;
+
+  uint32_t pos = syntax_->GetPos();
+  // Something else, like the "BI" operator, must be before the "ID" operator,
+  // so "ID" cannot be at position 0.
+  CHECK_NE(pos, 0u);
+  inline_image_context.data_pos = pos;
+}
 
 void CPDF_StreamContentParser::Handle_SetLineJoin() {
   cur_states_->mutable_graph_state().SetLineJoin(
