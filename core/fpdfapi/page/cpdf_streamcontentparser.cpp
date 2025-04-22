@@ -683,14 +683,11 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   while (true) {
     CPDF_StreamParser::ElementType type = syntax_->ParseNextElement();
     if (type == CPDF_StreamParser::ElementType::kEndOfData) {
-      break;
+      return;
     }
 
-    if (type != CPDF_StreamParser::ElementType::kKeyword) {
-      continue;
-    }
-
-    if (syntax_->GetWord() == "EI") {
+    if (type == CPDF_StreamParser::ElementType::kKeyword &&
+        syntax_->GetWord() == "EI") {
       break;
     }
   }

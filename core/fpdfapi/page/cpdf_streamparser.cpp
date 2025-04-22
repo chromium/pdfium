@@ -210,8 +210,11 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
       while (true) {
         uint32_t saved_iteration_position = pos_;
         ElementType type = ParseNextElement();
-        if (type == ElementType::kEndOfData ||
-            (type == ElementType::kKeyword && GetWord() == "EI")) {
+        if (type == ElementType::kEndOfData) {
+          return nullptr;
+        }
+
+        if (type == ElementType::kKeyword && GetWord() == "EI") {
           break;
         }
 
