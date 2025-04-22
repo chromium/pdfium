@@ -141,12 +141,17 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     CPDF_Document* pDoc,
     RetainPtr<CPDF_Dictionary> pDict,
     const CPDF_Object* pCSObj) {
-  if (pos_ < buf_.size() && PDFCharIsWhitespace(buf_[pos_])) {
-    pos_++;
+  auto stream_span = buf_.subspan(pos_);
+  if (stream_span.empty()) {
+    return nullptr;
   }
 
-  if (pos_ == buf_.size()) {
-    return nullptr;
+  if (PDFCharIsWhitespace(stream_span.front())) {
+    pos_++;
+    stream_span = stream_span.subspan<1>();
+    if (stream_span.empty()) {
+      return nullptr;
+    }
   }
 
   ByteString decoder;
@@ -190,23 +195,24 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
 
   uint32_t original_size = size.ValueOrDie();
   DataVector<uint8_t> data;
-  uint32_t stream_size;
+  uint32_t actual_stream_size;
   if (decoder.IsEmpty()) {
-    original_size = std::min<uint32_t>(original_size, buf_.size() - pos_);
-    auto src_span = buf_.subspan(pos_, original_size);
+    original_size = std::min<uint32_t>(original_size, stream_span.size());
+    auto src_span = stream_span.first(original_size);
     data = DataVector<uint8_t>(src_span.begin(), src_span.end());
-    stream_size = original_size;
+    actual_stream_size = original_size;
     pos_ += original_size;
   } else {
-    stream_size = DecodeInlineStream(buf_.subspan(pos_), width, height, decoder,
-                                     std::move(param_dict), original_size);
-    if (!pdfium::IsValueInRangeForNumericType<int>(stream_size)) {
+    actual_stream_size =
+        DecodeInlineStream(stream_span, width, height, decoder,
+                           std::move(param_dict), original_size);
+    if (!pdfium::IsValueInRangeForNumericType<int>(actual_stream_size)) {
       return nullptr;
     }
 
     {
       AutoRestorer<uint32_t> saved_position(&pos_);
-      pos_ += stream_size;
+      pos_ += actual_stream_size;
       while (true) {
         uint32_t saved_iteration_position = pos_;
         ElementType type = ParseNextElement();
@@ -218,14 +224,14 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
           break;
         }
 
-        stream_size += pos_ - saved_iteration_position;
+        actual_stream_size += pos_ - saved_iteration_position;
       }
     }
-    auto src_span = buf_.subspan(pos_, stream_size);
+    auto src_span = stream_span.first(actual_stream_size);
     data = DataVector<uint8_t>(src_span.begin(), src_span.end());
-    pos_ += stream_size;
+    pos_ += actual_stream_size;
   }
-  pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(stream_size));
+  pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(actual_stream_size));
   return pdfium::MakeRetain<CPDF_Stream>(std::move(data), std::move(pDict));
 }
 
