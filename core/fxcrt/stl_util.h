@@ -45,12 +45,6 @@ bool IndexInBounds(const Collection& collection, IndexType index) {
   return index >= 0 && index < CollectionSize<IndexType>(collection);
 }
 
-// Equivalent of C++20 std::ranges::fill().
-template <typename T, typename V>
-void Fill(T&& container, const V& value) {
-  std::fill(std::begin(container), std::end(container), value);
-}
-
 // Non-flawed version of C++20 std::ranges::copy(), which takes an output
 // range as the second parameter and CHECKS() if it not sufficiently sized.
 template <typename T, typename U>
