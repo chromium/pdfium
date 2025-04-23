@@ -35,9 +35,11 @@
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/ptr_util.h"
@@ -405,6 +407,24 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
   }
 
   *fileVersion = pParser->GetFileVersion();
+
+  const CPDF_Dictionary* root_dict = pDoc->GetRoot();
+  if (root_dict) {
+    ByteString version = root_dict->GetNameFor("Version");
+    if (!version.IsEmpty()) {
+      // Check for valid PDF version format "X.Y"
+      const bool has_valid_length = version.GetLength() == 3;
+      const bool has_valid_format =
+          has_valid_length && FXSYS_IsDecimalDigit(version[0]) &&
+          version[1] == '.' && FXSYS_IsDecimalDigit(version[2]);
+      if (has_valid_format) {
+        const int major = FXSYS_DecimalCharToInt(version[0]);
+        const int minor = FXSYS_DecimalCharToInt(version[2]);
+        *fileVersion = major * 10 + minor;
+      }
+    }
+  }
+
   return true;
 }
 
