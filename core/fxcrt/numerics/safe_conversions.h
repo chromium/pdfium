@@ -8,13 +8,14 @@
 #include <stddef.h>
 
 #include <cmath>
+#include <concepts>
 #include <limits>
 #include <type_traits>
 
-#include "core/fxcrt/numerics/safe_conversions_impl.h"
+#include "core/fxcrt/numerics/safe_conversions_impl.h"  // IWYU pragma: export
 
 #if defined(__ARMEL__) && !defined(__native_client__)
-#include "core/fxcrt/numerics/safe_conversions_arm_impl.h"
+#include "core/fxcrt/numerics/safe_conversions_arm_impl.h"  // IWYU pragma: export
 #define BASE_HAS_OPTIMIZED_SAFE_CONVERSIONS (1)
 #else
 #define BASE_HAS_OPTIMIZED_SAFE_CONVERSIONS (0)
@@ -37,10 +38,10 @@ struct SaturateFastAsmOp {
 
 // The following special case a few specific integer conversions where we can
 // eke out better performance than range checking.
-template <typename Dst, typename Src, typename Enable = void>
+template <typename Dst, typename Src>
 struct IsValueInRangeFastOp {
   static constexpr bool is_supported = false;
-  static constexpr bool Do(Src value) {
+  static constexpr bool Do(Src) {
     // Force a compile failure if instantiated.
     return CheckOnFailure::template HandleFailure<bool>();
   }
@@ -48,13 +49,9 @@ struct IsValueInRangeFastOp {
 
 // Signed to signed range comparison.
 template <typename Dst, typename Src>
-struct IsValueInRangeFastOp<
-    Dst,
-    Src,
-    typename std::enable_if<
-        std::is_integral<Dst>::value && std::is_integral<Src>::value &&
-        std::is_signed<Dst>::value && std::is_signed<Src>::value &&
-        !IsTypeInRangeForNumericType<Dst, Src>::value>::type> {
+  requires(std::signed_integral<Dst> && std::signed_integral<Src> &&
+           !kIsTypeInRangeForNumericType<Dst, Src>)
+struct IsValueInRangeFastOp<Dst, Src> {
   static constexpr bool is_supported = true;
 
   static constexpr bool Do(Src value) {
@@ -66,32 +63,30 @@ struct IsValueInRangeFastOp<
 
 // Signed to unsigned range comparison.
 template <typename Dst, typename Src>
-struct IsValueInRangeFastOp<
-    Dst,
-    Src,
-    typename std::enable_if<
-        std::is_integral<Dst>::value && std::is_integral<Src>::value &&
-        !std::is_signed<Dst>::value && std::is_signed<Src>::value &&
-        !IsTypeInRangeForNumericType<Dst, Src>::value>::type> {
+  requires(std::unsigned_integral<Dst> && std::signed_integral<Src> &&
+           !kIsTypeInRangeForNumericType<Dst, Src>)
+struct IsValueInRangeFastOp<Dst, Src> {
   static constexpr bool is_supported = true;
 
   static constexpr bool Do(Src value) {
     // We cast a signed as unsigned to overflow negative values to the top,
     // then compare against whichever maximum is smaller, as our upper bound.
-    return as_unsigned(value) <= as_unsigned(CommonMax<Src, Dst>());
+    return as_unsigned(value) <= as_unsigned(kCommonMax<Src, Dst>);
   }
 };
 
 // Convenience function that returns true if the supplied value is in range
 // for the destination type.
 template <typename Dst, typename Src>
+  requires(IsNumeric<Src> && std::is_arithmetic_v<Dst> &&
+           std::numeric_limits<Dst>::lowest() < std::numeric_limits<Dst>::max())
 constexpr bool IsValueInRangeForNumericType(Src value) {
-  using SrcType = typename internal::UnderlyingType<Src>::type;
+  using SrcType = UnderlyingType<Src>;
+  const auto underlying_value = static_cast<SrcType>(value);
   return internal::IsValueInRangeFastOp<Dst, SrcType>::is_supported
              ? internal::IsValueInRangeFastOp<Dst, SrcType>::Do(
-                   static_cast<SrcType>(value))
-             : internal::DstRangeRelationToSrcRange<Dst>(
-                   static_cast<SrcType>(value))
+                   underlying_value)
+             : internal::DstRangeRelationToSrcRange<Dst>(underlying_value)
                    .IsValid();
 }
 
@@ -101,13 +96,15 @@ constexpr bool IsValueInRangeForNumericType(Src value) {
 template <typename Dst,
           class CheckHandler = internal::CheckOnFailure,
           typename Src>
+  requires(IsNumeric<Src> && std::is_arithmetic_v<Dst> &&
+           std::numeric_limits<Dst>::lowest() < std::numeric_limits<Dst>::max())
 constexpr Dst checked_cast(Src value) {
   // This throws a compile-time error on evaluating the constexpr if it can be
   // determined at compile-time as failing, otherwise it will CHECK at runtime.
-  using SrcType = typename internal::UnderlyingType<Src>::type;
-  return BASE_NUMERICS_LIKELY((IsValueInRangeForNumericType<Dst>(value)))
-             ? static_cast<Dst>(static_cast<SrcType>(value))
-             : CheckHandler::template HandleFailure<Dst>();
+  if (IsValueInRangeForNumericType<Dst>(value)) [[likely]] {
+    return static_cast<Dst>(static_cast<UnderlyingType<Src>>(value));
+  }
+  return CheckHandler::template HandleFailure<Dst>();
 }
 
 // Default boundaries for integral/float: max/infinity, lowest/-infinity, 0/NaN.
@@ -148,7 +145,7 @@ constexpr Dst saturated_cast_impl(Src value, RangeCheck constraint) {
              ? (!constraint.IsUnderflowFlagSet() ? static_cast<Dst>(value)
                                                  : S<Dst>::Underflow())
              // Skip this check for integral Src, which cannot be NaN.
-             : (std::is_integral<Src>::value || !constraint.IsUnderflowFlagSet()
+             : (std::is_integral_v<Src> || !constraint.IsUnderflowFlagSet()
                     ? S<Dst>::Overflow()
                     : S<Dst>::NaN());
 }
@@ -156,22 +153,19 @@ constexpr Dst saturated_cast_impl(Src value, RangeCheck constraint) {
 // We can reduce the number of conditions and get slightly better performance
 // for normal signed and unsigned integer ranges. And in the specific case of
 // Arm, we can use the optimized saturation instructions.
-template <typename Dst, typename Src, typename Enable = void>
+template <typename Dst, typename Src>
 struct SaturateFastOp {
   static constexpr bool is_supported = false;
-  static constexpr Dst Do(Src value) {
+  static constexpr Dst Do(Src) {
     // Force a compile failure if instantiated.
     return CheckOnFailure::template HandleFailure<Dst>();
   }
 };
 
 template <typename Dst, typename Src>
-struct SaturateFastOp<
-    Dst,
-    Src,
-    typename std::enable_if<std::is_integral<Src>::value &&
-                            std::is_integral<Dst>::value &&
-                            SaturateFastAsmOp<Dst, Src>::is_supported>::type> {
+  requires(std::integral<Src> && std::integral<Dst> &&
+           SaturateFastAsmOp<Dst, Src>::is_supported)
+struct SaturateFastOp<Dst, Src> {
   static constexpr bool is_supported = true;
   static constexpr Dst Do(Src value) {
     return SaturateFastAsmOp<Dst, Src>::Do(value);
@@ -179,23 +173,21 @@ struct SaturateFastOp<
 };
 
 template <typename Dst, typename Src>
-struct SaturateFastOp<
-    Dst,
-    Src,
-    typename std::enable_if<std::is_integral<Src>::value &&
-                            std::is_integral<Dst>::value &&
-                            !SaturateFastAsmOp<Dst, Src>::is_supported>::type> {
+  requires(std::integral<Src> && std::integral<Dst> &&
+           !SaturateFastAsmOp<Dst, Src>::is_supported)
+struct SaturateFastOp<Dst, Src> {
   static constexpr bool is_supported = true;
   static constexpr Dst Do(Src value) {
     // The exact order of the following is structured to hit the correct
     // optimization heuristics across compilers. Do not change without
     // checking the emitted code.
     const Dst saturated = CommonMaxOrMin<Dst, Src>(
-        IsMaxInRangeForNumericType<Dst, Src>() ||
-        (!IsMinInRangeForNumericType<Dst, Src>() && IsValueNegative(value)));
-    return BASE_NUMERICS_LIKELY(IsValueInRangeForNumericType<Dst>(value))
-               ? static_cast<Dst>(value)
-               : saturated;
+        kIsMaxInRangeForNumericType<Dst, Src> ||
+        (!kIsMinInRangeForNumericType<Dst, Src> && IsValueNegative(value)));
+    if (IsValueInRangeForNumericType<Dst>(value)) [[likely]] {
+      return static_cast<Dst>(value);
+    }
+    return saturated;
   }
 };
 
@@ -207,56 +199,47 @@ template <typename Dst,
           template <typename> class SaturationHandler = SaturationDefaultLimits,
           typename Src>
 constexpr Dst saturated_cast(Src value) {
-  using SrcType = typename UnderlyingType<Src>::type;
-  return !IsConstantEvaluated() && SaturateFastOp<Dst, SrcType>::is_supported &&
-                 std::is_same<SaturationHandler<Dst>,
-                              SaturationDefaultLimits<Dst>>::value
-             ? SaturateFastOp<Dst, SrcType>::Do(static_cast<SrcType>(value))
+  using SrcType = UnderlyingType<Src>;
+  const auto underlying_value = static_cast<SrcType>(value);
+  return !std::is_constant_evaluated() &&
+                 SaturateFastOp<Dst, SrcType>::is_supported &&
+                 std::is_same_v<SaturationHandler<Dst>,
+                                SaturationDefaultLimits<Dst>>
+             ? SaturateFastOp<Dst, SrcType>::Do(underlying_value)
              : saturated_cast_impl<Dst, SaturationHandler, SrcType>(
-                   static_cast<SrcType>(value),
+                   underlying_value,
                    DstRangeRelationToSrcRange<Dst, SaturationHandler, SrcType>(
-                       static_cast<SrcType>(value)));
+                       underlying_value));
 }
 
 // strict_cast<> is analogous to static_cast<> for numeric types, except that
 // it will cause a compile failure if the destination type is not large enough
 // to contain any value in the source type. It performs no runtime checking.
-template <typename Dst, typename Src>
+template <typename Dst, typename Src, typename SrcType = UnderlyingType<Src>>
+  requires(
+      IsNumeric<Src> && std::is_arithmetic_v<Dst> &&
+      // If you got here from a compiler error, it's because you tried to assign
+      // from a source type to a destination type that has insufficient range.
+      // The solution may be to change the destination type you're assigning to,
+      // and use one large enough to represent the source.
+      // Alternatively, you may be better served with the checked_cast<> or
+      // saturated_cast<> template functions for your particular use case.
+      kStaticDstRangeRelationToSrcRange<Dst, SrcType> ==
+          NumericRangeRepresentation::kContained)
 constexpr Dst strict_cast(Src value) {
-  using SrcType = typename UnderlyingType<Src>::type;
-  static_assert(UnderlyingType<Src>::is_numeric, "Argument must be numeric.");
-  static_assert(std::is_arithmetic<Dst>::value, "Result must be numeric.");
-
-  // If you got here from a compiler error, it's because you tried to assign
-  // from a source type to a destination type that has insufficient range.
-  // The solution may be to change the destination type you're assigning to,
-  // and use one large enough to represent the source.
-  // Alternatively, you may be better served with the checked_cast<> or
-  // saturated_cast<> template functions for your particular use case.
-  static_assert(StaticDstRangeRelationToSrcRange<Dst, SrcType>::value ==
-                    NUMERIC_RANGE_CONTAINED,
-                "The source type is out of range for the destination type. "
-                "Please see strict_cast<> comments for more information.");
-
   return static_cast<Dst>(static_cast<SrcType>(value));
 }
 
 // Some wrappers to statically check that a type is in range.
-template <typename Dst, typename Src, class Enable = void>
-struct IsNumericRangeContained {
-  static constexpr bool value = false;
-};
+template <typename Dst, typename Src>
+inline constexpr bool kIsNumericRangeContained = false;
 
 template <typename Dst, typename Src>
-struct IsNumericRangeContained<
-    Dst,
-    Src,
-    typename std::enable_if<ArithmeticOrUnderlyingEnum<Dst>::value &&
-                            ArithmeticOrUnderlyingEnum<Src>::value>::type> {
-  static constexpr bool value =
-      StaticDstRangeRelationToSrcRange<Dst, Src>::value ==
-      NUMERIC_RANGE_CONTAINED;
-};
+  requires(std::is_arithmetic_v<ArithmeticOrUnderlyingEnum<Dst>> &&
+           std::is_arithmetic_v<ArithmeticOrUnderlyingEnum<Src>>)
+inline constexpr bool kIsNumericRangeContained<Dst, Src> =
+    kStaticDstRangeRelationToSrcRange<Dst, Src> ==
+    NumericRangeRepresentation::kContained;
 
 // StrictNumeric implements compile time range checking between numeric types by
 // wrapping assignment operations in a strict_cast. This class is intended to be
@@ -269,6 +252,7 @@ struct IsNumericRangeContained<
 // runtime checking of any of the associated mathematical operations. Use
 // CheckedNumeric for runtime range checks of the actual value being assigned.
 template <typename T>
+  requires std::is_arithmetic_v<T>
 class StrictNumeric {
  public:
   using type = T;
@@ -279,12 +263,6 @@ class StrictNumeric {
   template <typename Src>
   constexpr StrictNumeric(const StrictNumeric<Src>& rhs)
       : value_(strict_cast<T>(rhs.value_)) {}
-
-  // Strictly speaking, this is not necessary, but declaring this allows class
-  // template argument deduction to be used so that it is possible to simply
-  // write `StrictNumeric(777)` instead of `StrictNumeric<int>(777)`.
-  // NOLINTNEXTLINE(google-explicit-constructor)
-  constexpr StrictNumeric(T value) : value_(value) {}
 
   // This is not an explicit constructor because we implicitly upgrade regular
   // numerics to StrictNumerics to make them easier to use.
@@ -304,32 +282,38 @@ class StrictNumeric {
   // to explicitly cast the result to the destination type.
   // If none of that works, you may be better served with the checked_cast<> or
   // saturated_cast<> template functions for your particular use case.
-  template <typename Dst,
-            typename std::enable_if<
-                IsNumericRangeContained<Dst, T>::value>::type* = nullptr>
-  constexpr operator Dst() const {
-    return static_cast<typename ArithmeticOrUnderlyingEnum<Dst>::type>(value_);
+  template <typename Dst>
+    requires(kIsNumericRangeContained<Dst, T>)
+  constexpr operator Dst() const {  // NOLINT(google-explicit-constructor)
+    return static_cast<ArithmeticOrUnderlyingEnum<Dst>>(value_);
   }
 
+  // Unary negation does not require any conversions.
+  constexpr bool operator!() const { return !value_; }
+
  private:
-  const T value_;
+  template <typename U>
+    requires std::is_arithmetic_v<U>
+  friend class StrictNumeric;
+
+  T value_;
 };
+
+template <typename T>
+StrictNumeric(T) -> StrictNumeric<T>;
 
 // Convenience wrapper returns a StrictNumeric from the provided arithmetic
 // type.
 template <typename T>
-constexpr StrictNumeric<typename UnderlyingType<T>::type> MakeStrictNum(
-    const T value) {
+constexpr StrictNumeric<UnderlyingType<T>> MakeStrictNum(const T value) {
   return value;
 }
 
-#define BASE_NUMERIC_COMPARISON_OPERATORS(CLASS, NAME, OP)              \
-  template <typename L, typename R,                                     \
-            typename std::enable_if<                                    \
-                internal::Is##CLASS##Op<L, R>::value>::type* = nullptr> \
-  constexpr bool operator OP(const L lhs, const R rhs) {                \
-    return SafeCompare<NAME, typename UnderlyingType<L>::type,          \
-                       typename UnderlyingType<R>::type>(lhs, rhs);     \
+#define BASE_NUMERIC_COMPARISON_OPERATORS(CLASS, NAME, OP)                    \
+  template <typename L, typename R>                                           \
+    requires(internal::Is##CLASS##Op<L, R>)                                   \
+  constexpr bool operator OP(L lhs, R rhs) {                                  \
+    return SafeCompare<NAME, UnderlyingType<L>, UnderlyingType<R>>(lhs, rhs); \
   }
 
 BASE_NUMERIC_COMPARISON_OPERATORS(Strict, IsLess, <)
@@ -344,9 +328,9 @@ BASE_NUMERIC_COMPARISON_OPERATORS(Strict, IsNotEqual, !=)
 using internal::as_signed;
 using internal::as_unsigned;
 using internal::checked_cast;
-using internal::IsTypeInRangeForNumericType;
 using internal::IsValueInRangeForNumericType;
 using internal::IsValueNegative;
+using internal::kIsTypeInRangeForNumericType;
 using internal::MakeStrictNum;
 using internal::SafeUnsignedAbs;
 using internal::saturated_cast;
@@ -357,29 +341,44 @@ using internal::StrictNumeric;
 using SizeT = StrictNumeric<size_t>;
 
 // floating -> integral conversions that saturate and thus can actually return
-// an integral type.  In most cases, these should be preferred over the std::
-// versions.
-template <typename Dst = int,
-          typename Src,
-          typename = std::enable_if_t<std::is_integral<Dst>::value &&
-                                      std::is_floating_point<Src>::value>>
+// an integral type.
+//
+// Generally, what you want is saturated_cast<Dst>(std::nearbyint(x)), which
+// rounds correctly according to IEEE-754 (round to nearest, ties go to nearest
+// even number; this avoids bias). If your code is performance-critical
+// and you are sure that you will never overflow, you can use std::lrint()
+// or std::llrint(), which return a long or long long directly.
+//
+// Below are convenience functions around similar patterns, except that
+// they round in nonstandard directions and will generally be slower.
+
+// Rounds towards negative infinity (i.e., down).
+template <typename Dst = int, typename Src>
+  requires(std::integral<Dst> && std::floating_point<Src>)
 Dst ClampFloor(Src value) {
   return saturated_cast<Dst>(std::floor(value));
 }
-template <typename Dst = int,
-          typename Src,
-          typename = std::enable_if_t<std::is_integral<Dst>::value &&
-                                      std::is_floating_point<Src>::value>>
+
+// Rounds towards positive infinity (i.e., up).
+template <typename Dst = int, typename Src>
+  requires(std::integral<Dst> && std::floating_point<Src>)
 Dst ClampCeil(Src value) {
   return saturated_cast<Dst>(std::ceil(value));
 }
-template <typename Dst = int,
-          typename Src,
-          typename = std::enable_if_t<std::is_integral<Dst>::value &&
-                                      std::is_floating_point<Src>::value>>
+
+// Rounds towards nearest integer, with ties away from zero.
+// This means that 0.5 will be rounded to 1 and 1.5 will be rounded to 2.
+// Similarly, -0.5 will be rounded to -1 and -1.5 will be rounded to -2.
+//
+// This is normally not what you want accuracy-wise (it introduces a small bias
+// away from zero), and it is not the fastest option, but it is frequently what
+// existing code expects. Compare with saturated_cast<Dst>(std::nearbyint(x))
+// or std::lrint(x), which would round 0.5 and -0.5 to 0 but 1.5 to 2 and
+// -1.5 to -2.
+template <typename Dst = int, typename Src>
+  requires(std::integral<Dst> && std::floating_point<Src>)
 Dst ClampRound(Src value) {
-  const Src rounded =
-      (value >= 0.0f) ? std::floor(value + 0.5f) : std::ceil(value - 0.5f);
+  const Src rounded = std::round(value);
   return saturated_cast<Dst>(rounded);
 }
 

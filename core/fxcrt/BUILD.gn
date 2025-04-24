@@ -93,6 +93,7 @@ source_set("fxcrt") {
     "numerics/checked_math_impl.h",
     "numerics/clamped_math.h",
     "numerics/clamped_math_impl.h",
+    "numerics/integral_constant_like.h",
     "numerics/safe_conversions.h",
     "numerics/safe_conversions_arm_impl.h",
     "numerics/safe_conversions_impl.h",

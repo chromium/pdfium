@@ -5,8 +5,8 @@
 #ifndef CORE_FXCRT_NUMERICS_SAFE_MATH_H_
 #define CORE_FXCRT_NUMERICS_SAFE_MATH_H_
 
-#include "core/fxcrt/numerics/checked_math.h"
-#include "core/fxcrt/numerics/clamped_math.h"
-#include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/checked_math.h"      // IWYU pragma: export
+#include "core/fxcrt/numerics/clamped_math.h"      // IWYU pragma: export
+#include "core/fxcrt/numerics/safe_conversions.h"  // IWYU pragma: export
 
 #endif  // CORE_FXCRT_NUMERICS_SAFE_MATH_H_
