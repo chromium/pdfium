@@ -1517,7 +1517,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
       dest_buf[i] = transfers[src_buf[i]];
     }
   } else {
-    fxcrt::Copy(src_buf.first(dest_pitch * height), dest_buf);
+    fxcrt::Copy(src_buf.first(static_cast<size_t>(dest_pitch * height)),
+                dest_buf);
   }
   return result_mask;
 }

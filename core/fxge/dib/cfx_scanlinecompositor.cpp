@@ -194,7 +194,7 @@ void CompositeRow_Rgb2Mask(pdfium::span<uint8_t> dest_span,
                            int width,
                            pdfium::span<const uint8_t> clip_span) {
   if (clip_span.empty()) {
-    std::ranges::fill(dest_span.first(width), 0xff);
+    std::ranges::fill(dest_span.first(static_cast<size_t>(width)), 0xff);
     return;
   }
   uint8_t* dest_scan = dest_span.data();
@@ -2548,7 +2548,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgra(
 
   auto src_span =
       fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_scan).first(
-          width);
+          static_cast<size_t>(width));
 
   switch (dest_format_) {
     case FXDIB_Format::kInvalid:

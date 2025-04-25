@@ -234,7 +234,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
         color_table_span[0] = FXARGB_R(argb);
         color_table_span[1] = FXARGB_G(argb);
         color_table_span[2] = FXARGB_B(argb);
-        color_table_span = color_table_span.subspan(3);
+        color_table_span = color_table_span.subspan<3u>();
       }
       auto pNewDict = document_->New<CPDF_Dictionary>();
       auto pCTS = document_->NewIndirect<CPDF_Stream>(std::move(color_table),
@@ -270,8 +270,10 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     if (pMaskBitmap->GetFormat() != FXDIB_Format::k1bppMask) {
       mask_buf.resize(Fx2DSizeOrDie(mask_width, mask_height));
       for (int32_t a = 0; a < mask_height; a++) {
-        fxcrt::Copy(pMaskBitmap->GetScanline(a).first(mask_width),
-                    pdfium::make_span(mask_buf).subspan(a * mask_width));
+        fxcrt::Copy(
+            pMaskBitmap->GetScanline(a).first(static_cast<size_t>(mask_width)),
+            pdfium::make_span(mask_buf).subspan(
+                static_cast<size_t>(a * mask_width)));
       }
     }
     pMaskDict->SetNewFor<CPDF_Number>(
@@ -289,7 +291,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   if (bCopyWithoutAlpha) {
     for (int32_t i = 0; i < BitmapHeight; i++) {
       dest_span = fxcrt::spancpy(dest_span, src_span.first(dest_pitch));
-      src_span = src_span.subspan(src_pitch);
+      src_span = src_span.subspan(static_cast<size_t>(src_pitch));
     }
   } else {
     const size_t src_step = bpp == 24 ? 3 : 4;
@@ -306,7 +308,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
         });
       }
       dest_span = dest_span.subspan(dest_pitch);
-      src_span = src_span.subspan(src_pitch);
+      src_span = src_span.subspan(static_cast<size_t>(src_pitch));
     }
   }
 

@@ -90,11 +90,11 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       CHECK(!bTransMask);  // bTransMask only allowed for CMYK colorspaces.
       // Compiler can't conclude src/dest don't overlap, avoid interleaved
       // loads and stores by not using an auto& reference here.
-      for (const auto pix : src_span.first(pixels)) {
+      for (const auto pix : src_span.first(static_cast<size_t>(pixels))) {
         rgb_out.front().red = pix;
         rgb_out.front().green = pix;
         rgb_out.front().blue = pix;
-        rgb_out = rgb_out.subspan(1);
+        rgb_out = rgb_out.subspan<1u>();
       }
       break;
     case Family::kDeviceRGB:
@@ -107,35 +107,35 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       if (bTransMask) {
         // Compiler can't conclude src/dest don't overlap, avoid interleaved
         // loads and stores by not using an auto& reference here.
-        for (const auto cmyk : cmyk_in.first(pixels)) {
+        for (const auto cmyk : cmyk_in.first(static_cast<size_t>(pixels))) {
           const int k = 255 - cmyk.key;
           rgb_out.front().red = ((255 - cmyk.cyan) * k) / 255;
           rgb_out.front().green = ((255 - cmyk.magenta) * k) / 255;
           rgb_out.front().blue = ((255 - cmyk.yellow) * k) / 255;
-          rgb_out = rgb_out.subspan(1);
+          rgb_out = rgb_out.subspan<1u>();
         }
         break;
       }
       if (IsStdConversionEnabled()) {
         // Compiler can't conclude src/dest don't overlap, avoid interleaved
         // loads and stores by not using am auto& reference here,
-        for (const auto cmyk : cmyk_in.first(pixels)) {
+        for (const auto cmyk : cmyk_in.first(static_cast<size_t>(pixels))) {
           const uint8_t k = cmyk.key;
           rgb_out.front().blue = 255 - std::min(255, cmyk.cyan + k);
           rgb_out.front().green = 255 - std::min(255, cmyk.magenta + k);
           rgb_out.front().red = 255 - std::min(255, cmyk.yellow + k);
-          rgb_out = rgb_out.subspan(1);
+          rgb_out = rgb_out.subspan<1u>();
         }
         break;
       }
-      for (const auto& cmyk : cmyk_in.first(pixels)) {
+      for (const auto& cmyk : cmyk_in.first(static_cast<size_t>(pixels))) {
         // TODO(tsepez): maybe this is a FX_BGR_STRUCT in reality?
         FX_RGB_STRUCT<uint8_t> rgb =
             AdobeCMYK_to_sRGB1(cmyk.cyan, cmyk.magenta, cmyk.yellow, cmyk.key);
         rgb_out.front().red = rgb.blue;
         rgb_out.front().green = rgb.green;
         rgb_out.front().blue = rgb.red;
-        rgb_out = rgb_out.subspan(1);
+        rgb_out = rgb_out.subspan<1u>();
       }
       break;
     }

@@ -52,7 +52,9 @@ void CFX_AggClipRgn::IntersectMaskRect(FX_RECT rect,
         mask_->GetWritableScanline(row - box_.top);
     pdfium::span<const uint8_t> src_scan =
         pOldMask->GetScanline(row - mask_rect.top);
-    fxcrt::Copy(src_scan.subspan(offset, box_.Width()), dest_scan);
+    fxcrt::Copy(src_scan.subspan(static_cast<size_t>(offset),
+                                 static_cast<size_t>(box_.Width())),
+                dest_scan);
   }
 }
 

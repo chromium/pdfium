@@ -435,7 +435,7 @@ DataVector<uint8_t> CRYPT_SHA1Generate(pdfium::span<const uint8_t> data) {
   CRYPT_SHA1Update(&s, data);
 
   DataVector<uint8_t> digest(20);
-  CRYPT_SHA1Finish(&s, digest);
+  CRYPT_SHA1Finish(&s, pdfium::span<uint8_t>(digest).first<20u>());
   return digest;
 }
 
@@ -463,12 +463,12 @@ void CRYPT_SHA256Update(CRYPT_sha2_context* context,
   context->total_bytes += data.size();
   if (left && data.size() >= fill) {
     fxcrt::Copy(data.first(fill), buffer_span.subspan(left));
-    sha256_process(context, buffer_span);
+    sha256_process(context, buffer_span.first<64u>());
     data = data.subspan(fill);
     left = 0;
   }
   while (data.size() >= 64) {
-    sha256_process(context, data.first(64u));
+    sha256_process(context, data.first<64u>());
     data = data.subspan(64u);
   }
   if (!data.empty()) {
@@ -501,7 +501,7 @@ DataVector<uint8_t> CRYPT_SHA256Generate(pdfium::span<const uint8_t> data) {
   CRYPT_SHA256Update(&ctx, data);
 
   DataVector<uint8_t> digest(32);
-  CRYPT_SHA256Finish(&ctx, digest);
+  CRYPT_SHA256Finish(&ctx, pdfium::span<uint8_t>(digest).first<32u>());
   return digest;
 }
 
@@ -529,13 +529,13 @@ void CRYPT_SHA384Update(CRYPT_sha2_context* context,
   context->total_bytes += data.size();
   if (left && data.size() >= fill) {
     fxcrt::Copy(data.first(fill), buffer_span.subspan(left));
-    sha384_process(context, buffer_span);
+    sha384_process(context, buffer_span.first<128u>());
     data = data.subspan(fill);
     left = 0;
   }
   while (data.size() >= 128) {
-    sha384_process(context, data);
-    data = data.subspan(128);
+    sha384_process(context, data.first<128u>());
+    data = data.subspan<128u>();
   }
   if (!data.empty()) {
     fxcrt::Copy(data, buffer_span.subspan(left));
@@ -566,7 +566,7 @@ DataVector<uint8_t> CRYPT_SHA384Generate(pdfium::span<const uint8_t> data) {
   CRYPT_SHA384Update(&context, data);
 
   DataVector<uint8_t> digest(48);
-  CRYPT_SHA384Finish(&context, digest);
+  CRYPT_SHA384Finish(&context, pdfium::span<uint8_t>(digest).first<48u>());
   return digest;
 }
 
@@ -614,6 +614,6 @@ DataVector<uint8_t> CRYPT_SHA512Generate(pdfium::span<const uint8_t> data) {
   CRYPT_SHA512Update(&context, data);
 
   DataVector<uint8_t> digest(64);
-  CRYPT_SHA512Finish(&context, digest);
+  CRYPT_SHA512Finish(&context, pdfium::span<uint8_t>(digest).first<64u>());
   return digest;
 }

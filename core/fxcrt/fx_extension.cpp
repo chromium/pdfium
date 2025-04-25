@@ -101,11 +101,11 @@ pdfium::span<const char> FXSYS_ToUTF16BE(uint32_t unicode,
   DCHECK(!pdfium::IsLowSurrogate(unicode));
 
   if (unicode <= 0xFFFF) {
-    FXSYS_IntToFourHexChars(unicode, buf);
+    FXSYS_IntToFourHexChars(unicode, buf.first<4u>());
     return buf.first<4u>();
   }
   pdfium::SurrogatePair surrogate_pair(unicode);
-  FXSYS_IntToFourHexChars(surrogate_pair.high(), buf);
+  FXSYS_IntToFourHexChars(surrogate_pair.high(), buf.first<4u>());
   FXSYS_IntToFourHexChars(surrogate_pair.low(), buf.subspan<4u>());
   return buf;
 }

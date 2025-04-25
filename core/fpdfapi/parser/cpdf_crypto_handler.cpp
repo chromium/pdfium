@@ -216,8 +216,8 @@ bool CPDF_CryptoHandler::DecryptFinish(void* context, BinaryBuffer& dest_buf) {
     uint8_t block_buf[16];
     CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_, 16);
     if (block_buf[15] < 16) {
-      dest_buf.AppendSpan(
-          pdfium::make_span(block_buf).first(16 - block_buf[15]));
+      dest_buf.AppendSpan(pdfium::make_span(block_buf).first(
+          static_cast<size_t>(16 - block_buf[15])));
     }
   }
   FX_Free(pContext);

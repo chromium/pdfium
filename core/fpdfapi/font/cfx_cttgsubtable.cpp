@@ -55,13 +55,13 @@ CFX_CTTGSUBTable::CFX_CTTGSUBTable(pdfium::span<const uint8_t> gsub) {
 CFX_CTTGSUBTable::~CFX_CTTGSUBTable() = default;
 
 bool CFX_CTTGSUBTable::LoadGSUBTable(pdfium::span<const uint8_t> gsub) {
-  if (fxcrt::GetUInt32MSBFirst(gsub) != 0x00010000) {
+  if (fxcrt::GetUInt32MSBFirst(gsub.first<4u>()) != 0x00010000) {
     return false;
   }
 
-  auto scriptlist_span = gsub.subspan(4, 2);
-  auto featurelist_span = gsub.subspan(6, 2);
-  auto lookuplist_span = gsub.subspan(8, 2);
+  auto scriptlist_span = gsub.subspan<4u, 2u>();
+  auto featurelist_span = gsub.subspan<6u, 2u>();
+  auto lookuplist_span = gsub.subspan<8u, 2u>();
   size_t scriptlist_index = fxcrt::GetUInt16MSBFirst(scriptlist_span);
   size_t featurelist_index = fxcrt::GetUInt16MSBFirst(featurelist_span);
   size_t lookuplist_index = fxcrt::GetUInt16MSBFirst(lookuplist_span);
@@ -155,31 +155,31 @@ int CFX_CTTGSUBTable::GetCoverageIndex(const CoverageFormat& coverage,
 
 uint8_t CFX_CTTGSUBTable::GetUInt8(pdfium::span<const uint8_t>& p) const {
   uint8_t ret = p.front();
-  p = p.subspan(1u);
+  p = p.subspan<1u>();
   return ret;
 }
 
 int16_t CFX_CTTGSUBTable::GetInt16(pdfium::span<const uint8_t>& p) const {
-  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.first(2u));
-  p = p.subspan(2u);
+  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.first<2u>());
+  p = p.subspan<2u>();
   return static_cast<int16_t>(ret);
 }
 
 uint16_t CFX_CTTGSUBTable::GetUInt16(pdfium::span<const uint8_t>& p) const {
-  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.first(2u));
-  p = p.subspan(2u);
+  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.first<2u>());
+  p = p.subspan<2u>();
   return ret;
 }
 
 int32_t CFX_CTTGSUBTable::GetInt32(pdfium::span<const uint8_t>& p) const {
-  uint32_t ret = fxcrt::GetUInt32MSBFirst(p.first(4u));
-  p = p.subspan(4u);
+  uint32_t ret = fxcrt::GetUInt32MSBFirst(p.first<4u>());
+  p = p.subspan<4u>();
   return static_cast<int32_t>(ret);
 }
 
 uint32_t CFX_CTTGSUBTable::GetUInt32(pdfium::span<const uint8_t>& p) const {
-  uint32_t ret = fxcrt::GetUInt32MSBFirst(p.first(4u));
-  p = p.subspan(4u);
+  uint32_t ret = fxcrt::GetUInt32MSBFirst(p.first<4u>());
+  p = p.subspan<4u>();
   return ret;
 }
 

@@ -734,7 +734,7 @@ void CPDF_CalGray::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                       bool bTransMask) const {
   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
 
-  auto gray_span = src_span.first(pixels);
+  auto gray_span = src_span.first(static_cast<size_t>(pixels));
   auto rgb_span = fxcrt::reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_span);
   for (auto [gray_ref, rgb_ref] : fxcrt::Zip(gray_span, rgb_span)) {
     // Compiler can not conclude that src/dest don't overlap.
@@ -911,7 +911,7 @@ void CPDF_LabCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   auto bgr_span = fxcrt::reinterpret_span<FX_BGR_STRUCT<uint8_t>>(dest_span);
   auto lab_span =
       fxcrt::reinterpret_span<const FX_LAB_STRUCT<uint8_t>>(src_span).first(
-          pixels);
+          static_cast<size_t>(pixels));
   for (auto [lab_ref, bgr_ref] : fxcrt::Zip(lab_span, bgr_span)) {
     const float lab[3] = {
         static_cast<float>(lab_ref.lightness_star * 100) / 255.0f,
@@ -1200,7 +1200,7 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_SeparationCS::GetRGB(
 
   // Using at least 16 elements due to the call alt_cs_->GetRGB() below.
   std::vector<float> results(std::max(func_->OutputCount(), 16u));
-  uint32_t nresults = func_->Call(pBuf.first(1), results).value_or(0);
+  uint32_t nresults = func_->Call(pBuf.first<1u>(), results).value_or(0);
   if (nresults == 0) {
     return std::nullopt;
   }

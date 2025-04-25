@@ -278,7 +278,7 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
       if (run_end < src_span.size()) {
         y = src_span[run_end];
       }
-      result_span = result_span.subspan(2);
+      result_span = result_span.subspan<2u>();
       continue;
     }
     // Mismatched run
@@ -302,7 +302,7 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
   if (run_start < src_span.size()) {  // 1 leftover character
     result_span[0] = 0;
     result_span[1] = x;
-    result_span = result_span.subspan(2);
+    result_span = result_span.subspan<2u>();
   }
   result_span[0] = 128;
   size_t new_size = 1 + result.size() - result_span.size();
@@ -335,25 +335,25 @@ DataVector<uint8_t> BasicModule::A85Encode(
   uint32_t pos = 0;
   uint32_t line_length = 0;
   while (src_span.size() >= 4 && pos < src_span.size() - 3) {
-    auto val_span = src_span.subspan(pos, 4);
-    uint32_t val = fxcrt::GetUInt32MSBFirst(val_span);
+    auto val_span = src_span.subspan(pos, 4u);
+    uint32_t val = fxcrt::GetUInt32MSBFirst(val_span.first<4u>());
     pos += 4;
     if (val == 0) {  // All zero special case
       result_span[0] = 'z';
-      result_span = result_span.subspan(1);
+      result_span = result_span.subspan<1u>();
       line_length++;
     } else {  // Compute base 85 characters and add 33.
       for (int i = 4; i >= 0; i--) {
         result_span[i] = (val % 85) + 33;
         val /= 85;
       }
-      result_span = result_span.subspan(5);
+      result_span = result_span.subspan<5u>();
       line_length += 5;
     }
     if (line_length >= 75) {  // Add a return.
       result_span[0] = '\r';
       result_span[1] = '\n';
-      result_span = result_span.subspan(2);
+      result_span = result_span.subspan<2u>();
       line_length = 0;
     }
   }
@@ -371,7 +371,7 @@ DataVector<uint8_t> BasicModule::A85Encode(
       }
       val /= 85;
     }
-    result_span = result_span.subspan(count + 1);
+    result_span = result_span.subspan(static_cast<size_t>(count + 1));
   }
 
   // Terminating characters.

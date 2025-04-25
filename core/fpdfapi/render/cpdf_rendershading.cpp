@@ -139,7 +139,8 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
-    auto dest_buf = pBitmap->GetWritableScanlineAs<uint32_t>(row).first(width);
+    auto dest_buf = pBitmap->GetWritableScanlineAs<uint32_t>(row).first(
+        static_cast<size_t>(width));
     size_t column_counter = 0;
     for (auto& pix : dest_buf) {
       const float column = static_cast<float>(column_counter++);
@@ -215,7 +216,8 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
-    auto dest_buf = pBitmap->GetWritableScanlineAs<uint32_t>(row).first(width);
+    auto dest_buf = pBitmap->GetWritableScanlineAs<uint32_t>(row).first(
+        static_cast<size_t>(width));
     size_t column_counter = 0;
     for (auto& pix : dest_buf) {
       const float column = static_cast<float>(column_counter++);
@@ -422,8 +424,8 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
     float r_result = r[start_index] + diff_x * r_unit;
     float g_result = g[start_index] + diff_x * g_unit;
     float b_result = b[start_index] + diff_x * b_unit;
-    pdfium::span<uint8_t> dib_span =
-        pBitmap->GetWritableScanline(y).subspan(start_x * 4);
+    pdfium::span<uint8_t> dib_span = pBitmap->GetWritableScanline(y).subspan(
+        static_cast<size_t>(start_x * 4));
 
     for (int x = start_x; x < end_x; x++) {
       r_result += r_unit;
@@ -433,7 +435,7 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
           dib_span.data(), ArgbEncode(alpha, static_cast<int>(r_result * 255),
                                       static_cast<int>(g_result * 255),
                                       static_cast<int>(b_result * 255))));
-      dib_span = dib_span.subspan(4);
+      dib_span = dib_span.subspan<4u>();
     }
   }
 }
@@ -744,10 +746,10 @@ struct PatchDrawer {
         (d_bottom < kCoonColorThreshold && d_left < kCoonColorThreshold &&
          d_top < kCoonColorThreshold && d_right < kCoonColorThreshold)) {
       pdfium::span<CFX_Path::Point> points = path.GetPoints();
-      C1.GetPoints(points.subspan(0, 4));
-      D2.GetPoints(points.subspan(3, 4));
-      C2.GetPointsReverse(points.subspan(6, 4));
-      D1.GetPointsReverse(points.subspan(9, 4));
+      C1.GetPoints(points.subspan<0u, 4u>());
+      D2.GetPoints(points.subspan<3u, 4u>());
+      C2.GetPointsReverse(points.subspan<6u, 4u>());
+      D1.GetPointsReverse(points.subspan<9u, 4u>());
       CFX_FillRenderOptions fill_options(
           CFX_FillRenderOptions::WindingOptions());
       fill_options.full_cover = true;
@@ -887,8 +889,8 @@ void DrawCoonPatchMeshes(
       patch.patch_colors[i].comp[2] = static_cast<int32_t>(rgb.blue * 255);
     }
 
-    CFX_FloatRect bbox =
-        CFX_FloatRect::GetBBox(pdfium::make_span(coords).first(point_count));
+    CFX_FloatRect bbox = CFX_FloatRect::GetBBox(
+        pdfium::make_span(coords).first(static_cast<size_t>(point_count)));
     if (bbox.right <= 0 || bbox.left >= (float)pBitmap->GetWidth() ||
         bbox.top <= 0 || bbox.bottom >= (float)pBitmap->GetHeight()) {
       continue;

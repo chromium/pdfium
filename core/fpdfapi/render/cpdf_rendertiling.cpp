@@ -246,7 +246,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
         }
         uint32_t* dest_buf = fxcrt::reinterpret_span<uint32_t>(
                                  pScreen->GetWritableScanline(start_y))
-                                 .subspan(start_x)
+                                 .subspan(static_cast<size_t>(start_x))
                                  .data();
         if (pPattern->colored()) {
           const uint32_t* src_buf32 =

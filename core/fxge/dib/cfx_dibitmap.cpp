@@ -288,9 +288,10 @@ void CFX_DIBitmap::TransferWithMultipleBPP(int dest_left,
     for (int row = 0; row < height; ++row) {
       uint8_t* dest_scan = buffer_.Get() + (dest_top + row) * GetPitch() +
                            dest_left * bytes_per_pixel;
-      const uint8_t* src_scan = source->GetScanline(src_top + row)
-                                    .subspan(src_left * bytes_per_pixel)
-                                    .data();
+      const uint8_t* src_scan =
+          source->GetScanline(src_top + row)
+              .subspan(static_cast<size_t>(src_left * bytes_per_pixel))
+              .data();
       FXSYS_memcpy(dest_scan, src_scan, width * bytes_per_pixel);
     }
   });
@@ -326,8 +327,8 @@ void CFX_DIBitmap::SetRedFromAlpha() {
   CHECK(buffer_);
 
   for (int row = 0; row < GetHeight(); row++) {
-    auto scanline =
-        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(GetWidth());
+    auto scanline = GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
+        static_cast<size_t>(GetWidth()));
     for (auto& pixel : scanline) {
       pixel.red = pixel.alpha;
     }
@@ -339,8 +340,8 @@ void CFX_DIBitmap::SetUniformOpaqueAlpha() {
   CHECK(buffer_);
 
   for (int row = 0; row < GetHeight(); row++) {
-    auto scanline =
-        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(GetWidth());
+    auto scanline = GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
+        static_cast<size_t>(GetWidth()));
     for (auto& pixel : scanline) {
       pixel.alpha = 0xff;
     }
@@ -362,8 +363,10 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
 
     for (int row = 0; row < GetHeight(); row++) {
       auto dest_scan =
-          GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(GetWidth());
-      auto mask_scan = mask->GetScanline(row).first(GetWidth());
+          GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
+              static_cast<size_t>(GetWidth()));
+      auto mask_scan =
+          mask->GetScanline(row).first(static_cast<size_t>(GetWidth()));
       for (int col = 0; col < GetWidth(); col++) {
         // Since the `dest_scan` value always starts out as 255 in this case,
         // simplify 255 * x / 255.
@@ -375,9 +378,10 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
 
   CHECK_EQ(GetFormat(), FXDIB_Format::kBgra);
   for (int row = 0; row < GetHeight(); row++) {
-    auto dest_scan =
-        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(GetWidth());
-    auto mask_scan = mask->GetScanline(row).first(GetWidth());
+    auto dest_scan = GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
+        static_cast<size_t>(GetWidth()));
+    auto mask_scan =
+        mask->GetScanline(row).first(static_cast<size_t>(GetWidth()));
     for (int col = 0; col < GetWidth(); col++) {
       dest_scan[col].alpha = dest_scan[col].alpha * mask_scan[col] / 255;
     }
@@ -406,8 +410,8 @@ bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
 
   const int bitmap_alpha = static_cast<int>(alpha * 255.0f);
   for (int row = 0; row < GetHeight(); row++) {
-    auto dest_scan =
-        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(GetWidth());
+    auto dest_scan = GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
+        static_cast<size_t>(GetWidth()));
     for (auto& pixel : dest_scan) {
       pixel.alpha = pixel.alpha * bitmap_alpha / 255;
     }
@@ -608,14 +612,14 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   for (int row = 0; row < height; row++) {
     pdfium::span<uint8_t> dest_scan =
         GetWritableScanline(dest_top + row)
-            .subspan(dest_left * dest_bytes_per_pixel);
+            .subspan(static_cast<size_t>(dest_left * dest_bytes_per_pixel));
     pdfium::span<const uint8_t> src_scan =
         source->GetScanline(src_top + row)
-            .subspan(src_left * src_bytes_per_pixel);
+            .subspan(static_cast<size_t>(src_left * src_bytes_per_pixel));
     pdfium::span<const uint8_t> clip_scan;
     if (pClipMask) {
       clip_scan = pClipMask->GetWritableScanline(dest_top + row - clip_box.top)
-                      .subspan(dest_left - clip_box.left);
+                      .subspan(static_cast<size_t>(dest_left - clip_box.left));
     }
     if (bRgb) {
       compositor.CompositeRgbBitmapLine(dest_scan, src_scan, width, clip_scan);
@@ -673,20 +677,22 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
     return false;
   }
   for (int row = 0; row < height; row++) {
-    pdfium::span<uint8_t> dest_scan = GetWritableScanline(dest_top + row)
-                                          .subspan(dest_left * bytes_per_pixel);
+    pdfium::span<uint8_t> dest_scan =
+        GetWritableScanline(dest_top + row)
+            .subspan(static_cast<size_t>(dest_left * bytes_per_pixel));
     pdfium::span<const uint8_t> src_scan = pMask->GetScanline(src_top + row);
     pdfium::span<const uint8_t> clip_scan;
     if (pClipMask) {
       clip_scan = pClipMask->GetScanline(dest_top + row - clip_box.top)
-                      .subspan(dest_left - clip_box.left);
+                      .subspan(static_cast<size_t>(dest_left - clip_box.left));
     }
     if (src_bpp == 1) {
       compositor.CompositeBitMaskLine(dest_scan, src_scan, src_left, width,
                                       clip_scan);
     } else {
-      compositor.CompositeByteMaskLine(dest_scan, src_scan.subspan(src_left),
-                                       width, clip_scan);
+      compositor.CompositeByteMaskLine(
+          dest_scan, src_scan.subspan(static_cast<size_t>(src_left)), width,
+          clip_scan);
     }
   }
   return true;
@@ -781,9 +787,13 @@ bool CFX_DIBitmap::CompositeRect(int left,
       }
       for (int row = rect.top; row < rect.bottom; row++) {
         uint8_t* dest_scan_top =
-            GetWritableScanline(row).subspan(rect.left / 8).data();
+            GetWritableScanline(row)
+                .subspan(static_cast<size_t>(rect.left / 8))
+                .data();
         uint8_t* dest_scan_top_r =
-            GetWritableScanline(row).subspan(rect.right / 8).data();
+            GetWritableScanline(row)
+                .subspan(static_cast<size_t>(rect.right / 8))
+                .data();
         uint8_t left_flag = *dest_scan_top & (255 << (8 - left_shift));
         uint8_t right_flag = *dest_scan_top_r & (255 >> right_shift);
         if (new_width) {

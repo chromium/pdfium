@@ -307,19 +307,21 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpPalette() {
     palette_.resize(palette_entries);
     if (pal_type_ == PalType::kOld) {
       auto src_pal_data =
-          fxcrt::reinterpret_span<FX_BGR_STRUCT<uint8_t>, uint8_t>(src_pal);
+          fxcrt::reinterpret_span<FX_BGR_STRUCT<uint8_t>, uint8_t>(
+              pdfium::span<uint8_t>(src_pal));
       for (auto& dest : palette_) {
         const auto& entry = src_pal_data.front();
         dest = ArgbEncode(0x00, entry.red, entry.green, entry.blue);
-        src_pal_data = src_pal_data.subspan(1);
+        src_pal_data = src_pal_data.subspan<1u>();
       }
     } else {
       auto src_pal_data =
-          fxcrt::reinterpret_span<FX_BGRA_STRUCT<uint8_t>, uint8_t>(src_pal);
+          fxcrt::reinterpret_span<FX_BGRA_STRUCT<uint8_t>, uint8_t>(
+              pdfium::span<uint8_t>(src_pal));
       for (auto& dest : palette_) {
         const auto& entry = src_pal_data.front();
         dest = ArgbEncode(entry.alpha, entry.red, entry.green, entry.blue);
-        src_pal_data = src_pal_data.subspan(1);
+        src_pal_data = src_pal_data.subspan<1u>();
       }
     }
   }
@@ -453,7 +455,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRGB() {
               static_cast<uint8_t>((buf.front() & mask_green_) >> green_bits);
           out_row_buffer_[idx++] =
               static_cast<uint8_t>((buf.front() & mask_red_) >> red_bits);
-          buf = buf.subspan(1);
+          buf = buf.subspan<1u>();
         }
         break;
       }

@@ -323,8 +323,8 @@ bool ByteString::EqualNoCase(ByteStringView str) const {
     if (this_char != that_char && tolower(this_char) != tolower(that_char)) {
       return false;
     }
-    this_span = this_span.subspan(1);
-    that_span = that_span.subspan(1);
+    this_span = this_span.subspan<1u>();
+    that_span = that_span.subspan<1u>();
   }
   return true;
 }

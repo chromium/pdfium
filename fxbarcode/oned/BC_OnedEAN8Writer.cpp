@@ -171,14 +171,14 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
   }
   tempStr = str.Substr(4, 4);
   iLen = tempStr.GetLength();
-  CalcTextInfo(tempStr, charpos_span.subspan(4), font_, (float)strWidth,
+  CalcTextInfo(tempStr, charpos_span.subspan<4u>(), font_, (float)strWidth,
                iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               (kLeftPosition + 33) * output_hscale_,
                               (float)(height_ - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(4, iLen), font_,
+    device->DrawNormalText(charpos_span.subspan(4u, iLen), font_,
                            static_cast<float>(iFontSize), affine_matrix1,
                            font_color_, GetTextRenderOptions());
   }

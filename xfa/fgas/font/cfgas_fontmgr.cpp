@@ -414,7 +414,7 @@ uint16_t FX_GetUnicodeBit(wchar_t wcUnicode) {
 
 uint16_t ReadUInt16FromSpanAtOffset(pdfium::span<const uint8_t> data,
                                     size_t offset) {
-  return fxcrt::GetUInt16MSBFirst(data.subspan(offset));
+  return fxcrt::GetUInt16MSBFirst(data.subspan(offset).first<2u>());
 }
 
 extern "C" {
@@ -451,7 +451,7 @@ std::vector<WideString> GetNames(pdfium::span<const uint8_t> name_table) {
   uint16_t nNameCount = ReadUInt16FromSpanAtOffset(name_table, 2);
   pdfium::span<const uint8_t> str =
       name_table.subspan(ReadUInt16FromSpanAtOffset(name_table, 4));
-  pdfium::span<const uint8_t> name_record = name_table.subspan(6);
+  pdfium::span<const uint8_t> name_record = name_table.subspan<6u>();
   for (uint16_t i = 0; i < nNameCount; ++i) {
     uint16_t nNameID = ReadUInt16FromSpanAtOffset(name_table, i * 12 + 6);
     if (nNameID != 1) {

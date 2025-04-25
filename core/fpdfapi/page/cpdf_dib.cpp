@@ -1285,7 +1285,8 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
     for (int col = 0; col < GetWidth(); col++) {
       mask32_span[col] = GetBitValue(pSrcLine, col) ? set_argb : reset_argb;
     }
-    return fxcrt::reinterpret_span<uint8_t>(mask32_span.first(GetWidth()));
+    return fxcrt::reinterpret_span<uint8_t>(
+        mask32_span.first(static_cast<size_t>(GetWidth())));
   }
   if (bpc_ * components_ <= 8) {
     pdfium::span<uint8_t> result = line_buf_;
@@ -1303,7 +1304,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
         }
         line_buf_[col] = color_index;
       }
-      result = result.first(GetWidth());
+      result = result.first(static_cast<size_t>(GetWidth()));
     }
     if (!color_key_) {
       return result;
@@ -1333,14 +1334,16 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
         }
       }
     });
-    return pdfium::make_span(mask_buf_).first(4 * GetWidth());
+    return pdfium::make_span(mask_buf_).first(
+        static_cast<size_t>(4 * GetWidth()));
   }
   if (color_key_) {
     if (components_ == 3 && bpc_ == 8) {
       UNSAFE_TODO({
         uint8_t* alpha_channel = mask_buf_.data() + 3;
         for (int col = 0; col < GetWidth(); col++) {
-          const auto pPixel = pSrcLine.subspan(col * 3, 3);
+          const auto pPixel =
+              pSrcLine.subspan(static_cast<size_t>(col * 3), 3u);
           alpha_channel[col * 4] =
               AreColorIndicesOutOfBounds(pPixel, comp_data_) ? 0xFF : 0;
         }
@@ -1369,7 +1372,8 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
       pDestPixel++;
     }
   });
-  return pdfium::make_span(mask_buf_).first(4 * GetWidth());
+  return pdfium::make_span(mask_buf_).first(
+      static_cast<size_t>(4 * GetWidth()));
 }
 
 bool CPDF_DIB::SkipToScanline(int line, PauseIndicatorIface* pPause) const {

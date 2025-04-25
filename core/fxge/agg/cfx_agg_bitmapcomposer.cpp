@@ -84,7 +84,8 @@ void CFX_AggBitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
         add_clip_scan_[i] = clip_scan[i] * alpha_;
       }
     } else {
-      std::ranges::fill(pdfium::make_span(add_clip_scan_).first(dest_width),
+      std::ranges::fill(pdfium::make_span(add_clip_scan_)
+                            .first(static_cast<size_t>(dest_width)),
                         FXSYS_roundf(alpha_ * 255));
     }
     clip_scan = add_clip_scan_;
@@ -113,7 +114,8 @@ void CFX_AggBitmapComposer::ComposeScanline(
     clip_scan =
         clip_mask_
             ->GetWritableScanline(dest_top_ + line - clip_rgn_->GetBox().top)
-            .subspan(dest_left_ - clip_rgn_->GetBox().left);
+            .subspan(
+                static_cast<size_t>(dest_left_ - clip_rgn_->GetBox().left));
   }
   pdfium::span<uint8_t> dest_scan =
       bitmap_->GetWritableScanline(line + dest_top_);
@@ -164,7 +166,7 @@ void CFX_AggBitmapComposer::ComposeScanlineV(
       int clip_pitch = clip_mask_->GetPitch();
       const uint8_t* src_clip =
           clip_mask_->GetScanline(dest_top_ - clip_rgn_->GetBox().top)
-              .subspan(dest_x - clip_rgn_->GetBox().left)
+              .subspan(static_cast<size_t>(dest_x - clip_rgn_->GetBox().left))
               .data();
       if (flip_y_) {
         src_clip += Fx2DSizeOrDie(clip_pitch, dest_height_ - 1);

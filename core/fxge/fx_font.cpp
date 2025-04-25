@@ -90,8 +90,9 @@ ByteString GetNameFromTT(pdfium::span<const uint8_t> name_table,
     return ByteString();
   }
 
-  uint32_t name_count = fxcrt::GetUInt16MSBFirst(name_table.subspan(2));
-  uint32_t string_offset = fxcrt::GetUInt16MSBFirst(name_table.subspan(4));
+  uint32_t name_count = fxcrt::GetUInt16MSBFirst(name_table.subspan<2u, 2u>());
+  uint32_t string_offset =
+      fxcrt::GetUInt16MSBFirst(name_table.subspan<4u, 2u>());
   // We will ignore the possibility of overlap of structures and
   // string table as if it's all corrupt there's not a lot we can do.
   if (name_table.size() < string_offset) {
@@ -99,30 +100,33 @@ ByteString GetNameFromTT(pdfium::span<const uint8_t> name_table,
   }
 
   pdfium::span<const uint8_t> string_span = name_table.subspan(string_offset);
-  name_table = name_table.subspan(6);
+  name_table = name_table.subspan<6u>();
   if (name_table.size() < name_count * 12) {
     return ByteString();
   }
 
   for (uint32_t i = 0; i < name_count;
-       i++, name_table = name_table.subspan(12)) {
-    if (fxcrt::GetUInt16MSBFirst(name_table.subspan(6)) == name_id) {
-      const uint16_t platform_identifier = fxcrt::GetUInt16MSBFirst(name_table);
+       i++, name_table = name_table.subspan<12u>()) {
+    if (fxcrt::GetUInt16MSBFirst(name_table.subspan<6u, 2u>()) == name_id) {
+      const uint16_t platform_identifier =
+          fxcrt::GetUInt16MSBFirst(name_table.first<2u>());
       const uint16_t platform_encoding =
-          fxcrt::GetUInt16MSBFirst(name_table.subspan(2));
+          fxcrt::GetUInt16MSBFirst(name_table.subspan<2u, 2u>());
 
       if (platform_identifier == kNamePlatformMac &&
           platform_encoding == kNameMacEncodingRoman) {
         return GetStringFromTable(
-            string_span, fxcrt::GetUInt16MSBFirst(name_table.subspan(10)),
-            fxcrt::GetUInt16MSBFirst(name_table.subspan(8)));
+            string_span,
+            fxcrt::GetUInt16MSBFirst(name_table.subspan<10u, 2u>()),
+            fxcrt::GetUInt16MSBFirst(name_table.subspan<8u, 2u>()));
       }
       if (platform_identifier == kNamePlatformWindows &&
           platform_encoding == kNameWindowsEncodingUnicode) {
         // This name is always UTF16-BE and we have to convert it to UTF8.
         ByteString utf16_be = GetStringFromTable(
-            string_span, fxcrt::GetUInt16MSBFirst(name_table.subspan(10)),
-            fxcrt::GetUInt16MSBFirst(name_table.subspan(8)));
+            string_span,
+            fxcrt::GetUInt16MSBFirst(name_table.subspan<10u, 2u>()),
+            fxcrt::GetUInt16MSBFirst(name_table.subspan<8u, 2u>()));
         if (utf16_be.IsEmpty() || utf16_be.GetLength() % 2 != 0) {
           return ByteString();
         }
@@ -135,11 +139,11 @@ ByteString GetNameFromTT(pdfium::span<const uint8_t> name_table,
 }
 
 size_t GetTTCIndex(pdfium::span<const uint8_t> pFontData, size_t font_offset) {
-  pdfium::span<const uint8_t> p = pFontData.subspan(8);
-  size_t nfont = fxcrt::GetUInt32MSBFirst(p);
+  pdfium::span<const uint8_t> p = pFontData.subspan<8u>();
+  size_t nfont = fxcrt::GetUInt32MSBFirst(p.first<4u>());
   for (size_t index = 0; index < nfont; index++) {
     p = pFontData.subspan(12 + index * 4);
-    if (fxcrt::GetUInt32MSBFirst(p) == font_offset) {
+    if (fxcrt::GetUInt32MSBFirst(p.first<4u>()) == font_offset) {
       return index;
     }
   }

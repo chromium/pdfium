@@ -22,6 +22,13 @@
 
 namespace pdfium {
 
+// Type tag to provide to byte span conversion functions to bypass
+// `std::has_unique_object_representations_v<>` check.
+struct allow_nonunique_obj_t {
+  explicit allow_nonunique_obj_t() = default;
+};
+inline constexpr allow_nonunique_obj_t allow_nonunique_obj{};
+
 constexpr size_t dynamic_extent = static_cast<size_t>(-1);
 
 template <typename T>
@@ -415,6 +422,15 @@ constexpr span<T> make_span(const Container& container) {
 // [span.objectrep], views of object representation
 template <typename T, size_t N, typename P>
 span<const uint8_t> as_bytes(span<T, N, P> s) noexcept {
+  // SAFETY: from size_bytes() method.
+  return UNSAFE_BUFFERS(
+      make_span(reinterpret_cast<const uint8_t*>(s.data()), s.size_bytes()));
+}
+
+// [span.objectrep], views of object representation
+template <typename T, size_t N, typename P>
+span<const uint8_t> as_bytes(allow_nonunique_obj_t tag,
+                             span<T, N, P> s) noexcept {
   // SAFETY: from size_bytes() method.
   return UNSAFE_BUFFERS(
       make_span(reinterpret_cast<const uint8_t*>(s.data()), s.size_bytes()));

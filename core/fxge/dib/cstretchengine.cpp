@@ -489,8 +489,8 @@ void CStretchEngine::StretchVert() {
             uint32_t dest_b = 0;
             for (int j = pWeights->src_start_; j <= pWeights->src_end_; ++j) {
               uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
-              pdfium::span<const uint8_t> src_pixel =
-                  src_span.subspan((j - src_clip_.top) * inter_pitch_, 3);
+              pdfium::span<const uint8_t> src_pixel = src_span.subspan(
+                  static_cast<size_t>((j - src_clip_.top) * inter_pitch_), 3u);
               dest_b += pixel_weight * src_pixel[0];
               dest_g += pixel_weight * src_pixel[1];
               dest_r += pixel_weight * src_pixel[2];
@@ -515,7 +515,8 @@ void CStretchEngine::StretchVert() {
             for (int j = pWeights->src_start_; j <= pWeights->src_end_; ++j) {
               uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
               pdfium::span<const uint8_t> src_pixel = src_span.subspan(
-                  (j - src_clip_.top) * inter_pitch_, kPixelBytes);
+                  static_cast<size_t>((j - src_clip_.top) * inter_pitch_),
+                  kPixelBytes);
               dest_b += pixel_weight * src_pixel[0];
               dest_g += pixel_weight * src_pixel[1];
               dest_r += pixel_weight * src_pixel[2];

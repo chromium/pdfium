@@ -235,10 +235,13 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
     }
 
     const uint8_t* src_scan =
-        pGlyph->GetScanline(row).subspan((start_col - left) * 3).data();
-    uint8_t* dest_scan = bitmap->GetWritableScanline(dest_row)
-                             .subspan(start_col * bytes_per_pixel)
-                             .data();
+        pGlyph->GetScanline(row)
+            .subspan(static_cast<size_t>((start_col - left) * 3))
+            .data();
+    uint8_t* dest_scan =
+        bitmap->GetWritableScanline(dest_row)
+            .subspan(static_cast<size_t>(start_col * bytes_per_pixel))
+            .data();
     if (x_subpixel == 0) {
       for (int col = start_col; col < end_col; ++col) {
         if (normalize) {

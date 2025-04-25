@@ -103,9 +103,9 @@ ByteString LoadTableFromTT(FILE* pFile,
     for (uint32_t i = 0; i < nTables; i++) {
       // TODO(tsepez): use actual span.
       auto p = pdfium::make_span(pTables + i * 16, 16u);
-      if (fxcrt::GetUInt32MSBFirst(p) == tag) {
-        uint32_t offset = fxcrt::GetUInt32MSBFirst(p.subspan(8));
-        uint32_t size = fxcrt::GetUInt32MSBFirst(p.subspan(12));
+      if (fxcrt::GetUInt32MSBFirst(p.first<4u>()) == tag) {
+        uint32_t offset = fxcrt::GetUInt32MSBFirst(p.subspan<8u, 4u>());
+        uint32_t size = fxcrt::GetUInt32MSBFirst(p.subspan<12u, 4u>());
         if (offset > std::numeric_limits<uint32_t>::max() - size ||
             static_cast<FX_FILESIZE>(offset + size) > fileSize ||
             fseek(pFile, offset, SEEK_SET) < 0) {
@@ -214,7 +214,7 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   }
 
   uint32_t nFaces =
-      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).subspan<8u>());
+      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).subspan<8u, 4u>());
   FX_SAFE_SIZE_T safe_face_bytes = nFaces;
   safe_face_bytes *= 4;
   if (!safe_face_bytes.IsValid()) {
@@ -231,8 +231,9 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   }
 
   for (uint32_t i = 0; i < nFaces; i++) {
-    ReportFace(path, pFile.get(), filesize,
-               fxcrt::GetUInt32MSBFirst(offsets_span.subspan(i * 4)));
+    ReportFace(
+        path, pFile.get(), filesize,
+        fxcrt::GetUInt32MSBFirst(offsets_span.subspan(i * 4).first<4u>()));
   }
 }
 
@@ -285,8 +286,8 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   ByteString os2 =
       LoadTableFromTT(pFile, tables.unsigned_str(), nTables, kOs2Tag, filesize);
   if (os2.GetLength() >= 86) {
-    pdfium::span<const uint8_t> p = os2.unsigned_span().subspan(78);
-    uint32_t codepages = fxcrt::GetUInt32MSBFirst(p);
+    pdfium::span<const uint8_t> p = os2.unsigned_span().subspan(78u);
+    uint32_t codepages = fxcrt::GetUInt32MSBFirst(p.first<4u>());
     if (codepages & (1U << 17)) {
       mapper_->AddInstalledFont(facename, FX_Charset::kShiftJIS);
       pInfo->charsets_ |= CHARSET_FLAG_SHIFTJIS;
@@ -428,9 +429,9 @@ size_t CFX_FolderFontInfo::GetFontData(void* hFont,
       // TODO(tsepez): iterate over span.
       pdfium::span<const uint8_t> p =
           pFont->font_tables_.unsigned_span().subspan(i * 16);
-      if (fxcrt::GetUInt32MSBFirst(p) == table) {
-        offset = fxcrt::GetUInt32MSBFirst(p.subspan(8));
-        datasize = fxcrt::GetUInt32MSBFirst(p.subspan(12));
+      if (fxcrt::GetUInt32MSBFirst(p.first<4u>()) == table) {
+        offset = fxcrt::GetUInt32MSBFirst(p.subspan<8u, 4u>());
+        datasize = fxcrt::GetUInt32MSBFirst(p.subspan<12u, 4u>());
       }
     }
   }

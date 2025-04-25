@@ -356,9 +356,9 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
       int char_size = 1;
       codes[0] = offset < pBytes.size() ? pBytes[offset++] : 0;
       while (true) {
-        int ret =
-            CheckFourByteCodeRange(pdfium::make_span(codes).first(char_size),
-                                   mixed_four_byte_leading_ranges_);
+        int ret = CheckFourByteCodeRange(
+            pdfium::make_span(codes).first(static_cast<size_t>(char_size)),
+            mixed_four_byte_leading_ranges_);
         if (ret == 0) {
           return 0;
         }

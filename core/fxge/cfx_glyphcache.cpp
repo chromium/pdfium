@@ -63,7 +63,7 @@ void UniqueKeyGen::Initialize(std::initializer_list<const int32_t> args) {
   auto key_span = pdfium::make_span(key_);
   for (const auto& arg : args) {
     key_span.front() = arg;
-    key_span = key_span.subspan(1);
+    key_span = key_span.subspan<1u>();
   }
   key_len_ = args.size();
 }

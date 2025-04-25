@@ -104,9 +104,9 @@ int BigOrder64BitsMod3(pdfium::span<const uint8_t> data) {
   uint64_t ret = 0;
   for (int i = 0; i < 4; ++i) {
     ret <<= 32;
-    ret |= fxcrt::GetUInt32MSBFirst(data);
+    ret |= fxcrt::GetUInt32MSBFirst(data.first<4u>());
     ret %= 3;
-    data = data.subspan(4);
+    data = data.subspan<4u>();
   }
   return static_cast<int>(ret);
 }
@@ -406,7 +406,7 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
     return false;
   }
 
-  if (fxcrt::GetUInt32LSBFirst(pdfium::make_span(buf).first(4u)) !=
+  if (fxcrt::GetUInt32LSBFirst(pdfium::make_span(buf).first<4u>()) !=
       permissions_) {
     return false;
   }
@@ -499,7 +499,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
   if (!file_id_.IsEmpty()) {
     CRYPT_MD5Update(&md5, file_id_.unsigned_span());
   }
-  CRYPT_MD5Finish(&md5, pdfium::make_span(ukeybuf).first(16u));
+  CRYPT_MD5Finish(&md5, pdfium::make_span(ukeybuf).first<16u>());
   return UNSAFE_TODO(memcmp(test, ukeybuf, 16)) == 0;
 }
 
@@ -637,7 +637,7 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
       CRYPT_ArcFourCryptBlock(partial_digest_span,
                               pdfium::make_span(tempkey).first(key_len));
     }
-    CRYPT_MD5Generate(partial_digest_span, remaining_digest_span);
+    CRYPT_MD5Generate(partial_digest_span, remaining_digest_span.first<16u>());
     pEncryptDict->SetNewFor<CPDF_String>(
         "U", ByteString(ByteStringView(pdfium::make_span(digest))));
   }

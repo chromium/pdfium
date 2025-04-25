@@ -96,7 +96,8 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     case FXDIB_Format::k8bppRgb: {
       pdfium::span<const uint32_t> src_palette = src_->GetPaletteSpan();
       auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
-      auto zip = fxcrt::Zip(src_span.first(GetWidth()), dest);
+      auto zip =
+          fxcrt::Zip(src_span.first(static_cast<size_t>(GetWidth())), dest);
       if (src_->HasPalette()) {
         for (auto [input, output] : zip) {
           const FX_ARGB src_argb = src_palette[input];
@@ -114,7 +115,8 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     }
     case FXDIB_Format::k8bppMask: {
       for (auto [input, output] :
-           fxcrt::Zip(src_span.first(GetWidth()), scanline_span)) {
+           fxcrt::Zip(src_span.first(static_cast<size_t>(GetWidth())),
+                      scanline_span)) {
         output = r_samples_[input];
       }
       break;
@@ -123,7 +125,8 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       auto src =
           fxcrt::reinterpret_span<const FX_BGR_STRUCT<uint8_t>>(src_span);
       auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
-      for (auto [input, output] : fxcrt::Zip(src.first(GetWidth()), dest)) {
+      for (auto [input, output] :
+           fxcrt::Zip(src.first(static_cast<size_t>(GetWidth())), dest)) {
         output = MakePlatformRGBStruct(r_samples_[input.red],
                                        g_samples_[input.green],
                                        b_samples_[input.blue]);
@@ -134,7 +137,8 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       auto src =
           fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_span);
       auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
-      for (auto [input, output] : fxcrt::Zip(src.first(GetWidth()), dest)) {
+      for (auto [input, output] :
+           fxcrt::Zip(src.first(static_cast<size_t>(GetWidth())), dest)) {
         output = MakePlatformRGBStruct(r_samples_[input.red],
                                        g_samples_[input.green],
                                        b_samples_[input.blue]);
@@ -146,7 +150,8 @@ void CPDF_TransferFuncDIB::TranslateScanline(
           fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_span);
       auto dest =
           fxcrt::reinterpret_span<FX_BGRA_STRUCT<uint8_t>>(scanline_span);
-      for (auto [input, output] : fxcrt::Zip(src.first(GetWidth()), dest)) {
+      for (auto [input, output] :
+           fxcrt::Zip(src.first(static_cast<size_t>(GetWidth())), dest)) {
         output = {
             .blue = b_samples_[input.blue],
             .green = g_samples_[input.green],

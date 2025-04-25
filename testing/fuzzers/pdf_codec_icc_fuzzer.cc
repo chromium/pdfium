@@ -16,7 +16,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   const float src[4] = {0.5f, 0.5f, 0.5f, 0.5f};
   float dst[4];
-  transform->Translate(pdfium::make_span(src).first(transform->components()),
+  transform->Translate(pdfium::make_span(src).first(
+                           static_cast<size_t>(transform->components())),
                        pdfium::make_span(dst));
   return 0;
 }

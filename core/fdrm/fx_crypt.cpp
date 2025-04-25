@@ -194,8 +194,8 @@ void CRYPT_MD5Update(CRYPT_md5_context* context,
     left = 0;
   }
   while (data.size() >= 64) {
-    md5_process(context, data.first(64));
-    data = data.subspan(64);
+    md5_process(context, data.first<64u>());
+    data = data.subspan<64u>();
   }
   if (!data.empty()) {
     fxcrt::Copy(data, buffer_span.subspan(left));

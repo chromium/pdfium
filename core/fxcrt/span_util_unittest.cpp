@@ -24,7 +24,7 @@ TEST(Spancpy, FitsWithin) {
   std::vector<char> src(2, 'A');
   std::vector<char> dst(4, 'B');
   // Also show that a const src argument is acceptable.
-  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan(1),
+  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan<1u>(),
                                pdfium::span<const char>(src));
   EXPECT_EQ(dst[0], 'B');
   EXPECT_EQ(dst[1], 'A');
@@ -37,8 +37,8 @@ TEST(Spancpy, FitsWithin) {
 TEST(Spancpy, EmptyCopyWithin) {
   std::vector<char> src(2, 'A');
   std::vector<char> dst(4, 'B');
-  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan(1),
-                               pdfium::make_span(src).subspan(2));
+  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan<1u>(),
+                               pdfium::make_span(src).subspan<2u>());
   EXPECT_EQ(dst[0], 'B');
   EXPECT_EQ(dst[1], 'B');
   EXPECT_EQ(dst[2], 'B');
@@ -50,8 +50,8 @@ TEST(Spancpy, EmptyCopyWithin) {
 TEST(Spancpy, EmptyCopyToEmpty) {
   std::vector<char> src(2, 'A');
   std::vector<char> dst(4, 'B');
-  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan(4),
-                               pdfium::make_span(src).subspan(2));
+  auto remain = fxcrt::spancpy(pdfium::make_span(dst).subspan<4u>(),
+                               pdfium::make_span(src).subspan<2u>());
   EXPECT_EQ(dst[0], 'B');
   EXPECT_EQ(dst[1], 'B');
   EXPECT_EQ(dst[2], 'B');
@@ -84,7 +84,7 @@ TEST(Spanmove, FitsWithin) {
   std::vector<char> src(2, 'A');
   std::vector<char> dst(4, 'B');
   // Also show that a const src argument is acceptable.
-  auto remain = fxcrt::spanmove(pdfium::make_span(dst).subspan(1),
+  auto remain = fxcrt::spanmove(pdfium::make_span(dst).subspan<1u>(),
                                 pdfium::span<const char>(src));
   EXPECT_EQ(dst[0], 'B');
   EXPECT_EQ(dst[1], 'A');
@@ -108,8 +108,8 @@ TEST(Spanmove, TryFitsEntirely) {
 TEST(Spanmove, TrySelfIntersect) {
   {
     std::vector<char> vec = {'A', 'B', 'C', 'D'};
-    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).first(3),
-                                    pdfium::make_span(vec).last(3)));
+    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).first(3u),
+                                    pdfium::make_span(vec).last(3u)));
     EXPECT_EQ(vec[0], 'B');
     EXPECT_EQ(vec[1], 'C');
     EXPECT_EQ(vec[2], 'D');
@@ -117,8 +117,8 @@ TEST(Spanmove, TrySelfIntersect) {
   }
   {
     std::vector<char> vec = {'A', 'B', 'C', 'D'};
-    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).last(3),
-                                    pdfium::make_span(vec).first(3)));
+    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).last(3u),
+                                    pdfium::make_span(vec).first(3u)));
     EXPECT_EQ(vec[0], 'A');
     EXPECT_EQ(vec[1], 'A');
     EXPECT_EQ(vec[2], 'B');
@@ -145,10 +145,10 @@ TEST(SpanEquals, Empty) {
   EXPECT_FALSE(fxcrt::span_equals(empty, some));
   EXPECT_FALSE(fxcrt::span_equals(some, empty));
   EXPECT_TRUE(fxcrt::span_equals(empty, empty));
-  EXPECT_TRUE(fxcrt::span_equals(empty, some.first(0)));
-  EXPECT_TRUE(fxcrt::span_equals(some.first(0), empty));
-  EXPECT_TRUE(fxcrt::span_equals(some2.first(0), some.first(0)));
-  EXPECT_TRUE(fxcrt::span_equals(some.first(0), some2.first(0)));
+  EXPECT_TRUE(fxcrt::span_equals(empty, some.first(0u)));
+  EXPECT_TRUE(fxcrt::span_equals(some.first(0u), empty));
+  EXPECT_TRUE(fxcrt::span_equals(some2.first(0u), some.first(0u)));
+  EXPECT_TRUE(fxcrt::span_equals(some.first(0u), some2.first(0u)));
 }
 
 TEST(SpanEquals, NonEmpty) {
@@ -157,15 +157,15 @@ TEST(SpanEquals, NonEmpty) {
   pdfium::span<int> some = pdfium::make_span(vec);
   pdfium::span<int> some2 = pdfium::make_span(vec2);
   EXPECT_FALSE(fxcrt::span_equals(some, some2));
-  EXPECT_FALSE(fxcrt::span_equals(some.first(2), some2));
-  EXPECT_FALSE(fxcrt::span_equals(some, some2.first(2)));
-  EXPECT_TRUE(fxcrt::span_equals(some.first(2), some2.first(2)));
+  EXPECT_FALSE(fxcrt::span_equals(some.first(2u), some2));
+  EXPECT_FALSE(fxcrt::span_equals(some, some2.first(2u)));
+  EXPECT_TRUE(fxcrt::span_equals(some.first(2u), some2.first(2u)));
 }
 
 TEST(Span, AssignOverOnePastEnd) {
   std::vector<char> src(2, 'A');
   pdfium::span<char> span = pdfium::make_span(src);
-  span = span.subspan(2);
+  span = span.subspan<2u>();
   span = pdfium::make_span(src);
   EXPECT_EQ(span.size(), 2u);
 }
@@ -191,7 +191,7 @@ TEST(ReinterpretSpan, LegalConversions) {
 TEST(ReinterpretSpan, BadAlignment) {
   uint8_t abcabc[6] = {0x61, 0x62, 0x63, 0x61, 0x62, 0x63};
   EXPECT_DEATH(fxcrt::reinterpret_span<uint32_t>(
-                   pdfium::make_span(abcabc).subspan(1, 4)),
+                   pdfium::make_span(abcabc).subspan<1u, 4u>()),
                "");
 }
 

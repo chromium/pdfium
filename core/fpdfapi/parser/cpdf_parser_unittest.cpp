@@ -356,7 +356,7 @@ TEST(ParserTest, ParseStartXRefWithHeaderOffset) {
 
   std::vector<unsigned char> data(pFileAccess->GetSize() + kTestHeaderOffset);
   ASSERT_TRUE(pFileAccess->ReadBlockAtOffset(
-      pdfium::make_span(data).subspan(kTestHeaderOffset), 0));
+      pdfium::make_span(data).subspan<kTestHeaderOffset>(), 0));
   CPDF_TestParser parser;
   parser.InitTestFromBufferWithOffset(data, kTestHeaderOffset);
 
@@ -377,7 +377,7 @@ TEST(ParserTest, ParseLinearizedWithHeaderOffset) {
 
   std::vector<unsigned char> data(pFileAccess->GetSize() + kTestHeaderOffset);
   ASSERT_TRUE(pFileAccess->ReadBlockAtOffset(
-      pdfium::make_span(data).subspan(kTestHeaderOffset), 0));
+      pdfium::make_span(data).subspan<kTestHeaderOffset>(), 0));
 
   CPDF_TestParser parser;
   parser.InitTestFromBufferWithOffset(data, kTestHeaderOffset);

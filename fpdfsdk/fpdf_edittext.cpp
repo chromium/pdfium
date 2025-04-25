@@ -563,7 +563,7 @@ RetainPtr<CPDF_Font> LoadCustomCompositeFont(
   std::map<uint32_t, uint32_t> widths;
   for (size_t i = 0; i < cid_to_gid_map_span.size(); i += 2) {
     uint16_t glyph_index =
-        fxcrt::GetUInt16MSBFirst(cid_to_gid_map_span.subspan(i, 2));
+        fxcrt::GetUInt16MSBFirst(cid_to_gid_map_span.subspan(i).first<2u>());
     // Safe to cast since `cid_to_gid_map_span` has a size limit.
     widths[static_cast<uint32_t>(i) / 2] = font->GetGlyphWidth(glyph_index);
   }

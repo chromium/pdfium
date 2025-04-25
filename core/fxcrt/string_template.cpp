@@ -76,9 +76,9 @@ size_t StringTemplate<T>::Remove(T chRemove) {
   while (!src_span.empty()) {
     if (src_span[0] != chRemove) {
       dst_span[0] = src_span[0];
-      dst_span = dst_span.subspan(1);
+      dst_span = dst_span.template subspan<1u>();
     }
-    src_span = src_span.subspan(1);
+    src_span = src_span.template subspan<1u>();
   }
   data_->data_length_ -= count;
   data_->capacity_span()[data_->data_length_] = 0;

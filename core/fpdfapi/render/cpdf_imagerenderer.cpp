@@ -294,7 +294,8 @@ RetainPtr<const CFX_DIBitmap> CPDF_ImageRenderer::CalculateDrawImage(
       const int matte_b = FXARGB_B(loader_->MatteColor());
       RetainPtr<CFX_DIBitmap> dest_bitmap = bitmap_device.GetBitmap();
       for (int row = 0; row < rect.Height(); row++) {
-        auto mask_scan = mask_bitmap->GetScanline(row).first(rect.Width());
+        auto mask_scan = mask_bitmap->GetScanline(row).first(
+            static_cast<size_t>(rect.Width()));
         auto dest_scan =
             dest_bitmap->GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row);
         for (auto [mask_ref, dest_ref] : fxcrt::Zip(mask_scan, dest_scan)) {

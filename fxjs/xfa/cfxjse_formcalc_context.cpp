@@ -521,7 +521,8 @@ bool IsPartOfNumberW(wchar_t ch) {
 
 ByteString GUIDString(bool bSeparator) {
   std::array<uint8_t, 16> data;
-  FX_Random_GenerateMT(fxcrt::reinterpret_span<uint32_t, uint8_t>(data));
+  FX_Random_GenerateMT(
+      fxcrt::reinterpret_span<uint32_t, uint8_t>(pdfium::span(data)));
   data[6] = (data[6] & 0x0F) | 0x40;
 
   ByteString bsGUID;
@@ -533,7 +534,7 @@ ByteString GUIDString(bool bSeparator) {
       if (bSeparator && (i == 4 || i == 6 || i == 8 || i == 10)) {
         guid_span[out_index++] = L'-';
       }
-      FXSYS_IntToTwoHexChars(data[i], guid_span.subspan(out_index, 2u));
+      FXSYS_IntToTwoHexChars(data[i], guid_span.subspan(out_index).first<2u>());
     }
   }
   bsGUID.ReleaseBuffer(bSeparator ? 36 : 32);

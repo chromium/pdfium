@@ -1059,7 +1059,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   if (bpp == 32) {
     for (int row = fill_rect.top; row < row_end; ++row) {
       auto span32 = pBitmap->GetWritableScanlineAs<uint32_t>(row).subspan(
-          fill_rect.left, fill_rect.Width());
+          static_cast<size_t>(fill_rect.left),
+          static_cast<size_t>(fill_rect.Width()));
       std::ranges::fill(span32, static_cast<uint32_t>(color));
     }
     return true;
@@ -1072,7 +1073,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   for (int row = fill_rect.top; row < row_end; ++row) {
     auto bgr_span =
         pBitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row).subspan(
-            fill_rect.left, fill_rect.Width());
+            static_cast<size_t>(fill_rect.left),
+            static_cast<size_t>(fill_rect.Width()));
     std::ranges::fill(bgr_span, bgr);
   }
   return true;

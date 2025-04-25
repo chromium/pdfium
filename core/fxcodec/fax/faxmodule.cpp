@@ -90,8 +90,9 @@ int FindBit(pdfium::span<const uint8_t> data_buf,
         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
     const uint8_t* skip_block = bit ? skip_block_0 : skip_block_1;
     while (byte_pos < max_byte - kBulkReadSize &&
-           UNSAFE_TODO(memcmp(data_buf.subspan(byte_pos).data(), skip_block,
-                              kBulkReadSize)) == 0) {
+           UNSAFE_TODO(
+               memcmp(data_buf.subspan(static_cast<size_t>(byte_pos)).data(),
+                      skip_block, kBulkReadSize)) == 0) {
       byte_pos += kBulkReadSize;
     }
   }

@@ -538,7 +538,8 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
   int rconst = 1;
   for (int i = 0; i < (ctx->Nr + 1) * ctx->Nb; i++) {
     if (i < Nk) {
-      ctx->keysched[i] = fxcrt::GetUInt32MSBFirst(keyspan.subspan(4 * i));
+      ctx->keysched[i] =
+          fxcrt::GetUInt32MSBFirst(keyspan.subspan(4u * i).first<4u>());
     } else {
       uint32_t temp = ctx->keysched[i - 1];
       if (i % Nk == 0) {
@@ -587,7 +588,7 @@ void CRYPT_AESSetIV(CRYPT_aes_context* ctx, const uint8_t* iv) {
   for (int i = 0; i < ctx->Nb; i++) {
     // TODO(tsepez): Pass actual span.
     ctx->iv[i] = fxcrt::GetUInt32MSBFirst(
-        UNSAFE_TODO(pdfium::make_span(iv + 4 * i, 4u)));
+        UNSAFE_TODO(pdfium::make_span(iv + 4u * i, 4u).first<4u>()));
   }
 }
 
@@ -604,13 +605,13 @@ void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
     FXSYS_memcpy(iv, ctx->iv.data(), sizeof(iv));
     while (size != 0) {
       for (i = 0; i < 4; i++) {
-        x[i] = ct[i] =
-            fxcrt::GetUInt32MSBFirst(pdfium::make_span(src + 4 * i, 4u));
+        x[i] = ct[i] = fxcrt::GetUInt32MSBFirst(
+            pdfium::make_span(src + 4 * i, 4u).first<4u>());
       }
       aes_decrypt_nb_4(ctx, x);
       for (i = 0; i < 4; i++) {
-        fxcrt::PutUInt32MSBFirst(iv[i] ^ x[i],
-                                 pdfium::make_span(dest + 4 * i, 4u));
+        fxcrt::PutUInt32MSBFirst(
+            iv[i] ^ x[i], pdfium::make_span(dest + 4 * i, 4u).first<4u>());
         iv[i] = ct[i];
       }
       dest += 16;
@@ -628,12 +629,12 @@ void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
   auto ctx_iv = pdfium::make_span(ctx->iv).first<4u>();
   while (!src.empty()) {
     for (auto& iv_element : ctx_iv) {
-      iv_element ^= fxcrt::GetUInt32MSBFirst(src.first(4u));
+      iv_element ^= fxcrt::GetUInt32MSBFirst(src.first<4u>());
       src = src.subspan(4u);
     }
     aes_encrypt_nb_4(ctx, ctx_iv.data());
     for (auto& iv_element : ctx_iv) {
-      fxcrt::PutUInt32MSBFirst(iv_element, dest.first(4u));
+      fxcrt::PutUInt32MSBFirst(iv_element, dest.first<4u>());
       dest = dest.subspan(4u);
     }
   }

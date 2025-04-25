@@ -216,8 +216,9 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
   const int bytes_per_pixel = pDevice->GetBPP() / 8;
   FX_ARGB argb = src_palette_[pal_index];
   for (int row = 0; row < sizeY; row++) {
-    pdfium::span<uint8_t> scan_span = pDevice->GetWritableScanline(row + startY)
-                                          .subspan(startX * bytes_per_pixel);
+    pdfium::span<uint8_t> scan_span =
+        pDevice->GetWritableScanline(row + startY)
+            .subspan(static_cast<size_t>(startX * bytes_per_pixel));
     switch (trans_method_) {
       case TransformMethod::k8BppRgbToRgbNoAlpha: {
         uint8_t* pScanline = scan_span.data();
@@ -259,7 +260,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num,
       if (byte_span.front() == gif_trans_index_) {
         byte_span.front() = gif_bg_index_;
       }
-      byte_span = byte_span.subspan(1);
+      byte_span = byte_span.subspan<1u>();
     }
   }
   int32_t pal_index = gif_bg_index_;
@@ -268,8 +269,10 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num,
   }
   const int32_t left = gif_frame_rect_.left;
   const pdfium::span<uint8_t> decode_span = decode_buf_;
-  std::ranges::fill(decode_span.first(src_width_), pal_index);
-  fxcrt::Copy(row_buf.first(img_width), decode_span.subspan(left));
+  std::ranges::fill(decode_span.first(static_cast<size_t>(src_width_)),
+                    pal_index);
+  fxcrt::Copy(row_buf.first(static_cast<size_t>(img_width)),
+              decode_span.subspan(static_cast<size_t>(left)));
 
   int32_t line = row_num + gif_frame_rect_.top;
   if (line < 0 || line >= src_height_) {
@@ -292,7 +295,7 @@ void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
   RetainPtr<CFX_DIBitmap> pDIBitmap = device_bitmap_;
   DCHECK(pDIBitmap);
 
-  fxcrt::Copy(row_buf.first(scanline_size_), decode_buf_);
+  fxcrt::Copy(row_buf.first(static_cast<size_t>(scanline_size_)), decode_buf_);
 
   if (row_num >= static_cast<uint32_t>(src_height_)) {
     return;

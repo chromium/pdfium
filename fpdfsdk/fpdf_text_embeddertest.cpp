@@ -105,7 +105,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   // Check includes the terminating NUL that is provided.
   int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
   ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
-  EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
+  EXPECT_THAT(pdfium::make_span(buffer).first<kHelloGoodbyeTextSize>(),
               ElementsAreArray(kHelloGoodbyeText));
 
   // Count does not include the terminating NUL in the string literal.
@@ -1288,7 +1288,7 @@ TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
   std::ranges::fill(buffer, 0xbdbd);
   int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
   ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
-  EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
+  EXPECT_THAT(pdfium::make_span(buffer).first<kHelloGoodbyeTextSize>(),
               ElementsAreArray(kHelloGoodbyeText));
 
   // Attempting to get a chunk of text after the control characters
@@ -1358,7 +1358,7 @@ TEST_F(FPDFTextEmbedderTest, CountRects) {
     unsigned short buffer[128];
     int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
     ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
-    EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
+    EXPECT_THAT(pdfium::make_span(buffer).first<kHelloGoodbyeTextSize>(),
                 ElementsAreArray(kHelloGoodbyeText));
   }
 
@@ -1488,7 +1488,7 @@ TEST_F(FPDFTextEmbedderTest, CroppedText) {
     std::ranges::fill(buffer, 0xbdbd);
     int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
     ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
-    EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
+    EXPECT_THAT(pdfium::make_span(buffer).first<kHelloGoodbyeTextSize>(),
                 ElementsAreArray(kHelloGoodbyeText));
 
     ByteStringView expected_text(kExpectedText[i]);
@@ -1522,7 +1522,7 @@ TEST_F(FPDFTextEmbedderTest, Bug1139) {
   unsigned short buffer[128];
   int num_chars = FPDFText_GetText(text_page.get(), 0, 128, buffer);
   ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
-  EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
+  EXPECT_THAT(pdfium::make_span(buffer).first<kHelloGoodbyeTextSize>(),
               ElementsAreArray(kHelloGoodbyeText));
 }
 
@@ -2172,7 +2172,7 @@ TEST_F(FPDFTextEmbedderTest, Bug384770169) {
   unsigned short buffer[256] = {};
   EXPECT_EQ(kExpectedSize,
             FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer));
-  EXPECT_THAT(pdfium::make_span(buffer).first(kExpectedSize),
+  EXPECT_THAT(pdfium::make_span(buffer).first<kExpectedSize>(),
               ElementsAreArray(kExpected));
 }
 
@@ -2190,7 +2190,7 @@ TEST_F(FPDFTextEmbedderTest, TextObjectSetIsActive) {
     int num_chars =
         FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer);
     ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
-    EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
+    EXPECT_THAT(pdfium::make_span(buffer).first<kHelloGoodbyeTextSize>(),
                 ElementsAreArray(kHelloGoodbyeText));
   }
 
@@ -2211,7 +2211,7 @@ TEST_F(FPDFTextEmbedderTest, TextObjectSetIsActive) {
     int num_chars =
         FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer);
     ASSERT_EQ(kGoodbyeTextSize, num_chars);
-    EXPECT_THAT(pdfium::make_span(buffer).first(kGoodbyeTextSize),
+    EXPECT_THAT(pdfium::make_span(buffer).first<kGoodbyeTextSize>(),
                 ElementsAreArray(
                     pdfium::make_span(kHelloGoodbyeText).subspan<kOffset>()));
   }
@@ -2227,7 +2227,7 @@ TEST_F(FPDFTextEmbedderTest, TextObjectSetIsActive) {
     int num_chars =
         FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer);
     ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
-    EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
+    EXPECT_THAT(pdfium::make_span(buffer).first<kHelloGoodbyeTextSize>(),
                 ElementsAreArray(kHelloGoodbyeText));
   }
 }

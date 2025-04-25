@@ -344,7 +344,7 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
                      uint32_t bytes_per_pixel) {
   const uint8_t tag = src_span.front();
   pdfium::span<const uint8_t> remaining_src_span =
-      src_span.subspan(1, row_size);
+      src_span.subspan(1u, row_size);
   switch (tag) {
     case 1: {
       for (size_t i = 0; i < remaining_src_span.size(); ++i) {

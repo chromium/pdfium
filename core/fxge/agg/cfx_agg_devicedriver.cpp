@@ -87,7 +87,9 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& bitmap,
       const int src_abgr = FXARGB_TOBGRORDERDIB(src_argb);
       for (int row = rect.top; row < rect.bottom; row++) {
         auto dest_row_span = bitmap->GetWritableScanlineAs<uint32_t>(row);
-        std::ranges::fill(dest_row_span.subspan(rect.left, width), src_abgr);
+        std::ranges::fill(dest_row_span.subspan(static_cast<size_t>(rect.left),
+                                                static_cast<size_t>(width)),
+                          src_abgr);
       }
       return;
     }
@@ -95,7 +97,8 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& bitmap,
     for (int row = rect.top; row < rect.bottom; row++) {
       auto dest_row_span =
           bitmap->GetWritableScanlineAs<FX_RGB_STRUCT<uint8_t>>(row);
-      for (auto& rgb : dest_row_span.subspan(rect.left, width)) {
+      for (auto& rgb : dest_row_span.subspan(static_cast<size_t>(rect.left),
+                                             static_cast<size_t>(width))) {
         rgb.red = src_r;
         rgb.green = src_g;
         rgb.blue = src_b;
@@ -108,7 +111,8 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& bitmap,
     for (int row = rect.top; row < rect.bottom; row++) {
       auto dest_row_span =
           bitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(row);
-      for (auto& rgba : dest_row_span.subspan(rect.left, width)) {
+      for (auto& rgba : dest_row_span.subspan(static_cast<size_t>(rect.left),
+                                              static_cast<size_t>(width))) {
         if (rgba.alpha == 0) {
           rgba.red = src_r;
           rgba.green = src_g;
@@ -130,7 +134,8 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& bitmap,
     for (int row = rect.top; row < rect.bottom; row++) {
       auto dest_row_span =
           bitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(row);
-      for (auto& rgba : dest_row_span.subspan(rect.left, width)) {
+      for (auto& rgba : dest_row_span.subspan(static_cast<size_t>(rect.left),
+                                              static_cast<size_t>(width))) {
         DoAlphaMerge(rgba, src_r, src_g, src_b, src_alpha);
       }
     }
@@ -140,7 +145,8 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& bitmap,
   for (int row = rect.top; row < rect.bottom; row++) {
     auto dest_row_span =
         bitmap->GetWritableScanlineAs<FX_RGB_STRUCT<uint8_t>>(row);
-    for (auto& rgb : dest_row_span.subspan(rect.left, width)) {
+    for (auto& rgb : dest_row_span.subspan(static_cast<size_t>(rect.left),
+                                           static_cast<size_t>(width))) {
       DoAlphaMerge(rgb, src_r, src_g, src_b, src_alpha);
     }
   }
@@ -169,11 +175,11 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
         int dest_row = dest_top + row;
         auto dest_scan =
             pBitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(dest_row)
-                .subspan(dest_left);
+                .subspan(static_cast<size_t>(dest_left));
         int src_row = src_top + row;
         auto src_scan =
             pSrcBitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(src_row).subspan(
-                src_left, width);
+                static_cast<size_t>(src_left), static_cast<size_t>(width));
         for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
           output.red = input.red;
           output.green = input.green;
@@ -189,11 +195,11 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
       int dest_row = dest_top + row;
       auto dest_scan =
           pBitmap->GetWritableScanlineAs<FX_RGB_STRUCT<uint8_t>>(dest_row)
-              .subspan(dest_left);
+              .subspan(static_cast<size_t>(dest_left));
       int src_row = src_top + row;
       auto src_scan =
           pSrcBitmap->GetScanlineAs<FX_BGR_STRUCT<uint8_t>>(src_row).subspan(
-              src_left, width);
+              static_cast<size_t>(src_left), static_cast<size_t>(width));
       for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
         output.red = input.red;
         output.green = input.green;
@@ -209,11 +215,11 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
       int dest_row = dest_top + row;
       auto dest_scan =
           pBitmap->GetWritableScanlineAs<FX_RGB_STRUCT<uint8_t>>(dest_row)
-              .subspan(dest_left);
+              .subspan(static_cast<size_t>(dest_left));
       int src_row = src_top + row;
       auto src_scan =
           pSrcBitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(src_row).subspan(
-              src_left, width);
+              static_cast<size_t>(src_left), static_cast<size_t>(width));
       for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
         output.red = input.red;
         output.green = input.green;
@@ -230,11 +236,11 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
       int dest_row = dest_top + row;
       auto dest_scan =
           pBitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(dest_row)
-              .subspan(dest_left);
+              .subspan(static_cast<size_t>(dest_left));
       int src_row = src_top + row;
       auto src_scan =
           pSrcBitmap->GetScanlineAs<FX_BGR_STRUCT<uint8_t>>(src_row).subspan(
-              src_left, width);
+              static_cast<size_t>(src_left), static_cast<size_t>(width));
       for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
         output.red = input.red;
         output.green = input.green;
@@ -252,11 +258,11 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
     int dest_row = dest_top + row;
     auto dest_scan =
         pBitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(dest_row)
-            .subspan(dest_left);
+            .subspan(static_cast<size_t>(dest_left));
     int src_row = src_top + row;
     auto src_scan =
         pSrcBitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(src_row).subspan(
-            src_left, width);
+            static_cast<size_t>(src_left), static_cast<size_t>(width));
     for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
       output.red = input.red;
       output.green = input.green;

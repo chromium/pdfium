@@ -612,7 +612,8 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
 
         // TODO(art-snake): The info.gennum is uint16_t, but version may be
         // greater than max<uint16_t>. Need to solve this issue.
-        const int32_t version = StringToInt(ByteStringView(pEntry.subspan(11)));
+        const int32_t version =
+            StringToInt(ByteStringView(pEntry.subspan<11u>()));
         info.gennum = version;
         info.type = ObjectType::kNormal;
       }

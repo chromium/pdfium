@@ -139,27 +139,27 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
   float strWidth = kWidth * output_hscale_;
 
   pdfium::span<TextCharPos> charpos_span = pdfium::make_span(charpos);
-  CalcTextInfo(tempStr, charpos_span.subspan(1), font_, strWidth, iFontSize,
+  CalcTextInfo(tempStr, charpos_span.subspan<1u>(), font_, strWidth, iFontSize,
                blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               kLeftPosition * output_hscale_,
                               (float)(height_ - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(1, length), font_,
+    device->DrawNormalText(charpos_span.subspan(1u, length), font_,
                            static_cast<float>(iFontSize), affine_matrix1,
                            font_color_, GetTextRenderOptions());
   }
   tempStr = str.Substr(6, 5);
   length = tempStr.GetLength();
-  CalcTextInfo(tempStr, charpos_span.subspan(6), font_, strWidth, iFontSize,
+  CalcTextInfo(tempStr, charpos_span.subspan<6u>(), font_, strWidth, iFontSize,
                blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               (kLeftPosition + 40) * output_hscale_,
                               (float)(height_ - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(6, length), font_,
+    device->DrawNormalText(charpos_span.subspan(6u, length), font_,
                            static_cast<float>(iFontSize), affine_matrix1,
                            font_color_, GetTextRenderOptions());
   }
@@ -178,14 +178,14 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
   }
   tempStr = str.Substr(11, 1);
   length = tempStr.GetLength();
-  CalcTextInfo(tempStr, charpos_span.subspan(11), font_, strWidth, iFontSize,
+  CalcTextInfo(tempStr, charpos_span.subspan<11u>(), font_, strWidth, iFontSize,
                blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               (kLeftPosition + 85) * output_hscale_,
                               (float)(height_ - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(charpos_span.subspan(11, length), font_,
+    device->DrawNormalText(charpos_span.subspan(11u, length), font_,
                            static_cast<float>(iFontSize), affine_matrix1,
                            font_color_, GetTextRenderOptions());
   }

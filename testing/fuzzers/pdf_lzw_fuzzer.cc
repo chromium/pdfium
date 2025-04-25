@@ -56,7 +56,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   // to assume they are the first two bytes of data provided.
   uint8_t color_exp = data_span[0];
   uint8_t code_exp = data_span[1];
-  pdfium::span<const uint8_t> lzw_data = data_span.subspan(2);
+  pdfium::span<const uint8_t> lzw_data = data_span.subspan<2u>();
   // Check that there isn't going to be an overflow in the destination buffer
   // size.
   if (lzw_data.size() >

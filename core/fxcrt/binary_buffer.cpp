@@ -121,7 +121,8 @@ void BinaryBuffer::AppendUint32(uint32_t value) {
 }
 
 void BinaryBuffer::AppendDouble(double value) {
-  AppendSpan(pdfium::as_bytes(pdfium::span_from_ref(value)));
+  AppendSpan(pdfium::as_bytes(pdfium::allow_nonunique_obj,
+                              pdfium::span_from_ref(value)));
 }
 
 }  // namespace fxcrt

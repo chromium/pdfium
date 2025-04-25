@@ -123,7 +123,7 @@ void WriteLine(fxcrt::ostringstream& stream, const CFX_PointF& point) {
 void WriteClosedLoop(fxcrt::ostringstream& stream,
                      pdfium::span<const CFX_PointF> points) {
   WriteMove(stream, points[0]);
-  for (const auto& point : points.subspan(1)) {
+  for (const auto& point : points.subspan<1u>()) {
     WriteLine(stream, point);
   }
   WriteLine(stream, points[0]);

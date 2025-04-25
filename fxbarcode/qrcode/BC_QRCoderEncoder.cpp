@@ -343,8 +343,10 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     }
 
     DataVector<uint8_t> dataBytes(numDataBytesInBlock);
-    fxcrt::Copy(bits->GetArray().subspan(dataBytesOffset, numDataBytesInBlock),
-                dataBytes);
+    fxcrt::Copy(
+        bits->GetArray().subspan(static_cast<size_t>(dataBytesOffset),
+                                 static_cast<size_t>(numDataBytesInBlock)),
+        dataBytes);
 
     DataVector<uint8_t> ecBytes = GenerateECBytes(dataBytes, numEcBytesInBlock);
     if (ecBytes.empty()) {

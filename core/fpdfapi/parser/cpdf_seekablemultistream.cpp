@@ -51,7 +51,8 @@ bool CPDF_SeekableMultiStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
   while (index < iCount) {
     auto acc_span = data_[index]->GetSpan();
     size_t dwRead = std::min<size_t>(buffer.size(), acc_span.size() - offset);
-    buffer = fxcrt::spancpy(buffer, acc_span.subspan(offset, dwRead));
+    buffer = fxcrt::spancpy(
+        buffer, acc_span.subspan(static_cast<size_t>(offset), dwRead));
     if (buffer.empty()) {
       return true;
     }

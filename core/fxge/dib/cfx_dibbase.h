@@ -59,7 +59,7 @@ class CFX_DIBBase : public Retainable {
   template <typename T>
   pdfium::span<const T> GetScanlineAs(int line) const {
     return fxcrt::reinterpret_span<const T>(GetScanline(line))
-        .first(GetWidth());
+        .first(static_cast<size_t>(GetWidth()));
   }
 
   int GetWidth() const { return width_; }

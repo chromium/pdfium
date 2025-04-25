@@ -806,7 +806,9 @@ std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
 
   CRYPT_md5_context context = CRYPT_MD5Start();
   for (int i = 0; i < height; ++i) {
-    CRYPT_MD5Update(&context, span.subspan(i * stride, usable_bytes_per_row));
+    CRYPT_MD5Update(&context,
+                    span.subspan(static_cast<size_t>(i * stride),
+                                 static_cast<size_t>(usable_bytes_per_row)));
   }
   uint8_t digest[16];
   CRYPT_MD5Finish(&context, digest);

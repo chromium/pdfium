@@ -163,8 +163,8 @@ DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
     }
 
     if (ch == 'z') {
-      std::ranges::fill(dest_span.first(4), 0);
-      dest_span = dest_span.subspan(4);
+      std::ranges::fill(dest_span.first<4u>(), 0u);
+      dest_span = dest_span.subspan<4u>();
       state = 0;
       res = 0;
       continue;
@@ -183,7 +183,7 @@ DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
 
     for (size_t i = 0; i < 4; ++i) {
       dest_span.front() = GetA85Result(res, i);
-      dest_span = dest_span.subspan(1);
+      dest_span = dest_span.subspan<1u>();
     }
     state = 0;
     res = 0;
@@ -195,7 +195,7 @@ DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
     }
     for (size_t i = 0; i < state - 1; ++i) {
       dest_span.front() = GetA85Result(res, i);
-      dest_span = dest_span.subspan(1);
+      dest_span = dest_span.subspan<1u>();
     }
   }
   if (pos < src_span.size() && src_span[pos] == '>') {
@@ -238,7 +238,7 @@ DataAndBytesConsumed HexDecode(pdfium::span<const uint8_t> src_span) {
       dest_span.front() = digit * 16;
     } else {
       dest_span.front() += digit;
-      dest_span = dest_span.subspan(1);
+      dest_span = dest_span.subspan<1u>();
     }
     is_first = !is_first;
   }
@@ -295,13 +295,15 @@ DataAndBytesConsumed RunLengthDecode(pdfium::span<const uint8_t> src_span) {
         std::ranges::fill(dest_span.subspan(dest_count + copy_len, delta), 0);
       }
       auto copy_span = src_span.subspan(i + 1, copy_len);
-      fxcrt::Copy(copy_span, dest_span.subspan(dest_count));
+      fxcrt::Copy(copy_span,
+                  dest_span.subspan(static_cast<size_t>(dest_count)));
       dest_count += src_span[i] + 1;
       i += src_span[i] + 2;
     } else {
       const uint8_t fill = i + 1 < src_span.size() ? src_span[i + 1] : 0;
       const size_t fill_size = 257 - src_span[i];
-      std::ranges::fill(dest_span.subspan(dest_count, fill_size), fill);
+      std::ranges::fill(
+          dest_span.subspan(static_cast<size_t>(dest_count), fill_size), fill);
       dest_count += fill_size;
       i += 2;
     }
@@ -536,15 +538,15 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
   if (span.size() >= 2 && ((span[0] == 0xfe && span[1] == 0xff) ||
                            (span[0] == 0xff && span[1] == 0xfe))) {
     if (span[0] == 0xfe) {
-      result = WideString::FromUTF16BE(span.subspan(2));
+      result = WideString::FromUTF16BE(span.subspan<2u>());
     } else {
-      result = WideString::FromUTF16LE(span.subspan(2));
+      result = WideString::FromUTF16LE(span.subspan<2u>());
     }
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(result.GetLength());
     dest_pos = StripLanguageCodes(dest_buf, result.GetLength());
   } else if (span.size() >= 3 && span[0] == 0xef && span[1] == 0xbb &&
              span[2] == 0xbf) {
-    result = WideString::FromUTF8(ByteStringView(span.subspan(3)));
+    result = WideString::FromUTF8(ByteStringView(span.subspan<3u>()));
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(result.GetLength());
     dest_pos = StripLanguageCodes(dest_buf, result.GetLength());
   } else {
