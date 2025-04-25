@@ -918,7 +918,9 @@ CFX_PSRenderer::FaxCompressResult CFX_PSRenderer::FaxCompressData(
   result.data.resize(safe_size.ValueOrDie());
   auto dest_span = pdfium::make_span(result.data);
   for (int row = 0; row < height; row++) {
-    fxcrt::Copy(src->GetScanline(row), dest_span.subspan(row * pitch, pitch));
+    fxcrt::Copy(src->GetScanline(row),
+                dest_span.subspan(static_cast<size_t>(row * pitch),
+                                  static_cast<size_t>(pitch)));
   }
   return result;
 }

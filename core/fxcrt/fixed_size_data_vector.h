@@ -112,12 +112,14 @@ class FixedSizeDataVector {
   }
 
   // Convenience methods to slice the vector into spans.
-  pdfium::span<T> subspan(size_t offset,
-                          size_t count = pdfium::dynamic_extent) {
+  pdfium::span<T> subspan(size_t offset) { return span().subspan(offset); }
+  pdfium::span<const T> subspan(size_t offset) const {
+    return span().subspan(offset);
+  }
+  pdfium::span<T> subspan(size_t offset, size_t count) {
     return span().subspan(offset, count);
   }
-  pdfium::span<const T> subspan(size_t offset,
-                                size_t count = pdfium::dynamic_extent) const {
+  pdfium::span<const T> subspan(size_t offset, size_t count) const {
     return span().subspan(offset, count);
   }
 

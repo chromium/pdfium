@@ -2623,7 +2623,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgraPremul(
 
   auto src_span =
       fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_scan).first(
-          width);
+          static_cast<size_t>(width));
 
   switch (dest_format_) {
     case FXDIB_Format::kInvalid:

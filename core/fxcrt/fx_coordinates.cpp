@@ -146,7 +146,7 @@ CFX_FloatRect CFX_FloatRect::GetBBox(pdfium::span<const CFX_PointF> pPoints) {
   float max_x = pPoints.front().x;
   float min_y = pPoints.front().y;
   float max_y = pPoints.front().y;
-  for (const auto& point : pPoints.subspan(1)) {
+  for (const auto& point : pPoints.subspan<1u>()) {
     min_x = std::min(min_x, point.x);
     max_x = std::max(max_x, point.x);
     min_y = std::min(min_y, point.y);

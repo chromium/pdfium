@@ -451,14 +451,14 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
           for (uint32_t i = 0; i < width; i++) {
             ReverseCopy3Bytes(dest_scan, src_scan.data());
             dest_scan += 3;
-            src_scan = src_scan.subspan(bytes_per_pixel);
+            src_scan = src_scan.subspan(static_cast<size_t>(bytes_per_pixel));
           }
         });
       } else {
         UNSAFE_TODO({
           for (uint32_t i = 0; i < pitch; i++) {
             *dest_scan++ = ~src_scan.front();
-            src_scan = src_scan.subspan(1);
+            src_scan = src_scan.subspan<1u>();
           }
         });
       }

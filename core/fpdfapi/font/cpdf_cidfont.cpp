@@ -350,7 +350,8 @@ wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
   wchar_t unicode;
   size_t ret = FX_MultiByteToWideChar(
       kCharsetCodePages[static_cast<size_t>(cmap_->GetCoding())],
-      ByteStringView(pdfium::make_span(sequence).first(charsize)),
+      ByteStringView(
+          pdfium::make_span(sequence).first(static_cast<size_t>(charsize))),
       pdfium::span_from_ref(unicode));
   return ret == 1 ? unicode : 0;
 #else

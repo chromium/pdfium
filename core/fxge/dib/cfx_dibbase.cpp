@@ -46,7 +46,7 @@ void ConvertBuffer_Rgb2ArgbPremul(
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)));
     auto src_span =
         src_bitmap->GetScanlineAs<FX_BGR_STRUCT<uint8_t>>(src_top + row)
-            .subspan(src_left);
+            .subspan(static_cast<size_t>(src_left));
     for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
       output.blue = input.blue;
       output.green = input.green;
@@ -69,7 +69,7 @@ void ConvertBuffer_ArgbPremulToRgb(
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)));
     auto src_span =
         src_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(src_top + row)
-            .subspan(src_left);
+            .subspan(static_cast<size_t>(src_left));
     for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
       auto unpremultiplied_input = UnPreMultiplyColor(input);
       output.blue = unpremultiplied_input.blue;

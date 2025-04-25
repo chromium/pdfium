@@ -866,7 +866,8 @@ DataVector<uint8_t> FaxEncoder::Encode() {
     line_buf_[0] = last_byte;
     pdfium::span<const uint8_t> scan_line = src_->GetScanline(i);
     FaxEncode2DLine(scan_line);
-    dest_buf_.AppendSpan(pdfium::make_span(line_buf_).first(dest_bitpos_ / 8));
+    dest_buf_.AppendSpan(pdfium::make_span(line_buf_).first(
+        static_cast<size_t>(dest_bitpos_ / 8)));
     last_byte = line_buf_[dest_bitpos_ / 8];
     dest_bitpos_ %= 8;
     ref_line_span_ = scan_line;
