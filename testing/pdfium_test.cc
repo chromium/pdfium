@@ -1965,6 +1965,7 @@ int main(int argc, const char* argv[]) {
     config.m_pIsolate = isolate.get();
 
     idler = [&platform, &isolate]() {
+      v8::Isolate::Scope isolate_scope(isolate.get());
       int task_count = 0;
       while (v8::platform::PumpMessageLoop(platform.get(), isolate.get())) {
         ++task_count;
