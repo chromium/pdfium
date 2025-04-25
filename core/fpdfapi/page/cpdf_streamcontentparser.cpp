@@ -1028,6 +1028,10 @@ void CPDF_StreamContentParser::Handle_SetFlat() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginImageData() {
+  if (!inline_image_context_.has_value()) {
+    return;
+  }
+
   InlineImageContext& inline_image_context = inline_image_context_.value();
   CHECK_EQ(inline_image_context.state,
            InlineImageContext::State::kLookingForID);
