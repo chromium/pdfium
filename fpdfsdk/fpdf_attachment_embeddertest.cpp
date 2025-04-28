@@ -403,3 +403,39 @@ TEST_F(FPDFAttachmentEmbedderTest, GetStringValueForNotString) {
                                           kExpectedLength));
   EXPECT_EQ(L"", GetPlatformWString(buf.data()));
 }
+
+TEST_F(FPDFAttachmentEmbedderTest, GetSubtype) {
+  ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
+  FPDF_ATTACHMENT attachment = FPDFDoc_GetAttachment(document(), 0);
+  ASSERT_TRUE(attachment);
+
+  // Test getting Subtype (MIME type)
+  constexpr char kExpectedSubtype[] = "text/plain";
+  unsigned long length = FPDFAttachment_GetSubtype(attachment, nullptr, 0);
+  ASSERT_EQ(2u * (strlen(kExpectedSubtype) + 1), length);
+
+  std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length);
+  EXPECT_EQ(length, FPDFAttachment_GetSubtype(attachment, buf.data(), length));
+  EXPECT_EQ(kExpectedSubtype, GetPlatformString(buf.data()));
+
+  // Test with buffer too small
+  std::vector<FPDF_WCHAR> small_buf(length - 1);
+  const FPDF_WCHAR kPattern = 0xDEAD;
+  std::ranges::fill(small_buf, kPattern);
+  EXPECT_EQ(length, FPDFAttachment_GetSubtype(attachment, small_buf.data(),
+                                              length - 1));
+  EXPECT_THAT(small_buf, testing::Each(kPattern));
+}
+
+TEST_F(FPDFAttachmentEmbedderTest, GetSubtypeInvalid) {
+  ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
+  FPDF_ATTACHMENT attachment = FPDFDoc_GetAttachment(document(), 0);
+  ASSERT_TRUE(attachment);
+
+  std::vector<FPDF_WCHAR> buf(1);
+  EXPECT_EQ(0u, FPDFAttachment_GetSubtype(nullptr, buf.data(), 1));
+
+  constexpr char kExpectedSubtype[] = "text/plain";
+  EXPECT_EQ(2u * (strlen(kExpectedSubtype) + 1),
+            FPDFAttachment_GetSubtype(attachment, nullptr, 10));
+}

@@ -304,3 +304,30 @@ FPDFAttachment_GetFile(FPDF_ATTACHMENT attachment,
                                        static_cast<size_t>(buflen))));
   return true;
 }
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAttachment_GetSubtype(FPDF_ATTACHMENT attachment,
+                          FPDF_WCHAR* buffer,
+                          unsigned long buflen) {
+  CPDF_Object* file = CPDFObjectFromFPDFAttachment(attachment);
+  if (!file) {
+    return 0;
+  }
+
+  // SAFETY: required from caller.
+  auto buffer_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
+  CPDF_FileSpec spec(pdfium::WrapRetain(file));
+  RetainPtr<const CPDF_Stream> file_stream = spec.GetFileStream();
+  if (!file_stream) {
+    return Utf16EncodeMaybeCopyAndReturnLength(WideString(), buffer_span);
+  }
+
+  ByteString subtype = file_stream->GetDict()->GetNameFor("Subtype");
+  if (subtype.IsEmpty()) {
+    // Per API description, return an empty string in these cases.
+    return Utf16EncodeMaybeCopyAndReturnLength(WideString(), buffer_span);
+  }
+
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      PDF_DecodeText(subtype.unsigned_span()), buffer_span);
+}
