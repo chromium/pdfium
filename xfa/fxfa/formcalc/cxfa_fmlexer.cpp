@@ -84,10 +84,9 @@ const XFA_FMKeyword kKeyWords[] = {
 
 XFA_FM_TOKEN TokenizeIdentifier(WideStringView str) {
   const XFA_FMKeyword* result =
-      std::find_if(std::begin(kKeyWords), std::end(kKeyWords),
-                   [str](const XFA_FMKeyword& iter) {
-                     return str.EqualsASCII(iter.keyword_);
-                   });
+      std::ranges::find_if(kKeyWords, [str](const XFA_FMKeyword& iter) {
+        return str.EqualsASCII(iter.keyword_);
+      });
   if (result != std::end(kKeyWords) && str.EqualsASCII(result->keyword_)) {
     return result->type_;
   }

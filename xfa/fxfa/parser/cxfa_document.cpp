@@ -241,10 +241,10 @@ void SortRecurseRecord(std::vector<RecurseRecord>* rgRecords,
   std::vector<RecurseRecord> rgResultRecord;
   for (CXFA_Node* pNode = pDataScope->GetFirstChild(); pNode;
        pNode = pNode->GetNextSibling()) {
-    auto it = std::find_if(rgRecords->begin(), rgRecords->end(),
-                           [pNode](const RecurseRecord& record) {
-                             return pNode == record.pDataChild;
-                           });
+    auto it =
+        std::ranges::find_if(*rgRecords, [pNode](const RecurseRecord& record) {
+          return pNode == record.pDataChild;
+        });
     if (it != rgRecords->end()) {
       rgResultRecord.push_back(*it);
       rgRecords->erase(it);

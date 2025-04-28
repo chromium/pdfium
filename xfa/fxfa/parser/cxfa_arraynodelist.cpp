@@ -45,7 +45,7 @@ bool CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
     return true;
   }
 
-  auto it = std::find(array_.begin(), array_.end(), pBeforeNode);
+  auto it = std::ranges::find(array_, pBeforeNode);
   if (it == array_.end()) {
     return false;
   }
@@ -55,7 +55,7 @@ bool CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
 }
 
 void CXFA_ArrayNodeList::Remove(CXFA_Node* pNode) {
-  auto it = std::find(array_.begin(), array_.end(), pNode);
+  auto it = std::ranges::find(array_, pNode);
   if (it != array_.end()) {
     array_.erase(it);
   }

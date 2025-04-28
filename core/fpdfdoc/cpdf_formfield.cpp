@@ -270,7 +270,7 @@ int CPDF_FormField::GetControlIndex(const CPDF_FormControl* pControl) const {
   }
 
   const auto& controls = GetControls();
-  auto it = std::find(controls.begin(), controls.end(), pControl);
+  auto it = std::ranges::find(controls, pControl);
   if (it == controls.end()) {
     return -1;
   }

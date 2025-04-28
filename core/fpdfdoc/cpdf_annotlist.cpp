@@ -233,10 +233,10 @@ CPDF_AnnotList::~CPDF_AnnotList() {
 }
 
 bool CPDF_AnnotList::Contains(const CPDF_Annot* pAnnot) const {
-  auto it = std::find_if(annot_list_.begin(), annot_list_.end(),
-                         [pAnnot](const std::unique_ptr<CPDF_Annot>& annot) {
-                           return annot.get() == pAnnot;
-                         });
+  auto it = std::ranges::find_if(
+      annot_list_, [pAnnot](const std::unique_ptr<CPDF_Annot>& annot) {
+        return annot.get() == pAnnot;
+      });
   return it != annot_list_.end();
 }
 

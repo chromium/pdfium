@@ -102,12 +102,11 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
     if (pWnd == main_keyboard_wnd_) {
       main_keyboard_wnd_ = nullptr;
     }
-    auto mouse_it = std::find(mouse_paths_.begin(), mouse_paths_.end(), pWnd);
+    auto mouse_it = std::ranges::find(mouse_paths_, pWnd);
     if (mouse_it != mouse_paths_.end()) {
       mouse_paths_.erase(mouse_it);
     }
-    auto keyboard_it =
-        std::find(keyboard_paths_.begin(), keyboard_paths_.end(), pWnd);
+    auto keyboard_it = std::ranges::find(keyboard_paths_, pWnd);
     if (keyboard_it != keyboard_paths_.end()) {
       keyboard_paths_.erase(keyboard_it);
     }
@@ -432,8 +431,7 @@ void CPWL_Wnd::AddChild(std::unique_ptr<CPWL_Wnd> pWnd) {
 
 void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
   DCHECK_EQ(pWnd->parent_, this);
-  auto it =
-      std::find(children_.begin(), children_.end(), MakeFakeUniquePtr(pWnd));
+  auto it = std::ranges::find(children_, MakeFakeUniquePtr(pWnd));
   if (it == children_.end()) {
     return;
   }

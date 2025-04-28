@@ -32,7 +32,7 @@ CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* page_view,
 
   CPDFSDK_Annot* pTopMostAnnot = page_view->GetFocusAnnot();
   if (pTopMostAnnot) {
-    auto it = std::find(copied_list.begin(), copied_list.end(), pTopMostAnnot);
+    auto it = std::ranges::find(copied_list, pTopMostAnnot);
     if (it != copied_list.end()) {
       copied_list.erase(it);
       auto insert_it =

@@ -181,8 +181,8 @@ void CPDFSDK_PageView::DeleteAnnotForFFWidget(CXFA_FFWidget* pWidget) {
     form_fill_env_->KillFocusAnnot({});
   }
   if (pAnnot) {
-    auto it = std::find(sdkannot_array_.begin(), sdkannot_array_.end(),
-                        fxcrt::MakeFakeUniquePtr(pAnnot.Get()));
+    auto it = std::ranges::find(sdkannot_array_,
+                                fxcrt::MakeFakeUniquePtr(pAnnot.Get()));
     if (it != sdkannot_array_.end()) {
       sdkannot_array_.erase(it);
     }

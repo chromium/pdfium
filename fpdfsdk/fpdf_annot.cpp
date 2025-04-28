@@ -456,10 +456,10 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotIndex(FPDF_PAGE page,
   }
 
   CPDF_ArrayLocker locker(pAnnots);
-  auto it = std::find_if(locker.begin(), locker.end(),
-                         [pAnnotDict](const RetainPtr<CPDF_Object>& candidate) {
-                           return candidate->GetDirect() == pAnnotDict;
-                         });
+  auto it = std::ranges::find_if(
+      locker, [pAnnotDict](const RetainPtr<CPDF_Object>& candidate) {
+        return candidate->GetDirect() == pAnnotDict;
+      });
 
   if (it == locker.end()) {
     return -1;

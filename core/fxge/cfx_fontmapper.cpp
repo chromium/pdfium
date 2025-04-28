@@ -781,10 +781,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
                             subst_font);
   }
 
-  auto it = std::find_if(
-      face_array_.begin(), face_array_.end(), [Charset](const FaceData& face) {
-        return face.charset == static_cast<uint32_t>(Charset);
-      });
+  auto it = std::ranges::find_if(face_array_, [Charset](const FaceData& face) {
+    return face.charset == static_cast<uint32_t>(Charset);
+  });
   if (it == face_array_.end()) {
     return UseInternalSubst(base_font, old_weight, italic_angle, pitch_family,
                             subst_font);

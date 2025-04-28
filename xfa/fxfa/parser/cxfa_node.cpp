@@ -1402,8 +1402,7 @@ void CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
 
 bool CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
   if (BindsFormItems()) {
-    auto it =
-        std::find(binding_nodes_.begin(), binding_nodes_.end(), pFormNode);
+    auto it = std::ranges::find(binding_nodes_, pFormNode);
     if (it != binding_nodes_.end()) {
       binding_nodes_.erase(it);
     }
@@ -4582,8 +4581,7 @@ int32_t CXFA_Node::GetSelectedItem(int32_t nIndex) {
   }
 
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
-  auto it = std::find(wsSaveTextArray.begin(), wsSaveTextArray.end(),
-                      wsValueArray[nIndex]);
+  auto it = std::ranges::find(wsSaveTextArray, wsValueArray[nIndex]);
   return it != wsSaveTextArray.end()
              ? pdfium::checked_cast<int32_t>(it - wsSaveTextArray.begin())
              : -1;
@@ -4594,7 +4592,7 @@ std::vector<int32_t> CXFA_Node::GetSelectedItems() {
   std::vector<WideString> wsValueArray = GetSelectedItemsValue();
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
   for (const auto& value : wsValueArray) {
-    auto it = std::find(wsSaveTextArray.begin(), wsSaveTextArray.end(), value);
+    auto it = std::ranges::find(wsSaveTextArray, value);
     if (it != wsSaveTextArray.end()) {
       iSelArray.push_back(
           pdfium::checked_cast<int32_t>(it - wsSaveTextArray.begin()));
@@ -4631,8 +4629,7 @@ void CXFA_Node::SetItemState(int32_t nIndex,
 
   int32_t iSel = -1;
   std::vector<WideString> wsValueArray = GetSelectedItemsValue();
-  auto value_iter = std::find(wsValueArray.begin(), wsValueArray.end(),
-                              wsSaveTextArray[nIndex]);
+  auto value_iter = std::ranges::find(wsValueArray, wsSaveTextArray[nIndex]);
   if (value_iter != wsValueArray.end()) {
     iSel = pdfium::checked_cast<int32_t>(value_iter - wsValueArray.begin());
   }
@@ -4648,8 +4645,7 @@ void CXFA_Node::SetItemState(int32_t nIndex,
       }
     } else if (iSel >= 0) {
       std::vector<int32_t> iSelArray = GetSelectedItems();
-      auto selected_iter =
-          std::find(iSelArray.begin(), iSelArray.end(), nIndex);
+      auto selected_iter = std::ranges::find(iSelArray, nIndex);
       if (selected_iter != iSelArray.end()) {
         iSelArray.erase(selected_iter);
       }

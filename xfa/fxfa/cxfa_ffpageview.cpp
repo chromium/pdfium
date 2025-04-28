@@ -412,8 +412,8 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetCurrentWidget() {
 
 bool CXFA_FFTabOrderPageWidgetIterator::SetCurrentWidget(
     CXFA_FFWidget* hWidget) {
-  auto it = std::find(tab_order_widget_array_.begin(),
-                      tab_order_widget_array_.end(), hWidget->GetLayoutItem());
+  auto it =
+      std::ranges::find(tab_order_widget_array_, hWidget->GetLayoutItem());
   if (it == tab_order_widget_array_.end()) {
     return false;
   }
@@ -461,7 +461,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
       tab_order_widget_array_.emplace_back(item);
       CXFA_Node* node = item->GetFFWidget()->GetNode();
       if (node->GetFFWidgetType() == XFA_FFWidgetType::kExclGroup) {
-        auto it = std::find(items.begin(), items.end(), item);
+        auto it = std::ranges::find(items, item);
         size_t index = it != items.end() ? it - items.begin() + 1 : 0;
         while (true) {
           CXFA_FFWidget* radio = items[index % items.size()]->GetFFWidget();
@@ -480,7 +480,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
         continue;
       }
     }
-    auto it = std::find(items.begin(), items.end(), item);
+    auto it = std::ranges::find(items, item);
     size_t index = it != items.end() ? it - items.begin() + 1 : 0;
     item = items[index % items.size()];
   }

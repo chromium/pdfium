@@ -1225,7 +1225,7 @@ CJS_Result CJS_Document::getIcon(CJS_Runtime* pRuntime,
   }
 
   WideString swIconName = pRuntime->ToWideString(params[0]);
-  auto it = std::find(icon_names_.begin(), icon_names_.end(), swIconName);
+  auto it = std::ranges::find(icon_names_, swIconName);
   if (it == icon_names_.end()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }

@@ -54,7 +54,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetLastAnnot() {
 }
 
 CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetNextAnnot(CPDFSDK_Annot* pAnnot) {
-  auto iter = std::find(annots_.begin(), annots_.end(), pAnnot);
+  auto iter = std::ranges::find(annots_, pAnnot);
   if (iter == annots_.end()) {
     return nullptr;
   }
@@ -66,7 +66,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetNextAnnot(CPDFSDK_Annot* pAnnot) {
 }
 
 CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
-  auto iter = std::find(annots_.begin(), annots_.end(), pAnnot);
+  auto iter = std::ranges::find(annots_, pAnnot);
   if (iter == annots_.begin() || iter == annots_.end()) {
     return nullptr;
   }

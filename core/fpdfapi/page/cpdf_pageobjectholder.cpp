@@ -191,8 +191,7 @@ void CPDF_PageObjectHolder::AppendPageObject(
 std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
     CPDF_PageObject* pPageObj) {
   auto it =
-      std::find(std::begin(page_object_list_), std::end(page_object_list_),
-                fxcrt::MakeFakeUniquePtr(pPageObj));
+      std::ranges::find(page_object_list_, fxcrt::MakeFakeUniquePtr(pPageObj));
   if (it == std::end(page_object_list_)) {
     return nullptr;
   }

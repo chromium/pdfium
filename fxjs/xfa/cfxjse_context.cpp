@@ -234,11 +234,10 @@ void CFXJSE_Context::AddClass(std::unique_ptr<CFXJSE_Class> pClass) {
 }
 
 CFXJSE_Class* CFXJSE_Context::GetClassByName(ByteStringView szName) const {
-  auto pClass =
-      std::find_if(classes_.begin(), classes_.end(),
-                   [szName](const std::unique_ptr<CFXJSE_Class>& item) {
-                     return item->IsName(szName);
-                   });
+  auto pClass = std::ranges::find_if(
+      classes_, [szName](const std::unique_ptr<CFXJSE_Class>& item) {
+        return item->IsName(szName);
+      });
   return pClass != classes_.end() ? pClass->get() : nullptr;
 }
 
