@@ -2213,8 +2213,10 @@ void CFXJSE_FormCalcContext::Time2Num(
 
   WideString wsFormat;
   if (bsFormat.IsEmpty()) {
-    wsFormat =
-        pLocale->GetTimePattern(LocaleIface::DateTimeSubcategory::kDefault);
+    if (pLocale) {
+      wsFormat =
+          pLocale->GetTimePattern(LocaleIface::DateTimeSubcategory::kDefault);
+    }
   } else {
     wsFormat = WideString::FromUTF8(bsFormat.AsStringView());
   }
