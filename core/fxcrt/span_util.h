@@ -150,14 +150,15 @@ std::optional<size_t> spanpos(pdfium::span<T> haystack,
 
 template <typename T,
           typename U,
+          size_t M,
           typename = typename std::enable_if_t<std::is_const_v<T> ||
                                                !std::is_const_v<U>>>
-inline pdfium::span<T> reinterpret_span(pdfium::span<U> s) noexcept {
+inline pdfium::span<T> reinterpret_span(pdfium::span<U, M> s) noexcept {
   CHECK(alignof(T) == alignof(U) ||
         reinterpret_cast<uintptr_t>(s.data()) % alignof(T) == 0u);
   // SAFETY: relies on correct conversion of size_bytes() result.
-  return UNSAFE_BUFFERS(pdfium::make_span(reinterpret_cast<T*>(s.data()),
-                                          s.size_bytes() / sizeof(T)));
+  return UNSAFE_BUFFERS(
+      pdfium::span(reinterpret_cast<T*>(s.data()), s.size_bytes() / sizeof(T)));
 }
 
 }  // namespace fxcrt
