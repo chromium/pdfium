@@ -206,7 +206,7 @@ size_t CFX_SeekableStreamProxy::ReadBlock(pdfium::span<wchar_t> buffer) {
     return 0;
   }
   auto [src_bytes_consumed, dest_wchars_produced] =
-      UTF8Decode(pdfium::make_span(byte_buf).first(bytes_read), buffer);
+      UTF8Decode(pdfium::span(byte_buf).first(bytes_read), buffer);
   Seek(From::Current, src_bytes_consumed - bytes_read);
   return dest_wchars_produced;
 }

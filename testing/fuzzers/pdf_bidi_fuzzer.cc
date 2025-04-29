@@ -31,7 +31,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   rtf_break.SetFontSize(12);
 
   // SAFETY: trusted arguments from fuzzer.
-  auto span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
+  auto span = UNSAFE_BUFFERS(pdfium::span(data, size));
   WideString input = WideString::FromUTF16LE(span);
   for (wchar_t ch : input) {
     rtf_break.AppendChar(ch);

@@ -2941,7 +2941,7 @@ pdfium::span<uint8_t> CFX_ScanlineCompositor::Palette::Make8BitPalette(
   data_.reset(reinterpret_cast<uint32_t*>(FX_Alloc(uint8_t, elements_)));
   // SAFETY: `elements_` passed to FX_Alloc() of type uint8_t.
   return UNSAFE_BUFFERS(
-      pdfium::make_span(reinterpret_cast<uint8_t*>(data_.get()), elements_));
+      pdfium::span(reinterpret_cast<uint8_t*>(data_.get()), elements_));
 }
 
 pdfium::span<uint32_t> CFX_ScanlineCompositor::Palette::Make32BitPalette(
@@ -2950,7 +2950,7 @@ pdfium::span<uint32_t> CFX_ScanlineCompositor::Palette::Make32BitPalette(
   elements_ = nElements;
   data_.reset(FX_Alloc(uint32_t, elements_));
   // SAFETY: `elements_` passed to FX_Alloc() of type uint32_t.
-  return UNSAFE_BUFFERS(pdfium::make_span(data_.get(), elements_));
+  return UNSAFE_BUFFERS(pdfium::span(data_.get(), elements_));
 }
 
 pdfium::span<const uint8_t> CFX_ScanlineCompositor::Palette::Get8BitPalette()
@@ -2958,8 +2958,8 @@ pdfium::span<const uint8_t> CFX_ScanlineCompositor::Palette::Get8BitPalette()
   CHECK(!data_ || width_ == sizeof(uint8_t));
   // SAFETY: `width_` only set to sizeof(uint8_t) just prior to passing
   // `elements_` to FX_Alloc() of type uint8_t.
-  return UNSAFE_BUFFERS(pdfium::make_span(
-      reinterpret_cast<const uint8_t*>(data_.get()), elements_));
+  return UNSAFE_BUFFERS(
+      pdfium::span(reinterpret_cast<const uint8_t*>(data_.get()), elements_));
 }
 
 pdfium::span<const uint32_t> CFX_ScanlineCompositor::Palette::Get32BitPalette()
@@ -2967,5 +2967,5 @@ pdfium::span<const uint32_t> CFX_ScanlineCompositor::Palette::Get32BitPalette()
   CHECK(!data_ || width_ == sizeof(uint32_t));
   // SAFETY: `width_` only set to sizeof(uint32_t) just prior to passing
   // `elements_` to FX_Alloc() of type uint32_t.
-  return UNSAFE_BUFFERS(pdfium::make_span(data_.get(), elements_));
+  return UNSAFE_BUFFERS(pdfium::span(data_.get(), elements_));
 }

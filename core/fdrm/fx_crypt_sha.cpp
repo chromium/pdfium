@@ -374,7 +374,7 @@ void CRYPT_SHA1Start(CRYPT_sha1_context* context) {
 
 void CRYPT_SHA1Update(CRYPT_sha1_context* context,
                       pdfium::span<const uint8_t> data) {
-  const auto block_span = pdfium::make_span(context->block);
+  const auto block_span = pdfium::span(context->block);
   context->total_bytes += data.size();
   if (context->blkused && data.size() < 64 - context->blkused) {
     fxcrt::Copy(data, block_span.subspan(context->blkused));
@@ -409,9 +409,9 @@ void CRYPT_SHA1Finish(CRYPT_sha1_context* context,
   } else {
     pad = 56 - context->blkused;
   }
-  std::ranges::fill(pdfium::make_span(c).first(pad), 0);
+  std::ranges::fill(pdfium::span(c).first(pad), 0);
   c[0] = 0x80;
-  CRYPT_SHA1Update(context, pdfium::make_span(c).first(pad));
+  CRYPT_SHA1Update(context, pdfium::span(c).first(pad));
   c[0] = (total_bits >> 56) & 0xFF;
   c[1] = (total_bits >> 48) & 0xFF;
   c[2] = (total_bits >> 40) & 0xFF;
@@ -420,7 +420,7 @@ void CRYPT_SHA1Finish(CRYPT_sha1_context* context,
   c[5] = (total_bits >> 16) & 0xFF;
   c[6] = (total_bits >> 8) & 0xFF;
   c[7] = (total_bits >> 0) & 0xFF;
-  CRYPT_SHA1Update(context, pdfium::make_span(c).first<8u>());
+  CRYPT_SHA1Update(context, pdfium::span(c).first<8u>());
   for (int i = 0; i < 5; i++) {
     digest[i * 4] = (context->h[i] >> 24) & 0xFF;
     digest[i * 4 + 1] = (context->h[i] >> 16) & 0xFF;
@@ -457,7 +457,7 @@ void CRYPT_SHA256Update(CRYPT_sha2_context* context,
   if (data.empty()) {
     return;
   }
-  const auto buffer_span = pdfium::make_span(context->buffer);
+  const auto buffer_span = pdfium::span(context->buffer);
   uint32_t left = context->total_bytes & 0x3F;
   uint32_t fill = 64 - left;
   context->total_bytes += data.size();
@@ -523,7 +523,7 @@ void CRYPT_SHA384Update(CRYPT_sha2_context* context,
   if (data.empty()) {
     return;
   }
-  const auto buffer_span = pdfium::make_span(context->buffer);
+  const auto buffer_span = pdfium::span(context->buffer);
   uint32_t left = context->total_bytes & 0x7F;
   uint32_t fill = 128 - left;
   context->total_bytes += data.size();
@@ -550,7 +550,7 @@ void CRYPT_SHA384Finish(CRYPT_sha2_context* context,
   SHA_PUT_UINT64(total_bits, msglen, 8);
   uint32_t last = context->total_bytes & 0x7F;
   uint32_t padn = (last < 112) ? (112 - last) : (240 - last);
-  CRYPT_SHA384Update(context, pdfium::make_span(kSha384Padding).first(padn));
+  CRYPT_SHA384Update(context, pdfium::span(kSha384Padding).first(padn));
   CRYPT_SHA384Update(context, msglen);
   SHA_PUT_UINT64(context->state[0], digest, 0);
   SHA_PUT_UINT64(context->state[1], digest, 8);
@@ -596,7 +596,7 @@ void CRYPT_SHA512Finish(CRYPT_sha2_context* context,
   SHA_PUT_UINT64(total_bits, msglen, 8);
   uint32_t last = context->total_bytes & 0x7F;
   uint32_t padn = (last < 112) ? (112 - last) : (240 - last);
-  CRYPT_SHA512Update(context, pdfium::make_span(kSha384Padding).first(padn));
+  CRYPT_SHA512Update(context, pdfium::span(kSha384Padding).first(padn));
   CRYPT_SHA512Update(context, msglen);
   SHA_PUT_UINT64(context->state[0], digest, 0);
   SHA_PUT_UINT64(context->state[1], digest, 8);

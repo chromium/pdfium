@@ -103,9 +103,9 @@ uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
   while (pMap) {
     switch (pMap->word_map_type_) {
       case CMap::Type::kSingle: {
-        auto single_span = UNSAFE_TODO(pdfium::make_span(
-            reinterpret_cast<const SingleCmap*>(pMap->word_map_),
-            pMap->word_count_));
+        auto single_span = UNSAFE_TODO(
+            pdfium::span(reinterpret_cast<const SingleCmap*>(pMap->word_map_),
+                         pMap->word_count_));
         for (const auto& single : single_span) {
           if (single.cid == cid) {
             return single.code;
@@ -114,9 +114,9 @@ uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
         break;
       }
       case CMap::Type::kRange: {
-        auto range_span = UNSAFE_TODO(pdfium::make_span(
-            reinterpret_cast<const RangeCmap*>(pMap->word_map_),
-            pMap->word_count_));
+        auto range_span = UNSAFE_TODO(
+            pdfium::span(reinterpret_cast<const RangeCmap*>(pMap->word_map_),
+                         pMap->word_count_));
         for (const auto& range : range_span) {
           if (cid >= range.cid && cid <= range.cid + range.high - range.low) {
             return range.low + cid - range.cid;

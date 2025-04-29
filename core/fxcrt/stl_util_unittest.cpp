@@ -39,7 +39,7 @@ TEST(fxcrt, FillStdVector) {
 
 TEST(fxcrt, FillSpan) {
   float buf[12];
-  auto buf_span = pdfium::make_span(buf);
+  auto buf_span = pdfium::span(buf);
   std::ranges::fill(buf_span, 123.0f);
   for (const auto b : buf) {
     EXPECT_EQ(b, 123.0f);
@@ -86,7 +86,7 @@ TEST(fxcrt, CopySpan) {
   float dst[12];
   {
     float buf[12];
-    auto buf_span = pdfium::make_span(buf);
+    auto buf_span = pdfium::span(buf);
     std::ranges::fill(buf_span, 123.0f);
     fxcrt::Copy(buf_span, dst);
   }

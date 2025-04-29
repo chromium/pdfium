@@ -57,7 +57,7 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
   FX_SAFE_UINT32 i = 0;
   if (decompressed_next_ != 0) {
     size_t extracted_size =
-        ExtractData(UNSAFE_TODO(pdfium::make_span(dest_buf, *dest_size)));
+        ExtractData(UNSAFE_TODO(pdfium::span(dest_buf, *dest_size)));
     if (decompressed_next_ != 0) {
       return Status::kInsufficientDestSize;
     }
@@ -128,8 +128,8 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
       }
 
       code_old_ = code;
-      size_t extracted_size = ExtractData(UNSAFE_TODO(
-          pdfium::make_span(dest_buf, (*dest_size - i).ValueOrDie())));
+      size_t extracted_size = ExtractData(
+          UNSAFE_TODO(pdfium::span(dest_buf, (*dest_size - i).ValueOrDie())));
       if (decompressed_next_ != 0) {
         return Status::kInsufficientDestSize;
       }

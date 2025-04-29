@@ -108,7 +108,7 @@ DataVector<uint8_t> CBC_OnedEAN13Writer::Encode(const ByteString& contents) {
   int32_t firstDigit = FXSYS_DecimalCharToInt(contents.Front());
   int32_t parities = kFirstDigitEncodings[firstDigit];
   DataVector<uint8_t> result(code_width_);
-  auto result_span = pdfium::make_span(result);
+  auto result_span = pdfium::span(result);
   result_span = AppendPattern(result_span, kOnedEAN13StartPattern, true);
 
   for (int i = 1; i <= 6; i++) {
@@ -170,7 +170,7 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   length = tempStr.GetLength();
   int32_t strWidth = static_cast<int32_t>(kWidth * output_hscale_);
 
-  pdfium::span<TextCharPos> charpos_span = pdfium::make_span(charpos);
+  pdfium::span<TextCharPos> charpos_span = pdfium::span(charpos);
   CalcTextInfo(tempStr, charpos_span.subspan<1u>(), font_, (float)strWidth,
                iFontSize, blank);
   {

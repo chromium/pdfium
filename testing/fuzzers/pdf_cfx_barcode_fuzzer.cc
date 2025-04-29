@@ -13,7 +13,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   }
 
   // SAFETY: trusted arguments from fuzzer.
-  auto span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
+  auto span = UNSAFE_BUFFERS(pdfium::span(data, size));
 
   BC_TYPE type =
       static_cast<BC_TYPE>(data[0] % (static_cast<int>(BC_TYPE::kLast) + 1));

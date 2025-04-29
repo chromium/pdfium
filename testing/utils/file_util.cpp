@@ -55,8 +55,8 @@ FileAccessForTesting::FileAccessForTesting(const std::string& file_name) {
 int FileAccessForTesting::GetBlockImpl(unsigned long pos,
                                        unsigned char* pBuf,
                                        unsigned long size) {
-  fxcrt::Copy(pdfium::make_span(file_contents_).subspan(pos, size),
-              pdfium::make_span(pBuf, size));
+  fxcrt::Copy(pdfium::span(file_contents_).subspan(pos, size),
+              pdfium::span(pBuf, size));
   return size ? 1 : 0;
 }
 

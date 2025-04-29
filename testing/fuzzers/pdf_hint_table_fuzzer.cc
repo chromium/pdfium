@@ -38,7 +38,7 @@ class HintTableForFuzzing final : public CPDF_HintTables {
       return;
     }
 
-    CFX_BitStream bs(pdfium::make_span(data, size));
+    CFX_BitStream bs(pdfium::span(data, size));
     if (!ReadPageHintTable(&bs)) {
       return;
     }

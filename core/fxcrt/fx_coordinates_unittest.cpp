@@ -39,7 +39,7 @@ TEST(CFXFloatRectTest, GetBBox) {
 
   std::vector<CFX_PointF> data;
   data.emplace_back(0.0f, 0.0f);
-  rect = CFX_FloatRect::GetBBox(pdfium::make_span(data).first(0u));
+  rect = CFX_FloatRect::GetBBox(pdfium::span(data).first(0u));
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(0.0f, rect.right);
@@ -52,7 +52,7 @@ TEST(CFXFloatRectTest, GetBBox) {
 
   data.emplace_back(2.5f, 6.2f);
   data.emplace_back(1.5f, 6.2f);
-  rect = CFX_FloatRect::GetBBox(pdfium::make_span(data).first(2u));
+  rect = CFX_FloatRect::GetBBox(pdfium::span(data).first(2u));
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(2.5f, rect.right);

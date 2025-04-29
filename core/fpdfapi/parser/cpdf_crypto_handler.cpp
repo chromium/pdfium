@@ -63,10 +63,10 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     PopulateKey(objnum, gennum, key1);
     if (cipher_ == Cipher::kAES) {
       fxcrt::Copy(ByteStringView("sAlT").unsigned_span(),
-                  pdfium::make_span(key1).subspan(key_len_ + 5));
+                  pdfium::span(key1).subspan(key_len_ + 5));
     }
     size_t len = cipher_ == Cipher::kAES ? key_len_ + 9 : key_len_ + 5;
-    CRYPT_MD5Generate(pdfium::make_span(key1).first(len), realkey);
+    CRYPT_MD5Generate(pdfium::span(key1).first(len), realkey);
     realkeylen = std::min(key_len_ + 5, sizeof(realkey));
   }
   if (cipher_ == Cipher::kAES) {
@@ -79,7 +79,7 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     const size_t source_data_size = source.size() - source_padding_size;
 
     DataVector<uint8_t> dest(kIVSize + source_data_size + kPaddingSize);
-    auto dest_span = pdfium::make_span(dest);
+    auto dest_span = pdfium::span(dest);
     auto dest_iv_span = dest_span.first(kIVSize);
     auto dest_data_span = dest_span.subspan(kIVSize, source_data_size);
     auto dest_padding_span = dest_span.subspan(kIVSize + source_data_size);
@@ -94,13 +94,13 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
 
     std::array<uint8_t, kPaddingSize> padding;
     fxcrt::Copy(source.subspan(source_data_size, source_padding_size), padding);
-    std::ranges::fill(pdfium::make_span(padding).subspan(source_padding_size),
+    std::ranges::fill(pdfium::span(padding).subspan(source_padding_size),
                       16 - source_padding_size);
     CRYPT_AESEncrypt(aes_context_.get(), dest_padding_span, padding);
     return dest;
   }
   DataVector<uint8_t> dest(source.begin(), source.end());
-  CRYPT_ArcFourCryptBlock(dest, pdfium::make_span(realkey).first(realkeylen));
+  CRYPT_ArcFourCryptBlock(dest, pdfium::span(realkey).first(realkeylen));
   return dest;
 }
 
@@ -132,7 +132,7 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
 
   uint8_t realkey[16];
   size_t len = cipher_ == Cipher::kAES ? key_len_ + 9 : key_len_ + 5;
-  CRYPT_MD5Generate(pdfium::make_span(key1).first(len), realkey);
+  CRYPT_MD5Generate(pdfium::span(key1).first(len), realkey);
   size_t realkeylen = std::min(key_len_ + 5, sizeof(realkey));
 
   if (cipher_ == Cipher::kAES) {
@@ -143,7 +143,7 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
     return pContext;
   }
   CRYPT_rc4_context* pContext = FX_Alloc(CRYPT_rc4_context, 1);
-  CRYPT_ArcFourSetup(pContext, pdfium::make_span(realkey).first(realkeylen));
+  CRYPT_ArcFourSetup(pContext, pdfium::span(realkey).first(realkeylen));
   return pContext;
 }
 
@@ -216,7 +216,7 @@ bool CPDF_CryptoHandler::DecryptFinish(void* context, BinaryBuffer& dest_buf) {
     uint8_t block_buf[16];
     CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_, 16);
     if (block_buf[15] < 16) {
-      dest_buf.AppendSpan(pdfium::make_span(block_buf).first(
+      dest_buf.AppendSpan(pdfium::span(block_buf).first(
           static_cast<size_t>(16 - block_buf[15])));
     }
   }

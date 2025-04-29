@@ -105,7 +105,7 @@ DataVector<uint8_t> CBC_OnedEAN8Writer::Encode(const ByteString& contents) {
   }
 
   DataVector<uint8_t> result(code_width_);
-  auto result_span = pdfium::make_span(result);
+  auto result_span = pdfium::span(result);
   result_span = AppendPattern(result_span, kOnedEAN8StartPattern, true);
 
   for (int i = 0; i <= 3; i++) {
@@ -158,7 +158,7 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
   device->FillRect(re, kBackgroundColor);
   int32_t strWidth = static_cast<int32_t>(kWidth * output_hscale_);
 
-  pdfium::span<TextCharPos> charpos_span = pdfium::make_span(charpos);
+  pdfium::span<TextCharPos> charpos_span = pdfium::span(charpos);
   CalcTextInfo(tempStr, charpos, font_, (float)strWidth, iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,

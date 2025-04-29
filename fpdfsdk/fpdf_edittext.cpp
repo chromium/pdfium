@@ -383,7 +383,7 @@ RetainPtr<CPDF_Stream> LoadUnicode(
         buffer << " ";
         AddCharcode(buffer, charcode_range.second);
         buffer << " [";
-        auto unicodes = pdfium::make_span(it->second);
+        auto unicodes = pdfium::span(it->second);
         AddUnicode(buffer, unicodes[0]);
         for (uint32_t code : unicodes.subspan(1u)) {
           buffer << " ";
@@ -654,7 +654,7 @@ FPDFText_SetCharcodes(FPDF_PAGEOBJECT text_object,
 
   ByteString byte_text;
   // SAFETY: required from caller.
-  auto charcodes_span = UNSAFE_BUFFERS(pdfium::make_span(charcodes, count));
+  auto charcodes_span = UNSAFE_BUFFERS(pdfium::span(charcodes, count));
   for (uint32_t c : charcodes_span) {
     pTextObj->GetFont()->AppendChar(&byte_text, c);
   }
@@ -673,7 +673,7 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
     return nullptr;
   }
   // SAFETY: required from caller.
-  auto span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
+  auto span = UNSAFE_BUFFERS(pdfium::span(data, size));
   auto pFont = std::make_unique<CFX_Font>();
 
   // TODO(npm): Maybe use FT_Get_X11_Font_Format to check format? Otherwise, we
@@ -718,7 +718,7 @@ FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
     return nullptr;
   }
   // SAFETY: required from caller.
-  auto font_span = UNSAFE_BUFFERS(pdfium::make_span(font_data, font_data_size));
+  auto font_span = UNSAFE_BUFFERS(pdfium::span(font_data, font_data_size));
   auto font = std::make_unique<CFX_Font>();
 
   // TODO(thestig): Consider checking the font format. See similar comment in
@@ -735,7 +735,7 @@ FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
       LoadCustomCompositeFont(
           doc, std::move(font), font_span, to_unicode_cmap,
           UNSAFE_BUFFERS(
-              pdfium::make_span(cid_to_gid_map_data, cid_to_gid_map_data_size)))
+              pdfium::span(cid_to_gid_map_data, cid_to_gid_map_data_size)))
           .Leak());
 }
 

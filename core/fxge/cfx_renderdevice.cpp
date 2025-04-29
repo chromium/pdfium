@@ -1176,8 +1176,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     }
   }
   std::vector<TextGlyphPos> glyphs(pCharPos.size());
-  for (auto [charpos, glyph] :
-       fxcrt::Zip(pCharPos, pdfium::make_span(glyphs))) {
+  for (auto [charpos, glyph] : fxcrt::Zip(pCharPos, pdfium::span(glyphs))) {
     glyph.device_origin_ = text2Device.Transform(charpos.origin_);
     glyph.origin_.x = anti_alias < FT_RENDER_MODE_LCD
                           ? FXSYS_roundf(glyph.device_origin_.x)

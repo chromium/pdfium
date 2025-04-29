@@ -257,8 +257,8 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
                          dateTime.GetSecond()));
 
   // SAFETY: required from caller.
-  pdfium::span<const uint8_t> contents_span = UNSAFE_BUFFERS(
-      pdfium::make_span(static_cast<const uint8_t*>(contents), len));
+  pdfium::span<const uint8_t> contents_span =
+      UNSAFE_BUFFERS(pdfium::span(static_cast<const uint8_t*>(contents), len));
 
   std::array<uint8_t, 16> digest;
   CRYPT_MD5Generate(contents_span, digest);
@@ -300,8 +300,8 @@ FPDFAttachment_GetFile(FPDF_ATTACHMENT attachment,
   // SAFETY: required from caller.
   *out_buflen = DecodeStreamMaybeCopyAndReturnLength(
       std::move(pFileStream),
-      UNSAFE_BUFFERS(pdfium::make_span(static_cast<uint8_t*>(buffer),
-                                       static_cast<size_t>(buflen))));
+      UNSAFE_BUFFERS(pdfium::span(static_cast<uint8_t*>(buffer),
+                                  static_cast<size_t>(buflen))));
   return true;
 }
 

@@ -405,7 +405,7 @@ WideString WideString::Format(const wchar_t* pFormat, ...) {
 WideString::WideString(const wchar_t* pStr, size_t nLen) {
   if (nLen) {
     // SAFETY: caller ensures `pStr` points to al least `nLen` wchar_t.
-    data_ = StringData::Create(UNSAFE_BUFFERS(pdfium::make_span(pStr, nLen)));
+    data_ = StringData::Create(UNSAFE_BUFFERS(pdfium::span(pStr, nLen)));
   }
 }
 

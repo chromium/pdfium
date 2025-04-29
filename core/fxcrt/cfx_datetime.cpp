@@ -28,8 +28,8 @@ constexpr int32_t kDaysPerLeapYear = 366;
 int32_t DaysBeforeMonthInYear(int32_t iYear, uint8_t iMonth) {
   DCHECK(iYear != 0);
   pdfium::span<const int32_t> p = FX_IsLeapYear(iYear)
-                                      ? pdfium::make_span(kDaysBeforeLeapMonth)
-                                      : pdfium::make_span(kDaysBeforeMonth);
+                                      ? pdfium::span(kDaysBeforeLeapMonth)
+                                      : pdfium::span(kDaysBeforeMonth);
   // Note: iMonth is one-based.
   return p[iMonth - 1];
 }
@@ -70,8 +70,8 @@ int64_t DateToDays(int32_t iYear,
 uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth) {
   DCHECK(iYear != 0);
   pdfium::span<const uint8_t> p = FX_IsLeapYear(iYear)
-                                      ? pdfium::make_span(kDaysPerLeapMonth)
-                                      : pdfium::make_span(kDaysPerMonth);
+                                      ? pdfium::span(kDaysPerLeapMonth)
+                                      : pdfium::span(kDaysPerMonth);
   // Note: iMonth is one-based.
   return p[iMonth - 1];
 }

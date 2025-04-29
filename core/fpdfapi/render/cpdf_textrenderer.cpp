@@ -80,7 +80,7 @@ bool CPDF_TextRenderer::DrawTextPath(
 
     CFX_Font* font = GetFont(pFont, fontPosition);
     if (!pDevice->DrawTextPath(
-            pdfium::make_span(pos).subspan(startIndex, i - startIndex), font,
+            pdfium::span(pos).subspan(startIndex, i - startIndex), font,
             font_size, mtText2User, pUser2Device, pGraphState, fill_argb,
             stroke_argb, pClippingPath, fill_options)) {
       bDraw = false;
@@ -89,7 +89,7 @@ bool CPDF_TextRenderer::DrawTextPath(
     startIndex = i;
   }
   CFX_Font* font = GetFont(pFont, fontPosition);
-  if (!pDevice->DrawTextPath(pdfium::make_span(pos).subspan(startIndex), font,
+  if (!pDevice->DrawTextPath(pdfium::span(pos).subspan(startIndex), font,
                              font_size, mtText2User, pUser2Device, pGraphState,
                              fill_argb, stroke_argb, pClippingPath,
                              fill_options)) {
@@ -165,7 +165,7 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
 
     CFX_Font* font = GetFont(pFont, fontPosition);
     if (!pDevice->DrawNormalText(
-            pdfium::make_span(pos).subspan(startIndex, i - startIndex), font,
+            pdfium::span(pos).subspan(startIndex, i - startIndex), font,
             font_size, mtText2Device, fill_argb, text_options)) {
       bDraw = false;
     }
@@ -173,7 +173,7 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
     startIndex = i;
   }
   CFX_Font* font = GetFont(pFont, fontPosition);
-  if (!pDevice->DrawNormalText(pdfium::make_span(pos).subspan(startIndex), font,
+  if (!pDevice->DrawNormalText(pdfium::span(pos).subspan(startIndex), font,
                                font_size, mtText2Device, fill_argb,
                                text_options)) {
     bDraw = false;

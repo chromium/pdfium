@@ -67,7 +67,7 @@ FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() const {
 
 void CPDF_TransferFuncDIB::TranslateScanline(
     pdfium::span<const uint8_t> src_span) const {
-  auto scanline_span = pdfium::make_span(scanline_);
+  auto scanline_span = pdfium::span(scanline_);
   switch (src_->GetFormat()) {
     case FXDIB_Format::kInvalid: {
       break;

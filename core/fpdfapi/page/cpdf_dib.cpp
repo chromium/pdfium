@@ -1272,16 +1272,16 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
         // TODO(tsepez): Bounds check if cost is acceptable.
         UNSAFE_TODO(line_buf_[i] = ~pSrcLine.data()[i]);
       }
-      return pdfium::make_span(line_buf_).first(src_pitch_value);
+      return pdfium::span(line_buf_).first(src_pitch_value);
     }
     if (!color_key_) {
       fxcrt::Copy(pSrcLine.first(src_pitch_value), line_buf_);
-      return pdfium::make_span(line_buf_).first(src_pitch_value);
+      return pdfium::span(line_buf_).first(src_pitch_value);
     }
     uint32_t reset_argb = Get1BitResetValue();
     uint32_t set_argb = Get1BitSetValue();
     auto mask32_span =
-        fxcrt::reinterpret_span<uint32_t>(pdfium::make_span(mask_buf_));
+        fxcrt::reinterpret_span<uint32_t>(pdfium::span(mask_buf_));
     for (int col = 0; col < GetWidth(); col++) {
       mask32_span[col] = GetBitValue(pSrcLine, col) ? set_argb : reset_argb;
     }
@@ -1334,8 +1334,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
         }
       }
     });
-    return pdfium::make_span(mask_buf_).first(
-        static_cast<size_t>(4 * GetWidth()));
+    return pdfium::span(mask_buf_).first(static_cast<size_t>(4 * GetWidth()));
   }
   if (color_key_) {
     if (components_ == 3 && bpc_ == 8) {
@@ -1355,7 +1354,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
   if (color_space_) {
     TranslateScanline24bpp(line_buf_, pSrcLine);
     src_pitch_value = 3 * GetWidth();
-    pSrcLine = pdfium::make_span(line_buf_).first(src_pitch_value);
+    pSrcLine = pdfium::span(line_buf_).first(src_pitch_value);
   }
   if (!color_key_) {
     return pSrcLine;
@@ -1372,8 +1371,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
       pDestPixel++;
     }
   });
-  return pdfium::make_span(mask_buf_).first(
-      static_cast<size_t>(4 * GetWidth()));
+  return pdfium::span(mask_buf_).first(static_cast<size_t>(4 * GetWidth()));
 }
 
 bool CPDF_DIB::SkipToScanline(int line, PauseIndicatorIface* pPause) const {

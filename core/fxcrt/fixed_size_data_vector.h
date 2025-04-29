@@ -104,11 +104,11 @@ class FixedSizeDataVector {
   // Explicit access to data via span.
   pdfium::span<T> span() {
     // SAFETY: size_ describes size of data_.
-    return UNSAFE_BUFFERS(pdfium::make_span(data_.get(), size_));
+    return UNSAFE_BUFFERS(pdfium::span(data_.get(), size_));
   }
   pdfium::span<const T> span() const {
     // SAFETY: size_ describes size of data_.
-    return UNSAFE_BUFFERS(pdfium::make_span(data_.get(), size_));
+    return UNSAFE_BUFFERS(pdfium::span(data_.get(), size_));
   }
 
   // Convenience methods to slice the vector into spans.

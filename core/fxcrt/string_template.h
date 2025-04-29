@@ -83,7 +83,7 @@ class StringTemplate {
   pdfium::span<const CharType> span_with_terminator() const {
     // SAFETY: EmptyString() returns one NUL byte.
     return data_ ? data_->span_with_terminator()
-                 : UNSAFE_BUFFERS(pdfium::make_span(
+                 : UNSAFE_BUFFERS(pdfium::span(
                        EmptyString(static_cast<CharType*>(nullptr)), 1u));
   }
 

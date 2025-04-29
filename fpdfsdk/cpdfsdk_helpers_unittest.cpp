@@ -26,26 +26,25 @@ TEST(CPDFSDKHelpersTest, NulTerminateMaybeCopyAndReturnLength) {
     // Buffer should not change if declared length is too short.
     char buf[kExpectedToBeCopiedLen + 1];
     std::ranges::fill(buf, 0x42);
-    ASSERT_EQ(kExpectedToBeCopiedLen + 1,
-              NulTerminateMaybeCopyAndReturnLength(
-                  to_be_copied,
-                  pdfium::make_span(buf).first(kExpectedToBeCopiedLen)));
+    ASSERT_EQ(
+        kExpectedToBeCopiedLen + 1,
+        NulTerminateMaybeCopyAndReturnLength(
+            to_be_copied, pdfium::span(buf).first(kExpectedToBeCopiedLen)));
     for (char c : buf) {
       EXPECT_EQ(0x42, c);
     }
 
     // Buffer should copy over if long enough.
-    ASSERT_EQ(kExpectedToBeCopiedLen + 1,
-              NulTerminateMaybeCopyAndReturnLength(to_be_copied,
-                                                   pdfium::make_span(buf)));
+    ASSERT_EQ(kExpectedToBeCopiedLen + 1, NulTerminateMaybeCopyAndReturnLength(
+                                              to_be_copied, pdfium::span(buf)));
     EXPECT_EQ(to_be_copied, ByteString(buf));
   }
   {
     // Empty ByteString should still copy NUL terminator.
     const ByteString empty;
     char buf[1];
-    ASSERT_EQ(1u, NulTerminateMaybeCopyAndReturnLength(empty,
-                                                       pdfium::make_span(buf)));
+    ASSERT_EQ(1u,
+              NulTerminateMaybeCopyAndReturnLength(empty, pdfium::span(buf)));
     EXPECT_EQ(empty, ByteString(buf));
   }
 }

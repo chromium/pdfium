@@ -4149,8 +4149,8 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   EXPECT_TRUE(FPDFPageObjMark_GetParamBlobValue(
       mark, "BlobKey", blob_buffer, sizeof(blob_buffer), &out_buffer_len));
   EXPECT_EQ(kBlobLen, out_buffer_len);
-  EXPECT_TRUE(fxcrt::span_equals(pdfium::make_span(kBlobData),
-                                 pdfium::make_span(blob_buffer)));
+  EXPECT_TRUE(
+      fxcrt::span_equals(pdfium::span(kBlobData), pdfium::span(blob_buffer)));
 
   // Render and check the bitmap is the expected one.
   {

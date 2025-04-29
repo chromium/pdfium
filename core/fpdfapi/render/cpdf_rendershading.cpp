@@ -76,7 +76,7 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
   float diff = t_max - t_min;
   for (int i = 0; i < kShadingSteps; ++i) {
     float input = diff * i / kShadingSteps + t_min;
-    pdfium::span<float> result_span = pdfium::make_span(result_array);
+    pdfium::span<float> result_span = pdfium::span(result_array);
     for (const auto& func : funcs) {
       if (!func) {
         continue;
@@ -312,7 +312,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       }
 
       float input[2] = {pos.x, pos.y};
-      pdfium::span<float> result_span = pdfium::make_span(result_array);
+      pdfium::span<float> result_span = pdfium::span(result_array);
       for (const auto& func : funcs) {
         if (!func) {
           continue;
@@ -890,7 +890,7 @@ void DrawCoonPatchMeshes(
     }
 
     CFX_FloatRect bbox = CFX_FloatRect::GetBBox(
-        pdfium::make_span(coords).first(static_cast<size_t>(point_count)));
+        pdfium::span(coords).first(static_cast<size_t>(point_count)));
     if (bbox.right <= 0 || bbox.left >= (float)pBitmap->GetWidth() ||
         bbox.top <= 0 || bbox.bottom >= (float)pBitmap->GetHeight()) {
       continue;

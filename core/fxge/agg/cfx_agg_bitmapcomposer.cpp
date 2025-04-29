@@ -84,9 +84,9 @@ void CFX_AggBitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
         add_clip_scan_[i] = clip_scan[i] * alpha_;
       }
     } else {
-      std::ranges::fill(pdfium::make_span(add_clip_scan_)
-                            .first(static_cast<size_t>(dest_width)),
-                        FXSYS_roundf(alpha_ * 255));
+      std::ranges::fill(
+          pdfium::span(add_clip_scan_).first(static_cast<size_t>(dest_width)),
+          FXSYS_roundf(alpha_ * 255));
     }
     clip_scan = add_clip_scan_;
   }

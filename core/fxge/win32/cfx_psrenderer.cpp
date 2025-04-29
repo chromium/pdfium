@@ -640,8 +640,8 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
         }
       }
       // SAFETY: `output_size` passed to FX_Alloc() of `output_buf`.
-      compress_result = PSCompressData(
-          UNSAFE_BUFFERS(pdfium::make_span(output_buf, output_size)));
+      compress_result =
+          PSCompressData(UNSAFE_BUFFERS(pdfium::span(output_buf, output_size)));
       if (compress_result.has_value()) {
         FX_Free(output_buf);
         output_buf_is_owned = false;
@@ -662,7 +662,7 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
     WriteStream(buf);
 
     // SAFETY: `output_size` passed to FX_Alloc() of `output_buf`.
-    WritePSBinary(UNSAFE_BUFFERS(pdfium::make_span(output_buf, output_size)));
+    WritePSBinary(UNSAFE_BUFFERS(pdfium::span(output_buf, output_size)));
     if (output_buf_is_owned) {
       FX_Free(output_buf);
     }
@@ -916,7 +916,7 @@ CFX_PSRenderer::FaxCompressResult CFX_PSRenderer::FaxCompressData(
   FX_SAFE_UINT32 safe_size = pitch;
   safe_size *= height;
   result.data.resize(safe_size.ValueOrDie());
-  auto dest_span = pdfium::make_span(result.data);
+  auto dest_span = pdfium::span(result.data);
   for (int row = 0; row < height; row++) {
     fxcrt::Copy(src->GetScanline(row),
                 dest_span.subspan(static_cast<size_t>(row * pitch),

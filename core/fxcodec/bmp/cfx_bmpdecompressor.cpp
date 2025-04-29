@@ -423,8 +423,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRGB() {
         break;
       }
       case 16: {
-        auto buf =
-            fxcrt::reinterpret_span<uint16_t>(pdfium::make_span(dest_buf));
+        auto buf = fxcrt::reinterpret_span<uint16_t>(pdfium::span(dest_buf));
         uint8_t blue_bits = 0;
         uint8_t green_bits = 0;
         uint8_t red_bits = 0;
@@ -462,7 +461,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRGB() {
       case 24:
       case 32:
         // TODO(crbug.com/pdfium/1901): Apply bitfields.
-        fxcrt::Copy(pdfium::make_span(dest_buf).first(src_row_bytes_),
+        fxcrt::Copy(pdfium::span(dest_buf).first(src_row_bytes_),
                     out_row_buffer_);
         idx += src_row_bytes_;
         break;
@@ -539,8 +538,8 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
               return BmpDecoder::Status::kContinue;
             }
 
-            fxcrt::Copy(pdfium::make_span(second_part).first(first_part),
-                        pdfium::make_span(out_row_buffer_).subspan(col_num_));
+            fxcrt::Copy(pdfium::span(second_part).first(first_part),
+                        pdfium::span(out_row_buffer_).subspan(col_num_));
 
             for (size_t i = col_num_; i < col_num_ + first_part; ++i) {
               if (!ValidateColorIndex(out_row_buffer_[i])) {
@@ -565,7 +564,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
         }
 
         std::ranges::fill(
-            pdfium::make_span(out_row_buffer_).subspan(col_num_, first_part),
+            pdfium::span(out_row_buffer_).subspan(col_num_, first_part),
             second_part);
 
         if (!ValidateColorIndex(out_row_buffer_[col_num_])) {

@@ -124,7 +124,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
       }
 
       size_t buffer_chars =
-          stream_->ReadBlock(pdfium::make_span(buffer).first(xml_plane_size_));
+          stream_->ReadBlock(pdfium::span(buffer).first(xml_plane_size_));
       if (buffer_chars == 0) {
         return true;
       }
@@ -357,8 +357,8 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           current_buffer_idx++;
           break;
         case FDE_XmlSyntaxState::SkipCommentOrDecl: {
-          auto current_view = WideStringView(
-              pdfium::make_span(buffer).subspan(current_buffer_idx));
+          auto current_view =
+              WideStringView(pdfium::span(buffer).subspan(current_buffer_idx));
           if (current_view.First(2).EqualsASCII("--")) {
             current_buffer_idx += 2;
             current_parser_state = FDE_XmlSyntaxState::SkipComment;
@@ -373,8 +373,8 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           break;
         }
         case FDE_XmlSyntaxState::SkipCData: {
-          auto current_view = WideStringView(
-              pdfium::make_span(buffer).subspan(current_buffer_idx));
+          auto current_view =
+              WideStringView(pdfium::span(buffer).subspan(current_buffer_idx));
           if (current_view.First(3).EqualsASCII("]]>")) {
             current_buffer_idx += 3;
             current_parser_state = FDE_XmlSyntaxState::Text;
@@ -438,8 +438,8 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           }
           break;
         case FDE_XmlSyntaxState::SkipComment: {
-          auto current_view = WideStringView(
-              pdfium::make_span(buffer).subspan(current_buffer_idx));
+          auto current_view =
+              WideStringView(pdfium::span(buffer).subspan(current_buffer_idx));
           if (current_view.First(3).EqualsASCII("-->")) {
             current_buffer_idx += 2;
             current_parser_state = FDE_XmlSyntaxState::Text;

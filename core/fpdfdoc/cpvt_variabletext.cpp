@@ -849,7 +849,7 @@ float CPVT_VariableText::GetAutoFontSize() {
   }
 
   size_t span_size = IsMultiLine() ? kQuarterSize : kFullSize;
-  auto font_span = pdfium::make_span(kFontSizeSteps).first(span_size);
+  auto font_span = pdfium::span(kFontSizeSteps).first(span_size);
 
   constexpr bool kUnusedValue = true;
   auto it = std::lower_bound(

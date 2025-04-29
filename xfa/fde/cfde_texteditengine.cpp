@@ -299,12 +299,12 @@ void CFDE_TextEditEngine::Insert(size_t idx,
   if (validation_enabled_ || limit_horizontal_area_ || limit_vertical_area_) {
     WideString str;
     if (gap_position_ > 0) {
-      str += WideStringView(make_span(content_).first(gap_position_));
+      str += WideStringView(pdfium::span(content_).first(gap_position_));
     }
     str += text;
 
     if (text_length_ - gap_position_ > 0) {
-      str += WideStringView(make_span(content_).subspan(
+      str += WideStringView(pdfium::span(content_).subspan(
           gap_position_ + gap_size_, text_length_ - gap_position_));
     }
 
@@ -344,7 +344,7 @@ void CFDE_TextEditEngine::Insert(size_t idx,
 
   // Copy the new text into the gap.
   fxcrt::Copy(text.span().first(length),
-              make_span(content_).subspan(gap_position_));
+              pdfium::span(content_).subspan(gap_position_));
 
   gap_position_ += length;
   gap_size_ -= length;
@@ -812,18 +812,18 @@ WideString CFDE_TextEditEngine::GetSelectedText() const {
   if (selection_.start_idx < gap_position_) {
     // Fully on left of gap.
     if (selection_.start_idx + selection_.count < gap_position_) {
-      text += WideStringView(
-          make_span(content_).subspan(selection_.start_idx, selection_.count));
+      text += WideStringView(pdfium::span(content_).subspan(
+          selection_.start_idx, selection_.count));
       return text;
     }
 
     // Pre-gap text
-    text += WideStringView(make_span(content_).subspan(
+    text += WideStringView(pdfium::span(content_).subspan(
         selection_.start_idx, gap_position_ - selection_.start_idx));
 
     if (selection_.count - (gap_position_ - selection_.start_idx) > 0) {
       // Post-gap text
-      text += WideStringView(make_span(content_).subspan(
+      text += WideStringView(pdfium::span(content_).subspan(
           gap_position_ + gap_size_,
           selection_.count - (gap_position_ - selection_.start_idx)));
     }
@@ -832,7 +832,7 @@ WideString CFDE_TextEditEngine::GetSelectedText() const {
   }
 
   // Fully right of gap
-  text += WideStringView(make_span(content_).subspan(
+  text += WideStringView(pdfium::span(content_).subspan(
       gap_size_ + selection_.start_idx, selection_.count));
   return text;
 }
@@ -881,7 +881,7 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
   AdjustGap(start_idx + length, 0);
 
   WideString ret(
-      WideStringView(make_span(content_).subspan(start_idx, length)));
+      WideStringView(pdfium::span(content_).subspan(start_idx, length)));
 
   if (add_operation == RecordOperation::kInsertRecord) {
     AddOperationRecord(std::make_unique<DeleteOperation>(this, start_idx, ret));
@@ -940,10 +940,10 @@ void CFDE_TextEditEngine::ReplaceSelectedText(const WideString& requested_rep) {
 WideString CFDE_TextEditEngine::GetText() const {
   WideString str;
   if (gap_position_ > 0) {
-    str += WideStringView(make_span(content_).first(gap_position_));
+    str += WideStringView(pdfium::span(content_).first(gap_position_));
   }
   if (text_length_ - gap_position_ > 0) {
-    str += WideStringView(make_span(content_).subspan(
+    str += WideStringView(pdfium::span(content_).subspan(
         gap_position_ + gap_size_, text_length_ - gap_position_));
   }
   return str;

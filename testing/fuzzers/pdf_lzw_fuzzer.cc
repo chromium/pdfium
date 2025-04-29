@@ -45,7 +45,7 @@ void LZWFuzz(pdfium::span<const uint8_t> src_buf,
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   // SAFETY: required from fuzzer
-  auto data_span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
+  auto data_span = UNSAFE_BUFFERS(pdfium::span(data, size));
 
   // Need at least 3 bytes to do anything.
   if (data_span.size() < 3 || data_span.size() > kMaxFuzzBytes) {

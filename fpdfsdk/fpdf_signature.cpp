@@ -123,7 +123,7 @@ FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
       fxcrt::CollectionSize<unsigned long>(*byte_range);
   if (buffer && length >= byte_range_len) {
     // SAFETY: required from caller.
-    auto buffer_span = UNSAFE_BUFFERS(pdfium::make_span(buffer, length));
+    auto buffer_span = UNSAFE_BUFFERS(pdfium::span(buffer, length));
     for (size_t i = 0; i < byte_range_len; ++i) {
       buffer_span[i] = byte_range->GetIntegerAt(i);
     }

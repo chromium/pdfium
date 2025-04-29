@@ -38,8 +38,8 @@ TEST(FlateModule, Decode) {
   size_t i = 0;
   for (const pdfium::DecodeTestData& data : flate_decode_cases) {
     DataAndBytesConsumed result = FlateModule::FlateOrLZWDecode(
-        false, UNSAFE_TODO(pdfium::make_span(data.input, data.input_size)),
-        false, 0, 0, 0, 0, 0);
+        false, UNSAFE_TODO(pdfium::span(data.input, data.input_size)), false, 0,
+        0, 0, 0, 0);
     EXPECT_EQ(data.processed_size, result.bytes_consumed) << " for case " << i;
     EXPECT_THAT(result.data, ElementsAreArray(data.expected_span()))
         << " for case " << i;

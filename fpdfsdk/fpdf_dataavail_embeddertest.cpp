@@ -118,7 +118,7 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
     }
     const unsigned long bytes_to_copy = end - pos;
     fxcrt::Copy(file_contents().subspan(pos, bytes_to_copy),
-                UNSAFE_TODO(pdfium::make_span(pBuf, size)));
+                UNSAFE_TODO(pdfium::span(pBuf, size)));
     SetDataAvailable(pos, bytes_to_copy);
     return static_cast<int>(bytes_to_copy);
   }

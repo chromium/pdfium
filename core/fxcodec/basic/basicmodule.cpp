@@ -132,7 +132,7 @@ pdfium::span<uint8_t> RLScanlineDecoder::GetNextLine() {
   std::ranges::fill(scanline_, 0);
   uint32_t col_pos = 0;
   bool eol = false;
-  auto scan_span = pdfium::make_span(scanline_);
+  auto scan_span = pdfium::span(scanline_);
   while (src_offset_ < src_buf_.size() && !eol) {
     if (operator_ < 128) {
       uint32_t copy_len = operator_ + 1;
@@ -251,7 +251,7 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
   DataVector<uint8_t> result(estimated_size.ValueOrDie());
 
   // Set up span and counts.
-  auto result_span = pdfium::make_span(result);
+  auto result_span = pdfium::span(result);
   uint32_t run_start = 0;
   uint32_t run_end = 1;
   uint8_t x = src_span[run_start];
@@ -331,7 +331,7 @@ DataVector<uint8_t> BasicModule::A85Encode(
   result.resize(estimated_size.ValueOrDie());
 
   // Set up span and counts.
-  auto result_span = pdfium::make_span(result);
+  auto result_span = pdfium::span(result);
   uint32_t pos = 0;
   uint32_t line_length = 0;
   while (src_span.size() >= 4 && pos < src_span.size() - 3) {

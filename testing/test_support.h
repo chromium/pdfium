@@ -24,11 +24,11 @@ namespace pdfium {
 struct StrFuncTestData {
   pdfium::span<const uint8_t> input_span() const {
     // SAFETY: size determined from literal via macro above.
-    return UNSAFE_BUFFERS(pdfium::make_span(input, input_size));
+    return UNSAFE_BUFFERS(pdfium::span(input, input_size));
   }
   pdfium::span<const uint8_t> expected_span() const {
     // SAFETY: size determined from literal via macro above.
-    return UNSAFE_BUFFERS(pdfium::make_span(expected, expected_size));
+    return UNSAFE_BUFFERS(pdfium::span(expected, expected_size));
   }
 
   const uint8_t* input;
@@ -40,11 +40,11 @@ struct StrFuncTestData {
 struct DecodeTestData {
   pdfium::span<const uint8_t> input_span() const {
     // SAFETY: size determined from literal via macro above.
-    return UNSAFE_BUFFERS(pdfium::make_span(input, input_size));
+    return UNSAFE_BUFFERS(pdfium::span(input, input_size));
   }
   pdfium::span<const uint8_t> expected_span() const {
     // SAFETY: size determined from literal via macro above.
-    return UNSAFE_BUFFERS(pdfium::make_span(expected, expected_size));
+    return UNSAFE_BUFFERS(pdfium::span(expected, expected_size));
   }
 
   const uint8_t* input;

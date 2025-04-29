@@ -232,7 +232,7 @@ static unsigned long DefaultGetFontData(struct _FPDF_SYSFONTINFO* pThis,
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
   // SAFETY: required from caller.
   return pdfium::checked_cast<unsigned long>(pDefault->font_info_->GetFontData(
-      hFont, table, UNSAFE_BUFFERS(pdfium::make_span(buffer, buf_size))));
+      hFont, table, UNSAFE_BUFFERS(pdfium::span(buffer, buf_size))));
 }
 
 // TODO(tsepez): should be UNSAFE_BUFFER_USAGE.

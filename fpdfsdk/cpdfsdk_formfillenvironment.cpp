@@ -160,7 +160,7 @@ WideString CPDFSDK_FormFillEnvironment::GetLanguage() {
   }
 
   return WideString::FromUTF16LE(
-      pdfium::make_span(pBuff).first(static_cast<size_t>(nActualLen)));
+      pdfium::span(pBuff).first(static_cast<size_t>(nActualLen)));
 #else   // PDF_ENABLE_XFA
   return WideString();
 #endif  // PDF_ENABLE_XFA
@@ -184,7 +184,7 @@ WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
   }
 
   return WideString::FromUTF16LE(
-      pdfium::make_span(pBuff).first(static_cast<size_t>(nActualLen)));
+      pdfium::span(pBuff).first(static_cast<size_t>(nActualLen)));
 #else   // PDF_ENABLE_XFA
   return WideString();
 #endif  // PDF_ENABLE_XFA
@@ -609,8 +609,8 @@ WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
 
   // SAFETY: required from FFI callback.
   WideString wsRet = WideString::FromUTF16LE(UNSAFE_BUFFERS(
-      pdfium::make_span(reinterpret_cast<const uint8_t*>(response.str),
-                        static_cast<size_t>(response.len))));
+      pdfium::span(reinterpret_cast<const uint8_t*>(response.str),
+                   static_cast<size_t>(response.len))));
 
   FPDF_BStr_Clear(&response);
   return wsRet;

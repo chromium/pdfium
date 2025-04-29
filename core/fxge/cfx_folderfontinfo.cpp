@@ -102,7 +102,7 @@ ByteString LoadTableFromTT(FILE* pFile,
   UNSAFE_TODO({
     for (uint32_t i = 0; i < nTables; i++) {
       // TODO(tsepez): use actual span.
-      auto p = pdfium::make_span(pTables + i * 16, 16u);
+      auto p = pdfium::span(pTables + i * 16, 16u);
       if (fxcrt::GetUInt32MSBFirst(p.first<4u>()) == tag) {
         uint32_t offset = fxcrt::GetUInt32MSBFirst(p.subspan<8u, 4u>());
         uint32_t size = fxcrt::GetUInt32MSBFirst(p.subspan<12u, 4u>());
@@ -206,15 +206,14 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   if (items_read != 1) {
     return;
   }
-  uint32_t magic =
-      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).first<4u>());
+  uint32_t magic = fxcrt::GetUInt32MSBFirst(pdfium::span(buffer).first<4u>());
   if (magic != kTableTTCF) {
     ReportFace(path, pFile.get(), filesize, 0);
     return;
   }
 
   uint32_t nFaces =
-      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).subspan<8u, 4u>());
+      fxcrt::GetUInt32MSBFirst(pdfium::span(buffer).subspan<8u, 4u>());
   FX_SAFE_SIZE_T safe_face_bytes = nFaces;
   safe_face_bytes *= 4;
   if (!safe_face_bytes.IsValid()) {

@@ -22,9 +22,9 @@ void BitmapSaver::WriteBitmapToPng(FPDF_BITMAP bitmap,
   CHECK(height >= 0);
   FX_SAFE_FILESIZE size = stride;
   size *= height;
-  auto input = pdfium::make_span(
-      static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
-      pdfium::ValueOrDieForType<size_t>(size));
+  auto input =
+      pdfium::span(static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
+                   pdfium::ValueOrDieForType<size_t>(size));
 
   std::vector<uint8_t> png;
   int format = FPDFBitmap_GetFormat(bitmap);

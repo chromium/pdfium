@@ -362,7 +362,7 @@ FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password) {
     return nullptr;
   }
   // SAFETY: required from caller.
-  auto data_span = UNSAFE_BUFFERS(pdfium::make_span(
+  auto data_span = UNSAFE_BUFFERS(pdfium::span(
       static_cast<const uint8_t*>(data_buf), static_cast<size_t>(size)));
   return LoadDocumentImpl(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(data_span),
                           password);
@@ -373,8 +373,8 @@ FPDF_LoadMemDocument64(const void* data_buf,
                        size_t size,
                        FPDF_BYTESTRING password) {
   // SAFETY: required from caller.
-  auto data_span = UNSAFE_BUFFERS(
-      pdfium::make_span(static_cast<const uint8_t*>(data_buf), size));
+  auto data_span =
+      UNSAFE_BUFFERS(pdfium::span(static_cast<const uint8_t*>(data_buf), size));
   return LoadDocumentImpl(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(data_span),
                           password);
 }
@@ -1441,8 +1441,8 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     *buflen = len;
   } else if (len <= *buflen) {
     // SAFETY: required from caller.
-    auto buffer_span =
-        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), *buflen));
+    auto buffer_span = UNSAFE_BUFFERS(
+        pdfium::span(static_cast<char*>(buffer), static_cast<size_t>(*buflen)));
     fxcrt::Copy(utf16Name.span(), buffer_span);
     *buflen = len;
   } else {
@@ -1502,8 +1502,8 @@ FPDF_GetXFAPacketContent(FPDF_DOCUMENT document,
   // SAFETY: caller ensures `buffer` points to at least `buflen` bytes.
   *out_buflen = DecodeStreamMaybeCopyAndReturnLength(
       xfa_packets[index].data,
-      UNSAFE_BUFFERS(pdfium::make_span(static_cast<uint8_t*>(buffer),
-                                       static_cast<size_t>(buflen))));
+      UNSAFE_BUFFERS(pdfium::span(static_cast<uint8_t*>(buffer),
+                                  static_cast<size_t>(buflen))));
   return true;
 }
 
@@ -1523,8 +1523,7 @@ FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
       fxcrt::CollectionSize<unsigned long>(trailer_ends);
   if (buffer && length >= trailer_ends_len) {
     // SAFETY: required from caller.
-    fxcrt::Copy(trailer_ends,
-                UNSAFE_BUFFERS(pdfium::make_span(buffer, length)));
+    fxcrt::Copy(trailer_ends, UNSAFE_BUFFERS(pdfium::span(buffer, length)));
   }
 
   return trailer_ends_len;

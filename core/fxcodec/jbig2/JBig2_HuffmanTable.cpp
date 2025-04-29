@@ -235,8 +235,7 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
     ++NTEMP;
   }
 
-  return CJBig2_Context::HuffmanAssignCode(
-      pdfium::make_span(CODES).first(NTEMP));
+  return CJBig2_Context::HuffmanAssignCode(pdfium::span(CODES).first(NTEMP));
 }
 
 void CJBig2_HuffmanTable::ExtendBuffers(bool increment) {

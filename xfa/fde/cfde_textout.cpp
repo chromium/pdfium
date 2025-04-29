@@ -95,7 +95,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #else
         font = pFxFont;
 #endif
-        device->DrawNormalText(UNSAFE_TODO(make_span(pCurCP, count)), font,
+        device->DrawNormalText(UNSAFE_TODO(pdfium::span(pCurCP, count)), font,
                                -fFontSize, matrix, color, kOptions);
       }
       pCurFont = pSTFont;
@@ -115,8 +115,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #else
     font = pFxFont;
 #endif
-    return device->DrawNormalText(UNSAFE_TODO(make_span(pCurCP, count)), font,
-                                  -fFontSize, matrix, color, kOptions);
+    return device->DrawNormalText(UNSAFE_TODO(pdfium::span(pCurCP, count)),
+                                  font, -fFontSize, matrix, color, kOptions);
   }
   return true;
 }
@@ -314,8 +314,8 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
         continue;
       }
       CFDE_TextOut::DrawString(device, txt_color_, font_,
-                               make_span(char_pos_).first(szCount), font_size_,
-                               matrix_);
+                               pdfium::span(char_pos_).first(szCount),
+                               font_size_, matrix_);
     }
   }
   device->RestoreState(false);
@@ -536,7 +536,7 @@ size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
 
   CFGAS_TxtBreak::Run tr;
   tr.wsStr = text_.Substr(pPiece->start_char);
-  tr.pWidths = make_span(char_widths_).subspan(pPiece->start_char);
+  tr.pWidths = pdfium::span(char_widths_).subspan(pPiece->start_char);
   tr.iLength = checked_cast<int32_t>(pPiece->char_count);
   tr.pFont = font_;
   tr.fFontSize = font_size_;

@@ -42,7 +42,7 @@ WideString EncodeToC40Codewords(const WideString& sb) {
   wchar_t cw[2];
   cw[0] = static_cast<wchar_t>(v / 256);
   cw[1] = static_cast<wchar_t>(v % 256);
-  return WideString(WideStringView(pdfium::make_span(cw)));
+  return WideString(WideStringView(pdfium::span(cw)));
 }
 
 }  // namespace

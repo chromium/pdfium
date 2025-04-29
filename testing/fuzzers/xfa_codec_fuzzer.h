@@ -25,8 +25,8 @@ class XFACodecFuzzer {
  public:
   static int Fuzz(const uint8_t* data, size_t size, FXCODEC_IMAGE_TYPE type) {
     auto decoder = std::make_unique<ProgressiveDecoder>();
-    auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-        pdfium::make_span(data, size));
+    auto source =
+        pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::span(data, size));
     CFX_DIBAttribute attr;
     FXCODEC_STATUS status =
         decoder->LoadImageInfo(std::move(source), type, &attr, true);

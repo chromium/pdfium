@@ -228,7 +228,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       pCS->AppendNew<CPDF_Name>("DeviceRGB");
       pCS->AppendNew<CPDF_Number>(static_cast<int>(palette_size - 1));
       DataVector<uint8_t> color_table(Fx2DSizeOrDie(palette_size, 3));
-      auto color_table_span = pdfium::make_span(color_table);
+      auto color_table_span = pdfium::span(color_table);
       for (size_t i = 0; i < palette_size; i++) {
         uint32_t argb = pBitmap->GetPaletteArgb(i);
         color_table_span[0] = FXARGB_R(argb);
@@ -272,7 +272,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       for (int32_t a = 0; a < mask_height; a++) {
         fxcrt::Copy(
             pMaskBitmap->GetScanline(a).first(static_cast<size_t>(mask_width)),
-            pdfium::make_span(mask_buf).subspan(
+            pdfium::span(mask_buf).subspan(
                 static_cast<size_t>(a * mask_width)));
       }
     }
@@ -285,7 +285,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   }
 
   DataVector<uint8_t> dest_buf(Fx2DSizeOrDie(dest_pitch, BitmapHeight));
-  pdfium::span<uint8_t> dest_span = pdfium::make_span(dest_buf);
+  pdfium::span<uint8_t> dest_span = pdfium::span(dest_buf);
   pdfium::span<const uint8_t> src_span = pBitmap->GetBuffer();
   const int32_t src_pitch = pBitmap->GetPitch();
   if (bCopyWithoutAlpha) {

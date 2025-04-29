@@ -138,7 +138,7 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
   device->FillRect(re, kBackgroundColor);
   float strWidth = kWidth * output_hscale_;
 
-  pdfium::span<TextCharPos> charpos_span = pdfium::make_span(charpos);
+  pdfium::span<TextCharPos> charpos_span = pdfium::span(charpos);
   CalcTextInfo(tempStr, charpos_span.subspan<1u>(), font_, strWidth, iFontSize,
                blank);
   {

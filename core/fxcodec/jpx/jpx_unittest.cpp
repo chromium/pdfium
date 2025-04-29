@@ -64,7 +64,7 @@ TEST(fxcodec, DecodeDataNullStream) {
 }
 
 TEST(fxcodec, DecodeDataZeroSize) {
-  DecodeData dd(pdfium::make_span(kStreamData).first(0u));
+  DecodeData dd(pdfium::span(kStreamData).first(0u));
   uint8_t buffer[16];
 
   // Reads of size 0 do nothing but return an error code.

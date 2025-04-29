@@ -278,7 +278,7 @@ DataAndBytesConsumed RunLengthDecode(pdfium::span<const uint8_t> src_span) {
   }
 
   DataVector<uint8_t> dest_buf(dest_size);
-  auto dest_span = pdfium::make_span(dest_buf);
+  auto dest_span = pdfium::span(dest_buf);
   i = 0;
   int dest_count = 0;
   while (i < src_span.size()) {
@@ -507,7 +507,7 @@ std::optional<PDFDataDecodeResult> PDF_DataDecode(
       return std::nullopt;
     }
 
-    last_span = pdfium::make_span(new_buf);
+    last_span = pdfium::span(new_buf);
     result.data = std::move(new_buf);
   }
 

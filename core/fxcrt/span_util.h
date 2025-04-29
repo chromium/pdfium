@@ -128,11 +128,13 @@ bool span_equals(pdfium::span<T1, N1, P1> s1, pdfium::span<T2, N2, P2> s2) {
 // Returns the first position where `needle` occurs in `haystack`.
 template <typename T,
           typename U,
+          size_t TS,
+          size_t US,
           typename = std::enable_if_t<sizeof(T) == sizeof(U) &&
                                       std::is_trivially_copyable_v<T> &&
                                       std::is_trivially_copyable_v<U>>>
-std::optional<size_t> spanpos(pdfium::span<T> haystack,
-                              pdfium::span<U> needle) {
+std::optional<size_t> spanpos(pdfium::span<T, TS> haystack,
+                              pdfium::span<U, US> needle) {
   if (needle.empty() || needle.size() > haystack.size()) {
     return std::nullopt;
   }

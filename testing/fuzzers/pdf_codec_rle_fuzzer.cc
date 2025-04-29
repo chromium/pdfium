@@ -10,6 +10,6 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   // SAFETY: trusted arguments passed from fuzzer.
-  BasicModule::RunLengthEncode(UNSAFE_BUFFERS(pdfium::make_span(data, size)));
+  BasicModule::RunLengthEncode(UNSAFE_BUFFERS(pdfium::span(data, size)));
   return 0;
 }

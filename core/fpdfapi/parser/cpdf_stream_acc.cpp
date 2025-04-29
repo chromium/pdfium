@@ -139,7 +139,7 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
       return;
     }
 
-    src_span = pdfium::make_span(temp_src_data);
+    src_span = pdfium::span(temp_src_data);
     src_data = std::move(temp_src_data);
   }
 

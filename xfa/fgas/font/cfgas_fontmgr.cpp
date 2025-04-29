@@ -432,7 +432,7 @@ unsigned long ftStreamRead(FXFT_StreamRec* stream,
 
   // SAFETY: required from caller.
   if (!pFile->ReadBlockAtOffset(
-          UNSAFE_BUFFERS(pdfium::make_span(buffer, count), offset))) {
+          UNSAFE_BUFFERS(pdfium::span(buffer, count), offset))) {
     return 0;
   }
   return count;
@@ -796,8 +796,6 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   auto pFont = std::make_unique<CFGAS_FontDescriptor>();
   pFont->font_styles_ |= GetFlags(pFace);
 
-  // TODO(crbug.com/pdfium/2085): Use make_span() in fewer places after updating
-  // pdfium::span.
   std::optional<std::array<uint32_t, 4>> unicode_range =
       pFace->GetOs2UnicodeRange();
   if (unicode_range.has_value()) {

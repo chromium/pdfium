@@ -362,7 +362,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
   // terminator.
   CHECK_LT(char_count, std::numeric_limits<int>::max());
   pdfium::span<unsigned short> result_span =
-      UNSAFE_BUFFERS(pdfium::make_span(result, char_count + 1));
+      UNSAFE_BUFFERS(pdfium::span(result, static_cast<size_t>(char_count + 1)));
 
   // Includes two-byte terminator in string data itself.
   ByteString str = textpage->GetPageText(start_index, char_count).ToUCS2LE();
@@ -420,7 +420,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
 
   // SAFETY: Required from caller. Public API states that buflen
   // describes the number of values buffer can hold.
-  const auto buffer_span = UNSAFE_BUFFERS(pdfium::make_span(buffer, buflen));
+  const auto buffer_span =
+      UNSAFE_BUFFERS(pdfium::span(buffer, static_cast<size_t>(buflen)));
 
   ByteString str = wstr.ToUTF16LE();
   pdfium::span<const char> str_span = str.span();
@@ -545,7 +546,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetURL(FPDF_PAGELINK link_page,
 
   // SAFETY: required from caller.
   pdfium::span<unsigned short> result_span =
-      UNSAFE_BUFFERS(pdfium::make_span(buffer, buflen));
+      UNSAFE_BUFFERS(pdfium::span(buffer, static_cast<size_t>(buflen)));
 
   size_t size = std::min(url_span.size(), result_span.size());
   fxcrt::Copy(url_span.first(size), result_span);

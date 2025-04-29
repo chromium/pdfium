@@ -52,11 +52,11 @@ void BinaryBuffer::DeleteBuf(size_t start_index, size_t count) {
 }
 
 pdfium::span<uint8_t> BinaryBuffer::GetMutableSpan() {
-  return pdfium::make_span(buffer_).first(GetSize());
+  return pdfium::span(buffer_).first(GetSize());
 }
 
 pdfium::span<const uint8_t> BinaryBuffer::GetSpan() const {
-  return pdfium::make_span(buffer_).first(GetSize());
+  return pdfium::span(buffer_).first(GetSize());
 }
 
 size_t BinaryBuffer::GetLength() const {
@@ -100,7 +100,7 @@ void BinaryBuffer::AppendSpan(pdfium::span<const uint8_t> span) {
   }
 
   ExpandBuf(span.size());
-  fxcrt::Copy(span, pdfium::make_span(buffer_).subspan(GetSize()));
+  fxcrt::Copy(span, pdfium::span(buffer_).subspan(GetSize()));
   data_size_ += span.size();
 }
 

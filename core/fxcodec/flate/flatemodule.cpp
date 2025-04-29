@@ -413,7 +413,7 @@ std::optional<DataVector<uint8_t>> PNG_Predictor(
   }
   DataVector<uint8_t> dest_buf(dest_size);
   pdfium::span<const uint8_t> remaining_src_span = src_span;
-  pdfium::span<uint8_t> remaining_dest_span = pdfium::make_span(dest_buf);
+  pdfium::span<uint8_t> remaining_dest_span = pdfium::span(dest_buf);
   pdfium::span<uint8_t> prev_dest_span;
   const uint32_t bytes_per_pixel = (Colors * BitsPerComponent + 7) / 8;
   for (size_t row = 0; row < row_count; row++) {
@@ -536,14 +536,14 @@ DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
   }
 
   DataVector<uint8_t> result_buf(dest_size);
-  auto result_span = pdfium::make_span(result_buf);
+  auto result_span = pdfium::span(result_buf);
   for (size_t i = 0; i < result_tmp_bufs.size(); i++) {
     DataVector<uint8_t> tmp_buf = std::move(result_tmp_bufs[i]);
     const uint32_t tmp_buf_size =
         i + 1 < result_tmp_bufs.size() ? buf_size : last_buf_size;
     size_t cp_size = std::min<size_t>(tmp_buf_size, result_span.size());
     result_span =
-        fxcrt::spancpy(result_span, pdfium::make_span(tmp_buf).first(cp_size));
+        fxcrt::spancpy(result_span, pdfium::span(tmp_buf).first(cp_size));
   }
   return {std::move(result_buf), bytes_consumed};
 }

@@ -342,8 +342,8 @@ void JpegDecoder::PatchUpTrailer() {
 
 pdfium::span<uint8_t> JpegDecoder::GetWritableSrcData() {
   // SAFETY: const_cast<> doesn't change size.
-  return UNSAFE_BUFFERS(pdfium::make_span(
-      const_cast<uint8_t*>(src_span_.data()), src_span_.size()));
+  return UNSAFE_BUFFERS(
+      pdfium::span(const_cast<uint8_t*>(src_span_.data()), src_span_.size()));
 }
 
 }  // namespace

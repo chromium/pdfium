@@ -101,7 +101,7 @@ void sycc_to_rgb(int offset,
 
 pdfium::span<opj_image_comp_t> components_span(opj_image_t* img) {
   // SAFETY: required from third-party library.
-  return UNSAFE_BUFFERS(pdfium::make_span(img->comps, img->numcomps));
+  return UNSAFE_BUFFERS(pdfium::span(img->comps, img->numcomps));
 }
 
 void sycc444_to_rgb(opj_image_t* img) {

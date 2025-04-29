@@ -85,7 +85,7 @@ unsigned long FTStreamRead(FXFT_StreamRec* stream,
 
   // SAFETY: caller ensures `buffer` points to at least `count` bytes.
   return pFile && pFile->ReadBlockAtOffset(
-                      UNSAFE_BUFFERS(pdfium::make_span(buffer, count)), offset)
+                      UNSAFE_BUFFERS(pdfium::span(buffer, count)), offset)
              ? count
              : 0;
 }
@@ -110,7 +110,7 @@ const char CFX_Font::kUniversalDefaultFontName[] = "Arial Unicode MS";
 
 // static
 pdfium::span<const CFX_Font::CharsetFontMap> CFX_Font::GetDefaultTTFMapSpan() {
-  auto map_with_sentinel_value = pdfium::make_span(kDefaultTTFMap);
+  auto map_with_sentinel_value = pdfium::span(kDefaultTTFMap);
   return map_with_sentinel_value.first(map_with_sentinel_value.size() - 1);
 }
 

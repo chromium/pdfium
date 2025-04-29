@@ -17,7 +17,7 @@ namespace {
 struct FindTagTestStruct {
   pdfium::span<const uint8_t> input_span() const {
     // SAFETY: STR_IN_TEST_CASE macro extracts size of literal.
-    return UNSAFE_BUFFERS(pdfium::make_span(input, input_size));
+    return UNSAFE_BUFFERS(pdfium::span(input, input_size));
   }
   const unsigned char* input;
   unsigned int input_size;

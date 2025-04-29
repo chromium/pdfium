@@ -9,7 +9,7 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CPDF_PSEngine engine;
-  if (engine.Parse(pdfium::make_span(data, size))) {
+  if (engine.Parse(pdfium::span(data, size))) {
     engine.Execute();
   }
   return 0;

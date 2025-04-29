@@ -270,9 +270,9 @@ ByteString ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
 WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
   // SAFETY: caller ensures `wide_string` is NUL-terminated and enforced
   // by UNSAFE_BUFFER_USAGE in header file.
-  return WideString::FromUTF16LE(UNSAFE_BUFFERS(
-      pdfium::make_span(reinterpret_cast<const uint8_t*>(wide_string),
-                        FPDFWideStringLength(wide_string) * 2)));
+  return WideString::FromUTF16LE(
+      UNSAFE_BUFFERS(pdfium::span(reinterpret_cast<const uint8_t*>(wide_string),
+                                  FPDFWideStringLength(wide_string) * 2)));
 }
 
 UNSAFE_BUFFER_USAGE pdfium::span<char> SpanFromFPDFApiArgs(
@@ -283,7 +283,7 @@ UNSAFE_BUFFER_USAGE pdfium::span<char> SpanFromFPDFApiArgs(
     return pdfium::span<char>();
   }
   // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
-  return UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
+  return UNSAFE_BUFFERS(pdfium::span(static_cast<char*>(buffer), buflen));
 }
 
 #ifdef PDF_ENABLE_XFA

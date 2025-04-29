@@ -100,7 +100,7 @@ FPDF_ImportPagesByIndex(FPDF_DOCUMENT dest_doc,
   }
 
   // SAFETY: required from caller.
-  auto page_span = UNSAFE_BUFFERS(pdfium::make_span(page_indices, length));
+  auto page_span = UNSAFE_BUFFERS(pdfium::span(page_indices, length));
   for (int page_index : page_span) {
     if (page_index < 0) {
       return false;

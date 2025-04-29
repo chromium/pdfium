@@ -1224,8 +1224,7 @@ TEST(ByteStringView, NotNull) {
   // SAFETY: known fixed-length string.
   auto alternate_string3 = UNSAFE_BUFFERS(ByteStringView("abcdef", 3));
   const char abcd[] = "abcd";
-  ByteStringView span_string4(
-      pdfium::as_bytes(pdfium::make_span(abcd).first(4u)));
+  ByteStringView span_string4(pdfium::as_bytes(pdfium::span(abcd).first(4u)));
   // SAFETY: known fixed-length string.
   auto embedded_nul_string7 = UNSAFE_BUFFERS(ByteStringView("abc\0def", 7));
   // SAFETY: known fixed-length string.
@@ -1541,7 +1540,7 @@ TEST(ByteStringView, OperatorEQ) {
 
   const char kHello[] = "hello";
   pdfium::span<const uint8_t> span5(
-      pdfium::as_bytes(pdfium::make_span(kHello).first(5u)));
+      pdfium::as_bytes(pdfium::span(kHello).first(5u)));
   auto raw_span = byte_string_c.unsigned_span();
   EXPECT_TRUE(
       std::equal(raw_span.begin(), raw_span.end(), span5.begin(), span5.end()));

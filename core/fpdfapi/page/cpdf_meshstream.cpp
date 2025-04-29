@@ -218,11 +218,11 @@ FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
     return cs_->GetRGBOrZerosOnError(color_value);
   }
   float result[kMaxComponents] = {};
-  pdfium::span<float> result_span = pdfium::make_span(result);
+  pdfium::span<float> result_span = pdfium::span(result);
   for (const auto& func : funcs_) {
     if (func && func->OutputCount() <= kMaxComponents) {
       std::optional<uint32_t> nresults =
-          func->Call(pdfium::make_span(color_value).first<1u>(), result_span);
+          func->Call(pdfium::span(color_value).first<1u>(), result_span);
       if (nresults.has_value()) {
         result_span = result_span.subspan(nresults.value());
       }

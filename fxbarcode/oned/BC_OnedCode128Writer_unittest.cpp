@@ -17,7 +17,7 @@ namespace {
 
 struct TestCase {
   pdfium::span<const int32_t> pattern_span() const {
-    return UNSAFE_TODO(pdfium::make_span(patterns, num_patterns));
+    return UNSAFE_TODO(pdfium::span(patterns, num_patterns));
   }
 
   const char* input;

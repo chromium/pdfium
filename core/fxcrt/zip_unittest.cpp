@@ -68,7 +68,7 @@ TEST(Zip, ActualZip) {
     // Test that ordering of args doesn't matter, except for the size
     // determination.
     int output[4] = {};
-    auto sub_output = pdfium::make_span(output).first<3u>();
+    auto sub_output = pdfium::span(output).first<3u>();
     for (auto [out, in] : Zip(sub_output, stuff)) {
       out = in;
     }
@@ -99,7 +99,7 @@ TEST(Zip, ActualZip3) {
     // Test that ordering of args doesn't matter, except for the size
     // determination.
     int output[4] = {};
-    auto sub_output = pdfium::make_span(output).first<3u>();
+    auto sub_output = pdfium::span(output).first<3u>();
     for (auto [out, in1, in2] : Zip(sub_output, stuff1, stuff2)) {
       out = in1 + in2;
     }

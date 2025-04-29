@@ -214,7 +214,7 @@ FPDF_MovePages(FPDF_DOCUMENT document,
   // SAFETY: caller ensures `page_indices` points to at least
   // `page_indices_len` ints.
   return doc->MovePages(
-      UNSAFE_BUFFERS(pdfium::make_span(page_indices, page_indices_len)),
+      UNSAFE_BUFFERS(pdfium::span(page_indices, page_indices_len)),
       dest_page_index);
 }
 
@@ -636,7 +636,7 @@ FPDFPageObjMark_SetBlobParam(FPDF_DOCUMENT document,
 
   // SAFETY: required from caller.
   pParams->SetNewFor<CPDF_String>(
-      key, UNSAFE_BUFFERS(pdfium::make_span(value, value_len)),
+      key, UNSAFE_BUFFERS(pdfium::span(value, value_len)),
       CPDF_String::DataType::kIsHex);
   pPageObj->SetDirty(true);
   return true;
@@ -1110,9 +1110,9 @@ FPDFPageObj_GetDashArray(FPDF_PAGEOBJECT page_object,
   }
 
   // SAFETY: required from caller.
-  auto result_span = UNSAFE_BUFFERS(pdfium::make_span(dash_array, dash_count));
+  auto result_span = UNSAFE_BUFFERS(pdfium::span(dash_array, dash_count));
   auto dash_vector = pPageObj->graph_state().GetLineDashArray();
-  return fxcrt::try_spancpy(result_span, pdfium::make_span(dash_vector));
+  return fxcrt::try_spancpy(result_span, pdfium::span(dash_vector));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

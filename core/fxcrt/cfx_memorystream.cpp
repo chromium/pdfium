@@ -33,7 +33,7 @@ bool CFX_MemoryStream::Flush() {
 }
 
 pdfium::span<const uint8_t> CFX_MemoryStream::GetSpan() const {
-  return pdfium::make_span(data_).first(cur_size_);
+  return pdfium::span(data_).first(cur_size_);
 }
 
 bool CFX_MemoryStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
@@ -84,7 +84,7 @@ bool CFX_MemoryStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
   }
   cur_pos_ = new_pos;
 
-  fxcrt::Copy(buffer, pdfium::make_span(data_).subspan(cur_size_));
+  fxcrt::Copy(buffer, pdfium::span(data_).subspan(cur_size_));
   cur_size_ = std::max(cur_size_, cur_pos_);
 
   return true;

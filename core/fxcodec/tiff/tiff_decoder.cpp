@@ -117,8 +117,8 @@ tsize_t tiff_read(thandle_t context, tdata_t buf, tsize_t length) {
   FX_FILESIZE offset = pTiffContext->offset();
   // SAFETY: required from caller.
   if (!pTiffContext->io_in()->ReadBlockAtOffset(
-          UNSAFE_BUFFERS(pdfium::make_span(static_cast<uint8_t*>(buf),
-                                           static_cast<size_t>(length))),
+          UNSAFE_BUFFERS(pdfium::span(static_cast<uint8_t*>(buf),
+                                      static_cast<size_t>(length))),
           offset)) {
     return 0;
   }

@@ -77,7 +77,7 @@ pdfium::span<const FT_Var_Axis> GetVariationAxis(
 
   // SAFETY: Required from library.
   return UNSAFE_BUFFERS(
-      pdfium::make_span(variation_desc->axis, variation_desc->num_axis));
+      pdfium::span(variation_desc->axis, variation_desc->num_axis));
 }
 
 }  // namespace

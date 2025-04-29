@@ -39,8 +39,8 @@ TEST(LZWDecompressor, ExtractData) {
     *(decompressor->DecompressedNextForTest()) = decompressed->size();
     uint8_t dest_buf[20];
     std::ranges::fill(dest_buf, 0xff);
-    EXPECT_EQ(0u, decompressor->ExtractDataForTest(
-                      pdfium::make_span(dest_buf).first(0u)));
+    EXPECT_EQ(
+        0u, decompressor->ExtractDataForTest(pdfium::span(dest_buf).first(0u)));
     EXPECT_THAT(dest_buf, Each(static_cast<uint8_t>(-1)));
     EXPECT_EQ(10u, *(decompressor->DecompressedNextForTest()));
     for (size_t i = 0; i < *(decompressor->DecompressedNextForTest()); ++i) {
@@ -55,8 +55,8 @@ TEST(LZWDecompressor, ExtractData) {
     *(decompressor->DecompressedNextForTest()) = decompressed->size();
     std::array<uint8_t, 20> dest_buf;
     std::ranges::fill(dest_buf, 0xff);
-    EXPECT_EQ(5u, decompressor->ExtractDataForTest(
-                      pdfium::make_span(dest_buf).first(5u)));
+    EXPECT_EQ(
+        5u, decompressor->ExtractDataForTest(pdfium::span(dest_buf).first(5u)));
     size_t i = 0;
     for (; i < 5; ++i) {
       EXPECT_EQ(9 - i, dest_buf[i]);

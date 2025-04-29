@@ -170,7 +170,7 @@ TEST(fxcrt, BitStreamBig) {
 
   // SAFETY: intentionally not safe, see above.
   CFX_BitStream bitstream(
-      UNSAFE_BUFFERS(pdfium::make_span(kNotReallyBigEnough, kAllocationBytes)));
+      UNSAFE_BUFFERS(pdfium::span(kNotReallyBigEnough, kAllocationBytes)));
   EXPECT_FALSE(bitstream.IsEOF());
   EXPECT_EQ(0U, bitstream.GetPos());
   EXPECT_EQ(kAllocationBits, bitstream.BitsRemaining());

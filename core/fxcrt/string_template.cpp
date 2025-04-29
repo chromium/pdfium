@@ -310,7 +310,7 @@ void StringTemplate<T>::ReallocBeforeWrite(size_t nNewLength) {
     size_t nCopyLength = std::min(data_->data_length_, nNewLength);
     // SAFETY: copy of no more than data_length_ bytes.
     pNewData->CopyContents(
-        UNSAFE_BUFFERS(pdfium::make_span(data_->string_, nCopyLength)));
+        UNSAFE_BUFFERS(pdfium::span(data_->string_, nCopyLength)));
     pNewData->data_length_ = nCopyLength;
   } else {
     pNewData->data_length_ = 0;
@@ -335,7 +335,7 @@ template <typename T>
 void StringTemplate<T>::AssignCopy(const T* pSrcData, size_t nSrcLen) {
   AllocBeforeWrite(nSrcLen);
   // SAFETY: AllocBeforeWrite() ensures `nSrcLen` bytes available.
-  data_->CopyContents(UNSAFE_BUFFERS(pdfium::make_span(pSrcData, nSrcLen)));
+  data_->CopyContents(UNSAFE_BUFFERS(pdfium::span(pSrcData, nSrcLen)));
   data_->data_length_ = nSrcLen;
 }
 
@@ -346,7 +346,7 @@ void StringTemplate<T>::Concat(const T* pSrcData, size_t nSrcLen) {
   }
   // SAFETY: required from caller.
   // TODO(tsepez): should be UNSAFE_BUFFER_USAGE or pass span.
-  auto src_span = UNSAFE_BUFFERS(pdfium::make_span(pSrcData, nSrcLen));
+  auto src_span = UNSAFE_BUFFERS(pdfium::span(pSrcData, nSrcLen));
   if (!data_) {
     data_ = StringData::Create(src_span);
     return;

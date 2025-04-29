@@ -170,7 +170,7 @@ const PredefinedCMap* GetPredefinedCMap(ByteStringView cmapid) {
 
 std::vector<bool> LoadLeadingSegments(const PredefinedCMap& map) {
   std::vector<bool> segments(256);
-  const auto seg_span = pdfium::make_span(map.leading_segs_);
+  const auto seg_span = pdfium::span(map.leading_segs_);
   for (const ByteRange& seg : seg_span) {
     if (seg.first_ == 0 && seg.last_ == 0) {
       break;
@@ -356,9 +356,8 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
       size_t char_size = 1;
       codes[0] = offset < pBytes.size() ? pBytes[offset++] : 0;
       while (true) {
-        int ret =
-            CheckFourByteCodeRange(pdfium::make_span(codes).first(char_size),
-                                   mixed_four_byte_leading_ranges_);
+        int ret = CheckFourByteCodeRange(pdfium::span(codes).first(char_size),
+                                         mixed_four_byte_leading_ranges_);
         if (ret == 0) {
           return 0;
         }

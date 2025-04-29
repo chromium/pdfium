@@ -11,7 +11,7 @@
 namespace {
 
 // Helps with default construction of the appropriate span rather than
-// writing make_span() and using span_equal() directly.
+// writing span() and using span_equal() directly.
 bool uint_ranges_equal(pdfium::span<const uint8_t> a,
                        pdfium::span<const uint8_t> b) {
   return fxcrt::span_equals(a, b);

@@ -181,7 +181,7 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
     }
   }
   DataVector<uint8_t> result(code_width);
-  auto result_span = pdfium::make_span(result);
+  auto result_span = pdfium::span(result);
   ToIntArray(kOnedCode39CharacterEncoding[39], wide_narr_ratio_, widths);
   result_span = AppendPattern(result_span, widths, true);
 

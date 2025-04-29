@@ -23,7 +23,7 @@ class CFX_CodecMemory final : public Retainable {
 
   // SAFETY: `size_` must track `buffer_` allocations.
   pdfium::span<uint8_t> GetBufferSpan() {
-    return UNSAFE_BUFFERS(pdfium::make_span(buffer_.get(), size_));
+    return UNSAFE_BUFFERS(pdfium::span(buffer_.get(), size_));
   }
   size_t GetSize() const { return size_; }
   size_t GetPosition() const { return pos_; }

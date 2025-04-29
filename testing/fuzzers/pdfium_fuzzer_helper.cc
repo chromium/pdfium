@@ -131,7 +131,7 @@ void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
   form_callbacks.m_pJsPlatform = &platform_callbacks;
 
   // SAFETY: trusted arguments from fuzzer,
-  FuzzerTestLoader loader(UNSAFE_BUFFERS(pdfium::make_span(data, len)));
+  FuzzerTestLoader loader(UNSAFE_BUFFERS(pdfium::span(data, len)));
   FPDF_FILEACCESS file_access;
   memset(&file_access, '\0', sizeof(file_access));
   file_access.m_FileLen = static_cast<unsigned long>(len);

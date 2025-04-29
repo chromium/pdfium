@@ -70,7 +70,7 @@ ScopedFPDFWideString GetFPDFWideString(const std::wstring& wstr) {
 
   // SAFETY: length was argument to malloc above.
   pdfium::span<uint8_t> result_span = UNSAFE_BUFFERS(
-      pdfium::make_span(reinterpret_cast<uint8_t*>(result.get()), length));
+      pdfium::span(reinterpret_cast<uint8_t*>(result.get()), length));
 
   size_t i = 0;
   for (wchar_t w : wstr) {

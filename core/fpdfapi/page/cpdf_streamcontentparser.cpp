@@ -1502,8 +1502,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
       }
     }
   }
-  AddTextObject(pdfium::make_span(strs).first(iSegment), kernings,
-                fInitKerning);
+  AddTextObject(pdfium::span(strs).first(iSegment), kernings, fInitKerning);
 }
 
 void CPDF_StreamContentParser::Handle_SetTextLeading() {

@@ -132,8 +132,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           uint8_t SBSYMCODELEN = (uint8_t)nTmp;
           pDecoder->SBSYMCODELEN = SBSYMCODELEN;
           std::vector<UnownedPtr<CJBig2_Image>> SBSYMS(pDecoder->SBNUMSYMS);
-          fxcrt::Copy(pdfium::make_span(SDINSYMS).first(SDNUMINSYMS),
-                      pdfium::make_span(SBSYMS));
+          fxcrt::Copy(pdfium::span(SDINSYMS).first(SDNUMINSYMS),
+                      pdfium::span(SBSYMS));
           for (size_t i = 0; i < NSYMSDECODED; ++i) {
             SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
           }
@@ -342,8 +342,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           }
           pDecoder->SBSYMCODES = std::move(SBSYMCODES);
           std::vector<UnownedPtr<CJBig2_Image>> SBSYMS(pDecoder->SBNUMSYMS);
-          fxcrt::Copy(pdfium::make_span(SDINSYMS).first(SDNUMINSYMS),
-                      pdfium::make_span(SBSYMS));
+          fxcrt::Copy(pdfium::span(SDINSYMS).first(SDNUMINSYMS),
+                      pdfium::span(SBSYMS));
           for (size_t i = 0; i < NSYMSDECODED; ++i) {
             SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
           }

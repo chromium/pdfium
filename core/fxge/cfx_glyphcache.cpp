@@ -60,7 +60,7 @@ class UniqueKeyGen {
 };
 
 void UniqueKeyGen::Initialize(std::initializer_list<const int32_t> args) {
-  auto key_span = pdfium::make_span(key_);
+  auto key_span = pdfium::span<uint32_t, pdfium::dynamic_extent>(key_);
   for (const auto& arg : args) {
     key_span.front() = arg;
     key_span = key_span.subspan<1u>();
@@ -69,7 +69,7 @@ void UniqueKeyGen::Initialize(std::initializer_list<const int32_t> args) {
 }
 
 pdfium::span<const uint8_t> UniqueKeyGen::span() const {
-  return pdfium::as_bytes(pdfium::make_span(key_).first(key_len_));
+  return pdfium::as_bytes(pdfium::span(key_).first(key_len_));
 }
 
 UniqueKeyGen::UniqueKeyGen(const CFX_Font* pFont,

@@ -314,7 +314,7 @@ TEST(ParserDecodeTest, HexDecode) {
   };
   for (const auto& test_case : kTestData) {
     DataAndBytesConsumed result = HexDecode(
-        UNSAFE_TODO(pdfium::make_span(test_case.input, test_case.input_size)));
+        UNSAFE_TODO(pdfium::span(test_case.input, test_case.input_size)));
     EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;
     EXPECT_THAT(result.data, ElementsAreArray(test_case.expected_span()))

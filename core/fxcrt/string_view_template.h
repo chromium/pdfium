@@ -50,9 +50,9 @@ class StringViewTemplate {
   // NOLINTNEXTLINE(runtime/explicit)
   StringViewTemplate(const CharType* ptr) noexcept
       // SAFETY: from length() function.
-      : span_(UNSAFE_BUFFERS(pdfium::make_span(
-            reinterpret_cast<const UnsignedType*>(ptr),
-            ptr ? std::char_traits<CharType>::length(ptr) : 0))) {}
+      : span_(UNSAFE_BUFFERS(
+            pdfium::span(reinterpret_cast<const UnsignedType*>(ptr),
+                         ptr ? std::char_traits<CharType>::length(ptr) : 0))) {}
 
   explicit constexpr StringViewTemplate(
       const pdfium::span<const CharType>& other) noexcept {
@@ -81,21 +81,20 @@ class StringViewTemplate {
   constexpr StringViewTemplate(const CharType* ptr, size_t size) noexcept
       // SAFETY: propagated to caller via UNSAFE_BUFFER_USAGE.
       : span_(UNSAFE_BUFFERS(
-            pdfium::make_span(reinterpret_cast<const UnsignedType*>(ptr),
-                              size))) {}
+            pdfium::span(reinterpret_cast<const UnsignedType*>(ptr), size))) {}
 
   template <typename E = typename std::enable_if<
                 !std::is_same<UnsignedType, CharType>::value>::type>
   UNSAFE_BUFFER_USAGE constexpr StringViewTemplate(const UnsignedType* ptr,
                                                    size_t size) noexcept
       // SAFETY: propagated to caller via UNSAFE_BUFFER_USAGE.
-      : span_(UNSAFE_BUFFERS(pdfium::make_span(ptr, size))) {}
+      : span_(UNSAFE_BUFFERS(pdfium::span(ptr, size))) {}
 
   StringViewTemplate& operator=(const CharType* src) {
     // SAFETY: caller ensures `src` is nul-terminated so `length()` is correct.
     span_ = UNSAFE_BUFFERS(
-        pdfium::make_span(reinterpret_cast<const UnsignedType*>(src),
-                          src ? std::char_traits<CharType>::length(src) : 0));
+        pdfium::span(reinterpret_cast<const UnsignedType*>(src),
+                     src ? std::char_traits<CharType>::length(src) : 0));
     return *this;
   }
 

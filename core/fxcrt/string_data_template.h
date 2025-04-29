@@ -36,37 +36,37 @@ class StringDataTemplate {
 
   pdfium::span<CharType> span() {
     // SAFETY: data_length_ is within string_.
-    return UNSAFE_BUFFERS(pdfium::make_span(string_, data_length_));
+    return UNSAFE_BUFFERS(pdfium::span(string_, data_length_));
   }
   pdfium::span<const CharType> span() const {
     // SAFETY: data_length_ is within string_.
-    return UNSAFE_BUFFERS(pdfium::make_span(string_, data_length_));
+    return UNSAFE_BUFFERS(pdfium::span(string_, data_length_));
   }
 
   // Only a const-form is provided to preclude modifying the terminator.
   pdfium::span<const CharType> span_with_terminator() const {
     // SAFETY: data_length_ is within string_ and there is always a
     // terminator character following it.
-    return UNSAFE_BUFFERS(pdfium::make_span(string_, data_length_ + 1));
+    return UNSAFE_BUFFERS(pdfium::span(string_, data_length_ + 1));
   }
 
   pdfium::span<CharType> alloc_span() {
     // SAFETY: alloc_length_ is within string_.
-    return UNSAFE_BUFFERS(pdfium::make_span(string_, alloc_length_));
+    return UNSAFE_BUFFERS(pdfium::span(string_, alloc_length_));
   }
   pdfium::span<const CharType> alloc_span() const {
     // SAFETY: alloc_length_ is within string_.
-    return UNSAFE_BUFFERS(pdfium::make_span(string_, alloc_length_));
+    return UNSAFE_BUFFERS(pdfium::span(string_, alloc_length_));
   }
 
   // Includes the terminating NUL not included in lengths.
   pdfium::span<CharType> capacity_span() {
     // SAFETY: alloc_length_ + 1 is within string_.
-    return UNSAFE_BUFFERS(pdfium::make_span(string_, alloc_length_ + 1));
+    return UNSAFE_BUFFERS(pdfium::span(string_, alloc_length_ + 1));
   }
   pdfium::span<const CharType> capacity_span() const {
     // SAFETY: alloc_length_ + 1 is within string_.
-    return UNSAFE_BUFFERS(pdfium::make_span(string_, alloc_length_ + 1));
+    return UNSAFE_BUFFERS(pdfium::span(string_, alloc_length_ + 1));
   }
 
   // Return length as determined by the location of the first embedded NUL.

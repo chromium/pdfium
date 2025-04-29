@@ -379,7 +379,7 @@ int16_t CFX_Face::GetDescender() const {
 pdfium::span<uint8_t> CFX_Face::GetData() const {
   // TODO(tsepez): justify safety from library API.
   return UNSAFE_BUFFERS(
-      pdfium::make_span(GetRec()->stream->base, GetRec()->stream->size));
+      pdfium::span(GetRec()->stream->base, GetRec()->stream->size));
 }
 
 size_t CFX_Face::GetSfntTable(uint32_t table, pdfium::span<uint8_t> buffer) {

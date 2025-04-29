@@ -9,15 +9,15 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<fxcodec::IccTransform> transform =
-      fxcodec::IccTransform::CreateTransformSRGB(pdfium::make_span(data, size));
+      fxcodec::IccTransform::CreateTransformSRGB(pdfium::span(data, size));
   if (!transform) {
     return 0;
   }
 
   const float src[4] = {0.5f, 0.5f, 0.5f, 0.5f};
   float dst[4];
-  transform->Translate(pdfium::make_span(src).first(
-                           static_cast<size_t>(transform->components())),
-                       pdfium::make_span(dst));
+  transform->Translate(
+      pdfium::span(src).first(static_cast<size_t>(transform->components())),
+      pdfium::span(dst));
   return 0;
 }

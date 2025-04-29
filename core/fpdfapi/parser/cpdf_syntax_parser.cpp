@@ -506,7 +506,7 @@ CPDF_SyntaxParser::WordResult CPDF_SyntaxParser::GetNextWord() {
   WordType word_type = GetNextWordInternal();
   ByteStringView word;
   if (!GetValidator()->has_read_problems()) {
-    word = ByteStringView(pdfium::make_span(word_buffer_).first(word_size_));
+    word = ByteStringView(pdfium::span(word_buffer_).first(word_size_));
   }
   return {ByteString(word), word_type == WordType::kNumber};
 }
@@ -600,7 +600,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
                : nullptr;
   }
   if (word[0] == '/') {
-    auto word_span = pdfium::make_span(word_buffer_).first(word_size_);
+    auto word_span = pdfium::span(word_buffer_).first(word_size_);
     return pdfium::MakeRetain<CPDF_Name>(
         pool_, PDF_NameDecode(ByteStringView(word_span).Substr(1)));
   }
@@ -809,7 +809,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     CPDF_ReadValidator::ScopedSession read_session(GetValidator());
     pos_ += ReadEOLMarkers(GetPos());
     const size_t zap_length = kEndStreamStr.GetLength() + 1;
-    std::ranges::fill(pdfium::make_span(word_buffer_).first(zap_length), 0);
+    std::ranges::fill(pdfium::span(word_buffer_).first(zap_length), 0);
     GetNextWordInternal();
     if (GetValidator()->has_read_problems()) {
       return nullptr;
@@ -872,7 +872,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   }
   const FX_FILESIZE end_stream_offset = GetPos();
   const size_t zap_length = kEndObjStr.GetLength() + 1;
-  std::ranges::fill(pdfium::make_span(word_buffer_).first(zap_length), 0);
+  std::ranges::fill(pdfium::span(word_buffer_).first(zap_length), 0);
   GetNextWordInternal();
 
   // Allow whitespace after endstream and before a newline.
@@ -901,7 +901,7 @@ uint32_t CPDF_SyntaxParser::GetDirectNum() {
   }
 
   word_buffer_[word_size_] = 0;
-  return FXSYS_atoui(pdfium::as_chars(pdfium::make_span(word_buffer_)).data());
+  return FXSYS_atoui(pdfium::as_chars(pdfium::span(word_buffer_)).data());
 }
 
 RetainPtr<CPDF_ReadValidator> CPDF_SyntaxParser::GetValidator() const {

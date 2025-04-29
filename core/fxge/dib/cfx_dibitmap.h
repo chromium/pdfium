@@ -71,7 +71,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
     pdfium::span<const uint8_t> src = GetBuffer();
     // SAFETY: const_cast<>() doesn't change size.
     return UNSAFE_BUFFERS(
-        pdfium::make_span(const_cast<uint8_t*>(src.data()), src.size()));
+        pdfium::span(const_cast<uint8_t*>(src.data()), src.size()));
   }
 
   // Note that the returned scanline includes unused space at the end, if any.
@@ -79,7 +79,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
     pdfium::span<const uint8_t> src = GetScanline(line);
     // SAFETY: const_cast<>() doesn't change size.
     return UNSAFE_BUFFERS(
-        pdfium::make_span(const_cast<uint8_t*>(src.data()), src.size()));
+        pdfium::span(const_cast<uint8_t*>(src.data()), src.size()));
   }
 
   // Note that the returned scanline does not include unused space at the end,

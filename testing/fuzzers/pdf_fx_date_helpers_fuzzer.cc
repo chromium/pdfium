@@ -13,7 +13,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     size_t len1 = size / 2;
 
     // SAFETY: trusted arguments from fuzzer.
-    auto span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
+    auto span = UNSAFE_BUFFERS(pdfium::span(data, size));
     WideString input1 = WideString::FromUTF16LE(span.first(len1));
     WideString input2 = WideString::FromUTF16LE(span.subspan(len1));
     FX_ParseDateUsingFormat(input1, input2, &ignore);

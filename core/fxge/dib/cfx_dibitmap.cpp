@@ -106,8 +106,7 @@ pdfium::span<const uint8_t> CFX_DIBitmap::GetBuffer() const {
     return pdfium::span<const uint8_t>();
   }
 
-  return UNSAFE_TODO(
-      pdfium::make_span(buffer_.Get(), GetHeight() * GetPitch()));
+  return UNSAFE_TODO(pdfium::span(buffer_.Get(), GetHeight() * GetPitch()));
 }
 
 pdfium::span<const uint8_t> CFX_DIBitmap::GetScanline(int line) const {
@@ -970,8 +969,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   }
 
   // SAFETY: `dest_buf` allocated with `dest_buf_size` bytes above.
-  auto dest_span =
-      UNSAFE_BUFFERS(pdfium::make_span(dest_buf.get(), dest_buf_size));
+  auto dest_span = UNSAFE_BUFFERS(pdfium::span(dest_buf.get(), dest_buf_size));
   if (dest_format == FXDIB_Format::kBgra) {
     std::ranges::fill(dest_span, 0xff);
   }

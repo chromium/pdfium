@@ -344,9 +344,12 @@ void FaxG4GetRow(const uint8_t* src_buf,
       } else if (bit2) {
         int run_len1 = 0;
         while (true) {
-          int run = FaxGetRun(a0color ? pdfium::make_span(kFaxWhiteRunIns)
-                                      : pdfium::make_span(kFaxBlackRunIns),
-                              src_buf, bitpos, bitsize);
+          int run = FaxGetRun(
+              a0color ? pdfium::span<const uint8_t, pdfium::dynamic_extent>(
+                            kFaxWhiteRunIns)
+                      : pdfium::span<const uint8_t, pdfium::dynamic_extent>(
+                            kFaxBlackRunIns),
+              src_buf, bitpos, bitsize);
           run_len1 += run;
           if (run < 64) {
             break;
@@ -366,9 +369,12 @@ void FaxG4GetRow(const uint8_t* src_buf,
 
         int run_len2 = 0;
         while (true) {
-          int run = FaxGetRun(a0color ? pdfium::make_span(kFaxBlackRunIns)
-                                      : pdfium::make_span(kFaxWhiteRunIns),
-                              src_buf, bitpos, bitsize);
+          int run = FaxGetRun(
+              a0color ? pdfium::span<const uint8_t, pdfium::dynamic_extent>(
+                            kFaxBlackRunIns)
+                      : pdfium::span<const uint8_t, pdfium::dynamic_extent>(
+                            kFaxWhiteRunIns),
+              src_buf, bitpos, bitsize);
           run_len2 += run;
           if (run < 64) {
             break;
@@ -484,9 +490,12 @@ void FaxGet1DLine(const uint8_t* src_buf,
 
     int run_len = 0;
     while (true) {
-      int run = FaxGetRun(color ? pdfium::make_span(kFaxWhiteRunIns)
-                                : pdfium::make_span(kFaxBlackRunIns),
-                          src_buf, bitpos, bitsize);
+      int run =
+          FaxGetRun(color ? pdfium::span<const uint8_t, pdfium::dynamic_extent>(
+                                kFaxWhiteRunIns)
+                          : pdfium::span<const uint8_t, pdfium::dynamic_extent>(
+                                kFaxBlackRunIns),
+                    src_buf, bitpos, bitsize);
       if (run < 0) {
         while (*bitpos < bitsize) {
           if (NextBit(src_buf, bitpos)) {
@@ -631,7 +640,7 @@ uint32_t FaxDecoder::GetSrcOffset() {
 }
 
 void FaxDecoder::InvertBuffer() {
-  auto byte_span = pdfium::make_span(scanline_buf_);
+  auto byte_span = pdfium::span(scanline_buf_);
   auto data = fxcrt::reinterpret_span<uint32_t>(byte_span);
   for (auto& datum : data) {
     datum = ~datum;
@@ -866,8 +875,8 @@ DataVector<uint8_t> FaxEncoder::Encode() {
     line_buf_[0] = last_byte;
     pdfium::span<const uint8_t> scan_line = src_->GetScanline(i);
     FaxEncode2DLine(scan_line);
-    dest_buf_.AppendSpan(pdfium::make_span(line_buf_).first(
-        static_cast<size_t>(dest_bitpos_ / 8)));
+    dest_buf_.AppendSpan(
+        pdfium::span(line_buf_).first(static_cast<size_t>(dest_bitpos_ / 8)));
     last_byte = line_buf_[dest_bitpos_ / 8];
     dest_bitpos_ %= 8;
     ref_line_span_ = scan_line;
