@@ -1,7 +1,7 @@
 // Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-//
+
 // This is Chromium's span.h with the following modificiations:
 // - namespace changed to pdfium
 // - include paths changed for check.h, compiler_specific.h,
@@ -17,7 +17,6 @@
 // - removed any references to base::cstring_view<>.
 // - Added reinterpret_span() helper.
 // - DCHECK() verbose logging message not supported and removed.
-// - Kept EnableIfSpanCompatibleContainer as in prior versions.
 
 // This file intentionally uses the `CHECK()` macro instead of the `CHECK_op()`
 // macros, as `CHECK()` generates significantly less code and is more likely to
@@ -31,7 +30,6 @@
 #include <stdint.h>
 
 #include <algorithm>
-#include <array>
 #include <concepts>
 #include <functional>
 #include <initializer_list>
@@ -342,67 +340,6 @@ struct allow_nonunique_obj_t {
 inline constexpr allow_nonunique_obj_t allow_nonunique_obj{};
 
 namespace internal {
-
-template <typename T>
-struct IsSpanImpl : std::false_type {};
-
-template <typename T>
-struct IsSpanImpl<span<T>> : std::true_type {};
-
-template <typename T>
-using IsSpan = IsSpanImpl<typename std::decay<T>::type>;
-
-template <typename T>
-struct IsStdArrayImpl : std::false_type {};
-
-template <typename T, size_t N>
-struct IsStdArrayImpl<std::array<T, N>> : std::true_type {};
-
-template <typename T>
-using IsStdArray = IsStdArrayImpl<typename std::decay<T>::type>;
-
-template <typename From, typename To>
-using IsLegalSpanConversion = std::is_convertible<From*, To*>;
-
-template <typename Container, typename T>
-using ContainerHasConvertibleData =
-    IsLegalSpanConversion<typename std::remove_pointer<
-                              decltype(std::declval<Container>().data())>::type,
-                          T>;
-template <typename Container>
-using ContainerHasIntegralSize =
-    std::is_integral<decltype(std::declval<Container>().size())>;
-
-template <typename From, typename To>
-using EnableIfLegalSpanConversion =
-    typename std::enable_if<IsLegalSpanConversion<From, To>::value>::type;
-
-// SFINAE check if Container can be converted to a span<T>. Note that the
-// implementation details of this check differ slightly from the requirements in
-// the working group proposal: in particular, the proposal also requires that
-// the container conversion constructor participate in overload resolution only
-// if two additional conditions are true:
-//
-//   1. Container implements operator[].
-//   2. Container::value_type matches remove_const_t<element_type>.
-//
-// The requirements are relaxed slightly here: in particular, not requiring (2)
-// means that an immutable span can be easily constructed from a mutable
-// container.
-template <typename Container, typename T>
-using EnableIfSpanCompatibleContainer =
-    typename std::enable_if<!internal::IsSpan<Container>::value &&
-                            !internal::IsStdArray<Container>::value &&
-                            ContainerHasConvertibleData<Container, T>::value &&
-                            ContainerHasIntegralSize<Container>::value>::type;
-
-template <typename Container, typename T>
-using EnableIfConstSpanCompatibleContainer =
-    typename std::enable_if<std::is_const<T>::value &&
-                            !internal::IsSpan<Container>::value &&
-                            !internal::IsStdArray<Container>::value &&
-                            ContainerHasConvertibleData<Container, T>::value &&
-                            ContainerHasIntegralSize<Container>::value>::type;
 
 // Exposition-only concept from [span.syn]
 template <typename T>
