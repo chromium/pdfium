@@ -110,15 +110,14 @@ ReturnType StringToFloatImpl(InputType strc) {
     ++start;
   }
 
-  // Skip a leading '+' sign.
-  if (start < len && strc[start] == '+') {
-    ++start;
-  }
-
   InputType sub_strc = strc.Substr(start, len - start);
 
   ReturnType value;
-  auto result = fast_float::from_chars(sub_strc.begin(), sub_strc.end(), value);
+  auto result =
+      fast_float::from_chars(sub_strc.begin(), sub_strc.end(), value,
+                             static_cast<fast_float::chars_format>(
+                                 fast_float::chars_format::general |
+                                 fast_float::chars_format::allow_leading_plus));
 
   // Return 0 for parsing errors. Some examples of errors are an empty string
   // and a string that cannot be converted to `ReturnType`.

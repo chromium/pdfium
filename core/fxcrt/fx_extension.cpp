@@ -42,15 +42,14 @@ float FXSYS_wcstof(WideStringView pwsStr, size_t* pUsedLen) {
     ++start;
   }
 
-  // Skip a leading '+' sign.
-  if (start < len && pwsStr[start] == '+') {
-    ++start;
-  }
-
   WideStringView sub_strc = pwsStr.Substr(start, len - start);
 
   float value;
-  auto result = fast_float::from_chars(sub_strc.begin(), sub_strc.end(), value);
+  auto result =
+      fast_float::from_chars(sub_strc.begin(), sub_strc.end(), value,
+                             static_cast<fast_float::chars_format>(
+                                 fast_float::chars_format::general |
+                                 fast_float::chars_format::allow_leading_plus));
 
   if (pUsedLen) {
     *pUsedLen = result.ptr - pwsStr.unterminated_c_str();
