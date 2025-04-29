@@ -353,18 +353,18 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
     }
     case MixedFourBytes: {
       std::array<uint8_t, 4> codes;
-      int char_size = 1;
+      size_t char_size = 1;
       codes[0] = offset < pBytes.size() ? pBytes[offset++] : 0;
       while (true) {
-        int ret = CheckFourByteCodeRange(
-            pdfium::make_span(codes).first(static_cast<size_t>(char_size)),
-            mixed_four_byte_leading_ranges_);
+        int ret =
+            CheckFourByteCodeRange(pdfium::make_span(codes).first(char_size),
+                                   mixed_four_byte_leading_ranges_);
         if (ret == 0) {
           return 0;
         }
         if (ret == 2) {
           uint32_t charcode = 0;
-          for (int i = 0; i < char_size; i++) {
+          for (size_t i = 0; i < char_size; i++) {
             charcode = (charcode << 8) + codes[i];
           }
           return charcode;
