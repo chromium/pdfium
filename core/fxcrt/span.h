@@ -16,7 +16,6 @@
 // - removed any references to std::string_view.
 // - removed any references to base::cstring_view<>.
 // - Added reinterpret_span() helper.
-// - Added make_span() helper method to ease conversion to CTAD.
 // - DCHECK() verbose logging message not supported and removed.
 // - Kept EnableIfSpanCompatibleContainer as in prior versions.
 
@@ -1657,42 +1656,6 @@ constexpr auto as_writable_byte_span(
     allow_nonunique_obj_t,
     ElementType (&arr LIFETIME_BOUND)[Extent]) {
   return as_writable_bytes(allow_nonunique_obj, span<ElementType, Extent>(arr));
-}
-
-// Type-deducing helpers for constructing a span.
-template <typename T>
-UNSAFE_BUFFER_USAGE constexpr span<T> make_span(T* data, size_t size) noexcept {
-  return UNSAFE_BUFFERS(span<T>(data, size));
-}
-
-template <typename T, size_t N>
-constexpr span<T> make_span(T (&array)[N]) noexcept {
-  return span<T>(array);
-}
-
-template <typename T, size_t N>
-constexpr span<T> make_span(std::array<T, N>& array) noexcept {
-  return span<T>(array);
-}
-
-template <typename T, size_t N>
-constexpr span<const T> make_span(const std::array<T, N>& array) noexcept {
-  return span<const T>(const_cast<std::array<T, N>&>(array));
-}
-
-template <typename Container,
-          typename T = typename Container::value_type,
-          typename = internal::EnableIfSpanCompatibleContainer<Container, T>>
-constexpr span<T> make_span(Container& container) {
-  return span<T>(container);
-}
-
-template <
-    typename Container,
-    typename T = typename std::add_const<typename Container::value_type>::type,
-    typename = internal::EnableIfConstSpanCompatibleContainer<Container, T>>
-constexpr span<T> make_span(const Container& container) {
-  return span<T>(container);
 }
 
 }  // namespace pdfium
