@@ -10,7 +10,6 @@
 #include <stdint.h>
 
 #include "core/fpdfapi/cmaps/fpdf_cmaps.h"
-#include "core/fxcrt/span.h"
 
 namespace fxcmap {
 
@@ -30,8 +29,8 @@ extern const uint16_t kUniCNS_UCS2_H_3[];
 extern const uint16_t kUniCNS_UCS2_V_3[];
 extern const uint16_t kUniCNS_UTF16_H_0[];
 
-extern const pdfium::span<const uint16_t> kCNS1CID2Unicode_5;
-extern const pdfium::span<const CMap> kCNS1_cmaps_span;
+#include "Adobe-CNS1-UCS2_5.inc"
+#include "cmaps_cns1.inc"
 
 }  // namespace fxcmap
 

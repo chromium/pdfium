@@ -4,12 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/cmaps/CNS1/cmaps_cns1.h"
-
-namespace fxcmap {
-namespace {
-
-const CMap kCNS1_cmaps[] = {
+inline constexpr CMap kCNS1_cmaps[] = {
     {"B5pc-H", kB5pc_H_0, nullptr, 247, 0, CMap::Type::kRange, 0},
     {"B5pc-V", kB5pc_V_0, nullptr, 12, 0, CMap::Type::kRange, -1},
     {"HKscs-B5-H", kHKscs_B5_H_5, nullptr, 1210, 0, CMap::Type::kRange, 0},
@@ -30,9 +25,3 @@ const CMap kCNS1_cmaps[] = {
     {"UniCNS-UTF16-V", kUniCNS_UCS2_V_3, nullptr, 13, 0, CMap::Type::kRange,
      -1},
 };
-
-}  // namespace
-
-const pdfium::span<const CMap> kCNS1_cmaps_span{kCNS1_cmaps};
-
-}  // namespace fxcmap

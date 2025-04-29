@@ -4,12 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/cmaps/Japan1/cmaps_japan1.h"
-
-namespace fxcmap {
-namespace {
-
-const CMap kJapan1_cmaps[] = {
+inline constexpr CMap kJapan1_cmaps[] = {
     {"83pv-RKSJ-H", k83pv_RKSJ_H_1, nullptr, 222, 0, CMap::Type::kRange, 0},
     {"90ms-RKSJ-H", k90ms_RKSJ_H_2, nullptr, 171, 0, CMap::Type::kRange, 0},
     {"90ms-RKSJ-V", k90ms_RKSJ_V_2, nullptr, 78, 0, CMap::Type::kRange, -1},
@@ -37,9 +32,3 @@ const CMap kJapan1_cmaps[] = {
     {"UniJIS-UTF16-V", kUniJIS_UCS2_V_4, nullptr, 251, 0, CMap::Type::kSingle,
      -1},
 };
-
-}  // namespace
-
-const pdfium::span<const CMap> kJapan1_cmaps_span{kJapan1_cmaps};
-
-}  // namespace fxcmap

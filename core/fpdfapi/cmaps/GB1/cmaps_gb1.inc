@@ -4,12 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/cmaps/GB1/cmaps_gb1.h"
-
-namespace fxcmap {
-namespace {
-
-const CMap kGB1_cmaps[] = {
+inline constexpr CMap kGB1_cmaps[] = {
     {"GB-EUC-H", kGB_EUC_H_0, nullptr, 90, 0, CMap::Type::kRange, 0},
     {"GB-EUC-V", kGB_EUC_V_0, nullptr, 20, 0, CMap::Type::kRange, -1},
     {"GBpc-EUC-H", kGBpc_EUC_H_0, nullptr, 91, 0, CMap::Type::kRange, 0},
@@ -27,9 +22,3 @@ const CMap kGB1_cmaps[] = {
      0},
     {"UniGB-UTF16-V", kUniGB_UCS2_V_4, nullptr, 24, 0, CMap::Type::kRange, -1},
 };
-
-}  // namespace
-
-const pdfium::span<const CMap> kGB1_cmaps_span{kGB1_cmaps};
-
-}  // namespace fxcmap
