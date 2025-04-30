@@ -18,7 +18,6 @@
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/stl_util.h"
 
 namespace fxcodec {
 

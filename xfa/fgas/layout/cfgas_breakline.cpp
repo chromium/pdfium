@@ -7,7 +7,6 @@
 #include "xfa/fgas/layout/cfgas_breakline.h"
 
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/stl_util.h"
 
 CFGAS_BreakLine::CFGAS_BreakLine() = default;
 
