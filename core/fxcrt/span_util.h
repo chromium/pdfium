@@ -23,14 +23,13 @@ template <typename T1,
           size_t N1,
           size_t N2,
           typename P1,
-          typename P2,
-          typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
-                                      std::is_trivially_copyable_v<T1> &&
-                                      std::is_trivially_copyable_v<T2>>>
+          typename P2>
+  requires(sizeof(T1) == sizeof(T2) && std::is_trivially_copyable_v<T1> &&
+           std::is_trivially_copyable_v<T2>)
 inline pdfium::span<T1> spancpy(pdfium::span<T1, N1, P1> dst,
                                 pdfium::span<T2, N2, P2> src) {
   CHECK_GE(dst.size(), src.size());
-  // SAFETY: SFINAE ensures `sizeof(T1)` equals `sizeof(T2)`, so comparing
+  // SAFETY: requires() ensures `sizeof(T1)` equals `sizeof(T2)`, so comparing
   // `size()` for equality ensures `size_bytes()` are equal, and `size_bytes()`
   // accurately describes `data()`.
   UNSAFE_BUFFERS(FXSYS_memcpy(dst.data(), src.data(), src.size_bytes()));
@@ -44,14 +43,13 @@ template <typename T1,
           size_t N1,
           size_t N2,
           typename P1,
-          typename P2,
-          typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
-                                      std::is_trivially_copyable_v<T1> &&
-                                      std::is_trivially_copyable_v<T2>>>
+          typename P2>
+  requires(sizeof(T1) == sizeof(T2) && std::is_trivially_copyable_v<T1> &&
+           std::is_trivially_copyable_v<T2>)
 inline pdfium::span<T1> spanmove(pdfium::span<T1, N1, P1> dst,
                                  pdfium::span<T2, N2, P2> src) {
   CHECK_GE(dst.size(), src.size());
-  // SAFETY: SFINAE ensures `sizeof(T1)` equals `sizeof(T2)`, so comparing
+  // SAFETY: requires()  ensures `sizeof(T1)` equals `sizeof(T2)`, so comparing
   // `size()` for equality ensures `size_bytes()` are equal, and `size_bytes()`
   // accurately describes `data()`.
   UNSAFE_BUFFERS(FXSYS_memmove(dst.data(), src.data(), src.size_bytes()));
@@ -66,16 +64,15 @@ template <typename T1,
           size_t N1,
           size_t N2,
           typename P1,
-          typename P2,
-          typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
-                                      std::is_trivially_copyable_v<T1> &&
-                                      std::is_trivially_copyable_v<T2>>>
+          typename P2>
+  requires(sizeof(T1) == sizeof(T2) && std::is_trivially_copyable_v<T1> &&
+           std::is_trivially_copyable_v<T2>)
 inline bool try_spancpy(pdfium::span<T1, N1, P1> dst,
                         pdfium::span<T2, N2, P2> src) {
   if (dst.size() < src.size()) {
     return false;
   }
-  // SAFETY: SFINAE ensures `sizeof(T1)` equals `sizeof(T2)`, the test above
+  // SAFETY: requires() ensures `sizeof(T1)` equals `sizeof(T2)`, the test above
   // ensures `src.size()` <= `dst.size()` which implies `src.size_bytes()`
   // <= `dst.size_bytes()`, and `dst.size_bytes()` describes `dst.data()`.
   UNSAFE_BUFFERS(FXSYS_memcpy(dst.data(), src.data(), src.size_bytes()));
@@ -90,16 +87,15 @@ template <typename T1,
           size_t N1,
           size_t N2,
           typename P1,
-          typename P2,
-          typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
-                                      std::is_trivially_copyable_v<T1> &&
-                                      std::is_trivially_copyable_v<T2>>>
+          typename P2>
+  requires(sizeof(T1) == sizeof(T2) && std::is_trivially_copyable_v<T1> &&
+           std::is_trivially_copyable_v<T2>)
 inline bool try_spanmove(pdfium::span<T1, N1, P1> dst,
                          pdfium::span<T2, N2, P2> src) {
   if (dst.size() < src.size()) {
     return false;
   }
-  // SAFETY: SFINAE ensures `sizeof(T1)` equals `sizeof(T2)`, the test above
+  // SAFETY: requires ensures `sizeof(T1)` equals `sizeof(T2)`, the test above
   // ensures `src.size()` <= `dst.size()` which implies `src.size_bytes()`
   // <= `dst.size_bytes()`, and `dst.size_bytes()` describes `dst.data()`.
   UNSAFE_BUFFERS(FXSYS_memmove(dst.data(), src.data(), src.size_bytes()));
@@ -113,10 +109,9 @@ template <typename T1,
           size_t N1,
           size_t N2,
           typename P1,
-          typename P2,
-          typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
-                                      std::is_trivially_copyable_v<T1> &&
-                                      std::is_trivially_copyable_v<T2>>>
+          typename P2>
+  requires(sizeof(T1) == sizeof(T2) && std::is_trivially_copyable_v<T1> &&
+           std::is_trivially_copyable_v<T2>)
 bool span_equals(pdfium::span<T1, N1, P1> s1, pdfium::span<T2, N2, P2> s2) {
   // SAFETY: For both `s1` and `s2`, there are `size_bytes()` valid bytes at
   // the corresponding `data()`, and the sizes are the same.
@@ -126,13 +121,9 @@ bool span_equals(pdfium::span<T1, N1, P1> s1, pdfium::span<T2, N2, P2> s2) {
 }
 
 // Returns the first position where `needle` occurs in `haystack`.
-template <typename T,
-          typename U,
-          size_t TS,
-          size_t US,
-          typename = std::enable_if_t<sizeof(T) == sizeof(U) &&
-                                      std::is_trivially_copyable_v<T> &&
-                                      std::is_trivially_copyable_v<U>>>
+template <typename T, typename U, size_t TS, size_t US>
+  requires(sizeof(T) == sizeof(U) && std::is_trivially_copyable_v<T> &&
+           std::is_trivially_copyable_v<U>)
 std::optional<size_t> spanpos(pdfium::span<T, TS> haystack,
                               pdfium::span<U, US> needle) {
   if (needle.empty() || needle.size() > haystack.size()) {
@@ -150,11 +141,8 @@ std::optional<size_t> spanpos(pdfium::span<T, TS> haystack,
   return std::nullopt;
 }
 
-template <typename T,
-          typename U,
-          size_t M,
-          typename = typename std::enable_if_t<std::is_const_v<T> ||
-                                               !std::is_const_v<U>>>
+template <typename T, typename U, size_t M>
+  requires(std::is_const_v<T> || !std::is_const_v<U>)
 inline pdfium::span<T> reinterpret_span(pdfium::span<U, M> s) noexcept {
   CHECK(alignof(T) == alignof(U) ||
         reinterpret_cast<uintptr_t>(s.data()) % alignof(T) == 0u);
