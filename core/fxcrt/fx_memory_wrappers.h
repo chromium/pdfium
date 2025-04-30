@@ -86,10 +86,9 @@ struct FxPartitionAllocAllocator {
 
 // Used to put backing store for std::vector<> and such into the
 // general partition, ensuring they contain data only.
-template <typename T,
-          typename = std::enable_if_t<std::is_arithmetic<T>::value ||
-                                      std::is_enum<T>::value ||
-                                      IsFXDataPartitionException<T>::value>>
+template <typename T>
+  requires(std::is_arithmetic<T>::value || std::is_enum<T>::value ||
+           IsFXDataPartitionException<T>::value)
 using FxAllocAllocator = FxPartitionAllocAllocator<T,
                                                    pdfium::internal::AllocOrDie,
                                                    pdfium::internal::Dealloc>;

@@ -61,10 +61,10 @@ class StringViewTemplate {
     }
   }
 
-  template <typename E = typename std::enable_if<
-                !std::is_same<UnsignedType, CharType>::value>::type>
   explicit constexpr StringViewTemplate(
-      const pdfium::span<const UnsignedType>& other) noexcept {
+      const pdfium::span<const UnsignedType>& other) noexcept
+    requires(!std::is_same<UnsignedType, CharType>::value)
+  {
     if (!other.empty()) {
       span_ = other;
     }
@@ -83,10 +83,9 @@ class StringViewTemplate {
       : span_(UNSAFE_BUFFERS(
             pdfium::span(reinterpret_cast<const UnsignedType*>(ptr), size))) {}
 
-  template <typename E = typename std::enable_if<
-                !std::is_same<UnsignedType, CharType>::value>::type>
   UNSAFE_BUFFER_USAGE constexpr StringViewTemplate(const UnsignedType* ptr,
                                                    size_t size) noexcept
+    requires(!std::is_same<UnsignedType, CharType>::value)
       // SAFETY: propagated to caller via UNSAFE_BUFFER_USAGE.
       : span_(UNSAFE_BUFFERS(pdfium::span(ptr, size))) {}
 
