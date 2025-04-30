@@ -14,7 +14,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/contains.h"
-#include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/containers/unique_ptr_adapters.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "public/fpdf_fwlevent.h"
@@ -431,7 +431,7 @@ void CPWL_Wnd::AddChild(std::unique_ptr<CPWL_Wnd> pWnd) {
 
 void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
   DCHECK_EQ(pWnd->parent_, this);
-  auto it = std::ranges::find(children_, MakeFakeUniquePtr(pWnd));
+  auto it = std::ranges::find_if(children_, pdfium::MatchesUniquePtr(pWnd));
   if (it == children_.end()) {
     return;
   }

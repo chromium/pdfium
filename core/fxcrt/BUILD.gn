@@ -50,6 +50,7 @@ source_set("fxcrt") {
     "component_export.h",
     "containers/adapters.h",
     "containers/contains.h",
+    "containers/unique_ptr_adapters.h",
     "data_vector.h",
     "debug/alias.cc",
     "debug/alias.h",

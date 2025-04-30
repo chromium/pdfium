@@ -17,8 +17,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/containers/contains.h"
-#include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/containers/unique_ptr_adapters.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
@@ -181,8 +180,8 @@ void CPDFSDK_PageView::DeleteAnnotForFFWidget(CXFA_FFWidget* pWidget) {
     form_fill_env_->KillFocusAnnot({});
   }
   if (pAnnot) {
-    auto it = std::ranges::find(sdkannot_array_,
-                                fxcrt::MakeFakeUniquePtr(pAnnot.Get()));
+    auto it = std::ranges::find_if(sdkannot_array_,
+                                   pdfium::MatchesUniquePtr(pAnnot.Get()));
     if (it != sdkannot_array_.end()) {
       sdkannot_array_.erase(it);
     }
@@ -647,7 +646,10 @@ bool CPDFSDK_PageView::IsValidAnnot(const CPDF_Annot* p) const {
 }
 
 bool CPDFSDK_PageView::IsValidSDKAnnot(const CPDFSDK_Annot* p) const {
-  return p && pdfium::Contains(sdkannot_array_, fxcrt::MakeFakeUniquePtr(p));
+  return p && std::ranges::find_if(
+                  sdkannot_array_,
+                  pdfium::MatchesUniquePtr(const_cast<CPDFSDK_Annot*>(p))) !=
+                  sdkannot_array_.end();
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {

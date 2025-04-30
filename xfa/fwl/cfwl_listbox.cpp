@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/containers/unique_ptr_adapters.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/stl_util.h"
 #include "v8/include/cppgc/visitor.h"
@@ -893,10 +894,7 @@ CFWL_ListBox::Item* CFWL_ListBox::GetItem(const CFWL_Widget* pWidget,
 }
 
 int32_t CFWL_ListBox::GetItemIndex(CFWL_Widget* pWidget, Item* pItem) {
-  auto it = std::ranges::find_if(
-      item_array_, [pItem](const std::unique_ptr<Item>& candidate) {
-        return candidate.get() == pItem;
-      });
+  auto it = std::ranges::find_if(item_array_, pdfium::MatchesUniquePtr(pItem));
   return it != item_array_.end()
              ? checked_cast<int32_t>(it - item_array_.begin())
              : -1;

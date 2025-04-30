@@ -7,28 +7,12 @@
 
 #include <algorithm>
 #include <iterator>
-#include <memory>
 
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 
 namespace fxcrt {
-
-// Means of generating a key for searching STL collections of std::unique_ptr
-// that avoids the side effect of deleting the pointer.
-template <class T>
-class FakeUniquePtr : public std::unique_ptr<T> {
- public:
-  using std::unique_ptr<T>::unique_ptr;
-  ~FakeUniquePtr() { std::unique_ptr<T>::release(); }
-};
-
-// Type-deducing wrapper for FakeUniquePtr<T>.
-template <class T>
-FakeUniquePtr<T> MakeFakeUniquePtr(T* arg) {
-  return FakeUniquePtr<T>(arg);
-}
 
 // Convenience routine for "int-fected" code, so that the stl collection
 // size_t size() method return values will be checked.

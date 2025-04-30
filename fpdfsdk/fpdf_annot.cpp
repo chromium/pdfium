@@ -33,6 +33,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/containers/unique_ptr_adapters.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
@@ -529,7 +530,8 @@ FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
 
   // Check that the object is already in this annotation's object list.
   CPDF_Form* pForm = pAnnot->GetForm();
-  if (!pdfium::Contains(*pForm, fxcrt::MakeFakeUniquePtr(pObj))) {
+  if (std::ranges::find_if(*pForm, pdfium::MatchesUniquePtr(pObj)) ==
+      pForm->end()) {
     return false;
   }
 
@@ -615,7 +617,8 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   // Note that an object that came from a different annotation must not be
   // passed here, since an object cannot belong to more than one annotation.
   CPDF_Form* pForm = pAnnot->GetForm();
-  if (pdfium::Contains(*pForm, fxcrt::MakeFakeUniquePtr(pObj))) {
+  if (std::ranges::find_if(*pForm, pdfium::MatchesUniquePtr(pObj)) !=
+      pForm->end()) {
     return false;
   }
 

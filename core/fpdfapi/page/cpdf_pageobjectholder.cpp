@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/containers/unique_ptr_adapters.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/stl_util.h"
 
@@ -190,8 +191,8 @@ void CPDF_PageObjectHolder::AppendPageObject(
 
 std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
     CPDF_PageObject* pPageObj) {
-  auto it =
-      std::ranges::find(page_object_list_, fxcrt::MakeFakeUniquePtr(pPageObj));
+  auto it = std::ranges::find_if(page_object_list_,
+                                 pdfium::MatchesUniquePtr(pPageObj));
   if (it == std::end(page_object_list_)) {
     return nullptr;
   }
