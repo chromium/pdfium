@@ -941,7 +941,9 @@ void CFXJSE_Engine::SetNodesOfRunScript(
 }
 
 void CFXJSE_Engine::AddNodesOfRunScript(CXFA_Node* pNode) {
-  if (script_node_array_ && !pdfium::Contains(*script_node_array_, pNode)) {
+  if (script_node_array_ &&
+      !pdfium::Contains(*script_node_array_, pNode,
+                        &cppgc::Persistent<CXFA_Node>::Get)) {
     script_node_array_->emplace_back(pNode);
   }
 }
