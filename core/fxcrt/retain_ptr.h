@@ -49,15 +49,13 @@ class TRIVIAL_ABI RetainPtr {
   RetainPtr(RetainPtr&& that) noexcept { Unleak(that.Leak()); }
 
   // Copy conversion constructor.
-  template <class U,
-            typename = typename std::enable_if<
-                std::is_convertible<U*, T*>::value>::type>
+  template <class U>
+    requires(std::is_convertible_v<U*, T*>)
   RetainPtr(const RetainPtr<U>& that) : RetainPtr(that.Get()) {}
 
   // Move-conversion constructor.
-  template <class U,
-            typename = typename std::enable_if<
-                std::is_convertible<U*, T*>::value>::type>
+  template <class U>
+    requires(std::is_convertible_v<U*, T*>)
   RetainPtr(RetainPtr<U>&& that) noexcept {
     Unleak(that.Leak());
   }
@@ -85,9 +83,8 @@ class TRIVIAL_ABI RetainPtr {
   }
 
   // Copy-convert assign a RetainPtr.
-  template <class U,
-            typename = typename std::enable_if<
-                std::is_convertible<U*, T*>::value>::type>
+  template <class U>
+    requires(std::is_convertible_v<U*, T*>)
   RetainPtr& operator=(const RetainPtr<U>& that) {
     if (*this != that) {
       Reset(that.Get());
@@ -96,9 +93,8 @@ class TRIVIAL_ABI RetainPtr {
   }
 
   // Move-convert assign a RetainPtr. After assignment, |that| will be NULL.
-  template <class U,
-            typename = typename std::enable_if<
-                std::is_convertible<U*, T*>::value>::type>
+  template <class U>
+    requires(std::is_convertible_v<U*, T*>)
   RetainPtr& operator=(RetainPtr<U>&& that) noexcept {
     Unleak(that.Leak());
     return *this;
