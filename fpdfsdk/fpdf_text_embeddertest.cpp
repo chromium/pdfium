@@ -10,7 +10,6 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/notreached.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_doc.h"
@@ -836,7 +835,7 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLines) {
   FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage.get());
   EXPECT_TRUE(pagelink);
 
-  static constexpr auto kExpectedUrls = fxcrt::ToArray<const char*>({
+  static constexpr auto kExpectedUrls = std::to_array<const char*>({
       "http://example.com",           // from "http://www.example.com?\r\nfoo"
       "http://example.com/",          // from "http://www.example.com/\r\nfoo"
       "http://example.com/test-foo",  // from "http://example.com/test-\r\nfoo"
@@ -1008,7 +1007,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontSize) {
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  static constexpr auto kExpectedFontsSizes = fxcrt::ToArray<const double>(
+  static constexpr auto kExpectedFontsSizes = std::to_array<const double>(
       {12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 1,  1,
        16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16});
 
@@ -1202,7 +1201,7 @@ TEST_F(FPDFTextEmbedderTest, Bug921) {
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  static constexpr auto kData = fxcrt::ToArray<const unsigned int>(
+  static constexpr auto kData = std::to_array<const unsigned int>(
       {1095, 1077, 1083, 1086, 1074, 1077, 1095, 1077, 1089, 1082, 1086, 1077,
        32,   1089, 1090, 1088, 1072, 1076, 1072, 1085, 1080, 1077, 46,   32});
   static constexpr int kStartIndex = 238;
@@ -1235,7 +1234,7 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
   // Expecting 'Veritaserum', except there is a \uFFFE where the hyphen was in
   // the original text. This is a weird thing that Adobe does, which we
   // replicate.
-  static constexpr auto soft_expected = fxcrt::ToArray<unsigned short>(
+  static constexpr auto soft_expected = std::to_array<unsigned short>(
       {0x0056, 0x0065, 0x0072, 0x0069, 0x0074, 0x0061, 0xfffe, 0x0073, 0x0065,
        0x0072, 0x0075, 0x006D, 0x0000});
   {
@@ -1253,7 +1252,7 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
     static constexpr size_t offset = std::size(soft_expected) + 1;
     // Expecting 'User-\r\ngenerated', the - is a unicode character, so cannot
     // store in a char[].
-    static constexpr auto hard_expected = fxcrt::ToArray<unsigned short>(
+    static constexpr auto hard_expected = std::to_array<unsigned short>(
         {0x0055, 0x0073, 0x0065, 0x0072, 0x2010, 0x000d, 0x000a, 0x0067, 0x0065,
          0x006e, 0x0065, 0x0072, 0x0061, 0x0074, 0x0065, 0x0064, 0x0000});
     static constexpr int count = std::size(hard_expected) - 1;
@@ -1323,7 +1322,7 @@ TEST_F(FPDFTextEmbedderTest, Bug1029) {
   //
   // The original text has a fi ligature, but that is broken up into
   // two characters when the PDF is processed.
-  static constexpr auto expected = fxcrt::ToArray<unsigned int>({
+  static constexpr auto expected = std::to_array<unsigned int>({
       0x004d, 0x0045, 0x0054, 0x0041, 0x0044, 0x0041, 0x0054, 0x0041,
       0x0020, 0x0074, 0x0061, 0x0062, 0x006c, 0x0065, 0x002e, 0x0020,
       0x0057, 0x0068, 0x0065, 0x006e, 0x0020, 0x0074, 0x0068, 0x0065,
@@ -1711,7 +1710,7 @@ TEST_F(FPDFTextEmbedderTest, GetStrokeColor) {
 TEST_F(FPDFTextEmbedderTest, GetMatrix) {
   static constexpr char kExpectedText[] = "A1\r\nA2\r\nA3";
   static constexpr size_t kExpectedTextSize = std::size(kExpectedText);
-  static constexpr auto kExpectedMatrices = fxcrt::ToArray<const FS_MATRIX>({
+  static constexpr auto kExpectedMatrices = std::to_array<const FS_MATRIX>({
       {12.0f, 0.0f, 0.0f, 10.0f, 66.0f, 90.0f},
       {12.0f, 0.0f, 0.0f, 10.0f, 66.0f, 90.0f},
       {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
@@ -2104,7 +2103,7 @@ TEST_F(FPDFTextEmbedderTest, BigtableTextRects) {
   // TODO(crbug.com/40448046): The PDF uses fonts [/F2, /F1, /F2, /F1] with a
   // constant size on a single line. FPDFText_CountRects() should merge the text
   // into 4 rects.
-  static constexpr auto kExpectedRects = fxcrt::ToArray<TextRect>({
+  static constexpr auto kExpectedRects = std::to_array<TextRect>({
       {7.0195, 657.8847, 10.3102, 648.9273},
       {11.1978, 657.4722, 13.9057, 651.1599},
       {14.1085, 655.3652, 22.2230, 649.2321},

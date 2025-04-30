@@ -20,7 +20,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/stl_util.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
@@ -190,7 +189,7 @@ TEST(ParserTest, LoadCrossRefTable) {
         "0000000331 00000 n \n"
         "0000000409 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
-    static constexpr auto kExpected = fxcrt::ToArray<OffsetAndType>({
+    static constexpr auto kExpected = std::to_array<OffsetAndType>({
         {0, CPDF_CrossRefTable::ObjectType::kFree},
         {17, CPDF_CrossRefTable::ObjectType::kNormal},
         {81, CPDF_CrossRefTable::ObjectType::kNormal},
@@ -219,7 +218,7 @@ TEST(ParserTest, LoadCrossRefTable) {
         "12 1 \n"
         "0000025777 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
-    static constexpr auto kExpected = fxcrt::ToArray<OffsetAndType>({
+    static constexpr auto kExpected = std::to_array<OffsetAndType>({
         {0, CPDF_CrossRefTable::ObjectType::kFree},
         {0, CPDF_CrossRefTable::ObjectType::kFree},
         {0, CPDF_CrossRefTable::ObjectType::kFree},
@@ -255,7 +254,7 @@ TEST(ParserTest, LoadCrossRefTable) {
         "12 1 \n"
         "0000025777 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
-    static constexpr auto kExpected = fxcrt::ToArray<OffsetAndType>({
+    static constexpr auto kExpected = std::to_array<OffsetAndType>({
         {0, CPDF_CrossRefTable::ObjectType::kFree},
         {0, CPDF_CrossRefTable::ObjectType::kFree},
         {0, CPDF_CrossRefTable::ObjectType::kFree},
@@ -290,7 +289,7 @@ TEST(ParserTest, LoadCrossRefTable) {
         "0000000045 00000 n \n"
         "0000000179 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
-    static constexpr auto kExpected = fxcrt::ToArray<OffsetAndType>({
+    static constexpr auto kExpected = std::to_array<OffsetAndType>({
         {0, CPDF_CrossRefTable::ObjectType::kFree},
         {23, CPDF_CrossRefTable::ObjectType::kNormal},
         {0, CPDF_CrossRefTable::ObjectType::kFree},

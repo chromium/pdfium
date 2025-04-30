@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <limits>
 #include <memory>
 #include <ostream>
@@ -3791,7 +3792,7 @@ end
 end
 )";
 
-  static constexpr auto kCidToGidMap = fxcrt::ToArray<const uint8_t>(
+  static constexpr auto kCidToGidMap = std::to_array<const uint8_t>(
       {0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9});
 
   ScopedFPDFFont font(FPDFText_LoadCidType2Font(
@@ -3859,7 +3860,7 @@ end
 )";
 
   static constexpr auto kCidToGidMap =
-      fxcrt::ToArray<const uint8_t>({0, 0, 0, 1, 0, 2, 0, 3, 0, 4});
+      std::to_array<const uint8_t>({0, 0, 0, 1, 0, 2, 0, 3, 0, 4});
 
   ScopedFPDFFont font(FPDFText_LoadCidType2Font(
       document(), font_data.data(), font_data.size(), kToUnicodeCMap,

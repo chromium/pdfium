@@ -11,11 +11,10 @@
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcrt/check_op.h"
-#include "core/fxcrt/stl_util.h"
 
 namespace {
 
-constexpr auto kQeTable = fxcrt::ToArray<const JBig2ArithCtx::JBig2ArithQe>(
+constexpr auto kQeTable = std::to_array<const JBig2ArithCtx::JBig2ArithQe>(
     {// Stupid hack to keep clang-format from reformatting this badly.
      {0x5601, 1, 1, true},    {0x3401, 2, 6, false},   {0x1801, 3, 9, false},
      {0x0AC1, 4, 12, false},  {0x0521, 5, 29, false},  {0x0221, 38, 33, false},

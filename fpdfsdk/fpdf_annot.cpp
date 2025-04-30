@@ -1158,7 +1158,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   }
 
   static constexpr auto kModeKeyForMode =
-      fxcrt::ToArray<const char*>({"N", "R", "D"});
+      std::to_array<const char*>({"N", "R", "D"});
   static_assert(kModeKeyForMode.size() == FPDF_ANNOT_APPEARANCEMODE_COUNT,
                 "length of kModeKeyForMode should be equal to "
                 "FPDF_ANNOT_APPEARANCEMODE_COUNT");

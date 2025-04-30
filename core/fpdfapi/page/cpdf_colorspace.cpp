@@ -51,7 +51,7 @@
 
 namespace {
 
-constexpr auto kSRGBSamples1 = fxcrt::ToArray<const uint8_t>({
+constexpr auto kSRGBSamples1 = std::to_array<const uint8_t>({
     0,   3,   6,   10,  13,  15,  18,  20,  22,  23,  25,  27,  28,  30,  31,
     32,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
     48,  49,  49,  50,  51,  52,  53,  53,  54,  55,  56,  56,  57,  58,  58,
@@ -67,7 +67,7 @@ constexpr auto kSRGBSamples1 = fxcrt::ToArray<const uint8_t>({
     116, 117, 117, 117, 118, 118, 118, 118, 119, 119, 119, 120,
 });
 
-constexpr auto kSRGBSamples2 = fxcrt::ToArray<const uint8_t>({
+constexpr auto kSRGBSamples2 = std::to_array<const uint8_t>({
     120, 121, 122, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
     136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 148, 149,
     150, 151, 152, 153, 154, 155, 155, 156, 157, 158, 159, 159, 160, 161, 162,

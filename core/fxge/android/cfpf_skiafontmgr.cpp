@@ -17,7 +17,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_folder.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxge/android/cfpf_skiafont.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/freetype/fx_freetype.h"
@@ -171,7 +170,7 @@ bool SkiaMaybeArabic(ByteStringView facename) {
   return name.Contains("arabic");
 }
 
-constexpr auto kFPFSkiaFontCharsets = fxcrt::ToArray<const uint32_t>({
+constexpr auto kFPFSkiaFontCharsets = std::to_array<const uint32_t>({
     SKIACHARSET_Ansi,
     SKIACHARSET_EeasternEuropean,
     SKIACHARSET_Cyrillic,

@@ -17,7 +17,6 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -26,7 +25,7 @@ namespace {
 
 // The 5 names per entry are: PsName, Normal, Bold, Italic, BoldItalic.
 using FontNameEntry = std::array<const char*, 5>;
-constexpr auto kXFAPDFFontNameTable = fxcrt::ToArray<const FontNameEntry>({
+constexpr auto kXFAPDFFontNameTable = std::to_array<const FontNameEntry>({
     {{"Adobe PI Std", "AdobePIStd", "AdobePIStd", "AdobePIStd", "AdobePIStd"}},
     {{"Myriad Pro Light", "MyriadPro-Light", "MyriadPro-Semibold",
       "MyriadPro-LightIt", "MyriadPro-SemiboldIt"}},

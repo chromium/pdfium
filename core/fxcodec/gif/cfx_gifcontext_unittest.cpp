@@ -55,7 +55,7 @@ TEST(CFXGifContextTest, ReadAllOrNone) {
   context.SetTestInputBuffer({});
   EXPECT_FALSE(context.ReadAllOrNone(pdfium::span<uint8_t>()));
 
-  auto src_buffer = fxcrt::ToArray<const uint8_t>(
+  auto src_buffer = std::to_array<const uint8_t>(
       {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09});
 
   DataVector<uint8_t> dest_buffer(src_buffer.size());

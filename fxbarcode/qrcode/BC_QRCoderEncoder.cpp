@@ -25,6 +25,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -59,7 +60,7 @@ struct QRCoderBlockPair {
 };
 
 // This is a mapping for an ASCII table, starting at an index of 32.
-const auto kAlphaNumericTable = fxcrt::ToArray<const int8_t>(
+const auto kAlphaNumericTable = std::to_array<const int8_t>(
     {36, -1, -1, -1, 37, 38, -1, -1, -1, -1, 39, 40, -1, 41, 42, 43,  // 32-47
      0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  44, -1, -1, -1, -1, -1,  // 48-63
      -1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,  // 64-79

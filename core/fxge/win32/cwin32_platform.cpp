@@ -20,7 +20,6 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/win/scoped_select_object.h"
 #include "core/fxcrt/win/win_util.h"
 #include "core/fxge/cfx_folderfontinfo.h"
@@ -44,7 +43,7 @@ struct Substs {
   bool italic_;
 };
 
-constexpr auto kBase14Substs = fxcrt::ToArray<const Substs>({
+constexpr auto kBase14Substs = std::to_array<const Substs>({
     {"Courier", "Courier New", false, false},
     {"Courier-Bold", "Courier New", true, false},
     {"Courier-BoldOblique", "Courier New", true, true},

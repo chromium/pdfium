@@ -7,6 +7,7 @@
 #include "core/fdrm/fx_crypt_sha.h"
 
 #include <algorithm>
+#include <array>
 
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -267,7 +268,7 @@ const uint8_t kSha384Padding[128] = {
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-constexpr auto constants = fxcrt::ToArray<const uint64_t>({
+constexpr auto constants = std::to_array<const uint64_t>({
     0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL, 0xb5c0fbcfec4d3b2fULL,
     0xe9b5dba58189dbbcULL, 0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
     0x923f82a4af194f9bULL, 0xab1c5ed5da6d8118ULL, 0xd807aa98a3030242ULL,

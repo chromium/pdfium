@@ -13,7 +13,6 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -35,7 +34,7 @@ enum JpFontFamilyRowIndex : uint8_t {
 
 constexpr size_t kJpFontFamilyColumnCount = 5;
 using JpFontFamilyRow = std::array<const char*, kJpFontFamilyColumnCount>;
-constexpr auto kJpFontTable = fxcrt::ToArray<const JpFontFamilyRow>({
+constexpr auto kJpFontTable = std::to_array<const JpFontFamilyRow>({
     {{"MS PGothic", "TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic"}},
     {{"MS Gothic", "TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic"}},
     {{"MS PMincho", "TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho"}},

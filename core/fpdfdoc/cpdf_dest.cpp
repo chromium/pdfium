@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpdf_dest.h"
 
 #include <algorithm>
+#include <array>
 #include <iterator>
 #include <utility>
 
@@ -15,18 +16,17 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "core/fxcrt/stl_util.h"
 
 namespace {
 
 // These arrays are indexed by the PDFDEST_VIEW_* constants.
 
 constexpr auto kZoomModes =
-    fxcrt::ToArray<const char*>({"Unknown", "XYZ", "Fit", "FitH", "FitV",
-                                 "FitR", "FitB", "FitBH", "FitBV"});
+    std::to_array<const char*>({"Unknown", "XYZ", "Fit", "FitH", "FitV", "FitR",
+                                "FitB", "FitBH", "FitBV"});
 
 constexpr auto kZoomModeMaxParamCount =
-    fxcrt::ToArray<const uint8_t>({0, 3, 0, 1, 1, 4, 0, 1, 1});
+    std::to_array<const uint8_t>({0, 3, 0, 1, 1, 4, 0, 1, 1});
 
 }  // namespace
 

@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/stl_util.h"
 
 namespace {
 
@@ -23,7 +22,7 @@ struct ArithIntDecodeData {
   int nValue;
 };
 
-constexpr auto kArithIntDecodeData = fxcrt::ToArray<ArithIntDecodeData>({
+constexpr auto kArithIntDecodeData = std::to_array<ArithIntDecodeData>({
     {2, 0},
     {4, 4},
     {6, 20},

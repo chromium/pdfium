@@ -99,7 +99,7 @@ enum FX_BIDINEUTRALACTION : uint16_t {
 };
 #undef PACK_NIBBLES
 
-constexpr auto kNTypes = fxcrt::ToArray<const FX_BIDICLASS>(
+constexpr auto kNTypes = std::to_array<const FX_BIDICLASS>(
     {FX_BIDICLASS::kN,   FX_BIDICLASS::kL,   FX_BIDICLASS::kR,
      FX_BIDICLASS::kAN,  FX_BIDICLASS::kEN,  FX_BIDICLASS::kAL,
      FX_BIDICLASS::kNSM, FX_BIDICLASS::kCS,  FX_BIDICLASS::kES,

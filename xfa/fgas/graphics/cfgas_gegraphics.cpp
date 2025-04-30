@@ -34,7 +34,7 @@ struct FX_HATCHDATA {
   uint8_t maskBits[64];
 };
 
-constexpr auto kHatchBitmapData = fxcrt::ToArray<const FX_HATCHDATA>({
+constexpr auto kHatchBitmapData = std::to_array<const FX_HATCHDATA>({
     {16,  // Horizontal
      16,
      {

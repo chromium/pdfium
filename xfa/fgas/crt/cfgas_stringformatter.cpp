@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <utility>
 #include <vector>
@@ -19,7 +20,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/notreached.h"
-#include "core/fxcrt/stl_util.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
 #include "xfa/fgas/crt/locale_mgr_iface.h"
 
@@ -68,7 +68,7 @@ struct FX_LOCALETIMEZONEINFO {
 };
 
 constexpr auto kFXLocaleTimeZoneData =
-    fxcrt::ToArray<const FX_LOCALETIMEZONEINFO>({
+    std::to_array<const FX_LOCALETIMEZONEINFO>({
         {L"CDT", -5, 0},
         {L"CST", -6, 0},
         {L"EDT", -4, 0},
@@ -577,7 +577,7 @@ uint16_t GetSolarMonthDays(uint16_t year, uint16_t month) {
 
 uint16_t GetWeekDay(uint16_t year, uint16_t month, uint16_t day) {
   static constexpr auto kMonthDay =
-      fxcrt::ToArray<const uint8_t>({0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5});
+      std::to_array<const uint8_t>({0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5});
   uint16_t nDays =
       (year - 1) % 7 + (year - 1) / 4 - (year - 1) / 100 + (year - 1) / 400;
   nDays += kMonthDay[month - 1] + day;

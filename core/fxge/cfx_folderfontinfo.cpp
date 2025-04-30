@@ -24,7 +24,6 @@
 #include "core/fxcrt/fx_folder.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 
@@ -35,7 +34,7 @@ struct FontSubst {
   const char* subst_name_;
 };
 
-constexpr auto kBase14Substs = fxcrt::ToArray<const FontSubst>({
+constexpr auto kBase14Substs = std::to_array<const FontSubst>({
     {"Courier", "Courier New"},
     {"Courier-Bold", "Courier New Bold"},
     {"Courier-BoldOblique", "Courier New Bold Italic"},

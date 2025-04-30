@@ -14,14 +14,13 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_numbertree.h"
-#include "core/fxcrt/stl_util.h"
 
 namespace {
 
 WideString MakeRoman(int num) {
-  static constexpr auto kArabic = fxcrt::ToArray<const int>(
+  static constexpr auto kArabic = std::to_array<const int>(
       {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1});
-  const auto kRoman = fxcrt::ToArray<const WideStringView>(
+  const auto kRoman = std::to_array<const WideStringView>(
       {L"m", L"cm", L"d", L"cd", L"c", L"xc", L"l", L"xl", L"x", L"ix", L"v",
        L"iv", L"i"});
   static constexpr int kMaxNum = 1000000;

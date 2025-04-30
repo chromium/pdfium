@@ -27,7 +27,7 @@ namespace {
 constexpr float kFontScale = 0.001f;
 constexpr uint8_t kReturnLength = 1;
 
-constexpr auto kFontSizeSteps = fxcrt::ToArray<const uint8_t>(
+constexpr auto kFontSizeSteps = std::to_array<const uint8_t>(
     {4,  6,  8,  9,  10, 12, 14, 18,  20,  25,  30,  35, 40,
      45, 50, 55, 60, 70, 80, 90, 100, 110, 120, 130, 144});
 
