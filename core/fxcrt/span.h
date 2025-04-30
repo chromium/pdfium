@@ -3,16 +3,18 @@
 // found in the LICENSE file.
 
 // This is Chromium's span.h with the following modificiations:
-// - namespace changed to pdfium
+// - namespace changed to pdfium.
+// - include removed for <span>.
 // - include paths changed for check.h, compiler_specific.h,
 //   integral_constant_like.h, and safe_conversions.h.
-// - include removed for checked_iterators.h,  cstring_view.h, to_string.h,
+// - include removed for checked_iterators.h, cstring_view.h, to_string.h,
 //   and to_address.h.
 // - span_forward_internal.h contents inlined in this file.
 // - iterator types changed from checked iterators to ordinary pointers,
-//   and adjusted begin(), end()
+//   and adjusted begin(), end().
 // - removed to_address() calls as iterators are now pointers.
 // - removed operator<<() that pretty-prints to std::stream.
+// - removed any code that references to std::span.
 // - removed any references to std::string_view.
 // - removed any references to base::cstring_view<>.
 // - Added reinterpret_span() helper.
@@ -39,7 +41,6 @@
 #include <memory>
 #include <optional>
 #include <ranges>
-#include <span>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -402,8 +403,6 @@ template <typename T>
 inline constexpr size_t kComputedExtentImpl<T> = std::tuple_size_v<T>;
 template <typename T, size_t N>
 inline constexpr size_t kComputedExtentImpl<T[N]> = N;
-template <typename T, size_t N>
-inline constexpr size_t kComputedExtentImpl<std::span<T, N>> = N;
 template <typename T, size_t N, typename InternalPtrType>
 inline constexpr size_t kComputedExtentImpl<span<T, N, InternalPtrType>> = N;
 template <typename T>
@@ -665,19 +664,6 @@ class GSL_POINTER span {
     } else {
       return first<N>().copy_from(other);
     }
-  }
-
-  // Implicit conversion to fixed-extent `std::span<>`. (The fixed-extent
-  // `std::span` range constructor is explicit.)
-  // NOLINTNEXTLINE(google-explicit-constructor)
-  operator std::span<element_type, extent>() const {
-    return std::span<element_type, extent>(*this);
-  }
-  // NOLINTNEXTLINE(google-explicit-constructor)
-  operator std::span<const element_type, extent>() const
-    requires(!std::is_const_v<element_type>)
-  {
-    return std::span<const element_type, extent>(*this);
   }
 
   // [span.sub]: Subviews
