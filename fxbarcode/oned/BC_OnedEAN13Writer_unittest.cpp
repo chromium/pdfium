@@ -4,10 +4,8 @@
 
 #include "fxbarcode/oned/BC_OnedEAN13Writer.h"
 
-#include <string.h>
-
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/span.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -23,7 +21,7 @@ TEST(OnedEAN13WriterTest, Encode) {
   EXPECT_TRUE(writer.Encode("123456789012").empty());
   EXPECT_TRUE(writer.Encode("12345678901234").empty());
 
-  static const char kExpected1[] =
+  static constexpr auto kExpected1 = pdfium::span_from_cstring(
       "# #"  // Start
       // 1 implicit by LLGLGG in next 6 digits
       "  #  ##"  // 2 L
@@ -39,12 +37,12 @@ TEST(OnedEAN13WriterTest, Encode) {
       "##  ## "  // 1 R
       "## ##  "  // 2 R
       "#  #   "  // 8 R
-      "# #";     // End
+      "# #");    // End
   DataVector<uint8_t> encoded = writer.Encode("1234567890128");
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
-    UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
+  for (size_t i = 0; i < kExpected1.size(); i++) {
+    EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i]) << i;
   }
-  static const char kExpected2[] =
+  static constexpr auto kExpected2 = pdfium::span_from_cstring(
       "# #"  // Start
       // 7 implicit by LGLGLG in next 6 digits
       " ### ##"  // 7 L
@@ -60,11 +58,11 @@ TEST(OnedEAN13WriterTest, Encode) {
       "# ###  "  // 4 R
       "# ###  "  // 4 R
       "###  # "  // 0 R
-      "# #";     // End
+      "# #");    // End
   encoded = writer.Encode("7776665554440");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected2)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected2)); i++) {
-    UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
+  ASSERT_EQ(kExpected2.size(), encoded.size());
+  for (size_t i = 0; i < kExpected2.size(); i++) {
+    EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i]) << i;
   }
 }
 

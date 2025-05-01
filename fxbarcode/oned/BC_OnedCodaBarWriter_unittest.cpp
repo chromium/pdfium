@@ -4,10 +4,8 @@
 
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
-#include <string.h>
-
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/span.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -15,63 +13,63 @@ namespace {
 TEST(OnedCodaBarWriterTest, Encode) {
   CBC_OnedCodaBarWriter writer;
 
-  static const char kExpected1[] =
-      "# ##  #  # "  // A Start
-      "#  #  # ##";  // B End
+  static constexpr auto kExpected1 = pdfium::span_from_cstring(
+      "# ##  #  # "   // A Start
+      "#  #  # ##");  // B End
   DataVector<uint8_t> encoded = writer.Encode("");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected1)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
-    UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
+  ASSERT_EQ(kExpected1.size(), encoded.size());
+  for (size_t i = 0; i < kExpected1.size(); i++) {
+    EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i]) << i;
   }
-  static const char kExpected2[] =
-      "# ##  #  # "  // A Start
-      "# # ##  # "   // 1
-      "# #  # ## "   // 2
-      "##  # # # "   // 3
-      "#  #  # ##";  // B End
+  static constexpr auto kExpected2 = pdfium::span_from_cstring(
+      "# ##  #  # "   // A Start
+      "# # ##  # "    // 1
+      "# #  # ## "    // 2
+      "##  # # # "    // 3
+      "#  #  # ##");  // B End
   encoded = writer.Encode("123");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected2)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected2)); i++) {
-    UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
+  ASSERT_EQ(kExpected2.size(), encoded.size());
+  for (size_t i = 0; i < kExpected2.size(); i++) {
+    EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i]) << i;
   }
-  static const char kExpected3[] =
-      "# ##  #  # "  // A Start
-      "# #  ## # "   // -
-      "# ##  # # "   // $
-      "## ## ## # "  // .
-      "## ## # ## "  // /
-      "## # ## ## "  // :
-      "# ## ## ## "  // +
-      "#  #  # ##";  // B End
+  static constexpr auto kExpected3 = pdfium::span_from_cstring(
+      "# ##  #  # "   // A Start
+      "# #  ## # "    // -
+      "# ##  # # "    // $
+      "## ## ## # "   // .
+      "## ## # ## "   // /
+      "## # ## ## "   // :
+      "# ## ## ## "   // +
+      "#  #  # ##");  // B End
   encoded = writer.Encode("-$./:+");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected3)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected3)); i++) {
-    UNSAFE_TODO(EXPECT_EQ(kExpected3[i] != ' ', !!encoded[i])) << i;
+  ASSERT_EQ(kExpected3.size(), encoded.size());
+  for (size_t i = 0; i < kExpected3.size(); i++) {
+    EXPECT_EQ(kExpected3[i] != ' ', !!encoded[i]) << i;
   }
-  static const char kExpected4[] =
-      "# ##  #  # "  // A Start
-      "# ## #  # "   // 4
-      "## # #  # "   // 5
-      "#  # # ## "   // 6
-      "## ## ## # "  // .
-      "## #  # # "   // 9
-      "#  ## # # "   // 8
-      "#  # ## # "   // 7
-      "## #  # # "   // 9
-      "#  ## # # "   // 8
-      "#  # ## # "   // 7
-      "## #  # # "   // 9
-      "#  ## # # "   // 8
-      "#  # ## # "   // 7
-      "## ## # ## "  // /
-      "# # #  ## "   // 0
-      "# # #  ## "   // 0
-      "# # ##  # "   // 1
-      "#  #  # ##";  // B End
+  static constexpr auto kExpected4 = pdfium::span_from_cstring(
+      "# ##  #  # "   // A Start
+      "# ## #  # "    // 4
+      "## # #  # "    // 5
+      "#  # # ## "    // 6
+      "## ## ## # "   // .
+      "## #  # # "    // 9
+      "#  ## # # "    // 8
+      "#  # ## # "    // 7
+      "## #  # # "    // 9
+      "#  ## # # "    // 8
+      "#  # ## # "    // 7
+      "## #  # # "    // 9
+      "#  ## # # "    // 8
+      "#  # ## # "    // 7
+      "## ## # ## "   // /
+      "# # #  ## "    // 0
+      "# # #  ## "    // 0
+      "# # ##  # "    // 1
+      "#  #  # ##");  // B End
   encoded = writer.Encode("456.987987987/001");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected4)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected4)); i++) {
-    UNSAFE_TODO(EXPECT_EQ(kExpected4[i] != ' ', !!encoded[i])) << i;
+  ASSERT_EQ(kExpected4.size(), encoded.size());
+  for (size_t i = 0; i < kExpected4.size(); i++) {
+    EXPECT_EQ(kExpected4[i] != ' ', !!encoded[i]) << i;
   }
 }
 
@@ -107,16 +105,16 @@ TEST(OnedCodaBarWriterTest, SetDelimiters) {
   EXPECT_TRUE(writer.SetStartChar('N'));
   EXPECT_TRUE(writer.SetEndChar('*'));
 
-  static const char kExpected[] =
-      "#  #  # ## "  // N (same as B) Start
-      "## #  # # "   // 9
-      "#  ## # # "   // 8
-      "#  # ## # "   // 7
-      "# #  #  ##";  // * (same as C) End
+  static constexpr auto kExpected = pdfium::span_from_cstring(
+      "#  #  # ## "   // N (same as B) Start
+      "## #  # # "    // 9
+      "#  ## # # "    // 8
+      "#  # ## # "    // 7
+      "# #  #  ##");  // * (same as C) End
   DataVector<uint8_t> encoded = writer.Encode("987");
-  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected)), encoded.size());
-  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected)); i++) {
-    UNSAFE_TODO(EXPECT_EQ(kExpected[i] != ' ', !!encoded[i])) << i;
+  ASSERT_EQ(kExpected.size(), encoded.size());
+  for (size_t i = 0; i < kExpected.size(); i++) {
+    EXPECT_EQ(kExpected[i] != ' ', !!encoded[i]) << i;
   }
 }
 

@@ -314,10 +314,11 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
 }
 
 FX_FILESIZE CPDF_Parser::ParseStartXRef() {
-  static constexpr char kStartXRefKeyword[] = "startxref";
-  syntax_->SetPos(syntax_->GetDocumentSize() -
-                  UNSAFE_TODO(strlen(kStartXRefKeyword)));
-  if (!syntax_->BackwardsSearchToWord(kStartXRefKeyword, 4096)) {
+  static constexpr auto kStartXRefKeyword =
+      pdfium::span_from_cstring("startxref");
+  syntax_->SetPos(syntax_->GetDocumentSize() - kStartXRefKeyword.size());
+  if (!syntax_->BackwardsSearchToWord(ByteStringView(kStartXRefKeyword),
+                                      4096)) {
     return 0;
   }
 

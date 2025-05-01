@@ -137,18 +137,18 @@ ByteString GetNativeFontName(FX_Charset charset, void* log_font) {
 
 ByteString GenerateNewFontResourceName(const CPDF_Dictionary* resource_dict,
                                        ByteString prefix) {
-  static const char kDummyFontName[] = "ZiTi";
+  static constexpr auto kDummyFontName = pdfium::span_from_cstring("ZiTi");
   if (prefix.IsEmpty()) {
-    prefix = kDummyFontName;
+    prefix = ByteStringView(kDummyFontName);
   }
 
   const size_t prefix_length = prefix.GetLength();
   size_t m = 0;
   ByteString actual_prefix;
-  while (m < UNSAFE_TODO(strlen(kDummyFontName)) && m < prefix_length) {
+  while (m < kDummyFontName.size() && m < prefix_length) {
     actual_prefix += prefix[m++];
   }
-  while (m < UNSAFE_TODO(strlen(kDummyFontName))) {
+  while (m < kDummyFontName.size()) {
     actual_prefix += '0' + m % 10;
     m++;
   }
