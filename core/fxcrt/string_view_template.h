@@ -191,8 +191,8 @@ class StringViewTemplate {
     return reinterpret_cast<const CharType*>(span_.data());
   }
 
-  size_t GetLength() const { return span_.size(); }
-  bool IsEmpty() const { return span_.empty(); }
+  constexpr size_t GetLength() const { return span_.size(); }
+  constexpr bool IsEmpty() const { return span_.empty(); }
   bool IsValidIndex(size_t index) const { return index < span_.size(); }
   bool IsValidLength(size_t length) const { return length <= span_.size(); }
 

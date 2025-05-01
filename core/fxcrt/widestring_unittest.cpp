@@ -1471,6 +1471,16 @@ TEST(WideString, FromDefANSI) {
                                              "y"));
 }
 
+TEST(WideStringView, ConstexprCtors) {
+  static constexpr WideStringView null_string;
+  static_assert(null_string.GetLength() == 0);
+  static_assert(null_string.IsEmpty());
+
+  static constexpr WideStringView copied_null_string(null_string);
+  static_assert(copied_null_string.GetLength() == 0);
+  static_assert(copied_null_string.IsEmpty());
+}
+
 TEST(WideStringView, FromVector) {
   std::vector<WideStringView::UnsignedType> null_vec;
   WideStringView null_string(null_vec);
