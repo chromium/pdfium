@@ -102,24 +102,6 @@ inline bool try_spanmove(pdfium::span<T1, N1, P1> dst,
   return true;
 }
 
-// Bounds-checked byte-for-byte equality of same-sized spans. This is
-// helpful because span does not (yet) have an operator==().
-template <typename T1,
-          typename T2,
-          size_t N1,
-          size_t N2,
-          typename P1,
-          typename P2>
-  requires(sizeof(T1) == sizeof(T2) && std::is_trivially_copyable_v<T1> &&
-           std::is_trivially_copyable_v<T2>)
-bool span_equals(pdfium::span<T1, N1, P1> s1, pdfium::span<T2, N2, P2> s2) {
-  // SAFETY: For both `s1` and `s2`, there are `size_bytes()` valid bytes at
-  // the corresponding `data()`, and the sizes are the same.
-  return s1.size_bytes() == s2.size_bytes() &&
-         UNSAFE_BUFFERS(FXSYS_memcmp(s1.data(), s2.data(), s1.size_bytes())) ==
-             0;
-}
-
 // Returns the first position where `needle` occurs in `haystack`.
 template <typename T, typename U, size_t TS, size_t US>
   requires(sizeof(T) == sizeof(U) && std::is_trivially_copyable_v<T> &&
@@ -133,8 +115,7 @@ std::optional<size_t> spanpos(pdfium::span<T, TS> haystack,
   // a full match to occur.
   size_t end_pos = haystack.size() - needle.size();
   for (size_t haystack_pos = 0; haystack_pos <= end_pos; ++haystack_pos) {
-    auto candidate = haystack.subspan(haystack_pos, needle.size());
-    if (fxcrt::span_equals(candidate, needle)) {
+    if (haystack.subspan(haystack_pos, needle.size()) == needle) {
       return haystack_pos;
     }
   }

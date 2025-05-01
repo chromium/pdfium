@@ -5,16 +5,15 @@
 #include "core/fpdfapi/font/cpdf_cmapparser.h"
 
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/span_util.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
 
 // Helps with default construction of the appropriate span rather than
-// writing span() and using span_equal() directly.
+// writing span() and using operator== directly.
 bool uint_ranges_equal(pdfium::span<const uint8_t> a,
                        pdfium::span<const uint8_t> b) {
-  return fxcrt::span_equals(a, b);
+  return a == b;
 }
 
 }  // namespace
