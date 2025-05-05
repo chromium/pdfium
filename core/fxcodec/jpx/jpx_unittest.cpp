@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <type_traits>
 
@@ -18,13 +19,19 @@
 
 namespace fxcodec {
 
-static const OPJ_OFF_T kSkipError = static_cast<OPJ_OFF_T>(-1);
-static const OPJ_SIZE_T kReadError = static_cast<OPJ_SIZE_T>(-1);
+namespace {
 
-static const uint8_t kStreamData[] = {
+constexpr OPJ_OFF_T kSkipError = static_cast<OPJ_OFF_T>(-1);
+constexpr OPJ_SIZE_T kReadError = static_cast<OPJ_SIZE_T>(-1);
+
+constexpr auto kStreamData = std::to_array<const uint8_t>({
+    // clang-format off
     0x00, 0x01, 0x02, 0x03,
     0x84, 0x85, 0x86, 0x87,  // Include some hi-bytes, too.
-};
+    // clang-format on
+});
+
+}  // namespace
 
 TEST(fxcodec, DecodeDataNullDecodeData) {
   uint8_t buffer[16];
