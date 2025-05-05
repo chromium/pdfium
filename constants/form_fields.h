@@ -8,26 +8,32 @@
 namespace pdfium {
 namespace form_fields {
 
-extern const char kFT[];
-extern const char kParent[];
-extern const char kKids[];
-extern const char kT[];
-extern const char kTU[];
-extern const char kTM[];
-extern const char kFf[];
-extern const char kV[];
-extern const char kDV[];
-extern const char kAA[];
+// ISO 32000-1:2008 table 220.
+// Entries common to all field dictionaries.
+inline constexpr char kFT[] = "FT";
+inline constexpr char kParent[] = "Parent";
+inline constexpr char kKids[] = "Kids";
+inline constexpr char kT[] = "T";
+inline constexpr char kTU[] = "TU";
+inline constexpr char kTM[] = "TM";
+inline constexpr char kFf[] = "Ff";
+inline constexpr char kV[] = "V";
+inline constexpr char kDV[] = "DV";
+inline constexpr char kAA[] = "AA";
 
-extern const char kBtn[];
-extern const char kTx[];
-extern const char kCh[];
-extern const char kSig[];
+// ISO 32000-1:2008 table 220.
+// Values for FT keyword.
+inline constexpr char kBtn[] = "Btn";
+inline constexpr char kTx[] = "Tx";
+inline constexpr char kCh[] = "Ch";
+inline constexpr char kSig[] = "Sig";
 
-extern const char kDA[];
-extern const char kQ[];
-extern const char kDS[];
-extern const char kRV[];
+// ISO 32000-1:2008 table 222.
+// Entries common to fields containing variable text.
+inline constexpr char kDA[] = "DA";
+inline constexpr char kQ[] = "Q";
+inline constexpr char kDS[] = "DS";
+inline constexpr char kRV[] = "RV";
 
 }  // namespace form_fields
 }  // namespace pdfium

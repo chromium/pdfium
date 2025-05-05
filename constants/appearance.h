@@ -8,15 +8,17 @@
 namespace pdfium {
 namespace appearance {
 
-extern const char kR[];
-extern const char kBC[];
-extern const char kBG[];
-extern const char kCA[];
-extern const char kRC[];
-extern const char kAC[];
-extern const char kI[];
-extern const char kRI[];
-extern const char kIX[];
+// ISO 32000-1:2008 spec, table 189.
+// Entries in an appearance characteristics dictionary.
+inline constexpr char kR[] = "R";
+inline constexpr char kBC[] = "BC";
+inline constexpr char kBG[] = "BG";
+inline constexpr char kCA[] = "CA";
+inline constexpr char kRC[] = "RC";
+inline constexpr char kAC[] = "AC";
+inline constexpr char kI[] = "I";
+inline constexpr char kRI[] = "RI";
+inline constexpr char kIX[] = "IX";
 
 }  // namespace appearance
 }  // namespace pdfium

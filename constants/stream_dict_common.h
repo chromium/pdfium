@@ -8,11 +8,16 @@
 namespace pdfium {
 namespace stream {
 
-extern const char kLength[];
-extern const char kFilter[];
-extern const char kDecodeParms[];
-extern const char kF[];
-extern const char kDL[];
+// PDF 1.7 spec, table 3.4.
+// Entries common to all stream dictionaries.
+//
+// TODO(https://crbug.com/pdfium/1049): Examine all usages of "Length",
+// "Filter", and "F".
+inline constexpr char kLength[] = "Length";
+inline constexpr char kFilter[] = "Filter";
+inline constexpr char kDecodeParms[] = "DecodeParms";
+inline constexpr char kF[] = "F";
+inline constexpr char kDL[] = "DL";
 
 }  // namespace stream
 }  // namespace pdfium

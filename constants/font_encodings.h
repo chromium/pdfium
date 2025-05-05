@@ -8,10 +8,11 @@
 namespace pdfium {
 namespace font_encodings {
 
-extern const char kMacRomanEncoding[];
-extern const char kWinAnsiEncoding[];
-extern const char kPDFDocEncoding[];
-extern const char kMacExpertEncoding[];
+// ISO 32000-1:2008 spec, table D1.
+inline constexpr char kMacRomanEncoding[] = "MacRomanEncoding";
+inline constexpr char kWinAnsiEncoding[] = "WinAnsiEncoding";
+inline constexpr char kPDFDocEncoding[] = "PDFDocEncoding";
+inline constexpr char kMacExpertEncoding[] = "MacExpertEncoding";
 
 }  // namespace font_encodings
 }  // namespace pdfium

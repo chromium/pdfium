@@ -8,34 +8,42 @@
 namespace pdfium {
 namespace transparency {
 
-extern const char kNormal[];
-extern const char kMultiply[];
-extern const char kScreen[];
-extern const char kOverlay[];
-extern const char kDarken[];
-extern const char kLighten[];
-extern const char kColorDodge[];
-extern const char kColorBurn[];
-extern const char kHardLight[];
-extern const char kSoftLight[];
-extern const char kDifference[];
-extern const char kExclusion[];
+// PDF 1.7 spec, table 7.2.
+// Standard separable blend modes.
+inline constexpr char kNormal[] = "Normal";
+inline constexpr char kMultiply[] = "Multiply";
+inline constexpr char kScreen[] = "Screen";
+inline constexpr char kOverlay[] = "Overlay";
+inline constexpr char kDarken[] = "Darken";
+inline constexpr char kLighten[] = "Lighten";
+inline constexpr char kColorDodge[] = "ColorDodge";
+inline constexpr char kColorBurn[] = "ColorBurn";
+inline constexpr char kHardLight[] = "HardLight";
+inline constexpr char kSoftLight[] = "SoftLight";
+inline constexpr char kDifference[] = "Difference";
+inline constexpr char kExclusion[] = "Exclusion";
 
-extern const char kHue[];
-extern const char kSaturation[];
-extern const char kColor[];
-extern const char kLuminosity[];
+// PDF 1.7 spec, table 7.3.
+// Standard nonseparable blend modes.
+inline constexpr char kHue[] = "Hue";
+inline constexpr char kSaturation[] = "Saturation";
+inline constexpr char kColor[] = "Color";
+inline constexpr char kLuminosity[] = "Luminosity";
 
-extern const char kSoftMaskSubType[];
-extern const char kAlpha[];
-extern const char kG[];
-extern const char kBC[];
-extern const char kTR[];
+// PDF 1.7 spec, table 7.10.
+// Entries in a soft-mask dictionary.
+inline constexpr char kSoftMaskSubType[] = "S";
+inline constexpr char kAlpha[] = "Alpha";
+inline constexpr char kG[] = "G";
+inline constexpr char kBC[] = "BC";
+inline constexpr char kTR[] = "TR";
 
-extern const char kGroupSubType[];
-extern const char kTransparency[];
-extern const char kCS[];
-extern const char kI[];
+// PDF 1.7 spec, table 7.13.
+// Additional entries specific to a transparency group attributes dictionary.
+inline constexpr char kGroupSubType[] = "S";
+inline constexpr char kTransparency[] = "Transparency";
+inline constexpr char kCS[] = "CS";
+inline constexpr char kI[] = "I";
 
 }  // namespace transparency
 }  // namespace pdfium
