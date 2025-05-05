@@ -115,17 +115,12 @@ class StringViewTemplate {
     return const_reverse_iterator(begin());
   }
 
-  bool operator==(const StringViewTemplate& other) const {
-    return std::equal(span_.begin(), span_.end(), other.span_.begin(),
-                      other.span_.end());
+  friend bool operator==(const StringViewTemplate& lhs,
+                         const StringViewTemplate& rhs) {
+    return lhs.span_ == rhs.span_;
   }
-  bool operator==(const CharType* ptr) const {
-    StringViewTemplate other(ptr);
-    return *this == other;
-  }
-  bool operator!=(const CharType* ptr) const { return !(*this == ptr); }
-  bool operator!=(const StringViewTemplate& other) const {
-    return !(*this == other);
+  friend bool operator==(const StringViewTemplate& lhs, const CharType* ptr) {
+    return lhs == StringViewTemplate(ptr);
   }
 
   bool IsASCII() const {
@@ -309,14 +304,6 @@ class StringViewTemplate {
   void* operator new(size_t) throw() { return nullptr; }
 };
 
-template <typename T>
-inline bool operator==(const T* lhs, const StringViewTemplate<T>& rhs) {
-  return rhs == lhs;
-}
-template <typename T>
-inline bool operator!=(const T* lhs, const StringViewTemplate<T>& rhs) {
-  return rhs != lhs;
-}
 template <typename T>
 inline bool operator<(const T* lhs, const StringViewTemplate<T>& rhs) {
   return rhs > lhs;
