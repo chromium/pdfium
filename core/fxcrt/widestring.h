@@ -76,13 +76,14 @@ class WideString : public StringTemplate<wchar_t> {
   WideString& operator+=(const WideString& str);
   WideString& operator+=(WideStringView str);
 
-  bool operator==(const wchar_t* ptr) const;
-  bool operator==(WideStringView str) const;
-  bool operator==(const WideString& other) const;
-
-  bool operator!=(const wchar_t* ptr) const { return !(*this == ptr); }
-  bool operator!=(WideStringView str) const { return !(*this == str); }
-  bool operator!=(const WideString& other) const { return !(*this == other); }
+  // TODO(tsepez): The wchar_t* form should be UNSAFE_BUFFER_USAGE.
+  friend bool operator==(const WideString& lhs, const wchar_t* rhs);
+  friend bool operator==(const WideString& lhs, WideStringView rhs) {
+    return lhs.AsStringView() == rhs;
+  }
+  friend bool operator==(const WideString& lhs, const WideString& rhs) {
+    return lhs.AsStringView() == rhs.AsStringView();
+  }
 
   bool operator<(const wchar_t* ptr) const;
   bool operator<(WideStringView str) const;
@@ -173,18 +174,6 @@ inline WideString operator+(const WideString& str1, WideStringView str2) {
 }
 inline WideString operator+(WideStringView str1, const WideString& str2) {
   return WideString(str1, str2.AsStringView());
-}
-inline bool operator==(const wchar_t* lhs, const WideString& rhs) {
-  return rhs == lhs;
-}
-inline bool operator==(WideStringView lhs, const WideString& rhs) {
-  return rhs == lhs;
-}
-inline bool operator!=(const wchar_t* lhs, const WideString& rhs) {
-  return rhs != lhs;
-}
-inline bool operator!=(WideStringView lhs, const WideString& rhs) {
-  return rhs != lhs;
 }
 inline bool operator<(const wchar_t* lhs, const WideString& rhs) {
   return rhs.Compare(lhs) > 0;

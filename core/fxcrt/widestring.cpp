@@ -525,52 +525,16 @@ WideString& WideString::operator+=(WideStringView str) {
   return *this;
 }
 
-// Should be UNSAFE_BUFFER_USAGE.
-bool WideString::operator==(const wchar_t* ptr) const {
-  if (!data_) {
-    return !ptr || !ptr[0];
+bool operator==(const WideString& lhs, const wchar_t* rhs) {
+  if (lhs.IsEmpty()) {
+    return !rhs || !rhs[0];
   }
-  if (!ptr) {
-    return data_->data_length_ == 0;
-  }
-
-  // SAFTEY: `wsclen()` comparison (whose own safety depends upoon the caller)
-  // ensures there are `data_length_` wchars at `ptr` before the terminator,
-  // and `data_length_` is within `string_`.
-  return UNSAFE_BUFFERS(wcslen(ptr)) == data_->data_length_ &&
-         UNSAFE_BUFFERS(
-             FXSYS_wmemcmp(ptr, data_->string_, data_->data_length_)) == 0;
-}
-
-bool WideString::operator==(WideStringView str) const {
-  if (!data_) {
-    return str.IsEmpty();
-  }
-
-  // SAFTEY: Comparison ensure there are `data_length_` wchars in `str`
-  // and `data_length_ is within `string_`.
-  return data_->data_length_ == str.GetLength() &&
-         UNSAFE_BUFFERS(FXSYS_wmemcmp(data_->string_, str.unterminated_c_str(),
-                                      str.GetLength())) == 0;
-}
-
-bool WideString::operator==(const WideString& other) const {
-  if (data_ == other.data_) {
-    return true;
-  }
-
-  if (IsEmpty()) {
-    return other.IsEmpty();
-  }
-
-  if (other.IsEmpty()) {
+  if (!rhs) {
     return false;
   }
 
-  // SAFETY: data_length_ bytes available at string_.
-  return other.data_->data_length_ == data_->data_length_ &&
-         UNSAFE_BUFFERS(FXSYS_wmemcmp(other.data_->string_, data_->string_,
-                                      data_->data_length_)) == 0;
+  // SAFTEY: required from caller.
+  return UNSAFE_BUFFERS(wcscmp(lhs.data_->string_, rhs)) == 0;
 }
 
 bool WideString::operator<(const wchar_t* ptr) const {
