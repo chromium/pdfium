@@ -20,6 +20,7 @@
 
 namespace {
 
+// PRECONDITIONS: `buffer` must point to `buflen` valid bytes.
 UNSAFE_BUFFER_USAGE unsigned long WideStringToBuffer(const WideString& str,
                                                      void* buffer,
                                                      unsigned long buflen) {

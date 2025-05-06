@@ -131,6 +131,7 @@ class FixedSizeDataVector {
   pdfium::span<const T> last(size_t count) const { return span().last(count); }
 
  private:
+  // PRECONDITIONS: `ptr` must point to `size` consecutive T elements.
   UNSAFE_BUFFER_USAGE FixedSizeDataVector(T* ptr, size_t size)
       : data_(ptr), size_(size) {}
 

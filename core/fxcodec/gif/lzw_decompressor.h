@@ -42,6 +42,8 @@ class LZWDecompressor {
   void SetSource(pdfium::span<const uint8_t> src_buf) {
     avail_input_ = src_buf;
   }
+
+  // PRECONDITIONS: `dest_buf` must point to memory of `*dest_size` bytes.
   UNSAFE_BUFFER_USAGE Status Decode(uint8_t* dest_buf, uint32_t* dest_size);
 
   // Used by unittests, should not be called in production code.

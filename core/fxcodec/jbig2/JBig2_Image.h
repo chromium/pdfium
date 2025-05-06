@@ -48,8 +48,9 @@ class CJBig2_Image {
   int GetPixel(int32_t x, int32_t y) const;
   void SetPixel(int32_t x, int32_t y, int v);
 
-  // SAFETY: propogated to caller via UNSAFE_BUFFER_USAGE.
+  // PRECONDITIONS: `y` must refer to a line within the image.
   UNSAFE_BUFFER_USAGE uint8_t* GetLineUnsafe(int32_t y) const {
+    // SAFETY: propogated to caller via UNSAFE_BUFFER_USAGE.
     return UNSAFE_BUFFERS(data() + y * stride_);
   }
 

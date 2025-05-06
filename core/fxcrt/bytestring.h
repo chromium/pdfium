@@ -36,6 +36,7 @@ class ByteString : public StringTemplate<char> {
 
   ~ByteString() = default;
 
+  // PRECONDITIONS: `pStr` must point to `len` valid bytes.
   UNSAFE_BUFFER_USAGE ByteString(const char* pStr, size_t len);
   UNSAFE_BUFFER_USAGE ByteString(const uint8_t* pStr, size_t len);
 

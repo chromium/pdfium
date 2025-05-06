@@ -211,32 +211,36 @@ constexpr FX_CMYK CmykEncode(uint32_t c, uint32_t m, uint32_t y, uint32_t k) {
   ((uint8_t)(argb >> 16) | ((uint8_t)(argb >> 8)) << 8 | \
    ((uint8_t)(argb)) << 16 | ((uint8_t)(argb >> 24) << 24))
 
-// SAFETY: Caller must ensure 4 valid bytes at `p`.
+// PRECONDITIONS: Caller must ensure 4 valid bytes at `p`.
 UNSAFE_BUFFER_USAGE inline FX_ARGB FXARGB_GetDIB(const uint8_t* p) {
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
   return ArgbEncode(UNSAFE_BUFFERS(p[3]), UNSAFE_BUFFERS(p[2]),
                     UNSAFE_BUFFERS(p[1]), UNSAFE_BUFFERS(p[0]));
 }
 
-// SAFETY: Caller must ensure 4 valid bytes at `p`.
+// PRECONDITIONS: Caller must ensure 4 valid bytes at `p`.
 UNSAFE_BUFFER_USAGE inline void FXARGB_SetDIB(uint8_t* p, uint32_t argb) {
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
   UNSAFE_BUFFERS(p[0]) = FXARGB_B(argb);
   UNSAFE_BUFFERS(p[1]) = FXARGB_G(argb);
   UNSAFE_BUFFERS(p[2]) = FXARGB_R(argb);
   UNSAFE_BUFFERS(p[3]) = FXARGB_A(argb);
 }
 
-// SAFETY: Caller must ensure 4 valid bytes at `p`.
+// PRECONDITIONS: Caller must ensure 4 valid bytes at `p`.
 UNSAFE_BUFFER_USAGE inline void FXARGB_SetRGBOrderDIB(uint8_t* p,
                                                       uint32_t argb) {
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
   UNSAFE_BUFFERS(p[0]) = FXARGB_R(argb);
   UNSAFE_BUFFERS(p[1]) = FXARGB_G(argb);
   UNSAFE_BUFFERS(p[2]) = FXARGB_B(argb);
   UNSAFE_BUFFERS(p[3]) = FXARGB_A(argb);
 }
 
-// SAFETY: Caller must ensure 3 valid bytes at `dest` and `src`.
+// PRECONDITIONS: Caller must ensure 3 valid bytes at `dest` and `src`.
 UNSAFE_BUFFER_USAGE inline void ReverseCopy3Bytes(uint8_t* dest,
                                                   const uint8_t* src) {
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
   UNSAFE_BUFFERS(dest[2] = src[0]);
   UNSAFE_BUFFERS(dest[1] = src[1]);
   UNSAFE_BUFFERS(dest[0] = src[2]);

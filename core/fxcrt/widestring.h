@@ -40,6 +40,7 @@ class WideString : public StringTemplate<wchar_t> {
 
   ~WideString() = default;
 
+  // PRECONDITIONS: `pStr` must point to `len` valid wchars.
   UNSAFE_BUFFER_USAGE WideString(const wchar_t* pStr, size_t len);
 
   // Make a one-character string from one wide char.

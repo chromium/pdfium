@@ -274,15 +274,18 @@ void ValidateBitmapPremultiplyState(CFX_DIBitmap* bitmap);
 
 CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle);
 
+// PRECONDITIONS: `wide_string` must be terminated by a NUL FPDF_WCHAR.
 UNSAFE_BUFFER_USAGE ByteString
 ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
+// PRECONDITIONS: `wide_string` must be terminated by a NUL FPDF_WCHAR.
 UNSAFE_BUFFER_USAGE WideString
 WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
 // Public APIs are not consistent w.r.t. the type used to represent buffer
 // length, while internal code generally expects size_t. Use StrictNumeric here
 // to make sure the length types fit in a size_t.
+// PRECONDITIONS: `buffer` must point to `buflen` valid bytes.
 UNSAFE_BUFFER_USAGE pdfium::span<char> SpanFromFPDFApiArgs(
     void* buffer,
     pdfium::StrictNumeric<size_t> buflen);

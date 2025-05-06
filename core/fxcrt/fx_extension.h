@@ -29,6 +29,7 @@
 
 float FXSYS_wcstof(WideStringView pwsStr, size_t* pUsedLen);
 
+// PRECONDITIONS: `dstStr` and `srcStr` must point to `count` valid wchars.
 UNSAFE_BUFFER_USAGE wchar_t* FXSYS_wcsncpy(wchar_t* dstStr,
                                            const wchar_t* srcStr,
                                            size_t count);
