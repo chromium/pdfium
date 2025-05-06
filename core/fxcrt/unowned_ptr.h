@@ -149,9 +149,9 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   ~UnownedPtr() { obj_ = nullptr; }
 
   friend inline bool operator==(const UnownedPtr& lhs, std::nullptr_t rhs) {
-    return obj_ == nullptr;
+    return lhs.obj_ == nullptr;
   }
-  friend inline bool operator==(const UnownedPtr& rhs, const UnownedPtr& rhs) {
+  friend inline bool operator==(const UnownedPtr& lhs, const UnownedPtr& rhs) {
     return lhs.obj_ == rhs.obj_;
   }
   bool operator<(const UnownedPtr& that) const {
