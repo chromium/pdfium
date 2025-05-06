@@ -180,7 +180,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling nasm_source
   # and whatever else without interference from each other.
-  'nasm_source_revision': '767a169c8811b090df222a458b25dfa137fc637e',
+  'nasm_source_revision': '9f916e90e6fc34ec302573f6ce147e43e33d68ca',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Ninja CIPD package version
   # and whatever else without interference from each other.
