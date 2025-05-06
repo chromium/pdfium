@@ -21,14 +21,6 @@ class CodePointView final {
    public:
     ~Iterator();
 
-    bool operator==(const Iterator& other) const {
-      return current_ == other.current_;
-    }
-
-    bool operator!=(const Iterator& other) const {
-      return current_ != other.current_;
-    }
-
     Iterator& operator++() {
       current_ = next_;
       code_point_ = Decode();
@@ -38,6 +30,10 @@ class CodePointView final {
     char32_t operator*() const {
       DCHECK_NE(kSentinel, code_point_);
       return code_point_;
+    }
+
+    friend inline bool operator==(const Iterator& lhs, const Iterator& rhs) {
+      return lhs.current_ == rhs.current_;
     }
 
    private:

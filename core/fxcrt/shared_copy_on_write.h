@@ -51,12 +51,11 @@ class SharedCopyOnWrite {
     return object_.Get();
   }
 
-  bool operator==(const SharedCopyOnWrite& that) const {
-    return object_ == that.object_;
+  friend inline bool operator==(const SharedCopyOnWrite& lhs,
+                                const SharedCopyOnWrite& rhs) {
+    return lhs.object_ == rhs.object_;
   }
-  bool operator!=(const SharedCopyOnWrite& that) const {
-    return !(*this == that);
-  }
+
   explicit operator bool() const { return !!object_; }
 
  private:

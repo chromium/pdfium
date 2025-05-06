@@ -72,7 +72,7 @@ class CFX_DateTime {
   uint16_t GetMillisecond() const { return millisecond_; }
   int32_t GetDayOfWeek() const;
 
-  bool operator==(const CFX_DateTime& other) const;
+  friend bool operator==(const CFX_DateTime& lhs, const CFX_DateTime& rhs);
 
  private:
   int32_t year_ = 0;

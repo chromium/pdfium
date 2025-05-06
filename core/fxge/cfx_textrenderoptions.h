@@ -49,9 +49,4 @@ inline bool operator==(const CFX_TextRenderOptions& lhs,
          lhs.native_text == rhs.native_text;
 }
 
-inline bool operator!=(const CFX_TextRenderOptions& lhs,
-                       const CFX_TextRenderOptions& rhs) {
-  return !(lhs == rhs);
-}
-
 #endif  // CORE_FXGE_CFX_TEXTRENDEROPTIONS_H_

@@ -37,8 +37,9 @@ class WeakPtr {
     handle_ = that.handle_;
     return *this;
   }
-  bool operator==(const WeakPtr& that) const { return handle_ == that.handle_; }
-  bool operator!=(const WeakPtr& that) const { return !(*this == that); }
+  friend inline bool operator==(const WeakPtr& lhs, const WeakPtr& rhs) {
+    return lhs.handle_ == rhs.handle_;
+  }
 
   T* Get() const { return handle_ ? handle_->Get() : nullptr; }
   void DeleteObject() {

@@ -84,13 +84,15 @@ class MaybeOwned {
     return *this;
   }
 
-  bool operator==(const MaybeOwned& that) const { return Get() == that.Get(); }
-  bool operator==(const OwnedType& ptr) const { return Get() == ptr.get(); }
-  bool operator==(T* ptr) const { return Get() == ptr; }
-
-  bool operator!=(const MaybeOwned& that) const { return !(*this == that); }
-  bool operator!=(const OwnedType ptr) const { return !(*this == ptr); }
-  bool operator!=(T* ptr) const { return !(*this == ptr); }
+  friend inline bool operator==(const MaybeOwned& lhs, const MaybeOwned& rhs) {
+    return lhs.Get() == rhs.Get();
+  }
+  friend inline bool operator==(const MaybeOwned& lhs, const OwnedType& rhs) {
+    return lhs.Get() == rhs.get();
+  }
+  friend inline bool operator==(const MaybeOwned& lhs, T* rhs) {
+    return lhs.Get() == rhs;
+  }
 
   explicit operator bool() const { return !!Get(); }
   T& operator*() const { return *Get(); }

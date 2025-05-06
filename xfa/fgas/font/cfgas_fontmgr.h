@@ -79,8 +79,9 @@ struct CFGAS_FontDescriptorInfo {
   bool operator<(const CFGAS_FontDescriptorInfo& other) const {
     return nPenalty < other.nPenalty;
   }
-  bool operator==(const CFGAS_FontDescriptorInfo& other) const {
-    return nPenalty == other.nPenalty;
+  friend inline bool operator==(const CFGAS_FontDescriptorInfo& lhs,
+                                const CFGAS_FontDescriptorInfo& rhs) {
+    return lhs.nPenalty == rhs.nPenalty;
   }
 };
 

@@ -26,12 +26,15 @@ class CPDF_ClipPath {
   CPDF_ClipPath& operator=(const CPDF_ClipPath& that);
   ~CPDF_ClipPath();
 
+  friend inline bool operator==(const CPDF_ClipPath& lhs,
+                                const CPDF_ClipPath& rhs) {
+    return lhs.ref_ == rhs.ref_;
+  }
+
   void Emplace() { ref_.Emplace(); }
   void SetNull() { ref_.SetNull(); }
 
   bool HasRef() const { return !!ref_; }
-  bool operator==(const CPDF_ClipPath& that) const { return ref_ == that.ref_; }
-  bool operator!=(const CPDF_ClipPath& that) const { return !(*this == that); }
 
   size_t GetPathCount() const;
   CPDF_Path GetPath(size_t i) const;

@@ -68,8 +68,4 @@ inline bool operator==(const CFX_Color& c1, const CFX_Color& c2) {
          c1.fColor4 - c2.fColor4 < 0.0001 && c1.fColor4 - c2.fColor4 > -0.0001;
 }
 
-inline bool operator!=(const CFX_Color& c1, const CFX_Color& c2) {
-  return !(c1 == c2);
-}
-
 #endif  // CORE_FXGE_CFX_COLOR_H_

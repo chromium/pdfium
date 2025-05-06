@@ -128,17 +128,13 @@ class TRIVIAL_ABI RetainPtr {
   T* Leak() { return obj_.release(); }
   void Unleak(T* ptr) { obj_.reset(ptr); }
 
-  bool operator==(const RetainPtr& that) const { return Get() == that.Get(); }
-  bool operator!=(const RetainPtr& that) const { return !(*this == that); }
-
-  template <typename U>
-  bool operator==(const U& that) const {
-    return Get() == that;
+  friend inline bool operator==(const RetainPtr& lhs, const RetainPtr& rhs) {
+    return lhs.Get() == rhs.Get();
   }
 
   template <typename U>
-  bool operator!=(const U& that) const {
-    return !(*this == that);
+  friend inline bool operator==(const RetainPtr& lhs, const U& rhs) {
+    return lhs.Get() == rhs;
   }
 
   bool operator<(const RetainPtr& that) const {

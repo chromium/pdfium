@@ -24,8 +24,9 @@ class CPDF_ObjectStream {
     ObjectInfo(uint32_t obj_num, uint32_t obj_offset)
         : obj_num(obj_num), obj_offset(obj_offset) {}
 
-    bool operator==(const ObjectInfo& that) const {
-      return obj_num == that.obj_num && obj_offset == that.obj_offset;
+    friend inline bool operator==(const ObjectInfo& lhs,
+                                  const ObjectInfo& rhs) {
+      return lhs.obj_num == rhs.obj_num && lhs.obj_offset == rhs.obj_offset;
     }
 
     uint32_t obj_num;
