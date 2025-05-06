@@ -44,8 +44,7 @@ class CPDF_StreamParser {
                                         uint32_t dwRecursionLevel);
   RetainPtr<CPDF_Stream> ReadInlineStream(CPDF_Document* pDoc,
                                           RetainPtr<CPDF_Dictionary> pDict,
-                                          const CPDF_Object* pCSObj,
-                                          uint32_t stream_length);
+                                          const CPDF_Object* pCSObj);
 
  private:
   friend class CPDFStreamParserTest_ReadHexString_Test;
