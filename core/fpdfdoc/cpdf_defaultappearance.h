@@ -17,7 +17,8 @@ class CPDF_SimpleParser;
 class CPDF_DefaultAppearance {
  public:
   explicit CPDF_DefaultAppearance(const ByteString& csDA);
-  CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA);
+  CPDF_DefaultAppearance(const CPDF_DefaultAppearance&) = delete;
+  CPDF_DefaultAppearance& operator=(const CPDF_DefaultAppearance&) = delete;
   ~CPDF_DefaultAppearance();
 
   std::optional<ByteString> GetFont(float* fFontSize) const;
