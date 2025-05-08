@@ -3871,3 +3871,66 @@ TEST_F(FPDFAnnotEmbedderTest, BadCasesFileAttachmentAnnotation) {
               FPDFAnnot_AddFileAttachment(annot.get(), not_empty_name.get()));
   }
 }
+
+TEST_F(FPDFAnnotEmbedderTest, SetFormFieldFlags) {
+  ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    int flags = FPDFAnnot_GetFormFieldFlags(form_handle(), annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_REQUIRED);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_NOEXPORT);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_TEXT_MULTILINE);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_TEXT_PASSWORD);
+
+    int new_flags = FPDF_FORMFLAG_READONLY | FPDF_FORMFLAG_REQUIRED;
+    EXPECT_TRUE(
+        FPDFAnnot_SetFormFieldFlags(form_handle(), annot.get(), new_flags));
+
+    flags = FPDFAnnot_GetFormFieldFlags(form_handle(), annot.get());
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_REQUIRED);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_NOEXPORT);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_TEXT_MULTILINE);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_TEXT_PASSWORD);
+  }
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ASSERT_TRUE(annot);
+
+    int flags = FPDFAnnot_GetFormFieldFlags(form_handle(), annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_REQUIRED);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_NOEXPORT);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_TEXT_MULTILINE);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_TEXT_PASSWORD);
+
+    int new_flags = FPDF_FORMFLAG_TEXT_MULTILINE | FPDF_FORMFLAG_NOEXPORT;
+    EXPECT_TRUE(
+        FPDFAnnot_SetFormFieldFlags(form_handle(), annot.get(), new_flags));
+
+    flags = FPDFAnnot_GetFormFieldFlags(form_handle(), annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_REQUIRED);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_NOEXPORT);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_TEXT_MULTILINE);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_TEXT_PASSWORD);
+  }
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_FALSE(FPDFAnnot_SetFormFieldFlags(nullptr, annot.get(), 0));
+
+    EXPECT_FALSE(FPDFAnnot_SetFormFieldFlags(form_handle(), nullptr, 0));
+    EXPECT_FALSE(FPDFAnnot_SetFormFieldFlags(nullptr, nullptr, 0));
+  }
+
+  UnloadPage(page);
+}

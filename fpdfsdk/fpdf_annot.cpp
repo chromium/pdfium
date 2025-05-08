@@ -1296,6 +1296,19 @@ FPDFAnnot_GetFormFieldFlags(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot) {
   return pFormField ? pFormField->GetFieldFlags() : FPDF_FORMFLAG_NONE;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_SetFormFieldFlags(FPDF_FORMHANDLE handle,
+                            FPDF_ANNOTATION annot,
+                            int flags) {
+  CPDF_FormField* form_field = GetFormField(handle, annot);
+  if (!form_field) {
+    return false;
+  }
+
+  form_field->SetFieldFlags(flags);
+  return true;
+}
+
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
 FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
                               FPDF_PAGE page,
