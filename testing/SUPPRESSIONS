@@ -622,6 +622,9 @@ bug_1098.in * * * *
 # TODO(chromium:1131694): Remove after associated bug is fixed
 bug_1131694.in * * * *
 
+# TODO(thestig): Remove after fixing inline image parsing.
+bug_1236805.in * * * *
+
 # TODO(pdfium:1747): Remove after associated bug is fixed
 bug_1258634.in * * * *
 

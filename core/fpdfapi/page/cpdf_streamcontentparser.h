@@ -9,7 +9,6 @@
 
 #include <array>
 #include <memory>
-#include <optional>
 #include <stack>
 #include <variant>
 #include <vector>
@@ -73,14 +72,6 @@ class CPDF_StreamContentParser {
 
  private:
   enum class RenderType : bool { kFill = false, kStroke = true };
-
-  struct InlineImageContext {
-    enum class State : bool { kLookingForID, kLookingForEI };
-
-    State state = State::kLookingForID;
-    uint32_t begin_pos = 0;
-    uint32_t data_pos = 0;
-  };
 
   using ContentParam =
       std::variant<RetainPtr<CPDF_Object>, FX_Number, ByteString>;
@@ -251,8 +242,6 @@ class CPDF_StreamContentParser {
 
   // The merged stream offset at which the last |syntax_| started parsing.
   uint32_t start_parse_offset_ = 0;
-
-  std::optional<InlineImageContext> inline_image_context_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_
