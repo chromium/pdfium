@@ -19,6 +19,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/ptr_util.h"
 #include "core/fxcrt/stl_util.h"
+#include "third_party/abseil-cpp/absl/container/flat_hash_set.h"
 
 namespace {
 
@@ -191,7 +192,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
 }
 
 bool IsTraversedObject(const CPDF_Object* obj,
-                       std::set<uint32_t>* seen_obj_nums) {
+                       absl::flat_hash_set<uint32_t>* seen_obj_nums) {
   uint32_t obj_num = obj->GetObjNum();
   if (!obj_num) {
     return false;
@@ -202,7 +203,7 @@ bool IsTraversedObject(const CPDF_Object* obj,
 }
 
 bool IsArrayWithTraversedObject(const CPDF_Array* array,
-                                std::set<uint32_t>* seen_obj_nums) {
+                                absl::flat_hash_set<uint32_t>* seen_obj_nums) {
   if (IsTraversedObject(array, seen_obj_nums)) {
     return true;
   }
@@ -227,7 +228,7 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     int nLevel,
     size_t* nIndex,
     NodeToInsert* node_to_insert,
-    std::set<uint32_t>* seen_obj_nums) {
+    absl::flat_hash_set<uint32_t>* seen_obj_nums) {
   if (nLevel > kNameTreeMaxRecursion) {
     return nullptr;
   }
@@ -317,7 +318,7 @@ RetainPtr<const CPDF_Object> SearchNameNodeByName(
     const WideString& csName,
     NodeToInsert* node_to_insert) {
   size_t nIndex = 0;
-  std::set<uint32_t> seen_obj_nums;
+  absl::flat_hash_set<uint32_t> seen_obj_nums;
   return SearchNameNodeByNameInternal(pNode, csName, 0, &nIndex, node_to_insert,
                                       &seen_obj_nums);
 }
@@ -398,7 +399,7 @@ std::optional<IndexSearchResult> SearchNameNodeByIndex(
 // Get the total number of key-value pairs in the tree with root |pNode|.
 size_t CountNamesInternal(const CPDF_Dictionary* pNode,
                           int nLevel,
-                          std::set<const CPDF_Dictionary*>& seen) {
+                          absl::flat_hash_set<const CPDF_Dictionary*>& seen) {
   if (nLevel > kNameTreeMaxRecursion) {
     return 0;
   }
@@ -535,7 +536,7 @@ RetainPtr<const CPDF_Array> CPDF_NameTree::LookupNamedDest(
 }
 
 size_t CPDF_NameTree::GetCount() const {
-  std::set<const CPDF_Dictionary*> seen;
+  absl::flat_hash_set<const CPDF_Dictionary*> seen;
   return CountNamesInternal(root_.Get(), 0, seen);
 }
 

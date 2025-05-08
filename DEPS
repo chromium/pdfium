@@ -637,6 +637,7 @@ include_rules = [
   '-third_party/abseil-cpp/absl/base/no_destructor.h',
   '-third_party/abseil-cpp/absl/base/nullability.h',
   '-third_party/abseil-cpp/absl/container',
+  '+third_party/abseil-cpp/absl/container/flat_hash_set.h',
   '+third_party/abseil-cpp/absl/container/inlined_vector.h',
   '-third_party/abseil-cpp/absl/crc',
   '-third_party/abseil-cpp/absl/flags',
