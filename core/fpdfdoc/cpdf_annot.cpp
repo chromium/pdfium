@@ -391,89 +391,65 @@ CPDF_Annot::Subtype CPDF_Annot::StringToAnnotSubtype(
 
 // static
 ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
-  if (nSubtype == CPDF_Annot::Subtype::TEXT) {
-    return "Text";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::LINK) {
-    return "Link";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::FREETEXT) {
-    return "FreeText";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::LINE) {
-    return "Line";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::SQUARE) {
-    return "Square";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::CIRCLE) {
-    return "Circle";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::POLYGON) {
-    return "Polygon";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::POLYLINE) {
-    return "PolyLine";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::HIGHLIGHT) {
-    return "Highlight";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::UNDERLINE) {
-    return "Underline";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::SQUIGGLY) {
-    return "Squiggly";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::STRIKEOUT) {
-    return "StrikeOut";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::STAMP) {
-    return "Stamp";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::CARET) {
-    return "Caret";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::INK) {
-    return "Ink";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::POPUP) {
-    return "Popup";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::FILEATTACHMENT) {
-    return "FileAttachment";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::SOUND) {
-    return "Sound";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::MOVIE) {
-    return "Movie";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::WIDGET) {
-    return "Widget";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::SCREEN) {
-    return "Screen";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::PRINTERMARK) {
-    return "PrinterMark";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::TRAPNET) {
-    return "TrapNet";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::WATERMARK) {
-    return "Watermark";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::THREED) {
-    return "3D";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::RICHMEDIA) {
-    return "RichMedia";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::XFAWIDGET) {
-    return "XFAWidget";
-  }
-  if (nSubtype == CPDF_Annot::Subtype::REDACT) {
-    return "Redact";
+  switch (nSubtype) {
+    case CPDF_Annot::Subtype::UNKNOWN:
+      break;
+    case CPDF_Annot::Subtype::TEXT:
+      return "Text";
+    case CPDF_Annot::Subtype::LINK:
+      return "Link";
+    case CPDF_Annot::Subtype::FREETEXT:
+      return "FreeText";
+    case CPDF_Annot::Subtype::LINE:
+      return "Line";
+    case CPDF_Annot::Subtype::SQUARE:
+      return "Square";
+    case CPDF_Annot::Subtype::CIRCLE:
+      return "Circle";
+    case CPDF_Annot::Subtype::POLYGON:
+      return "Polygon";
+    case CPDF_Annot::Subtype::POLYLINE:
+      return "PolyLine";
+    case CPDF_Annot::Subtype::HIGHLIGHT:
+      return "Highlight";
+    case CPDF_Annot::Subtype::UNDERLINE:
+      return "Underline";
+    case CPDF_Annot::Subtype::SQUIGGLY:
+      return "Squiggly";
+    case CPDF_Annot::Subtype::STRIKEOUT:
+      return "StrikeOut";
+    case CPDF_Annot::Subtype::STAMP:
+      return "Stamp";
+    case CPDF_Annot::Subtype::CARET:
+      return "Caret";
+    case CPDF_Annot::Subtype::INK:
+      return "Ink";
+    case CPDF_Annot::Subtype::POPUP:
+      return "Popup";
+    case CPDF_Annot::Subtype::FILEATTACHMENT:
+      return "FileAttachment";
+    case CPDF_Annot::Subtype::SOUND:
+      return "Sound";
+    case CPDF_Annot::Subtype::MOVIE:
+      return "Movie";
+    case CPDF_Annot::Subtype::WIDGET:
+      return "Widget";
+    case CPDF_Annot::Subtype::SCREEN:
+      return "Screen";
+    case CPDF_Annot::Subtype::PRINTERMARK:
+      return "PrinterMark";
+    case CPDF_Annot::Subtype::TRAPNET:
+      return "TrapNet";
+    case CPDF_Annot::Subtype::WATERMARK:
+      return "Watermark";
+    case CPDF_Annot::Subtype::THREED:
+      return "3D";
+    case CPDF_Annot::Subtype::RICHMEDIA:
+      return "RichMedia";
+    case CPDF_Annot::Subtype::XFAWIDGET:
+      return "XFAWidget";
+    case CPDF_Annot::Subtype::REDACT:
+      return "Redact";
   }
   return ByteString();
 }
