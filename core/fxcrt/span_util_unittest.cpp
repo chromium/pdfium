@@ -4,6 +4,7 @@
 
 #include "core/fxcrt/span_util.h"
 
+#include <array>
 #include <vector>
 
 #include "testing/gmock/include/gmock/gmock.h"
@@ -163,6 +164,27 @@ TEST(ReinterpretSpan, BadAlignment) {
   EXPECT_DEATH(
       fxcrt::reinterpret_span<uint32_t>(pdfium::span(abcabc).subspan<1u, 4u>()),
       "");
+}
+
+TEST(ReinterpretSpan, FlattenMultiDimension) {
+  struct Pt {
+    float x;
+    float y;
+  };
+  using Line = std::array<Pt, 4>;
+  using Plane = std::array<Line, 4>;
+  using Volume = std::array<Plane, 4>;
+  Volume box = {{{{{{}}}}}};
+  auto flat = fxcrt::reinterpret_span<Pt>(pdfium::span(box));
+  EXPECT_EQ(64u, flat.size());
+
+  float ctr = 0.0f;
+  for (auto& pt : flat) {
+    pt.x = ctr++;
+    pt.y = ctr++;
+  }
+  EXPECT_EQ(box[3][3][3].x, 126.0f);
+  EXPECT_EQ(box[3][3][3].y, 127.0f);
 }
 
 TEST(Spanpos, Empty) {
