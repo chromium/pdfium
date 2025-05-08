@@ -1647,8 +1647,8 @@ uint32_t CPDF_StreamContentParser::Parse(
 
   stream_start_offsets_ = stream_start_offsets;
 
-  ScopedSetInsertion<const uint8_t*> scoped_insert(
-      &recursion_state_->parsed_set, pDataStart.data());
+  ScopedSetInsertion scoped_insert(&recursion_state_->parsed_set,
+                                   pDataStart.data());
 
   uint32_t init_obj_count = object_holder_->GetPageObjectCount();
   AutoNuller<std::unique_ptr<CPDF_StreamParser>> auto_clearer(&syntax_);

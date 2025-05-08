@@ -310,7 +310,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
     return nullptr;
   }
 
-  ScopedSetInsertion<const CPDF_Object*> insertion(pVisitedInternal, pCSObj);
+  ScopedSetInsertion insertion(pVisitedInternal, pCSObj);
 
   if (pCSObj->IsName()) {
     ByteString name = pCSObj->GetString();

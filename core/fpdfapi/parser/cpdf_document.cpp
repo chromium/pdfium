@@ -90,8 +90,7 @@ std::optional<int> CountPages(
     NodeType kid_type = GetNodeType(kid_dict);
     if (kid_type == NodeType::kBranch) {
       // Use |visited_pages| to help detect circular references of pages.
-      ScopedSetInsertion<RetainPtr<CPDF_Dictionary>> local_add(visited_pages,
-                                                               kid_dict);
+      ScopedSetInsertion local_add(visited_pages, kid_dict);
       std::optional<int> local_count =
           CountPages(std::move(kid_dict), visited_pages);
       if (!local_count.has_value()) {
@@ -553,7 +552,7 @@ bool CPDF_Document::InsertDeletePDFPage(
       return false;
     }
 
-    ScopedSetInsertion<RetainPtr<CPDF_Dictionary>> insertion(visited, kid_dict);
+    ScopedSetInsertion insertion(visited, kid_dict);
     if (!InsertDeletePDFPage(std::move(kid_dict), pages_to_go, page_dict,
                              is_insert, visited)) {
       return false;

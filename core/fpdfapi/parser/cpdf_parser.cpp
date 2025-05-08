@@ -1070,7 +1070,7 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObject(uint32_t objnum) {
     return nullptr;
   }
 
-  ScopedSetInsertion<uint32_t> local_insert(&parsing_obj_nums_, objnum);
+  ScopedSetInsertion local_insert(&parsing_obj_nums_, objnum);
   const auto* info = cross_ref_table_->GetObjectInfo(objnum);
   if (!info) {
     return nullptr;
@@ -1119,7 +1119,7 @@ const CPDF_ObjectStream* CPDF_Parser::GetObjectStream(uint32_t object_number) {
   }
 
   // Keep track of `object_number` before doing more parsing.
-  ScopedSetInsertion<uint32_t> local_insert(&parsing_obj_nums_, object_number);
+  ScopedSetInsertion local_insert(&parsing_obj_nums_, object_number);
 
   RetainPtr<CPDF_Object> object =
       ParseIndirectObjectAt(object_pos, object_number);

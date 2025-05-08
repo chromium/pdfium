@@ -4,17 +4,19 @@
 
 #include "core/fxcrt/scoped_set_insertion.h"
 
+#include <set>
+
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcrt, ScopedSetInsertion) {
   std::set<int> container;
   {
-    ScopedSetInsertion<int> insertion(&container, 5);
+    ScopedSetInsertion insertion(&container, 5);
     EXPECT_THAT(container, testing::UnorderedElementsAreArray({5}));
 
     {
-      ScopedSetInsertion<int> insertion2(&container, 6);
+      ScopedSetInsertion insertion2(&container, 6);
       EXPECT_THAT(container, testing::UnorderedElementsAreArray({5, 6}));
     }
 

@@ -512,7 +512,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
     return nullptr;
   }
 
-  ScopedSetInsertion<const CPDF_Object*> insertion(pVisited, pObj);
+  ScopedSetInsertion insertion(pVisited, pObj);
 
   if (pObj->IsName()) {
     return GetStockCSForName(pObj->GetString());

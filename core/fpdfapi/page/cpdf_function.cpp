@@ -58,7 +58,7 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
     return nullptr;
   }
 
-  ScopedSetInsertion<VisitedSet::value_type> insertion(pVisited, pFuncObj);
+  ScopedSetInsertion insertion(pVisited, pFuncObj);
 
   int iType = -1;
   if (const CPDF_Stream* pStream = pFuncObj->AsStream()) {
