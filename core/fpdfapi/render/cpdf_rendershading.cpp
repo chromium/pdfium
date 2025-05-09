@@ -529,124 +529,100 @@ void DrawLatticeGouraudShading(
   }
 }
 
-struct CoonBezierCoeff {
-  void InitFromPoints(float p0, float p1, float p2, float p3) {
-    a = -p0 + 3 * p1 - 3 * p2 + p3;
-    b = 3 * p0 - 6 * p1 + 3 * p2;
-    c = -3 * p0 + 3 * p1;
-    d = p0;
+struct CubicBezierPatch {
+  bool IsSmall() const {
+    CFX_FloatRect bbox = CFX_FloatRect::GetBBox(
+        fxcrt::reinterpret_span<const CFX_PointF>(pdfium::span(points)));
+    return bbox.Width() < 2 && bbox.Height() < 2;
   }
 
-  void InitFromBezierInterpolation(const CoonBezierCoeff& C1,
-                                   const CoonBezierCoeff& C2,
-                                   const CoonBezierCoeff& D1,
-                                   const CoonBezierCoeff& D2) {
-    a = (D1.a + D2.a) / 2;
-    b = (D1.b + D2.b) / 2;
-    c = (D1.c + D2.c) / 2 - (C1.a / 8 + C1.b / 4 + C1.c / 2) +
-        (C2.a / 8 + C2.b / 4) + (-C1.d + D2.d) / 2 - (C2.a + C2.b) / 2;
-    d = C1.a / 8 + C1.b / 4 + C1.c / 2 + C1.d;
+  void GetBoundary(pdfium::span<CFX_Path::Point> boundary) {
+    // Returns a cubic bezier path consisting of the outer control points.
+    // Note that patch boundary does not always contain all patch points,
+    // but for "small" patches it's reasonably close.
+    // TODO(thakis): The outer control points don't always contain all
+    // points in the patch, e.g. for a single-color tensor product patch
+    // where the "inner" control points (points[1][1], points[2][1],
+    // points[1][2], points[2][2]) are far outside the "outer" ones.
+    // Make a bezier patch stress test and fix this by continuing to
+    // subdivide if the inner points are outside.
+    boundary[0].point_ = points[0][0];
+    boundary[1].point_ = points[0][1];
+    boundary[2].point_ = points[0][2];
+    boundary[3].point_ = points[0][3];
+    boundary[4].point_ = points[1][3];
+    boundary[5].point_ = points[2][3];
+    boundary[6].point_ = points[3][3];
+    boundary[7].point_ = points[3][2];
+    boundary[8].point_ = points[3][1];
+    boundary[9].point_ = points[3][0];
+    boundary[10].point_ = points[2][0];
+    boundary[11].point_ = points[1][0];
+    boundary[12].point_ = points[0][0];
   }
 
-  CoonBezierCoeff first_half() const {
-    CoonBezierCoeff result;
-    result.a = a / 8;
-    result.b = b / 4;
-    result.c = c / 2;
-    result.d = d;
-    return result;
-  }
+  void SubdivideVertical(CubicBezierPatch& top, CubicBezierPatch& bottom) {
+    for (int x = 0; x < 4; ++x) {
+      std::array<CFX_PointF, 3> level1 = {
+          0.5f * (points[x][0] + points[x][1]),
+          0.5f * (points[x][1] + points[x][2]),
+          0.5f * (points[x][2] + points[x][3]),
+      };
+      std::array<CFX_PointF, 2> level2 = {
+          0.5f * (level1[0] + level1[1]),
+          0.5f * (level1[1] + level1[2]),
+      };
+      CFX_PointF level3 = 0.5f * (level2[0] + level2[1]);
 
-  CoonBezierCoeff second_half() const {
-    CoonBezierCoeff result;
-    result.a = a / 8;
-    result.b = 3 * a / 8 + b / 4;
-    result.c = 3 * a / 8 + b / 2 + c / 2;
-    result.d = a / 8 + b / 4 + c / 2 + d;
-    return result;
-  }
+      top.points[x][0] = points[x][0];
+      top.points[x][1] = level1[0];
+      top.points[x][2] = level2[0];
+      top.points[x][3] = level3;
 
-  void GetPoints(pdfium::span<float, 4> p) const {
-    p[0] = d;
-    p[1] = c / 3 + p[0];
-    p[2] = b / 3 - p[0] + 2 * p[1];
-    p[3] = a + p[0] - 3 * p[1] + 3 * p[2];
-  }
-
-  float Distance() const {
-    float dis = a + b + c;
-    return dis < 0 ? -dis : dis;
-  }
-
-  float a;
-  float b;
-  float c;
-  float d;
-};
-
-struct CoonBezier {
-  void InitFromPoints(float x0,
-                      float y0,
-                      float x1,
-                      float y1,
-                      float x2,
-                      float y2,
-                      float x3,
-                      float y3) {
-    x.InitFromPoints(x0, x1, x2, x3);
-    y.InitFromPoints(y0, y1, y2, y3);
-  }
-
-  void InitFromBezierInterpolation(const CoonBezier& C1,
-                                   const CoonBezier& C2,
-                                   const CoonBezier& D1,
-                                   const CoonBezier& D2) {
-    x.InitFromBezierInterpolation(C1.x, C2.x, D1.x, D2.x);
-    y.InitFromBezierInterpolation(C1.y, C2.y, D1.y, D2.y);
-  }
-
-  CoonBezier first_half() const {
-    CoonBezier result;
-    result.x = x.first_half();
-    result.y = y.first_half();
-    return result;
-  }
-
-  CoonBezier second_half() const {
-    CoonBezier result;
-    result.x = x.second_half();
-    result.y = y.second_half();
-    return result;
-  }
-
-  void GetPoints(pdfium::span<CFX_Path::Point> path_points) const {
-    static constexpr size_t kPointsCount = 4;
-    std::array<float, kPointsCount> points_x;
-    std::array<float, kPointsCount> points_y;
-    x.GetPoints(points_x);
-    y.GetPoints(points_y);
-    for (size_t i = 0; i < kPointsCount; ++i) {
-      path_points[i].point_ = {points_x[i], points_y[i]};
+      bottom.points[x][0] = level3;
+      bottom.points[x][1] = level2[1];
+      bottom.points[x][2] = level1[2];
+      bottom.points[x][3] = points[x][3];
     }
   }
 
-  void GetPointsReverse(pdfium::span<CFX_Path::Point> path_points) const {
-    static constexpr size_t kPointsCount = 4;
-    std::array<float, kPointsCount> points_x;
-    std::array<float, kPointsCount> points_y;
-    x.GetPoints(points_x);
-    y.GetPoints(points_y);
-    for (size_t i = 0; i < kPointsCount; ++i) {
-      size_t reverse_index = kPointsCount - i - 1;
-      path_points[i].point_ = {points_x[reverse_index],
-                               points_y[reverse_index]};
+  void SubdivideHorizontal(CubicBezierPatch& left, CubicBezierPatch& right) {
+    for (int y = 0; y < 4; ++y) {
+      std::array<CFX_PointF, 3> level1 = {
+          0.5f * (points[0][y] + points[1][y]),
+          0.5f * (points[1][y] + points[2][y]),
+          0.5f * (points[2][y] + points[3][y]),
+      };
+      std::array<CFX_PointF, 2> level2 = {
+          0.5f * (level1[0] + level1[1]),
+          (1.0f / 2.0f) * (level1[1] + level1[2]),
+      };
+      CFX_PointF level3 = 0.5f * (level2[0] + level2[1]);
+
+      left.points[0][y] = points[0][y];
+      left.points[1][y] = level1[0];
+      left.points[2][y] = level2[0];
+      left.points[3][y] = level3;
+
+      right.points[0][y] = level3;
+      right.points[1][y] = level2[1];
+      right.points[2][y] = level1[2];
+      right.points[3][y] = points[3][y];
     }
   }
 
-  float Distance() const { return x.Distance() + y.Distance(); }
+  void Subdivide(CubicBezierPatch& top_left,
+                 CubicBezierPatch& bottom_left,
+                 CubicBezierPatch& top_right,
+                 CubicBezierPatch& bottom_right) {
+    CubicBezierPatch top;
+    CubicBezierPatch bottom;
+    SubdivideVertical(top, bottom);
+    top.SubdivideHorizontal(top_left, top_right);
+    bottom.SubdivideHorizontal(bottom_left, bottom_right);
+  }
 
-  CoonBezierCoeff x;
-  CoonBezierCoeff y;
+  std::array<std::array<CFX_PointF, 4>, 4> points;
 };
 
 int Interpolate(int p1, int p2, int delta1, int delta2, bool* overflow) {
@@ -708,12 +684,9 @@ struct PatchDrawer {
             int y_scale,
             int left,
             int bottom,
-            CoonBezier C1,
-            CoonBezier C2,
-            CoonBezier D1,
-            CoonBezier D2) {
-    bool bSmall = C1.Distance() < 2 && C2.Distance() < 2 && D1.Distance() < 2 &&
-                  D2.Distance() < 2;
+            CubicBezierPatch patch) {
+    bool bSmall = patch.IsSmall();
+
     CoonColor div_colors[4];
     int d_bottom = 0;
     int d_left = 0;
@@ -746,10 +719,7 @@ struct PatchDrawer {
         (d_bottom < kCoonColorThreshold && d_left < kCoonColorThreshold &&
          d_top < kCoonColorThreshold && d_right < kCoonColorThreshold)) {
       pdfium::span<CFX_Path::Point> points = path.GetPoints();
-      C1.GetPoints(points.subspan<0u, 4u>());
-      D2.GetPoints(points.subspan<3u, 4u>());
-      C2.GetPointsReverse(points.subspan<6u, 4u>());
-      D1.GetPointsReverse(points.subspan<9u, 4u>());
+      patch.GetBoundary(points);
       CFX_FillRenderOptions fill_options(
           CFX_FillRenderOptions::WindingOptions());
       fill_options.full_cover = true;
@@ -763,45 +733,36 @@ struct PatchDrawer {
           0, fill_options);
     } else {
       if (d_bottom < kCoonColorThreshold && d_top < kCoonColorThreshold) {
-        CoonBezier m1;
-        m1.InitFromBezierInterpolation(D1, D2, C1, C2);
+        CubicBezierPatch top_patch;
+        CubicBezierPatch bottom_patch;
+        patch.SubdivideVertical(top_patch, bottom_patch);
         y_scale *= 2;
         bottom *= 2;
-        Draw(x_scale, y_scale, left, bottom, C1, m1, D1.first_half(),
-             D2.first_half());
-        Draw(x_scale, y_scale, left, bottom + 1, m1, C2, D1.second_half(),
-             D2.second_half());
+        Draw(x_scale, y_scale, left, bottom, top_patch);
+        Draw(x_scale, y_scale, left, bottom + 1, bottom_patch);
       } else if (d_left < kCoonColorThreshold &&
                  d_right < kCoonColorThreshold) {
-        CoonBezier m2;
-        m2.InitFromBezierInterpolation(C1, C2, D1, D2);
+        CubicBezierPatch left_patch;
+        CubicBezierPatch right_patch;
+        patch.SubdivideHorizontal(left_patch, right_patch);
         x_scale *= 2;
         left *= 2;
-        Draw(x_scale, y_scale, left, bottom, C1.first_half(), C2.first_half(),
-             D1, m2);
-        Draw(x_scale, y_scale, left + 1, bottom, C1.second_half(),
-             C2.second_half(), m2, D2);
+        Draw(x_scale, y_scale, left, bottom, left_patch);
+        Draw(x_scale, y_scale, left + 1, bottom, right_patch);
       } else {
-        CoonBezier m1;
-        CoonBezier m2;
-        m1.InitFromBezierInterpolation(D1, D2, C1, C2);
-        m2.InitFromBezierInterpolation(C1, C2, D1, D2);
-        CoonBezier m1f = m1.first_half();
-        CoonBezier m1s = m1.second_half();
-        CoonBezier m2f = m2.first_half();
-        CoonBezier m2s = m2.second_half();
+        CubicBezierPatch top_left;
+        CubicBezierPatch bottom_left;
+        CubicBezierPatch top_right;
+        CubicBezierPatch bottom_right;
+        patch.Subdivide(top_left, bottom_left, top_right, bottom_right);
         x_scale *= 2;
         y_scale *= 2;
         left *= 2;
         bottom *= 2;
-        Draw(x_scale, y_scale, left, bottom, C1.first_half(), m1f,
-             D1.first_half(), m2f);
-        Draw(x_scale, y_scale, left, bottom + 1, m1f, C2.first_half(),
-             D1.second_half(), m2s);
-        Draw(x_scale, y_scale, left + 1, bottom, C1.second_half(), m1s, m2f,
-             D2.first_half());
-        Draw(x_scale, y_scale, left + 1, bottom + 1, m1s, C2.second_half(), m2s,
-             D2.second_half());
+        Draw(x_scale, y_scale, left, bottom, top_left);
+        Draw(x_scale, y_scale, left, bottom + 1, bottom_left);
+        Draw(x_scale, y_scale, left + 1, bottom, top_right);
+        Draw(x_scale, y_scale, left + 1, bottom + 1, bottom_right);
       }
     }
   }
@@ -836,15 +797,15 @@ void DrawCoonPatchMeshes(
     return;
   }
 
-  PatchDrawer patch;
-  patch.alpha = alpha;
-  patch.pDevice = &device;
-  patch.bNoPathSmooth = bNoPathSmooth;
+  PatchDrawer patch_drawer;
+  patch_drawer.alpha = alpha;
+  patch_drawer.pDevice = &device;
+  patch_drawer.bNoPathSmooth = bNoPathSmooth;
 
   for (int i = 0; i < 13; i++) {
-    patch.path.AppendPoint(CFX_PointF(), i == 0
-                                             ? CFX_Path::Point::Type::kMove
-                                             : CFX_Path::Point::Type::kBezier);
+    patch_drawer.path.AppendPoint(
+        CFX_PointF(),
+        i == 0 ? CFX_Path::Point::Type::kMove : CFX_Path::Point::Type::kBezier);
   }
 
   std::array<CFX_PointF, 16> coords;
@@ -866,10 +827,10 @@ void DrawCoonPatchMeshes(
       }
       fxcrt::Copy(tempCoords, coords);
       std::array<CoonColor, 2> tempColors = {{
-          patch.patch_colors[flag],
-          patch.patch_colors[(flag + 1) % 4],
+          patch_drawer.patch_colors[flag],
+          patch_drawer.patch_colors[(flag + 1) % 4],
       }};
-      fxcrt::Copy(tempColors, patch.patch_colors);
+      fxcrt::Copy(tempColors, patch_drawer.patch_colors);
     }
     for (i = iStartPoint; i < point_count; i++) {
       if (!stream.CanReadCoords()) {
@@ -884,9 +845,12 @@ void DrawCoonPatchMeshes(
       }
 
       FX_RGB_STRUCT<float> rgb = stream.ReadColor();
-      patch.patch_colors[i].comp[0] = static_cast<int32_t>(rgb.red * 255);
-      patch.patch_colors[i].comp[1] = static_cast<int32_t>(rgb.green * 255);
-      patch.patch_colors[i].comp[2] = static_cast<int32_t>(rgb.blue * 255);
+      patch_drawer.patch_colors[i].comp[0] =
+          static_cast<int32_t>(rgb.red * 255);
+      patch_drawer.patch_colors[i].comp[1] =
+          static_cast<int32_t>(rgb.green * 255);
+      patch_drawer.patch_colors[i].comp[2] =
+          static_cast<int32_t>(rgb.blue * 255);
     }
 
     CFX_FloatRect bbox = CFX_FloatRect::GetBBox(
@@ -895,19 +859,56 @@ void DrawCoonPatchMeshes(
         bbox.top <= 0 || bbox.bottom >= (float)pBitmap->GetHeight()) {
       continue;
     }
-    CoonBezier C1;
-    CoonBezier C2;
-    CoonBezier D1;
-    CoonBezier D2;
-    C1.InitFromPoints(coords[0].x, coords[0].y, coords[11].x, coords[11].y,
-                      coords[10].x, coords[10].y, coords[9].x, coords[9].y);
-    C2.InitFromPoints(coords[3].x, coords[3].y, coords[4].x, coords[4].y,
-                      coords[5].x, coords[5].y, coords[6].x, coords[6].y);
-    D1.InitFromPoints(coords[0].x, coords[0].y, coords[1].x, coords[1].y,
-                      coords[2].x, coords[2].y, coords[3].x, coords[3].y);
-    D2.InitFromPoints(coords[9].x, coords[9].y, coords[8].x, coords[8].y,
-                      coords[7].x, coords[7].y, coords[6].x, coords[6].y);
-    patch.Draw(1, 1, 0, 0, C1, C2, D1, D2);
+
+    CubicBezierPatch patch;
+    patch.points[0][0] = coords[0];
+    patch.points[0][1] = coords[1];
+    patch.points[0][2] = coords[2];
+    patch.points[0][3] = coords[3];
+    patch.points[1][3] = coords[4];
+    patch.points[2][3] = coords[5];
+    patch.points[3][3] = coords[6];
+    patch.points[3][2] = coords[7];
+    patch.points[3][1] = coords[8];
+    patch.points[3][0] = coords[9];
+    patch.points[2][0] = coords[10];
+    patch.points[1][0] = coords[11];
+    if (type == kTensorProductPatchMeshShading) {
+      patch.points[1][1] = coords[12];
+      patch.points[1][2] = coords[13];
+      patch.points[2][2] = coords[14];
+      patch.points[2][1] = coords[15];
+    } else {
+      CHECK_EQ(type, kCoonsPatchMeshShading);
+      // These equations are from ISO 32000-2:2020, page 267, in
+      // 8.7.4.5.8 Type 7 (tensor-product patch mesh) shadings:
+      patch.points[1][1] =
+          (1.0f / 9.0f) * (-4.0f * patch.points[0][0] +
+                           6.0f * (patch.points[0][1] + patch.points[1][0]) -
+                           2.0f * (patch.points[0][3] + patch.points[3][0]) +
+                           3.0f * (patch.points[3][1] + patch.points[1][3]) -
+                           1.0f * patch.points[3][3]);
+      patch.points[1][2] =
+          (1.0f / 9.0f) * (-4.0f * patch.points[0][3] +
+                           6.0f * (patch.points[0][2] + patch.points[1][3]) -
+                           2.0f * (patch.points[0][0] + patch.points[3][3]) +
+                           3.0f * (patch.points[3][2] + patch.points[1][0]) -
+                           1.0f * patch.points[3][0]);
+      patch.points[2][1] =
+          (1.0f / 9.0f) * (-4.0f * patch.points[3][0] +
+                           6.0f * (patch.points[3][1] + patch.points[2][0]) -
+                           2.0f * (patch.points[3][3] + patch.points[0][0]) +
+                           3.0f * (patch.points[0][1] + patch.points[2][3]) -
+                           1.0f * patch.points[0][3]);
+      patch.points[2][2] =
+          (1.0f / 9.0f) * (-4.0f * patch.points[3][3] +
+                           6.0f * (patch.points[3][2] + patch.points[2][3]) -
+                           2.0f * (patch.points[3][0] + patch.points[0][3]) +
+                           3.0f * (patch.points[0][2] + patch.points[2][0]) -
+                           1.0f * patch.points[0][0]);
+    }
+
+    patch_drawer.Draw(1, 1, 0, 0, patch);
   }
 }
 

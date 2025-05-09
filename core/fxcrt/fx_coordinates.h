@@ -48,6 +48,10 @@ using CFX_Point16 = CFX_PTemplate<int16_t>;
 using CFX_Point = CFX_PTemplate<int32_t>;
 using CFX_PointF = CFX_PTemplate<float>;
 
+inline CFX_PointF operator*(float f, CFX_PointF p) {
+  return {f * p.x, f * p.y};
+}
+
 template <class BaseType>
 class CFX_STemplate {
  public:
