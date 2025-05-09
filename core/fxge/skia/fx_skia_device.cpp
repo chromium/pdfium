@@ -1173,8 +1173,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
                                        const FX_RECT& clip_rect,
                                        int alpha) {
   const ShadingType shading_type = pattern.GetShadingType();
-  if (shading_type != kAxialShading && shading_type != kRadialShading &&
-      shading_type != kCoonsPatchMeshShading) {
+  if (shading_type != kAxialShading && shading_type != kRadialShading) {
     // TODO(caryclark) more types
     return false;
   }
@@ -1192,7 +1191,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
   RetainPtr<const CPDF_Dictionary> pDict =
       pattern.GetShadingObject()->GetDict();
   RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
-  if (!pCoords && shading_type != kCoonsPatchMeshShading) {
+  if (!pCoords) {
     return false;
   }
   // TODO(caryclark) Respect Domain[0], Domain[1]. (Don't know what they do
@@ -1281,7 +1280,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
     }
     skPath.addRect(skRect);
     skMatrix.setIdentity();
-  } else if (shading_type == kRadialShading) {
+  } else {
+    CHECK_EQ(shading_type, kRadialShading);
     float start_x = pCoords->GetFloatAt(0);
     float start_y = pCoords->GetFloatAt(1);
     float start_r = pCoords->GetFloatAt(2);
@@ -1310,53 +1310,6 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
     }
     skPath.addRect(skRect);
     skPath.transform(inverse);
-  } else {
-    CHECK_EQ(kCoonsPatchMeshShading, shading_type);
-    RetainPtr<const CPDF_Stream> pStream = ToStream(pattern.GetShadingObject());
-    if (!pStream) {
-      return false;
-    }
-    CPDF_MeshStream stream(shading_type, pattern.GetFuncs(), std::move(pStream),
-                           pattern.GetCS());
-    if (!stream.Load()) {
-      return false;
-    }
-    std::array<SkPoint, 12> cubics;
-    std::array<SkColor, 4> colors;
-    SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
-    if (!skClip.isEmpty()) {
-      canvas_->clipPath(skClip, SkClipOp::kIntersect, true);
-    }
-    canvas_->concat(skMatrix);
-    while (!stream.IsEOF()) {
-      const uint32_t flag = stream.ReadFlag();
-      if (flag) {
-        std::array<SkPoint, 4> temp_cubics;
-        for (size_t i = 0; i < temp_cubics.size(); ++i) {
-          temp_cubics[i] = cubics[(flag * 3 + i) % cubics.size()];
-        }
-        fxcrt::Copy(temp_cubics, cubics);
-        SkColor temp_colors[2] = {colors[flag % 4],
-                                  colors[(flag + 1) % colors.size()]};
-        fxcrt::Copy(temp_colors, colors);
-      }
-      const size_t start_point = flag ? 4 : 0;
-      for (size_t i = start_point; i < cubics.size(); ++i) {
-        CFX_PointF point = stream.ReadCoords();
-        cubics[i].fX = point.x;
-        cubics[i].fY = point.y;
-      }
-      const size_t start_color = flag ? 2 : 0;
-      for (size_t i = start_color; i < colors.size(); ++i) {
-        FX_RGB_STRUCT<float> rgb = stream.ReadColor();
-        colors[i] =
-            SkColorSetARGB(0xFF, (U8CPU)(rgb.red * 255),
-                           (U8CPU)(rgb.green * 255), (U8CPU)(rgb.blue * 255));
-      }
-      canvas_->drawPatch(cubics.data(), colors.data(), /*texCoords=*/nullptr,
-                         SkBlendMode::kDst, paint);
-    }
-    return true;
   }
   SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
   if (!skClip.isEmpty()) {
