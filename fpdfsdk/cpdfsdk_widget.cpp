@@ -503,11 +503,7 @@ std::optional<FX_COLORREF> CPDFSDK_Widget::GetTextColor() const {
 }
 
 float CPDFSDK_Widget::GetFontSize() const {
-  CPDF_FormControl* pFormCtrl = GetFormControl();
-  CPDF_DefaultAppearance pDa = pFormCtrl->GetDefaultAppearance();
-  float fFontSize;
-  pDa.GetFont(&fFontSize);
-  return fFontSize;
+  return GetFormControl()->GetDefaultAppearance().GetFontSizeOrZero();
 }
 
 int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {

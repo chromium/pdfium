@@ -2174,10 +2174,10 @@ CJS_Result CJS_Field::get_text_size(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  float fFontSize;
-  CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
-  FieldAppearance.GetFont(&fFontSize);
-  return CJS_Result::Success(pRuntime->NewNumber(static_cast<int>(fFontSize)));
+  CPDF_DefaultAppearance field_appearance =
+      pFormControl->GetDefaultAppearance();
+  return CJS_Result::Success(pRuntime->NewNumber(
+      static_cast<int>(field_appearance.GetFontSizeOrZero())));
 }
 
 CJS_Result CJS_Field::set_text_size(CJS_Runtime* pRuntime,

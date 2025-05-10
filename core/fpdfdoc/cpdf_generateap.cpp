@@ -268,21 +268,15 @@ struct DefaultAppearanceInfo {
 
 std::optional<DefaultAppearanceInfo> GetDefaultAppearanceInfo(
     const ByteString& default_appearance_string) {
-  if (default_appearance_string.IsEmpty()) {
-    return std::nullopt;
-  }
-
   CPDF_DefaultAppearance appearance(default_appearance_string);
-
-  float font_size = 0;
-  std::optional<ByteString> font = appearance.GetFont(&font_size);
-  if (!font.has_value()) {
+  auto maybe_font_name_and_size = appearance.GetFont();
+  if (!maybe_font_name_and_size.has_value()) {
     return std::nullopt;
   }
 
   return DefaultAppearanceInfo{
-      .font_name = font.value(),
-      .font_size = font_size,
+      .font_name = maybe_font_name_and_size.value().name,
+      .font_size = maybe_font_name_and_size.value().size,
       .text_color = appearance.GetColor().value_or(CFX_Color())};
 }
 

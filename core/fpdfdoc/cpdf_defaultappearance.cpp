@@ -63,21 +63,31 @@ CPDF_DefaultAppearance::CPDF_DefaultAppearance(const ByteString& csDA)
 
 CPDF_DefaultAppearance::~CPDF_DefaultAppearance() = default;
 
-std::optional<ByteString> CPDF_DefaultAppearance::GetFont(
-    float* fFontSize) const {
-  *fFontSize = 0.0f;
+std::optional<CPDF_DefaultAppearance::FontNameAndSize>
+CPDF_DefaultAppearance::GetFont() const {
   if (da_.IsEmpty()) {
     return std::nullopt;
   }
 
   CPDF_SimpleParser syntax(da_.AsStringView().unsigned_span());
   if (!FindTagParamFromStart(&syntax, "Tf", 2)) {
-    return ByteString();
+    return FontNameAndSize();
   }
 
-  ByteString name = PDF_NameDecode(syntax.GetWord().Substr(1));
-  *fFontSize = StringToFloat(syntax.GetWord());
-  return name;
+  // Deliberately using separate statements here to ensure the correct
+  // evaluation order.
+  FontNameAndSize result;
+  result.name = PDF_NameDecode(syntax.GetWord().Substr(1));
+  result.size = StringToFloat(syntax.GetWord());
+  return result;
+}
+
+float CPDF_DefaultAppearance::GetFontSizeOrZero() const {
+  auto maybe_font_name_and_size = GetFont();
+  if (!maybe_font_name_and_size.has_value()) {
+    return 0;
+  }
+  return maybe_font_name_and_size.value().size;
 }
 
 std::optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
