@@ -117,7 +117,8 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
           pAnnotDict->GetDictFor("Parent");
       value = pParentDict ? pParentDict->GetByteStringFor("V") : ByteString();
     }
-    as = (!value.IsEmpty() && pDict->KeyExist(value)) ? value : "Off";
+    as = (!value.IsEmpty() && pDict->KeyExist(value.AsStringView())) ? value
+                                                                     : "Off";
   }
   return pDict->GetMutableStreamFor(as);
 }

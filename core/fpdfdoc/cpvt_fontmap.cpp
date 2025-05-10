@@ -43,7 +43,7 @@ void CPVT_FontMap::SetupAnnotSysPDFFont() {
 
   RetainPtr<CPDF_Dictionary> pFontList = res_dict_->GetMutableDictFor("Font");
   if (ValidateFontResourceDict(pFontList.Get()) &&
-      !pFontList->KeyExist(sys_font_alias_)) {
+      !pFontList->KeyExist(sys_font_alias_.AsStringView())) {
     pFontList->SetNewFor<CPDF_Reference>(sys_font_alias_, document_,
                                          pPDFFont->GetFontDictObjNum());
   }

@@ -26,13 +26,14 @@ constexpr size_t kMaxInt = static_cast<size_t>(std::numeric_limits<int>::max());
 
 template <class T>
 bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
-                                   const ByteString& key,
+                                   ByteStringView key,
                                    T min_value,
                                    bool must_exist = true) {
   if (!pDict->KeyExist(key)) {
     return !must_exist;
   }
-  RetainPtr<const CPDF_Number> pNum = pDict->GetNumberFor(key);
+  // TODO(thestig): Avoid ByteString creation.
+  RetainPtr<const CPDF_Number> pNum = pDict->GetNumberFor(ByteString(key));
   if (!pNum || !pNum->IsInteger()) {
     return false;
   }

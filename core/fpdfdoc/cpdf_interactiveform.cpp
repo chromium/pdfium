@@ -160,7 +160,7 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* resource_dict,
   ByteString key_number;
   while (true) {
     ByteString key = actual_prefix + key_number;
-    if (!pDict->KeyExist(key)) {
+    if (!pDict->KeyExist(key.AsStringView())) {
       return key;
     }
 

@@ -22,7 +22,7 @@ CPDF_ApSettings::CPDF_ApSettings(const CPDF_ApSettings& that) = default;
 CPDF_ApSettings::~CPDF_ApSettings() = default;
 
 bool CPDF_ApSettings::HasMKEntry(const ByteString& csEntry) const {
-  return dict_ && dict_->KeyExist(csEntry);
+  return dict_ && dict_->KeyExist(csEntry.AsStringView());
 }
 
 int CPDF_ApSettings::GetRotation() const {

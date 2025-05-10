@@ -79,7 +79,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   CFX_FloatRect GetRectFor(const ByteString& key) const;
   CFX_Matrix GetMatrixFor(const ByteString& key) const;
 
-  bool KeyExist(const ByteString& key) const;
+  bool KeyExist(ByteStringView key) const;
   std::vector<ByteString> GetKeys() const;
 
   // Creates a new object owned by the dictionary and returns an unowned

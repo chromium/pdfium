@@ -259,7 +259,7 @@ CFX_Matrix CPDF_Dictionary::GetMatrixFor(const ByteString& key) const {
   return CFX_Matrix();
 }
 
-bool CPDF_Dictionary::KeyExist(const ByteString& key) const {
+bool CPDF_Dictionary::KeyExist(ByteStringView key) const {
   return pdfium::Contains(map_, key);
 }
 

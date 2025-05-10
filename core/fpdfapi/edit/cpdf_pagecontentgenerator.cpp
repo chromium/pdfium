@@ -534,7 +534,7 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
   while (true) {
     name = ByteString::Format("FX%c%d", bsType[0], idnum);
     // Avoid name collisions with existing `resource_dict` entries.
-    if (resource_dict->KeyExist(name)) {
+    if (resource_dict->KeyExist(name.AsStringView())) {
       idnum++;
       continue;
     }

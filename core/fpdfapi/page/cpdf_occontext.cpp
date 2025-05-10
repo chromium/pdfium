@@ -163,7 +163,7 @@ bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
     RetainPtr<const CPDF_Dictionary> pState = pUsage->GetDictFor(csState);
     if (pState) {
       ByteString csFind = csState + "State";
-      if (pState->KeyExist(csFind)) {
+      if (pState->KeyExist(csFind.AsStringView())) {
         return pState->GetByteStringFor(csFind) != "OFF";
       }
     }
