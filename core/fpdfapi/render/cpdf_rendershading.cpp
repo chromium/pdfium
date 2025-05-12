@@ -595,7 +595,7 @@ struct CubicBezierPatch {
       };
       std::array<CFX_PointF, 2> level2 = {
           0.5f * (level1[0] + level1[1]),
-          (1.0f / 2.0f) * (level1[1] + level1[2]),
+          0.5f * (level1[1] + level1[2]),
       };
       CFX_PointF level3 = 0.5f * (level2[0] + level2[1]);
 
