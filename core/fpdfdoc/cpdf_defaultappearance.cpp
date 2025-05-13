@@ -9,13 +9,29 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxge/cfx_color.h"
 
 namespace {
+
+ByteString GetDefaultAppearanceString(const CPDF_Dictionary* annot_dict,
+                                      const CPDF_Dictionary* acroform_dict) {
+  ByteString default_appearance_string;
+  RetainPtr<const CPDF_Object> default_appearance_object =
+      CPDF_FormField::GetFieldAttrForDict(annot_dict, "DA");
+  if (default_appearance_object) {
+    default_appearance_string = default_appearance_object->GetString();
+  }
+  if (default_appearance_string.IsEmpty()) {
+    default_appearance_string = acroform_dict->GetByteStringFor("DA");
+  }
+  return default_appearance_string;
+}
 
 // Find the token and its |nParams| parameters from the start of data,
 // and move the current position to the start of those parameters.
@@ -60,6 +76,12 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
 
 CPDF_DefaultAppearance::CPDF_DefaultAppearance(const ByteString& csDA)
     : da_(csDA) {}
+
+CPDF_DefaultAppearance::CPDF_DefaultAppearance(
+    const CPDF_Dictionary* annot_dict,
+    const CPDF_Dictionary* acroform_dict)
+    : CPDF_DefaultAppearance(
+          GetDefaultAppearanceString(annot_dict, acroform_dict)) {}
 
 CPDF_DefaultAppearance::~CPDF_DefaultAppearance() = default;
 

@@ -246,20 +246,6 @@ AnnotationDimensionsAndColor GetAnnotationDimensionsAndColor(
   };
 }
 
-ByteString GetDefaultAppearanceString(CPDF_Dictionary* annot_dict,
-                                      CPDF_Dictionary* form_dict) {
-  ByteString default_appearance_string;
-  RetainPtr<const CPDF_Object> default_appearance_object =
-      CPDF_FormField::GetFieldAttrForDict(annot_dict, "DA");
-  if (default_appearance_object) {
-    default_appearance_string = default_appearance_object->GetString();
-  }
-  if (default_appearance_string.IsEmpty()) {
-    default_appearance_string = form_dict->GetByteStringFor("DA");
-  }
-  return default_appearance_string;
-}
-
 struct DefaultAppearanceInfo {
   ByteString font_name;
   float font_size;
@@ -267,8 +253,9 @@ struct DefaultAppearanceInfo {
 };
 
 std::optional<DefaultAppearanceInfo> GetDefaultAppearanceInfo(
-    const ByteString& default_appearance_string) {
-  CPDF_DefaultAppearance appearance(default_appearance_string);
+    const CPDF_Dictionary* annot_dict,
+    const CPDF_Dictionary* acroform_dict) {
+  CPDF_DefaultAppearance appearance(annot_dict, acroform_dict);
   auto maybe_font_name_and_size = appearance.GetFont();
   if (!maybe_font_name_and_size.has_value()) {
     return std::nullopt;
@@ -1051,8 +1038,7 @@ bool GenerateFreeTextAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   }
 
   std::optional<DefaultAppearanceInfo> default_appearance_info =
-      GetDefaultAppearanceInfo(
-          GetDefaultAppearanceString(annot_dict, form_dict));
+      GetDefaultAppearanceInfo(annot_dict, form_dict);
   if (!default_appearance_info.has_value()) {
     return false;
   }
@@ -1454,8 +1440,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
   }
 
   std::optional<DefaultAppearanceInfo> default_appearance_info =
-      GetDefaultAppearanceInfo(
-          GetDefaultAppearanceString(annot_dict, form_dict));
+      GetDefaultAppearanceInfo(annot_dict, form_dict);
   if (!default_appearance_info.has_value()) {
     return;
   }
