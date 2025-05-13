@@ -6,6 +6,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
 
+#include <array>
 #include <iterator>
 #include <limits>
 

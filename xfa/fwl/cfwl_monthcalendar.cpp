@@ -7,6 +7,7 @@
 #include "xfa/fwl/cfwl_monthcalendar.h"
 
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <utility>
 

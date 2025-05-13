@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <utility>
+#include <vector>
 
 #include "constants/access_permissions.h"
 #include "core/fpdfapi/page/cpdf_pageimagecache.h"

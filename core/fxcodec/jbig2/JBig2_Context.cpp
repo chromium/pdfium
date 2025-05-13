@@ -7,6 +7,7 @@
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <list>
 #include <utility>

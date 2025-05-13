@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 
+#include <array>
 #include <memory>
 #include <utility>
 #include <vector>

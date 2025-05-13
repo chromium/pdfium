@@ -6,7 +6,6 @@
 
 #include "core/fpdfdoc/cpdf_nametree.h"
 
-#include <set>
 #include <utility>
 #include <vector>
 
