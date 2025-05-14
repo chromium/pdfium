@@ -82,7 +82,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': 'f8eeb23fa50b2b2bdfa9c341a1ed9b3d529770c4',
+  'buildtools_revision': '1441807f305740d72c9dc8d87ec1d29463d05c7d',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
@@ -156,7 +156,7 @@ vars = {
   # and whatever else without interference from each other.
   # If you change this, also update the libc++ revision in
   # //buildtools/deps_revisions.gni.
-  'libcxx_revision': '4e8b01e3c1c22a50f8eb5290f6a65859d5886205',
+  'libcxx_revision': 'f034fd5662d033c281ab6a9b45164066ddd18809',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
