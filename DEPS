@@ -108,6 +108,10 @@ vars = {
   # and whatever else without interference from each other.
   'depot_tools_revision': '1fcc527019d786502b02f71b8b764ee674a40953',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling dragonbox
+  # and whatever else without interference from each other.
+  'dragonbox_revision': '6c7c925b571d54486b9ffae8d9d18a822801cbda',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling fast_float
   # and whatever else without interference from each other.
   'fast_float_revision': 'cb1d42aaa1e14b09e1452cfdef373d051b8c02a4',
@@ -349,6 +353,12 @@ deps = {
   'third_party/depot_tools':
     Var('chromium_git') + '/chromium/tools/depot_tools.git@' +
         Var('depot_tools_revision'),
+
+  'third_party/dragonbox/src': {
+    'url': Var('chromium_git') + '/external/github.com/jk-jeon/dragonbox.git@' +
+        Var('dragonbox_revision'),
+    'condition': 'checkout_v8',
+  },
 
   'third_party/fast_float/src':
     Var('chromium_git') + '/external/github.com/fastfloat/fast_float.git@' +
