@@ -33,6 +33,10 @@ default_args = {
 
   # PDFium has its own unsafe-buffers enforcement directories.
   clang_unsafe_buffers_paths = "//unsafe_buffers_paths.txt"
+
+  # Needed only for std::atomic_ref<T> for large Ts.
+  # See https://crbug.com/402171653 for details.
+  use_llvm_libatomic = false
 }
 
 no_check_targets = [
