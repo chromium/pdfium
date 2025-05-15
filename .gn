@@ -31,6 +31,9 @@ default_args = {
   # give warnings.
   v8_imminent_deprecation_warnings = false
 
+  # PDFium does not include the temporal_rs library.
+  v8_enable_temporal_support = false
+
   # PDFium has its own unsafe-buffers enforcement directories.
   clang_unsafe_buffers_paths = "//unsafe_buffers_paths.txt"
 
