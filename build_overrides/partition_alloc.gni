@@ -54,6 +54,7 @@ if (_use_shim && !_disable_partition_alloc_everywhere) {
 
 # See base/allocator/partition_allocator/external_builds.md
 use_allocator_shim_default = _use_shim
+shim_supports_sized_dealloc_default = false
 use_partition_alloc_as_malloc_default = _default_allocator == "partition"
 
 _is_brp_supported = (is_win || is_android || is_linux || is_mac ||
