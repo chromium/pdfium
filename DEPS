@@ -100,7 +100,7 @@ vars = {
   # and whatever else without interference from each other.
   'code_coverage_revision': 'dea8d7c1bd513cc0364d6c797fb05bf0ec4a420d',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling code_coverage
+  # the commit queue can handle CLs rolling cpu_features
   # and whatever else without interference from each other.
   'cpu_features_revision': '936b9ab5515dead115606559502e3864958f7f6e',
   # Three lines of non-changing comments so that
@@ -202,7 +202,7 @@ vars = {
   # and whatever else without interference from each other.
   'rust_revision': 'e4c4740810fc135d7b86940575598b7a3bad52de',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling skia
+  # the commit queue can handle CLs rolling simdutf
   # and whatever else without interference from each other.
   'simdutf_revision': '40d1fa26cd5ca221605c974e22c001ca2fb12fde',
   # Three lines of non-changing comments so that
@@ -366,9 +366,11 @@ deps = {
     Var('chromium_git') + '/external/github.com/google/googletest.git@' +
         Var('gtest_revision'),
 
-  'third_party/highway/src':
-    Var('chromium_git') + '/external/github.com/google/highway.git@' +
+  'third_party/highway/src': {
+    'url': Var('chromium_git') + '/external/github.com/google/highway.git@' +
         Var('highway_revision'),
+    'condition': 'checkout_v8',
+  },
 
   'third_party/icu':
     Var('chromium_git') + '/chromium/deps/icu.git@' + Var('icu_revision'),
