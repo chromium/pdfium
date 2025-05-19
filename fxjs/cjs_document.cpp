@@ -697,7 +697,7 @@ CJS_Result CJS_Document::set_bookmark_root(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_author(CJS_Runtime* pRuntime) {
-  return getPropertyInternal(pRuntime, "Author");
+  return GetPropertyInternal(pRuntime, "Author");
 }
 
 CJS_Result CJS_Document::set_author(CJS_Runtime* pRuntime,
@@ -773,7 +773,7 @@ CJS_Result CJS_Document::set_info(CJS_Runtime* pRuntime,
   return CJS_Result::Failure(JSMessage::kReadOnlyError);
 }
 
-CJS_Result CJS_Document::getPropertyInternal(CJS_Runtime* pRuntime,
+CJS_Result CJS_Document::GetPropertyInternal(CJS_Runtime* pRuntime,
                                              ByteStringView property_name) {
   if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
@@ -790,7 +790,7 @@ CJS_Result CJS_Document::getPropertyInternal(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_creation_date(CJS_Runtime* pRuntime) {
-  return getPropertyInternal(pRuntime, "CreationDate");
+  return GetPropertyInternal(pRuntime, "CreationDate");
 }
 
 CJS_Result CJS_Document::set_creation_date(CJS_Runtime* pRuntime,
@@ -800,7 +800,7 @@ CJS_Result CJS_Document::set_creation_date(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_creator(CJS_Runtime* pRuntime) {
-  return getPropertyInternal(pRuntime, "Creator");
+  return GetPropertyInternal(pRuntime, "Creator");
 }
 
 CJS_Result CJS_Document::set_creator(CJS_Runtime* pRuntime,
@@ -843,7 +843,7 @@ CJS_Result CJS_Document::set_delay(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_keywords(CJS_Runtime* pRuntime) {
-  return getPropertyInternal(pRuntime, "Keywords");
+  return GetPropertyInternal(pRuntime, "Keywords");
 }
 
 CJS_Result CJS_Document::set_keywords(CJS_Runtime* pRuntime,
@@ -853,7 +853,7 @@ CJS_Result CJS_Document::set_keywords(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_mod_date(CJS_Runtime* pRuntime) {
-  return getPropertyInternal(pRuntime, "ModDate");
+  return GetPropertyInternal(pRuntime, "ModDate");
 }
 
 CJS_Result CJS_Document::set_mod_date(CJS_Runtime* pRuntime,
@@ -863,7 +863,7 @@ CJS_Result CJS_Document::set_mod_date(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_producer(CJS_Runtime* pRuntime) {
-  return getPropertyInternal(pRuntime, "Producer");
+  return GetPropertyInternal(pRuntime, "Producer");
 }
 
 CJS_Result CJS_Document::set_producer(CJS_Runtime* pRuntime,
@@ -873,7 +873,7 @@ CJS_Result CJS_Document::set_producer(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_subject(CJS_Runtime* pRuntime) {
-  return getPropertyInternal(pRuntime, "Subject");
+  return GetPropertyInternal(pRuntime, "Subject");
 }
 
 CJS_Result CJS_Document::set_subject(CJS_Runtime* pRuntime,
@@ -886,7 +886,7 @@ CJS_Result CJS_Document::get_title(CJS_Runtime* pRuntime) {
   if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
-  return getPropertyInternal(pRuntime, "Title");
+  return GetPropertyInternal(pRuntime, "Title");
 }
 
 CJS_Result CJS_Document::set_title(CJS_Runtime* pRuntime,

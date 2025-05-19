@@ -299,7 +299,7 @@ class CJS_Document final : public CJS_Object, public Observable {
   CJS_Result removeIcon(CJS_Runtime* pRuntime,
                         pdfium::span<v8::Local<v8::Value>> params);
 
-  CJS_Result getPropertyInternal(CJS_Runtime* pRuntime,
+  CJS_Result GetPropertyInternal(CJS_Runtime* pRuntime,
                                  ByteStringView property_name);
 
   CPDF_InteractiveForm* GetCoreInteractiveForm();
