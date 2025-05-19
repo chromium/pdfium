@@ -178,6 +178,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFFont_GetWeight);
     CHK(FPDFFormObj_CountObjects);
     CHK(FPDFFormObj_GetObject);
+    CHK(FPDFFormObj_RemoveObject);
     CHK(FPDFGlyphPath_CountGlyphSegments);
     CHK(FPDFGlyphPath_GetGlyphPathSegment);
     CHK(FPDFImageObj_GetBitmap);

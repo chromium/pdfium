@@ -155,6 +155,13 @@ const CPDF_PageObjectHolder* CPDFPageObjHolderFromFPDFFormObject(
   return pFormObject ? pFormObject->form() : nullptr;
 }
 
+// Non-const version needed for FPDFFormObj_RemoveObject
+CPDF_PageObjectHolder* MutableCPDFPageObjHolderFromFPDFFormObject(
+    FPDF_PAGEOBJECT page_object) {
+  CPDF_FormObject* form_object = CPDFFormObjectFromFPDFPageObject(page_object);
+  return form_object ? form_object->form() : nullptr;
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
@@ -1156,4 +1163,21 @@ FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index) {
 
   return FPDFPageObjectFromCPDFPageObject(
       pObjectList->GetPageObjectByIndex(index));
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFFormObj_RemoveObject(FPDF_PAGEOBJECT form_object,
+                         FPDF_PAGEOBJECT page_object) {
+  auto* object_holder = MutableCPDFPageObjHolderFromFPDFFormObject(form_object);
+  if (!object_holder) {
+    return false;
+  }
+
+  CPDF_PageObject* cpage_object = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!cpage_object) {
+    return false;
+  }
+
+  // Caller takes ownership of the removed page object
+  return !!object_holder->RemovePageObject(cpage_object).release();
 }

@@ -30,6 +30,7 @@ class CPDF_FormObject final : public CPDF_PageObject {
 
   void CalcBoundingBox();
   const CPDF_Form* form() const { return form_.get(); }
+  CPDF_Form* form() { return form_.get(); }
   const CFX_Matrix& form_matrix() const { return form_matrix_; }
   void SetFormMatrix(const CFX_Matrix& matrix);
 

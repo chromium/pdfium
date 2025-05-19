@@ -5472,3 +5472,40 @@ TEST_F(FPDFEditEmbedderTest, Bug377948405) {
   EXPECT_EQ(widths_array->GetIntegerAt(0), 1);
   EXPECT_EQ(widths_array->GetIntegerAt(2), 5);
 }
+
+TEST_F(FPDFEditEmbedderTest, FormModifyObject) {
+  ASSERT_TRUE(OpenDocument("form_object_with_image.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Since we know the document structure, assert the exact object count
+  constexpr int kExpectedPageObjectCount = 1;
+  ASSERT_EQ(kExpectedPageObjectCount, FPDFPage_CountObjects(page));
+
+  FPDF_PAGEOBJECT form_obj = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(form_obj);
+  ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(form_obj));
+
+  // Get the count of objects in the form
+  constexpr int kExpectedFormObjectCount = 1;
+  ASSERT_EQ(kExpectedFormObjectCount, FPDFFormObj_CountObjects(form_obj));
+
+  constexpr int kImageObjectIndex = 0;
+  FPDF_PAGEOBJECT image_obj =
+      FPDFFormObj_GetObject(form_obj, kImageObjectIndex);
+  ASSERT_TRUE(image_obj);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(image_obj));
+
+  ASSERT_FALSE(FPDFFormObj_RemoveObject(nullptr, image_obj));
+  ASSERT_FALSE(FPDFFormObj_RemoveObject(form_obj, nullptr));
+  ASSERT_FALSE(FPDFFormObj_RemoveObject(nullptr, nullptr));
+  ASSERT_TRUE(FPDFFormObj_RemoveObject(form_obj, image_obj));
+
+  // After removing the image, the form should have no objects left
+  ASSERT_EQ(0, FPDFFormObj_CountObjects(form_obj));
+
+  FPDFPageObj_Destroy(image_obj);
+  ASSERT_TRUE(FPDFPage_GenerateContent(page));
+
+  UnloadPage(page);
+}
