@@ -300,7 +300,7 @@ class CJS_Document final : public CJS_Object, public Observable {
                         pdfium::span<v8::Local<v8::Value>> params);
 
   CJS_Result getPropertyInternal(CJS_Runtime* pRuntime,
-                                 const ByteString& propName);
+                                 ByteStringView property_name);
 
   CPDF_InteractiveForm* GetCoreInteractiveForm();
   CPDFSDK_InteractiveForm* GetSDKInteractiveForm();

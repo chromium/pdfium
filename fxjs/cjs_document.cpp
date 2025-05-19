@@ -774,7 +774,7 @@ CJS_Result CJS_Document::set_info(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::getPropertyInternal(CJS_Runtime* pRuntime,
-                                             const ByteString& propName) {
+                                             ByteStringView property_name) {
   if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
@@ -786,7 +786,7 @@ CJS_Result CJS_Document::getPropertyInternal(CJS_Runtime* pRuntime,
   }
 
   return CJS_Result::Success(pRuntime->NewString(
-      pDictionary->GetUnicodeTextFor(propName).AsStringView()));
+      pDictionary->GetUnicodeTextFor(property_name).AsStringView()));
 }
 
 CJS_Result CJS_Document::get_creation_date(CJS_Runtime* pRuntime) {

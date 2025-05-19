@@ -48,7 +48,7 @@ class CPDF_PageContentGenerator {
   void ProcessText(fxcrt::ostringstream* buf, CPDF_TextObject* pTextObj);
   ByteString GetOrCreateDefaultGraphics() const;
   ByteString RealizeResource(const CPDF_Object* pResource,
-                             const ByteString& bsType) const;
+                             ByteStringView type) const;
   const CPDF_ContentMarks* ProcessContentMarks(fxcrt::ostringstream* buf,
                                                const CPDF_PageObject* pPageObj,
                                                const CPDF_ContentMarks* pPrev);

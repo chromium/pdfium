@@ -44,11 +44,11 @@ class CPDF_PageOrganizer {
 
   static bool CopyInheritable(RetainPtr<CPDF_Dictionary> dest_page_dict,
                               RetainPtr<const CPDF_Dictionary> src_page_dict,
-                              const ByteString& key);
+                              ByteStringView key);
 
   static RetainPtr<const CPDF_Object> PageDictGetInheritableTag(
       RetainPtr<const CPDF_Dictionary> dict,
-      const ByteString& src_tag);
+      ByteStringView src_tag);
 
  private:
   bool InitDestDoc();

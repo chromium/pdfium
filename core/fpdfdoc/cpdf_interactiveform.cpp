@@ -799,7 +799,8 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> element = font_dict->GetMutableDictFor(alias);
+  RetainPtr<CPDF_Dictionary> element =
+      font_dict->GetMutableDictFor(alias.AsStringView());
   if (!ValidateDictType(element.Get(), "Font")) {
     return nullptr;
   }

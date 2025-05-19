@@ -626,7 +626,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
   if (pProperty->IsName()) {
     ByteString property_name = pProperty->GetString();
     RetainPtr<CPDF_Dictionary> pHolder = FindResourceHolder("Properties");
-    if (!pHolder || !pHolder->GetDictFor(property_name)) {
+    if (!pHolder || !pHolder->GetDictFor(property_name.AsStringView())) {
       return;
     }
     new_marks->AddMarkWithPropertiesHolder(tag, std::move(pHolder),
@@ -1203,7 +1203,8 @@ RetainPtr<CPDF_Dictionary> CPDF_StreamContentParser::FindResourceHolder(
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pDict = resources_->GetMutableDictFor(type);
+  RetainPtr<CPDF_Dictionary> pDict =
+      resources_->GetMutableDictFor(type.AsStringView());
   if (pDict) {
     return pDict;
   }
@@ -1212,14 +1213,15 @@ RetainPtr<CPDF_Dictionary> CPDF_StreamContentParser::FindResourceHolder(
     return nullptr;
   }
 
-  return page_resources_->GetMutableDictFor(type);
+  return page_resources_->GetMutableDictFor(type.AsStringView());
 }
 
 RetainPtr<CPDF_Object> CPDF_StreamContentParser::FindResourceObj(
     const ByteString& type,
     const ByteString& name) {
   RetainPtr<CPDF_Dictionary> pHolder = FindResourceHolder(type);
-  return pHolder ? pHolder->GetMutableDirectObjectFor(name) : nullptr;
+  return pHolder ? pHolder->GetMutableDirectObjectFor(name.AsStringView())
+                 : nullptr;
 }
 
 RetainPtr<CPDF_Font> CPDF_StreamContentParser::FindFont(

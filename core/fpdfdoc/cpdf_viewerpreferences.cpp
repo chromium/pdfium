@@ -48,7 +48,8 @@ std::optional<ByteString> CPDF_ViewerPreferences::GenericName(
     return std::nullopt;
   }
 
-  RetainPtr<const CPDF_Name> pName = ToName(pDict->GetObjectFor(bsKey));
+  RetainPtr<const CPDF_Name> pName =
+      ToName(pDict->GetObjectFor(bsKey.AsStringView()));
   if (!pName) {
     return std::nullopt;
   }

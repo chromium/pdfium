@@ -32,8 +32,7 @@ bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
   if (!pDict->KeyExist(key)) {
     return !must_exist;
   }
-  // TODO(thestig): Avoid ByteString creation.
-  RetainPtr<const CPDF_Number> pNum = pDict->GetNumberFor(ByteString(key));
+  RetainPtr<const CPDF_Number> pNum = pDict->GetNumberFor(key);
   if (!pNum || !pNum->IsInteger()) {
     return false;
   }

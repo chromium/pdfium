@@ -120,7 +120,7 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
     as = (!value.IsEmpty() && pDict->KeyExist(value.AsStringView())) ? value
                                                                      : "Off";
   }
-  return pDict->GetMutableStreamFor(as);
+  return pDict->GetMutableStreamFor(as.AsStringView());
 }
 
 }  // namespace

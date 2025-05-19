@@ -201,14 +201,14 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
   // SAFETY: required from caller.
   auto buffer_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
 
-  ByteString key_str = key;
-  RetainPtr<const CPDF_Object> object = params->GetObjectFor(key_str);
+  ByteStringView key_view(key);
+  RetainPtr<const CPDF_Object> object = params->GetObjectFor(key_view);
   if (!object || (!object->IsString() && !object->IsName())) {
     // Per API description, return an empty string in these cases.
     return Utf16EncodeMaybeCopyAndReturnLength(WideString(), buffer_span);
   }
 
-  if (key_str == kChecksumKey) {
+  if (key_view == kChecksumKey) {
     RetainPtr<const CPDF_String> string_object = ToString(object);
     if (string_object && string_object->IsHex()) {
       ByteString encoded =

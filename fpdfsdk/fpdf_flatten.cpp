@@ -426,7 +426,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       }
 
       if (!sAnnotState.IsEmpty()) {
-        original_ap_stream = original_ap_dict->GetMutableStreamFor(sAnnotState);
+        original_ap_stream =
+            original_ap_dict->GetMutableStreamFor(sAnnotState.AsStringView());
       } else {
         if (original_ap_dict->size() > 0) {
           CPDF_DictionaryLocker locker(original_ap_dict);

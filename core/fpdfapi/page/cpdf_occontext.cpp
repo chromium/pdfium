@@ -70,23 +70,17 @@ RetainPtr<const CPDF_Dictionary> GetConfig(CPDF_Document* pDoc,
   return pConfig;
 }
 
-ByteString GetUsageTypeString(CPDF_OCContext::UsageType eType) {
-  ByteString csState;
+ByteStringView GetUsageTypeString(CPDF_OCContext::UsageType eType) {
   switch (eType) {
     case CPDF_OCContext::kDesign:
-      csState = "Design";
-      break;
+      return "Design";
     case CPDF_OCContext::kPrint:
-      csState = "Print";
-      break;
+      return "Print";
     case CPDF_OCContext::kExport:
-      csState = "Export";
-      break;
+      return "Export";
     default:
-      csState = "View";
-      break;
+      return "View";
   }
-  return csState;
 }
 
 }  // namespace
@@ -99,7 +93,7 @@ CPDF_OCContext::CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType)
 CPDF_OCContext::~CPDF_OCContext() = default;
 
 bool CPDF_OCContext::LoadOCGStateFromConfig(
-    const ByteString& csConfig,
+    ByteStringView config,
     const CPDF_Dictionary* pOCGDict) const {
   RetainPtr<const CPDF_Dictionary> pConfig = GetConfig(document_, pOCGDict);
   if (!pConfig) {
@@ -122,14 +116,14 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
     return bState;
   }
 
-  ByteString csFind = csConfig + "State";
+  ByteString csFind({config, "State"});
   for (size_t i = 0; i < pArray->size(); i++) {
     RetainPtr<const CPDF_Dictionary> pUsage = pArray->GetDictAt(i);
     if (!pUsage) {
       continue;
     }
 
-    if (pUsage->GetByteStringFor("Event", "View") != csConfig) {
+    if (pUsage->GetByteStringFor("Event", "View") != config) {
       continue;
     }
 
@@ -142,12 +136,12 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
       continue;
     }
 
-    RetainPtr<const CPDF_Dictionary> pState = pUsage->GetDictFor(csConfig);
+    RetainPtr<const CPDF_Dictionary> pState = pUsage->GetDictFor(config);
     if (!pState) {
       continue;
     }
 
-    bState = pState->GetByteStringFor(csFind) != "OFF";
+    bState = pState->GetByteStringFor(csFind.AsStringView()) != "OFF";
   }
   return bState;
 }
@@ -157,24 +151,24 @@ bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
     return true;
   }
 
-  ByteString csState = GetUsageTypeString(usage_type_);
+  ByteStringView state = GetUsageTypeString(usage_type_);
   RetainPtr<const CPDF_Dictionary> pUsage = pOCGDict->GetDictFor("Usage");
   if (pUsage) {
-    RetainPtr<const CPDF_Dictionary> pState = pUsage->GetDictFor(csState);
+    RetainPtr<const CPDF_Dictionary> pState = pUsage->GetDictFor(state);
     if (pState) {
-      ByteString csFind = csState + "State";
+      ByteString csFind({state, "State"});
       if (pState->KeyExist(csFind.AsStringView())) {
-        return pState->GetByteStringFor(csFind) != "OFF";
+        return pState->GetByteStringFor(csFind.AsStringView()) != "OFF";
       }
     }
-    if (csState != "View") {
+    if (state != "View") {
       pState = pUsage->GetDictFor("View");
       if (pState && pState->KeyExist("ViewState")) {
         return pState->GetByteStringFor("ViewState") != "OFF";
       }
     }
   }
-  return LoadOCGStateFromConfig(csState, pOCGDict);
+  return LoadOCGStateFromConfig(state, pOCGDict);
 }
 
 bool CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) const {

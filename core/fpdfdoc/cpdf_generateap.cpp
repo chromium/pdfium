@@ -620,7 +620,7 @@ RetainPtr<CPDF_Dictionary> GetFontFromDrFontDictOrGenerateFallback(
     CPDF_Dictionary* dr_font_dict,
     const ByteString& font_name) {
   RetainPtr<CPDF_Dictionary> font_dict =
-      dr_font_dict->GetMutableDictFor(font_name);
+      dr_font_dict->GetMutableDictFor(font_name.AsStringView());
   if (font_dict) {
     return font_dict;
   }

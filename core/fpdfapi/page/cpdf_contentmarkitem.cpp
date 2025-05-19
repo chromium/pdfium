@@ -18,7 +18,7 @@ CPDF_ContentMarkItem::~CPDF_ContentMarkItem() = default;
 RetainPtr<const CPDF_Dictionary> CPDF_ContentMarkItem::GetParam() const {
   switch (param_type_) {
     case kPropertiesDict:
-      return properties_holder_->GetDictFor(property_name_);
+      return properties_holder_->GetDictFor(property_name_.AsStringView());
     case kDirectDict:
       return direct_dict_;
     case kNone:

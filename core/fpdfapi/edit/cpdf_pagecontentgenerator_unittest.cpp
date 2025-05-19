@@ -38,8 +38,8 @@ class CPDFPageContentGeneratorTest : public TestWithPageModule {
 
   RetainPtr<const CPDF_Dictionary> TestGetResource(
       CPDF_PageContentGenerator* pGen,
-      const ByteString& type,
-      const ByteString& name) {
+      ByteStringView type,
+      ByteStringView name) {
     RetainPtr<const CPDF_Dictionary> pResources =
         pGen->obj_holder_->GetResources();
     return pResources->GetDictFor(type)->GetDictFor(name);
@@ -225,10 +225,11 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessGraphics) {
   EXPECT_EQ(kExpectedStringEnd,
             path_string.Last(kExpectedStringEnd.GetLength()));
   ASSERT_GT(path_string.GetLength(), kExpectedStringMinLength);
-  RetainPtr<const CPDF_Dictionary> external_gs = TestGetResource(
-      &generator, "ExtGState",
-      path_string.Substr(kExpectedStringStart.GetLength(),
-                         path_string.GetLength() - kExpectedStringMinLength));
+  RetainPtr<const CPDF_Dictionary> external_gs =
+      TestGetResource(&generator, "ExtGState",
+                      path_string.AsStringView().Substr(
+                          kExpectedStringStart.GetLength(),
+                          path_string.GetLength() - kExpectedStringMinLength));
   ASSERT_TRUE(external_gs);
   EXPECT_EQ(0.5f, external_gs->GetFloatFor("ca"));
   EXPECT_EQ(0.8f, external_gs->GetFloatFor("CA"));
@@ -312,13 +313,15 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessStandardText) {
   EXPECT_EQ(kCompareString3, last_string.Last(kCompareString3.GetLength()));
   RetainPtr<const CPDF_Dictionary> external_gs = TestGetResource(
       &generator, "ExtGState",
-      mid_string.First(mid_string.GetLength() - kCompareString2.GetLength()));
+      mid_string.AsStringView().First(mid_string.GetLength() -
+                                      kCompareString2.GetLength()));
   ASSERT_TRUE(external_gs);
   EXPECT_EQ(0.5f, external_gs->GetFloatFor("ca"));
   EXPECT_EQ(0.8f, external_gs->GetFloatFor("CA"));
   RetainPtr<const CPDF_Dictionary> font_dict = TestGetResource(
       &generator, "Font",
-      last_string.First(last_string.GetLength() - kCompareString3.GetLength()));
+      last_string.AsStringView().First(last_string.GetLength() -
+                                       kCompareString3.GetLength()));
   ASSERT_TRUE(font_dict);
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
   EXPECT_EQ("Type1", font_dict->GetNameFor("Subtype"));
@@ -387,9 +390,10 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessText) {
   EXPECT_EQ(compare_string2, text_string.Last(compare_string2.GetLength()));
   RetainPtr<const CPDF_Dictionary> font_dict = TestGetResource(
       &generator, "Font",
-      text_string.Substr(compare_string1.GetLength(),
-                         text_string.GetLength() - compare_string1.GetLength() -
-                             compare_string2.GetLength()));
+      text_string.AsStringView().Substr(compare_string1.GetLength(),
+                                        text_string.GetLength() -
+                                            compare_string1.GetLength() -
+                                            compare_string2.GetLength()));
   ASSERT_TRUE(font_dict);
   EXPECT_TRUE(font_dict->GetObjNum());
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));

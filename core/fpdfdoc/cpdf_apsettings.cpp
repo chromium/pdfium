@@ -35,7 +35,8 @@ CFX_Color::TypeAndARGB CPDF_ApSettings::GetColorARGB(
     return {CFX_Color::Type::kTransparent, 0};
   }
 
-  RetainPtr<const CPDF_Array> pEntry = dict_->GetArrayFor(csEntry);
+  RetainPtr<const CPDF_Array> pEntry =
+      dict_->GetArrayFor(csEntry.AsStringView());
   if (!pEntry) {
     return {CFX_Color::Type::kTransparent, 0};
   }
@@ -71,7 +72,8 @@ float CPDF_ApSettings::GetOriginalColorComponent(
     return 0;
   }
 
-  RetainPtr<const CPDF_Array> pEntry = dict_->GetArrayFor(csEntry);
+  RetainPtr<const CPDF_Array> pEntry =
+      dict_->GetArrayFor(csEntry.AsStringView());
   return pEntry ? pEntry->GetFloatAt(index) : 0;
 }
 
@@ -80,7 +82,8 @@ CFX_Color CPDF_ApSettings::GetOriginalColor(const ByteString& csEntry) const {
     return CFX_Color();
   }
 
-  RetainPtr<const CPDF_Array> pEntry = dict_->GetArrayFor(csEntry);
+  RetainPtr<const CPDF_Array> pEntry =
+      dict_->GetArrayFor(csEntry.AsStringView());
   if (!pEntry) {
     return CFX_Color();
   }
@@ -102,12 +105,13 @@ CFX_Color CPDF_ApSettings::GetOriginalColor(const ByteString& csEntry) const {
 }
 
 WideString CPDF_ApSettings::GetCaption(const ByteString& csEntry) const {
-  return dict_ ? dict_->GetUnicodeTextFor(csEntry) : WideString();
+  return dict_ ? dict_->GetUnicodeTextFor(csEntry.AsStringView())
+               : WideString();
 }
 
 RetainPtr<CPDF_Stream> CPDF_ApSettings::GetIcon(
     const ByteString& csEntry) const {
-  return dict_ ? dict_->GetMutableStreamFor(csEntry) : nullptr;
+  return dict_ ? dict_->GetMutableStreamFor(csEntry.AsStringView()) : nullptr;
 }
 
 CPDF_IconFit CPDF_ApSettings::GetIconFit() const {

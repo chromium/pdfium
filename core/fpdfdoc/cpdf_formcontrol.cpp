@@ -229,7 +229,7 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
     RetainPtr<CPDF_Dictionary> pFonts = pDRDict->GetMutableDictFor("Font");
     if (ValidateFontResourceDict(pFonts.Get())) {
       RetainPtr<CPDF_Dictionary> pElement =
-          pFonts->GetMutableDictFor(font_name);
+          pFonts->GetMutableDictFor(font_name.AsStringView());
       if (pElement) {
         RetainPtr<CPDF_Font> pFont =
             form_->GetFontForElement(std::move(pElement));
@@ -256,7 +256,8 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pElement = pFonts->GetMutableDictFor(font_name);
+  RetainPtr<CPDF_Dictionary> pElement =
+      pFonts->GetMutableDictFor(font_name.AsStringView());
   if (!pElement) {
     return nullptr;
   }

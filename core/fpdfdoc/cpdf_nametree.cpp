@@ -450,7 +450,8 @@ RetainPtr<const CPDF_Array> LookupOldStyleNamedDest(CPDF_Document* pDoc,
   if (!pDests) {
     return nullptr;
   }
-  return GetNamedDestFromObject(pDests->GetDirectObjectFor(name));
+  return GetNamedDestFromObject(
+      pDests->GetDirectObjectFor(name.AsStringView()));
 }
 
 }  // namespace
@@ -476,7 +477,8 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::Create(
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pCategory = pNames->GetMutableDictFor(category);
+  RetainPtr<CPDF_Dictionary> pCategory =
+      pNames->GetMutableDictFor(category.AsStringView());
   if (!pCategory) {
     return nullptr;
   }
@@ -502,7 +504,8 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateWithRootNameArray(
   }
 
   // Create the |category| dictionary if missing.
-  RetainPtr<CPDF_Dictionary> pCategory = pNames->GetMutableDictFor(category);
+  RetainPtr<CPDF_Dictionary> pCategory =
+      pNames->GetMutableDictFor(category.AsStringView());
   if (!pCategory) {
     pCategory = pDoc->NewIndirect<CPDF_Dictionary>();
     pCategory->SetNewFor<CPDF_Array>("Names");

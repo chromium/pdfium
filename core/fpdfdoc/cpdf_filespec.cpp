@@ -152,7 +152,7 @@ RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
       {"UF", "F", "DOS", "Mac", "Unix"}};
   size_t end = pDict->GetByteStringFor("FS") == "URL" ? 2 : std::size(kKeys);
   for (size_t i = 0; i < end; ++i) {
-    ByteString key = kKeys[i];
+    ByteStringView key = kKeys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
       RetainPtr<const CPDF_Stream> pStream = pFiles->GetStreamFor(key);
       if (pStream) {

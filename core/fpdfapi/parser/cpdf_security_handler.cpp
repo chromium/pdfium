@@ -247,7 +247,7 @@ static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,
       *cipher = CPDF_CryptoHandler::Cipher::kNone;
     } else {
       RetainPtr<const CPDF_Dictionary> pDefFilter =
-          pCryptFilters->GetDictFor(name);
+          pCryptFilters->GetDictFor(name.AsStringView());
       if (!pDefFilter) {
         return false;
       }

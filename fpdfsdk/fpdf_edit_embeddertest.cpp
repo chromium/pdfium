@@ -234,9 +234,8 @@ class FPDFEditEmbedderTest : public EmbedderTest {
     EXPECT_TRUE(font_desc->KeyExist(present));
     EXPECT_FALSE(font_desc->KeyExist(absent));
 
-    // TODO(thestig): Avoid ByteString creation.
-    auto streamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(
-        font_desc->GetStreamFor(ByteString(present)));
+    auto streamAcc =
+        pdfium::MakeRetain<CPDF_StreamAcc>(font_desc->GetStreamFor(present));
     streamAcc->LoadAllDataRaw();
 
     // Check that the font stream is the one that was provided

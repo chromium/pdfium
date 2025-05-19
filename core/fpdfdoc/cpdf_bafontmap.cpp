@@ -292,7 +292,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
               pNormalDict->GetMutableDictFor("Resources")) {
         if (RetainPtr<CPDF_Dictionary> pResFontDict =
                 pNormalResDict->GetMutableDictFor("Font")) {
-          pFontDict = pResFontDict->GetMutableDictFor(*sAlias);
+          pFontDict = pResFontDict->GetMutableDictFor(sAlias->AsStringView());
         }
       }
     }
@@ -302,7 +302,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
             pAcroFormDict->GetMutableDictFor("DR")) {
       if (RetainPtr<CPDF_Dictionary> pDRFontDict =
               pDRDict->GetMutableDictFor("Font")) {
-        pFontDict = pDRFontDict->GetMutableDictFor(*sAlias);
+        pFontDict = pDRFontDict->GetMutableDictFor(sAlias->AsStringView());
       }
     }
   }
@@ -323,11 +323,12 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
       annot_dict_->GetOrCreateDictFor(pdfium::annotation::kAP);
 
   // to avoid checkbox and radiobutton
-  if (ToDictionary(pAPDict->GetObjectFor(ap_type_))) {
+  if (ToDictionary(pAPDict->GetObjectFor(ap_type_.AsStringView()))) {
     return;
   }
 
-  RetainPtr<CPDF_Stream> stream = pAPDict->GetMutableStreamFor(ap_type_);
+  RetainPtr<CPDF_Stream> stream =
+      pAPDict->GetMutableStreamFor(ap_type_.AsStringView());
   if (!stream) {
     stream =
         document_->NewIndirect<CPDF_Stream>(document_->New<CPDF_Dictionary>());

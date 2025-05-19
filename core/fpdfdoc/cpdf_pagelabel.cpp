@@ -131,7 +131,7 @@ std::optional<WideString> CPDF_PageLabel::GetLabel(int page_index) const {
     label = label_dict->GetUnicodeTextFor("P");
   }
 
-  ByteString style = label_dict->GetByteStringFor("S", ByteString());
+  ByteString style = label_dict->GetByteStringFor("S", ByteStringView());
   int label_number =
       page_index - lower_bound.value().key + label_dict->GetIntegerFor("St", 1);
   label += GetLabelNumPortion(label_number, style);

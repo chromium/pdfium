@@ -724,12 +724,12 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
   pAnnotDict->SetNewFor<CPDF_Number>("CA", A / 255.f);
 
   // Set the color of the annotation.
-  ByteString key = type == FPDFANNOT_COLORTYPE_InteriorColor ? "IC" : "C";
+  ByteStringView key = type == FPDFANNOT_COLORTYPE_InteriorColor ? "IC" : "C";
   RetainPtr<CPDF_Array> pColor = pAnnotDict->GetMutableArrayFor(key);
   if (pColor) {
     pColor->Clear();
   } else {
-    pColor = pAnnotDict->SetNewFor<CPDF_Array>(key);
+    pColor = pAnnotDict->SetNewFor<CPDF_Array>(ByteString(key));
   }
 
   pColor->AppendNew<CPDF_Number>(R / 255.f);

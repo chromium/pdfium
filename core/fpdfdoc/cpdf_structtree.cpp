@@ -47,7 +47,7 @@ CPDF_StructTree::~CPDF_StructTree() = default;
 
 ByteString CPDF_StructTree::GetRoleMapNameFor(const ByteString& type) const {
   if (role_map_) {
-    ByteString mapped = role_map_->GetNameFor(type);
+    ByteString mapped = role_map_->GetNameFor(type.AsStringView());
     if (!mapped.IsEmpty()) {
       return mapped;
     }

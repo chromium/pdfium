@@ -85,8 +85,10 @@ RetainPtr<const CPDF_Object> CPDF_Page::GetPageAttr(
     const ByteString& name) const {
   std::set<RetainPtr<const CPDF_Dictionary>> visited;
   RetainPtr<const CPDF_Dictionary> pPageDict = GetDict();
+  ByteStringView name_view = name.AsStringView();
   while (pPageDict && !pdfium::Contains(visited, pPageDict)) {
-    RetainPtr<const CPDF_Object> pObj = pPageDict->GetDirectObjectFor(name);
+    RetainPtr<const CPDF_Object> pObj =
+        pPageDict->GetDirectObjectFor(name_view);
     if (pObj) {
       return pObj;
     }

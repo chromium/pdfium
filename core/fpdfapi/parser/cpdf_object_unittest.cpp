@@ -154,7 +154,7 @@ class PDFObjectsTest : public testing::Test {
         CPDF_DictionaryLocker locker1(dict1);
         for (const auto& item : locker1) {
           if (!Equal(item.second.Get(),
-                     dict2->GetObjectFor(item.first).Get())) {
+                     dict2->GetObjectFor(item.first.AsStringView()).Get())) {
             return false;
           }
         }

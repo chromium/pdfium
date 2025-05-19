@@ -513,7 +513,7 @@ void CPDF_PageContentGenerator::UpdateResourcesDict() {
 
 ByteString CPDF_PageContentGenerator::RealizeResource(
     const CPDF_Object* pResource,
-    const ByteString& bsType) const {
+    ByteStringView type) const {
   DCHECK(pResource);
   if (!obj_holder_->GetResources()) {
     obj_holder_->SetResources(document_->NewIndirect<CPDF_Dictionary>());
@@ -523,16 +523,16 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
   }
 
   RetainPtr<CPDF_Dictionary> resource_dict =
-      obj_holder_->GetMutableResources()->GetOrCreateDictFor(bsType);
+      obj_holder_->GetMutableResources()->GetOrCreateDictFor(type);
   const auto& all_removed_resources_map =
       obj_holder_->all_removed_resources_map();
-  auto it = all_removed_resources_map.find(bsType);
+  auto it = all_removed_resources_map.find(type);
   const CPDF_PageObjectHolder::RemovedResourceMap* removed_resource_map =
       it != all_removed_resources_map.end() ? &it->second : nullptr;
   ByteString name;
   int idnum = 1;
   while (true) {
-    name = ByteString::Format("FX%c%d", bsType[0], idnum);
+    name = ByteString::Format("FX%c%d", type[0], idnum);
     // Avoid name collisions with existing `resource_dict` entries.
     if (resource_dict->KeyExist(name.AsStringView())) {
       idnum++;

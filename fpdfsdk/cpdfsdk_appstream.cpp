@@ -1826,7 +1826,8 @@ void CPDFSDK_AppStream::SetAsTextField(std::optional<WideString> sValue) {
 
 void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
                                  const CPDF_Stream* pImage) {
-  RetainPtr<CPDF_Stream> pStream = dict_->GetMutableStreamFor(sAPType);
+  RetainPtr<CPDF_Stream> pStream =
+      dict_->GetMutableStreamFor(sAPType.AsStringView());
   RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
 
   const ByteString sImageAlias = pImage->GetDict()->GetByteStringFor("Name");
@@ -1848,13 +1849,14 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
     parent_dict = dict_;
     key = sAPType;
   } else {
-    parent_dict = dict_->GetOrCreateDictFor(sAPType);
+    parent_dict = dict_->GetOrCreateDictFor(sAPType.AsStringView());
     key = sAPState;
   }
 
   // If `stream` is created by CreateModifiedAPStream(), then it is safe to
   // edit, as it is not shared.
-  RetainPtr<CPDF_Stream> stream = parent_dict->GetMutableStreamFor(key);
+  RetainPtr<CPDF_Stream> stream =
+      parent_dict->GetMutableStreamFor(key.AsStringView());
   CPDF_Document* doc = widget_->GetPageView()->GetPDFDocument();
   if (!doc->IsModifiedAPStream(stream.Get())) {
     auto new_stream_dict = doc->New<CPDF_Dictionary>();

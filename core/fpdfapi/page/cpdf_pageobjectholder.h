@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include <deque>
+#include <functional>
 #include <map>
 #include <memory>
 #include <optional>
@@ -62,7 +63,8 @@ class CPDF_PageObjectHolder {
 
   // Key: The resource dictionary name.
   // Value: The entries removed from that dictionary.
-  using AllRemovedResourcesMap = std::map<ByteString, RemovedResourceMap>;
+  using AllRemovedResourcesMap =
+      std::map<ByteString, RemovedResourceMap, std::less<>>;
 
   using iterator = std::deque<std::unique_ptr<CPDF_PageObject>>::iterator;
   using const_iterator =

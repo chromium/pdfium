@@ -396,7 +396,7 @@ bool CPDFSDK_Widget::IsWidgetAppearanceValid(
     case FormFieldType::kCheckBox:
     case FormFieldType::kRadioButton:
       if (const CPDF_Dictionary* pSubDict = pSub->AsDictionary()) {
-        return !!pSubDict->GetStreamFor(GetAppState());
+        return !!pSubDict->GetStreamFor(GetAppState().AsStringView());
       }
       return false;
     default:
