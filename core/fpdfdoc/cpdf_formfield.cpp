@@ -76,16 +76,16 @@ std::optional<FormFieldType> CPDF_FormField::IntToFormFieldType(int value) {
 // static
 RetainPtr<const CPDF_Object> CPDF_FormField::GetFieldAttrForDict(
     const CPDF_Dictionary* pFieldDict,
-    const ByteString& name) {
-  return GetFieldAttrRecursive(pFieldDict, name.AsStringView(), 0);
+    ByteStringView name) {
+  return GetFieldAttrRecursive(pFieldDict, name, 0);
 }
 
 // static
 RetainPtr<CPDF_Object> CPDF_FormField::GetMutableFieldAttrForDict(
     CPDF_Dictionary* pFieldDict,
-    const ByteString& name) {
+    ByteStringView name) {
   return pdfium::WrapRetain(const_cast<CPDF_Object*>(
-      GetFieldAttrRecursive(pFieldDict, name.AsStringView(), 0).Get()));
+      GetFieldAttrRecursive(pFieldDict, name, 0).Get()));
 }
 
 // static
@@ -165,7 +165,7 @@ WideString CPDF_FormField::GetFullName() const {
 }
 
 RetainPtr<const CPDF_Object> CPDF_FormField::GetFieldAttr(
-    const ByteString& name) const {
+    ByteStringView name) const {
   return GetFieldAttrInternal(name);
 }
 
@@ -974,8 +974,8 @@ void CPDF_FormField::NotifyListOrComboBoxAfterChange() {
 }
 
 RetainPtr<const CPDF_Object> CPDF_FormField::GetFieldAttrInternal(
-    const ByteString& name) const {
-  return GetFieldAttrRecursive(dict_.Get(), name.AsStringView(), 0);
+    ByteStringView name) const {
+  return GetFieldAttrRecursive(dict_.Get(), name, 0);
 }
 
 const CPDF_Dictionary* CPDF_FormField::GetFieldDictInternal() const {

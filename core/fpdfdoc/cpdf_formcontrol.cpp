@@ -153,34 +153,33 @@ CPDF_ApSettings CPDF_FormControl::GetMK() const {
   return CPDF_ApSettings(widget_dict_->GetMutableDictFor("MK"));
 }
 
-bool CPDF_FormControl::HasMKEntry(const ByteString& csEntry) const {
-  return GetMK().HasMKEntry(csEntry);
+bool CPDF_FormControl::HasMKEntry(ByteStringView entry) const {
+  return GetMK().HasMKEntry(entry);
 }
 
 int CPDF_FormControl::GetRotation() const {
   return GetMK().GetRotation();
 }
 
-CFX_Color::TypeAndARGB CPDF_FormControl::GetColorARGB(
-    const ByteString& csEntry) {
-  return GetMK().GetColorARGB(csEntry);
+CFX_Color::TypeAndARGB CPDF_FormControl::GetColorARGB(ByteStringView entry) {
+  return GetMK().GetColorARGB(entry);
 }
 
 float CPDF_FormControl::GetOriginalColorComponent(int index,
-                                                  const ByteString& csEntry) {
-  return GetMK().GetOriginalColorComponent(index, csEntry);
+                                                  ByteStringView entry) {
+  return GetMK().GetOriginalColorComponent(index, entry);
 }
 
-CFX_Color CPDF_FormControl::GetOriginalColor(const ByteString& csEntry) {
-  return GetMK().GetOriginalColor(csEntry);
+CFX_Color CPDF_FormControl::GetOriginalColor(ByteStringView entry) {
+  return GetMK().GetOriginalColor(entry);
 }
 
-WideString CPDF_FormControl::GetCaption(const ByteString& csEntry) const {
-  return GetMK().GetCaption(csEntry);
+WideString CPDF_FormControl::GetCaption(ByteStringView entry) const {
+  return GetMK().GetCaption(entry);
 }
 
-RetainPtr<CPDF_Stream> CPDF_FormControl::GetIcon(const ByteString& csEntry) {
-  return GetMK().GetIcon(csEntry);
+RetainPtr<CPDF_Stream> CPDF_FormControl::GetIcon(ByteStringView entry) {
+  return GetMK().GetIcon(entry);
 }
 
 CPDF_IconFit CPDF_FormControl::GetIconFit() const {

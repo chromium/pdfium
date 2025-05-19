@@ -31,7 +31,7 @@ class CPDFSDK_AppStream {
 
  private:
   void AddImage(const ByteString& sAPType, const CPDF_Stream* pImage);
-  void Write(const ByteString& sAPType,
+  void Write(ByteStringView sAPType,
              const ByteString& sContents,
              const ByteString& sAPState);
   void Remove(ByteStringView sAPType);

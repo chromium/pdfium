@@ -28,7 +28,7 @@ CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
                                        RetainPtr<const CPDF_Dictionary> pDict)
     : tree_(pTree),
       dict_(std::move(pDict)),
-      type_(tree_->GetRoleMapNameFor(dict_->GetNameFor("S"))) {
+      type_(tree_->GetRoleMapNameFor(dict_->GetNameFor("S").AsStringView())) {
   LoadKids();
 }
 

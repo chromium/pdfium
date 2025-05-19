@@ -31,7 +31,7 @@ class CPDF_ApSettings {
   CPDF_ApSettings(const CPDF_ApSettings& that);
   ~CPDF_ApSettings();
 
-  bool HasMKEntry(const ByteString& csEntry) const;
+  bool HasMKEntry(ByteStringView entry) const;
   int GetRotation() const;
 
   CPDF_IconFit GetIconFit() const;
@@ -39,13 +39,13 @@ class CPDF_ApSettings {
   // Returns one of the TEXTPOS_* values above.
   int GetTextPosition() const;
 
-  CFX_Color::TypeAndARGB GetColorARGB(const ByteString& csEntry) const;
+  CFX_Color::TypeAndARGB GetColorARGB(ByteStringView entry) const;
 
-  float GetOriginalColorComponent(int index, const ByteString& csEntry) const;
-  CFX_Color GetOriginalColor(const ByteString& csEntry) const;
+  float GetOriginalColorComponent(int index, ByteStringView entry) const;
+  CFX_Color GetOriginalColor(ByteStringView entry) const;
 
-  WideString GetCaption(const ByteString& csEntry) const;
-  RetainPtr<CPDF_Stream> GetIcon(const ByteString& csEntry) const;
+  WideString GetCaption(ByteStringView entry) const;
+  RetainPtr<CPDF_Stream> GetIcon(ByteStringView entry) const;
 
  private:
   RetainPtr<CPDF_Dictionary> const dict_;

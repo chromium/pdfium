@@ -125,8 +125,8 @@ class CPDF_StreamContentParser {
   RetainPtr<CPDF_ColorSpace> FindColorSpace(const ByteString& name);
   RetainPtr<CPDF_Pattern> FindPattern(const ByteString& name);
   RetainPtr<CPDF_ShadingPattern> FindShading(const ByteString& name);
-  RetainPtr<CPDF_Dictionary> FindResourceHolder(const ByteString& type);
-  RetainPtr<CPDF_Object> FindResourceObj(const ByteString& type,
+  RetainPtr<CPDF_Dictionary> FindResourceHolder(ByteStringView type);
+  RetainPtr<CPDF_Object> FindResourceObj(ByteStringView type,
                                          const ByteString& name);
 
   // Takes ownership of |pImageObj|, returns unowned pointer to it.

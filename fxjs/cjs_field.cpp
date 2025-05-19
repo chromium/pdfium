@@ -175,7 +175,7 @@ std::vector<CPDF_FormField*> GetFormFieldsForName(
 }
 
 CFX_Color GetFormControlColor(CPDF_FormControl* pFormControl,
-                              const ByteString& entry) {
+                              ByteStringView entry) {
   switch (pFormControl->GetColorARGB(entry).color_type) {
     case CFX_Color::Type::kTransparent:
       return CFX_Color(CFX_Color::Type::kTransparent);

@@ -76,15 +76,15 @@ class CPDF_FormField {
   static WideString GetFullNameForDict(const CPDF_Dictionary* pFieldDict);
   static RetainPtr<const CPDF_Object> GetFieldAttrForDict(
       const CPDF_Dictionary* pFieldDict,
-      const ByteString& name);
+      ByteStringView name);
   static RetainPtr<CPDF_Object> GetMutableFieldAttrForDict(
       CPDF_Dictionary* pFieldDict,
-      const ByteString& name);
+      ByteStringView name);
 
   WideString GetFullName() const;
   Type GetType() const { return type_; }
 
-  RetainPtr<const CPDF_Object> GetFieldAttr(const ByteString& name) const;
+  RetainPtr<const CPDF_Object> GetFieldAttr(ByteStringView name) const;
   RetainPtr<const CPDF_Dictionary> GetFieldDict() const;
   void ResetField();
 
@@ -158,8 +158,7 @@ class CPDF_FormField {
   bool NotifyListOrComboBoxBeforeChange(const WideString& value);
   void NotifyListOrComboBoxAfterChange();
 
-  RetainPtr<const CPDF_Object> GetFieldAttrInternal(
-      const ByteString& name) const;
+  RetainPtr<const CPDF_Object> GetFieldAttrInternal(ByteStringView name) const;
   const CPDF_Dictionary* GetFieldDictInternal() const;
   RetainPtr<const CPDF_Object> GetDefaultValueObject() const;
   RetainPtr<const CPDF_Object> GetValueObject() const;

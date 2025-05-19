@@ -77,18 +77,15 @@ void CPDF_Page::ParseContent() {
   ContinueParse(nullptr);
 }
 
-RetainPtr<CPDF_Object> CPDF_Page::GetMutablePageAttr(const ByteString& name) {
+RetainPtr<CPDF_Object> CPDF_Page::GetMutablePageAttr(ByteStringView name) {
   return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetPageAttr(name).Get()));
 }
 
-RetainPtr<const CPDF_Object> CPDF_Page::GetPageAttr(
-    const ByteString& name) const {
+RetainPtr<const CPDF_Object> CPDF_Page::GetPageAttr(ByteStringView name) const {
   std::set<RetainPtr<const CPDF_Dictionary>> visited;
   RetainPtr<const CPDF_Dictionary> pPageDict = GetDict();
-  ByteStringView name_view = name.AsStringView();
   while (pPageDict && !pdfium::Contains(visited, pPageDict)) {
-    RetainPtr<const CPDF_Object> pObj =
-        pPageDict->GetDirectObjectFor(name_view);
+    RetainPtr<const CPDF_Object> pObj = pPageDict->GetDirectObjectFor(name);
     if (pObj) {
       return pObj;
     }
@@ -99,7 +96,7 @@ RetainPtr<const CPDF_Object> CPDF_Page::GetPageAttr(
   return nullptr;
 }
 
-CFX_FloatRect CPDF_Page::GetBox(const ByteString& name) const {
+CFX_FloatRect CPDF_Page::GetBox(ByteStringView name) const {
   CFX_FloatRect box;
   RetainPtr<const CPDF_Array> pBox = ToArray(GetPageAttr(name));
   if (pBox) {

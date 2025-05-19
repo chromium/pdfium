@@ -42,14 +42,13 @@ ByteString CPDF_ViewerPreferences::Duplex() const {
 }
 
 std::optional<ByteString> CPDF_ViewerPreferences::GenericName(
-    const ByteString& bsKey) const {
+    ByteStringView key) const {
   RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
   if (!pDict) {
     return std::nullopt;
   }
 
-  RetainPtr<const CPDF_Name> pName =
-      ToName(pDict->GetObjectFor(bsKey.AsStringView()));
+  RetainPtr<const CPDF_Name> pName = ToName(pDict->GetObjectFor(key));
   if (!pName) {
     return std::nullopt;
   }

@@ -26,14 +26,14 @@ class CPDF_NameTree {
   ~CPDF_NameTree();
 
   static std::unique_ptr<CPDF_NameTree> Create(CPDF_Document* pDoc,
-                                               const ByteString& category);
+                                               ByteStringView category);
 
   // If necessary, create missing Names dictionary in |pDoc|, and/or missing
   // Names array in the dictionary that corresponds to |category|, if necessary.
   // Returns nullptr on failure.
   static std::unique_ptr<CPDF_NameTree> CreateWithRootNameArray(
       CPDF_Document* pDoc,
-      const ByteString& category);
+      ByteStringView category);
 
   static std::unique_ptr<CPDF_NameTree> CreateForTesting(
       CPDF_Dictionary* pRoot);

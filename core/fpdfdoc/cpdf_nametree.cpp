@@ -464,9 +464,8 @@ CPDF_NameTree::CPDF_NameTree(RetainPtr<CPDF_Dictionary> pRoot)
 CPDF_NameTree::~CPDF_NameTree() = default;
 
 // static
-std::unique_ptr<CPDF_NameTree> CPDF_NameTree::Create(
-    CPDF_Document* pDoc,
-    const ByteString& category) {
+std::unique_ptr<CPDF_NameTree> CPDF_NameTree::Create(CPDF_Document* pDoc,
+                                                     ByteStringView category) {
   RetainPtr<CPDF_Dictionary> pRoot = pDoc->GetMutableRoot();
   if (!pRoot) {
     return nullptr;
@@ -477,8 +476,7 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::Create(
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pCategory =
-      pNames->GetMutableDictFor(category.AsStringView());
+  RetainPtr<CPDF_Dictionary> pCategory = pNames->GetMutableDictFor(category);
   if (!pCategory) {
     return nullptr;
   }
@@ -490,7 +488,7 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::Create(
 // static
 std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateWithRootNameArray(
     CPDF_Document* pDoc,
-    const ByteString& category) {
+    ByteStringView category) {
   RetainPtr<CPDF_Dictionary> pRoot = pDoc->GetMutableRoot();
   if (!pRoot) {
     return nullptr;
@@ -504,12 +502,12 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateWithRootNameArray(
   }
 
   // Create the |category| dictionary if missing.
-  RetainPtr<CPDF_Dictionary> pCategory =
-      pNames->GetMutableDictFor(category.AsStringView());
+  RetainPtr<CPDF_Dictionary> pCategory = pNames->GetMutableDictFor(category);
   if (!pCategory) {
     pCategory = pDoc->NewIndirect<CPDF_Dictionary>();
     pCategory->SetNewFor<CPDF_Array>("Names");
-    pNames->SetNewFor<CPDF_Reference>(category, pDoc, pCategory->GetObjNum());
+    pNames->SetNewFor<CPDF_Reference>(ByteString(category), pDoc,
+                                      pCategory->GetObjNum());
   }
 
   return pdfium::WrapUnique(new CPDF_NameTree(pCategory));  // Private ctor.

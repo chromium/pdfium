@@ -97,9 +97,9 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   CPDF_Page(CPDF_Document* pDocument, RetainPtr<CPDF_Dictionary> pPageDict);
   ~CPDF_Page() override;
 
-  RetainPtr<CPDF_Object> GetMutablePageAttr(const ByteString& name);
-  RetainPtr<const CPDF_Object> GetPageAttr(const ByteString& name) const;
-  CFX_FloatRect GetBox(const ByteString& name) const;
+  RetainPtr<CPDF_Object> GetMutablePageAttr(ByteStringView name);
+  RetainPtr<const CPDF_Object> GetPageAttr(ByteStringView name) const;
+  CFX_FloatRect GetBox(ByteStringView name) const;
 
   CFX_SizeF page_size_;
   CFX_Matrix page_matrix_;

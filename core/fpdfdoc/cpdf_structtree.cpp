@@ -45,14 +45,14 @@ CPDF_StructTree::CPDF_StructTree(const CPDF_Document* pDoc)
 
 CPDF_StructTree::~CPDF_StructTree() = default;
 
-ByteString CPDF_StructTree::GetRoleMapNameFor(const ByteString& type) const {
+ByteString CPDF_StructTree::GetRoleMapNameFor(ByteStringView type) const {
   if (role_map_) {
-    ByteString mapped = role_map_->GetNameFor(type.AsStringView());
+    ByteString mapped = role_map_->GetNameFor(type);
     if (!mapped.IsEmpty()) {
       return mapped;
     }
   }
-  return type;
+  return ByteString(type);
 }
 
 void CPDF_StructTree::LoadPageTree(RetainPtr<const CPDF_Dictionary> pPageDict) {

@@ -1198,13 +1198,12 @@ void CPDF_StreamContentParser::Handle_SetFont() {
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_StreamContentParser::FindResourceHolder(
-    const ByteString& type) {
+    ByteStringView type) {
   if (!resources_) {
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pDict =
-      resources_->GetMutableDictFor(type.AsStringView());
+  RetainPtr<CPDF_Dictionary> pDict = resources_->GetMutableDictFor(type);
   if (pDict) {
     return pDict;
   }
@@ -1213,11 +1212,11 @@ RetainPtr<CPDF_Dictionary> CPDF_StreamContentParser::FindResourceHolder(
     return nullptr;
   }
 
-  return page_resources_->GetMutableDictFor(type.AsStringView());
+  return page_resources_->GetMutableDictFor(type);
 }
 
 RetainPtr<CPDF_Object> CPDF_StreamContentParser::FindResourceObj(
-    const ByteString& type,
+    ByteStringView type,
     const ByteString& name) {
   RetainPtr<CPDF_Dictionary> pHolder = FindResourceHolder(type);
   return pHolder ? pHolder->GetMutableDirectObjectFor(name.AsStringView())

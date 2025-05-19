@@ -31,7 +31,7 @@ class CPDF_StructTree {
   size_t CountTopElements() const { return kids_.size(); }
   CPDF_StructElement* GetTopElement(size_t i) const { return kids_[i].Get(); }
   uint32_t GetPageObjNum() const { return page_->GetObjNum(); }
-  ByteString GetRoleMapNameFor(const ByteString& type) const;
+  ByteString GetRoleMapNameFor(ByteStringView type) const;
 
  private:
   using StructElementMap = std::map<RetainPtr<const CPDF_Dictionary>,

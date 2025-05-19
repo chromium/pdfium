@@ -1840,7 +1840,7 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
                                       pImage->GetObjNum());
 }
 
-void CPDFSDK_AppStream::Write(const ByteString& sAPType,
+void CPDFSDK_AppStream::Write(ByteStringView sAPType,
                               const ByteString& sContents,
                               const ByteString& sAPState) {
   RetainPtr<CPDF_Dictionary> parent_dict;
@@ -1849,7 +1849,7 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
     parent_dict = dict_;
     key = sAPType;
   } else {
-    parent_dict = dict_->GetOrCreateDictFor(sAPType.AsStringView());
+    parent_dict = dict_->GetOrCreateDictFor(sAPType);
     key = sAPState;
   }
 
