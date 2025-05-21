@@ -35,7 +35,7 @@ class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
 
   CXFA_FFDocView* GetDocView() const;
   CFX_RectF GetPageViewRect() const;
-  CFX_Matrix GetDisplayMatrix(const FX_RECT& rtDisp, int32_t iRotate) const;
+  CFX_Matrix GetDisplayMatrix(const FX_RECT& rtDisp, int32_t rotation) const;
 
   // This always returns a non-null iterator from the gc heap.
   CXFA_FFWidget::IteratorIface* CreateGCedTraverseWidgetIterator(

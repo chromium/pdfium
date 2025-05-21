@@ -108,21 +108,22 @@ CFX_FloatRect CPDF_Page::GetBox(ByteStringView name) const {
 
 std::optional<CFX_PointF> CPDF_Page::DeviceToPage(
     const FX_RECT& rect,
-    int rotate,
+    int rotation,
     const CFX_PointF& device_point) const {
-  CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
+  CFX_Matrix page2device = GetDisplayMatrix(rect, rotation);
   return page2device.GetInverse().Transform(device_point);
 }
 
 std::optional<CFX_PointF> CPDF_Page::PageToDevice(
     const FX_RECT& rect,
-    int rotate,
+    int rotation,
     const CFX_PointF& page_point) const {
-  CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
+  CFX_Matrix page2device = GetDisplayMatrix(rect, rotation);
   return page2device.Transform(page_point);
 }
 
-CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
+CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect,
+                                       int rotation) const {
   if (page_size_.width == 0 || page_size_.height == 0) {
     return CFX_Matrix();
   }
@@ -133,14 +134,14 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
   float y1 = 0;
   float x2 = 0;
   float y2 = 0;
-  iRotate %= 4;
+  rotation %= 4;
   // This code implicitly inverts the y-axis to account for page coordinates
   // pointing up and bitmap coordinates pointing down. (x0, y0) is the base
   // point, (x1, y1) is that point translated on y and (x2, y2) is the point
-  // translated on x. On iRotate = 0, y0 is rect.bottom and the translation
+  // translated on x. On rotation = 0, y0 is rect.bottom and the translation
   // to get y1 is performed as negative. This results in the desired
   // transformation.
-  switch (iRotate) {
+  switch (rotation) {
     case 0:
       x0 = rect.left;
       y0 = rect.bottom;
@@ -183,8 +184,8 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
 int CPDF_Page::GetPageRotation() const {
   RetainPtr<const CPDF_Object> pRotate =
       GetPageAttr(pdfium::page_object::kRotate);
-  int rotate = pRotate ? (pRotate->GetInteger() / 90) % 4 : 0;
-  return (rotate < 0) ? (rotate + 4) : rotate;
+  int rotation = pRotate ? (pRotate->GetInteger() / 90) % 4 : 0;
+  return (rotation < 0) ? (rotation + 4) : rotation;
 }
 
 RetainPtr<CPDF_Array> CPDF_Page::GetOrCreateAnnotsArray() {

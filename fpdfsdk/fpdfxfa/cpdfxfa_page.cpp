@@ -186,32 +186,32 @@ float CPDFXFA_Page::GetPageHeight() const {
 
 std::optional<CFX_PointF> CPDFXFA_Page::DeviceToPage(
     const FX_RECT& rect,
-    int rotate,
+    int rotation,
     const CFX_PointF& device_point) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
   if (!pdfpage_ && !pPageView) {
     return std::nullopt;
   }
 
-  CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
+  CFX_Matrix page2device = GetDisplayMatrix(rect, rotation);
   return page2device.GetInverse().Transform(device_point);
 }
 
 std::optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
     const FX_RECT& rect,
-    int rotate,
+    int rotation,
     const CFX_PointF& page_point) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
   if (!pdfpage_ && !pPageView) {
     return std::nullopt;
   }
 
-  CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
+  CFX_Matrix page2device = GetDisplayMatrix(rect, rotation);
   return page2device.Transform(page_point);
 }
 
 CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
-                                          int iRotate) const {
+                                          int rotation) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
   if (!pdfpage_ && !pPageView) {
     return CFX_Matrix();
@@ -223,12 +223,12 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
     case FormType::kAcroForm:
     case FormType::kXFAForeground:
       if (pdfpage_) {
-        return pdfpage_->GetDisplayMatrix(rect, iRotate);
+        return pdfpage_->GetDisplayMatrix(rect, rotation);
       }
       [[fallthrough]];
     case FormType::kXFAFull:
       if (pPageView) {
-        return pPageView->GetDisplayMatrix(rect, iRotate);
+        return pPageView->GetDisplayMatrix(rect, rotation);
       }
       break;
   }

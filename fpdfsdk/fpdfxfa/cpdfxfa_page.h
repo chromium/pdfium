@@ -32,14 +32,14 @@ class CPDFXFA_Page final : public IPDF_Page {
   CPDF_Document* GetDocument() const override;
   float GetPageWidth() const override;
   float GetPageHeight() const override;
-  CFX_Matrix GetDisplayMatrix(const FX_RECT& rect, int iRotate) const override;
+  CFX_Matrix GetDisplayMatrix(const FX_RECT& rect, int rotation) const override;
   std::optional<CFX_PointF> DeviceToPage(
       const FX_RECT& rect,
-      int rotate,
+      int rotation,
       const CFX_PointF& device_point) const override;
   std::optional<CFX_PointF> PageToDevice(
       const FX_RECT& rect,
-      int rotate,
+      int rotation,
       const CFX_PointF& page_point) const override;
 
   bool LoadPage();
