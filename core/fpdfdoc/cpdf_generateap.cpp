@@ -92,18 +92,24 @@ ByteString GetWordRenderString(ByteStringView words) {
   return PDF_EncodeString(words) + " Tj\n";
 }
 
+ByteString StringFromFontNameAndSize(const ByteString& font_name,
+                                     float font_size) {
+  fxcrt::ostringstream font_stream;
+  if (font_name.GetLength() > 0 && font_size > 0) {
+    font_stream << "/" << font_name << " ";
+    WriteFloat(font_stream, font_size) << " Tf\n";
+  }
+  return ByteString(font_stream);
+}
+
 ByteString GetFontSetString(IPVT_FontMap* font_map,
                             int32_t font_index,
                             float font_size) {
-  fxcrt::ostringstream font_stream;
-  if (font_map) {
-    ByteString font_alias = font_map->GetPDFFontAlias(font_index);
-    if (font_alias.GetLength() > 0 && font_size > 0) {
-      font_stream << "/" << font_alias << " ";
-      WriteFloat(font_stream, font_size) << " Tf\n";
-    }
+  if (!font_map) {
+    return ByteString();
   }
-  return ByteString(font_stream);
+  return StringFromFontNameAndSize(font_map->GetPDFFontAlias(font_index),
+                                   font_size);
 }
 
 void SetVtFontSize(float font_size, CPVT_VariableText& vt) {
@@ -1600,4 +1606,45 @@ bool CPDF_GenerateAP::GenerateAnnotAP(CPDF_Document* doc,
     default:
       return false;
   }
+}
+
+// static
+bool CPDF_GenerateAP::GenerateDefaultAppearanceWithColor(
+    CPDF_Document* doc,
+    CPDF_Dictionary* annot_dict,
+    const CFX_Color& color) {
+  RetainPtr<CPDF_Dictionary> root_dict = doc->GetMutableRoot();
+  if (!root_dict) {
+    return false;
+  }
+
+  RetainPtr<CPDF_Dictionary> acroform_dict =
+      root_dict->GetMutableDictFor("AcroForm");
+  if (!acroform_dict) {
+    acroform_dict = CPDF_InteractiveForm::InitAcroFormDict(doc);
+    CHECK(acroform_dict);
+  }
+
+  CPDF_DefaultAppearance default_appearance(annot_dict, acroform_dict);
+  auto maybe_font_name_and_size = default_appearance.GetFont();
+  if (!maybe_font_name_and_size.has_value()) {
+    return false;
+  }
+
+  ByteString new_default_appearance_font_name_and_size =
+      StringFromFontNameAndSize(maybe_font_name_and_size.value().name,
+                                maybe_font_name_and_size.value().size);
+  if (new_default_appearance_font_name_and_size.IsEmpty()) {
+    return false;
+  }
+
+  ByteString new_default_appearance_color =
+      GenerateColorAP(color, PaintOperation::kFill);
+  CHECK(!new_default_appearance_color.IsEmpty());
+  annot_dict->SetNewFor<CPDF_String>(
+      "DA",
+      new_default_appearance_font_name_and_size + new_default_appearance_color);
+
+  // TODO(thestig): Call GenerateAnnotAP();
+  return true;
 }

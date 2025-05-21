@@ -94,6 +94,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_SetColor);
     CHK(FPDFAnnot_SetFlags);
     CHK(FPDFAnnot_SetFocusableSubtypes);
+    CHK(FPDFAnnot_SetFontColor);
     CHK(FPDFAnnot_SetFormFieldFlags);
     CHK(FPDFAnnot_SetRect);
     CHK(FPDFAnnot_SetStringValue);

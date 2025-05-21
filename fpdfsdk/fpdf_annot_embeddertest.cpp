@@ -2745,6 +2745,98 @@ TEST_F(FPDFAnnotEmbedderTest, GetFontSizeNegative) {
   }
 }
 
+TEST_F(FPDFAnnotEmbedderTest, SetFontColor) {
+  static constexpr int kDimension = 200;
+  const char* original_checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+      return "7e5b28c095c794fad32ab6d42a2f872f";
+#elif BUILDFLAG(IS_APPLE)
+      return "13349bf30b80250e1b2fa1f410cfdf02";
+#else
+      return "cb504dd6465c780887ec051df19912bb";
+#endif
+    }
+#if BUILDFLAG(IS_APPLE)
+    return "d00b5e669e922f2e1e9b442c8b896056";
+#else
+    return "7f2e777d88a8c4d914cf4bd38e9fdf0d";
+#endif
+  }();
+  const char* modified_checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+      return "056eef1ffcbf522e64142ee99c50d6ec";
+#elif BUILDFLAG(IS_APPLE)
+      return "c736793c4c9f89c9c192d400d84f6979";
+#else
+      return "1407e39fd5ee2d999c62e642821a33ab";
+#endif
+    }
+#if BUILDFLAG(IS_APPLE)
+    return "1977b3820460c3a01f1047d30a0da25f";
+#else
+    return "5b339051f56d48dd7314c84e106a7c82";
+#endif
+  }();
+
+  ASSERT_TRUE(OpenDocument("freetext_annotation_without_da.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), kDimension, kDimension, original_checksum);
+
+    // Obtain the only annotation and set its text color.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
+    ASSERT_TRUE(annot);
+
+    // TODO(thestig): Check FPDFAnnot_GetFontColor() results before and after,
+    // when the API supports freetext annotations.
+    ASSERT_TRUE(
+        FPDFAnnot_SetFontColor(form_handle(), annot.get(), 60, 120, 180));
+    bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), kDimension, kDimension, modified_checksum);
+  }
+
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
+  VerifySavedRendering(saved_page, kDimension, kDimension, modified_checksum);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
+TEST_F(FPDFAnnotEmbedderTest, SetFontColorNegative) {
+  ASSERT_TRUE(OpenDocument("text_form_color.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Obtain the first annotation, a text field with orange color.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
+    ASSERT_TRUE(annot);
+
+    // Negative testing with invalid parameters.
+    ASSERT_FALSE(FPDFAnnot_SetFontColor(nullptr, nullptr, 256, 256, 256));
+    ASSERT_FALSE(FPDFAnnot_SetFontColor(form_handle(), nullptr, 0, 0, 0));
+    ASSERT_FALSE(FPDFAnnot_SetFontColor(nullptr, annot.get(), 0, 0, 0));
+    ASSERT_FALSE(FPDFAnnot_SetFontColor(nullptr, nullptr, 256, 0, 0));
+    ASSERT_FALSE(FPDFAnnot_SetFontColor(nullptr, nullptr, 0, 256, 0));
+    ASSERT_FALSE(FPDFAnnot_SetFontColor(nullptr, nullptr, 0, 0, 256));
+
+    // The text field widget in the PDF is not supported yet.
+    // TODO(thestig): Move out of this test case and make sure this succeeds
+    // after adding support.
+    ASSERT_FALSE(
+        FPDFAnnot_SetFontColor(form_handle(), annot.get(), 60, 120, 180));
+  }
+}
+
 TEST_F(FPDFAnnotEmbedderTest, GetFontColor) {
   // Open a file with textfield annotations and load its first page.
   ASSERT_TRUE(OpenDocument("text_form_color.pdf"));

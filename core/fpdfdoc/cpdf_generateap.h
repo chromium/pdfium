@@ -11,6 +11,7 @@
 
 class CPDF_Dictionary;
 class CPDF_Document;
+struct CFX_Color;
 
 class CPDF_GenerateAP {
  public:
@@ -25,6 +26,10 @@ class CPDF_GenerateAP {
   static bool GenerateAnnotAP(CPDF_Document* pDoc,
                               CPDF_Dictionary* pAnnotDict,
                               CPDF_Annot::Subtype subtype);
+
+  static bool GenerateDefaultAppearanceWithColor(CPDF_Document* doc,
+                                                 CPDF_Dictionary* annot_dict,
+                                                 const CFX_Color& color);
 
   CPDF_GenerateAP() = delete;
   CPDF_GenerateAP(const CPDF_GenerateAP&) = delete;

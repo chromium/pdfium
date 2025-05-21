@@ -860,6 +860,27 @@ FPDFAnnot_GetFontSize(FPDF_FORMHANDLE hHandle,
                       float* value);
 
 // Experimental API.
+// Set the text color of an annotation.
+//
+//   handle   - handle to the form fill module, returned by
+//              FPDFDOC_InitFormFillEnvironment.
+//   annot    - handle to an annotation.
+//   R        - the red component for the text color.
+//   G        - the green component for the text color.
+//   B        - the blue component for the text color.
+//
+// Returns true if successful.
+//
+// Currently supported subtypes: freetext.
+// The range for the color components is 0 to 255.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_SetFontColor(FPDF_FORMHANDLE handle,
+                       FPDF_ANNOTATION annot,
+                       unsigned int R,
+                       unsigned int G,
+                       unsigned int B);
+
+// Experimental API.
 // Get the RGB value of the font color for an |annot| with variable text.
 //
 //   hHandle  - handle to the form fill module, returned by
