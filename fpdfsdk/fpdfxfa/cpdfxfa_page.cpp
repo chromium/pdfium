@@ -75,8 +75,8 @@ CXFA_FFWidget::IteratorIface* GCedWidgetIteratorForAnnot(
 
 }  // namespace
 
-CPDFXFA_Page::CPDFXFA_Page(CPDF_Document* pDocument, int page_index)
-    : document_(pDocument), page_index_(page_index) {
+CPDFXFA_Page::CPDFXFA_Page(CPDF_Document* document, int page_index)
+    : document_(document), page_index_(page_index) {
   DCHECK(document_->GetExtension());
   DCHECK(page_index_ >= 0);
 }

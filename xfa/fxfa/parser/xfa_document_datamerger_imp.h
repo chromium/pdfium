@@ -17,13 +17,13 @@ class CXFA_Node;
 bool XFA_DataMerge_NeedGenerateForm(CXFA_Node* pTemplateChild,
                                     bool bUseInstanceManager);
 CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
-    CXFA_Document* pDocument,
+    CXFA_Document* document,
     CXFA_Node* pFormParent,
     CXFA_Node* pTemplateNode,
     bool bRecursive,
     std::vector<CXFA_Node*>* pSubformArray);
 CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode);
-CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* pDocument,
+CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* document,
                                              XFA_Element eType,
                                              uint32_t dwNameHash,
                                              CXFA_Node* pFormParent);

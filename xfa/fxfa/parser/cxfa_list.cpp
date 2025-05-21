@@ -12,13 +12,13 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_List::CXFA_List(CXFA_Document* pDocument, CJX_Object* obj)
-    : CXFA_List(pDocument, XFA_ObjectType::List, XFA_Element::List, obj) {}
+CXFA_List::CXFA_List(CXFA_Document* document, CJX_Object* obj)
+    : CXFA_List(document, XFA_ObjectType::List, XFA_Element::List, obj) {}
 
-CXFA_List::CXFA_List(CXFA_Document* pDocument,
+CXFA_List::CXFA_List(CXFA_Document* document,
                      XFA_ObjectType objectType,
                      XFA_Element eType,
                      CJX_Object* obj)
-    : CXFA_Object(pDocument, objectType, eType, obj) {}
+    : CXFA_Object(document, objectType, eType, obj) {}
 
 CXFA_List::~CXFA_List() = default;

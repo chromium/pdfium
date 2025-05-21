@@ -17,7 +17,7 @@
 #include "xfa/fxfa/parser/cxfa_treelist.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
-CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
+CXFA_Object::CXFA_Object(CXFA_Document* document,
                          XFA_ObjectType objectType,
                          XFA_Element elementType,
                          CJX_Object* jsObject)
@@ -25,7 +25,7 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
       element_type_(elementType),
       element_name_(XFA_ElementToName(elementType)),
       element_name_hash_(FX_HashCode_GetAsIfW(element_name_)),
-      document_(pDocument),
+      document_(document),
       jsobject_(jsObject) {}
 
 CXFA_Object::~CXFA_Object() = default;

@@ -47,9 +47,9 @@ constexpr std::array<const char*, 5> kChineseFontNames = {{
 
 }  // namespace
 
-CPDF_Font::CPDF_Font(CPDF_Document* pDocument,
+CPDF_Font::CPDF_Font(CPDF_Document* document,
                      RetainPtr<CPDF_Dictionary> pFontDict)
-    : document_(pDocument),
+    : document_(document),
       font_dict_(std::move(pFontDict)),
       base_font_name_(font_dict_->GetByteStringFor("BaseFont")) {}
 

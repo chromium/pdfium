@@ -203,17 +203,17 @@ ByteString GenerateFlattenedContent(const ByteString& key) {
 }
 
 RetainPtr<CPDF_Reference> NewIndirectContentsStreamReference(
-    CPDF_Document* pDocument,
+    CPDF_Document* document,
     const ByteString& contents) {
   auto pNewContents =
-      pDocument->NewIndirect<CPDF_Stream>(pDocument->New<CPDF_Dictionary>());
+      document->NewIndirect<CPDF_Stream>(document->New<CPDF_Dictionary>());
   pNewContents->SetData(contents.unsigned_span());
-  return pNewContents->MakeReference(pDocument);
+  return pNewContents->MakeReference(document);
 }
 
 void SetPageContents(const ByteString& key,
                      CPDF_Dictionary* pPage,
-                     CPDF_Document* pDocument) {
+                     CPDF_Document* document) {
   RetainPtr<CPDF_Array> pContentsArray =
       pPage->GetMutableArrayFor(pdfium::page_object::kContents);
   RetainPtr<CPDF_Stream> pContentsStream =
@@ -222,16 +222,16 @@ void SetPageContents(const ByteString& key,
     if (!key.IsEmpty()) {
       pPage->SetFor(pdfium::page_object::kContents,
                     NewIndirectContentsStreamReference(
-                        pDocument, GenerateFlattenedContent(key)));
+                        document, GenerateFlattenedContent(key)));
     }
     return;
   }
 
-  pPage->ConvertToIndirectObjectFor(pdfium::page_object::kContents, pDocument);
+  pPage->ConvertToIndirectObjectFor(pdfium::page_object::kContents, document);
   if (pContentsArray) {
-    pContentsArray->InsertAt(
-        0, NewIndirectContentsStreamReference(pDocument, "q"));
-    pContentsArray->Append(NewIndirectContentsStreamReference(pDocument, "Q"));
+    pContentsArray->InsertAt(0,
+                             NewIndirectContentsStreamReference(document, "q"));
+    pContentsArray->Append(NewIndirectContentsStreamReference(document, "Q"));
   } else {
     ByteString sStream = "q\n";
     {
@@ -241,15 +241,15 @@ void SetPageContents(const ByteString& key,
       sStream += "\nQ";
     }
     pContentsStream->SetDataAndRemoveFilter(sStream.unsigned_span());
-    pContentsArray = pDocument->NewIndirect<CPDF_Array>();
-    pContentsArray->AppendNew<CPDF_Reference>(pDocument,
+    pContentsArray = document->NewIndirect<CPDF_Array>();
+    pContentsArray->AppendNew<CPDF_Reference>(document,
                                               pContentsStream->GetObjNum());
-    pPage->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, pDocument,
+    pPage->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, document,
                                      pContentsArray->GetObjNum());
   }
   if (!key.IsEmpty()) {
     pContentsArray->Append(NewIndirectContentsStreamReference(
-        pDocument, GenerateFlattenedContent(key)));
+        document, GenerateFlattenedContent(key)));
   }
 }
 
@@ -323,16 +323,15 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     return FLATTEN_FAIL;
   }
 
-  CPDF_Document* pDocument = pPage->GetDocument();
+  CPDF_Document* document = pPage->GetDocument();
   RetainPtr<CPDF_Dictionary> pPageDict = pPage->GetMutableDict();
-  if (!pDocument) {
+  if (!document) {
     return FLATTEN_FAIL;
   }
 
   std::vector<CPDF_Dictionary*> ObjectArray;
   std::vector<CFX_FloatRect> RectArray;
-  int iRet =
-      ParserAnnots(pDocument, pPageDict, &RectArray, &ObjectArray, nFlag);
+  int iRet = ParserAnnots(document, pPageDict, &RectArray, &ObjectArray, nFlag);
   if (iRet == FLATTEN_NOTHINGTODO || iRet == FLATTEN_FAIL) {
     return iRet;
   }
@@ -369,7 +368,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   RetainPtr<CPDF_Dictionary> pRes =
       pPageDict->GetOrCreateDictFor(pdfium::page_object::kResources);
   auto pNewXObject =
-      pDocument->NewIndirect<CPDF_Stream>(pDocument->New<CPDF_Dictionary>());
+      document->NewIndirect<CPDF_Stream>(document->New<CPDF_Dictionary>());
   RetainPtr<CPDF_Dictionary> pPageXObject = pRes->GetOrCreateDictFor("XObject");
 
   ByteString key;
@@ -385,11 +384,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     }
   }
 
-  SetPageContents(key, pPageDict.Get(), pDocument);
+  SetPageContents(key, pPageDict.Get(), document);
 
   RetainPtr<CPDF_Dictionary> pNewXORes;
   if (!key.IsEmpty()) {
-    pPageXObject->SetNewFor<CPDF_Reference>(key, pDocument,
+    pPageXObject->SetNewFor<CPDF_Reference>(key, document,
                                             pNewXObject->GetObjNum());
 
     RetainPtr<CPDF_Dictionary> pNewOXbjectDic = pNewXObject->GetMutableDict();
@@ -465,7 +464,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     RetainPtr<CPDF_Stream> ap_stream;
     if (original_ap_stream->IsInline()) {
       ap_stream = ToStream(original_ap_stream->Clone());
-      pDocument->AddIndirectObject(ap_stream);
+      document->AddIndirectObject(ap_stream);
     } else {
       ap_stream = original_ap_stream;
     }
@@ -478,7 +477,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     RetainPtr<CPDF_Dictionary> pXObject =
         pNewXORes->GetOrCreateDictFor("XObject");
     ByteString sFormName = ByteString::Format("F%d", i);
-    pXObject->SetNewFor<CPDF_Reference>(sFormName, pDocument,
+    pXObject->SetNewFor<CPDF_Reference>(sFormName, document,
                                         ap_stream->GetObjNum());
 
     ByteString sStream;

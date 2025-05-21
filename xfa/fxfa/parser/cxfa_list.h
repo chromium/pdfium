@@ -27,7 +27,7 @@ class CXFA_List : public CXFA_Object {
 
  protected:
   CXFA_List(CXFA_Document* doc, CJX_Object* js_obj);
-  CXFA_List(CXFA_Document* pDocument,
+  CXFA_List(CXFA_Document* document,
             XFA_ObjectType objectType,
             XFA_Element eType,
             CJX_Object* obj);

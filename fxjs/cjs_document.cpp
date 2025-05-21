@@ -1314,18 +1314,18 @@ CJS_Result CJS_Document::getPageNthWord(
   int nWordNo = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 0;
   bool bStrip = params.size() > 2 ? pRuntime->ToBoolean(params[2]) : true;
 
-  CPDF_Document* pDocument = form_fill_env_->GetPDFDocument();
-  if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
+  CPDF_Document* document = form_fill_env_->GetPDFDocument();
+  if (nPageNo < 0 || nPageNo >= document->GetPageCount()) {
     return CJS_Result::Failure(JSMessage::kValueError);
   }
 
   RetainPtr<CPDF_Dictionary> pPageDict =
-      pDocument->GetMutablePageDictionary(nPageNo);
+      document->GetMutablePageDictionary(nPageNo);
   if (!pPageDict) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, std::move(pPageDict));
+  auto page = pdfium::MakeRetain<CPDF_Page>(document, std::move(pPageDict));
   page->AddPageImageCache();
   page->ParseContent();
 
@@ -1377,18 +1377,18 @@ CJS_Result CJS_Document::getPageNumWords(
   }
 
   int nPageNo = params.size() > 0 ? pRuntime->ToInt32(params[0]) : 0;
-  CPDF_Document* pDocument = form_fill_env_->GetPDFDocument();
-  if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
+  CPDF_Document* document = form_fill_env_->GetPDFDocument();
+  if (nPageNo < 0 || nPageNo >= document->GetPageCount()) {
     return CJS_Result::Failure(JSMessage::kValueError);
   }
 
   RetainPtr<CPDF_Dictionary> pPageDict =
-      pDocument->GetMutablePageDictionary(nPageNo);
+      document->GetMutablePageDictionary(nPageNo);
   if (!pPageDict) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, std::move(pPageDict));
+  auto page = pdfium::MakeRetain<CPDF_Page>(document, std::move(pPageDict));
   page->AddPageImageCache();
   page->ParseContent();
 
@@ -1470,9 +1470,9 @@ CJS_Result CJS_Document::gotoNamedDest(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  CPDF_Document* pDocument = form_fill_env_->GetPDFDocument();
+  CPDF_Document* document = form_fill_env_->GetPDFDocument();
   RetainPtr<const CPDF_Array> dest_array = CPDF_NameTree::LookupNamedDest(
-      pDocument, pRuntime->ToByteString(params[0]));
+      document, pRuntime->ToByteString(params[0]));
   if (!dest_array) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
@@ -1480,7 +1480,7 @@ CJS_Result CJS_Document::gotoNamedDest(
   CPDF_Dest dest(std::move(dest_array));
   std::vector<float> positions = dest.GetScrollPositionArray();
   pRuntime->BeginBlock();
-  form_fill_env_->DoGoToAction(dest.GetDestPageIndex(pDocument),
+  form_fill_env_->DoGoToAction(dest.GetDestPageIndex(document),
                                dest.GetZoomMode(), positions);
   pRuntime->EndBlock();
   return CJS_Result::Success();

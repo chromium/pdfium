@@ -387,7 +387,7 @@ void CPDF_StreamContentParser::DestroyGlobals() {
 }
 
 CPDF_StreamContentParser::CPDF_StreamContentParser(
-    CPDF_Document* pDocument,
+    CPDF_Document* document,
     RetainPtr<CPDF_Dictionary> pPageResources,
     RetainPtr<CPDF_Dictionary> pParentResources,
     const CFX_Matrix* pmtContentToUser,
@@ -396,7 +396,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     const CFX_FloatRect& rcBBox,
     const CPDF_AllStates* pStates,
     CPDF_Form::RecursionState* recursion_state)
-    : document_(pDocument),
+    : document_(document),
       page_resources_(pPageResources),
       parent_resources_(pParentResources),
       resources_(CPDF_Form::ChooseResourcesDict(pResources.Get(),

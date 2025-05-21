@@ -35,9 +35,9 @@ void GetPredefinedEncoding(const ByteString& value, FontEncoding* basemap) {
 
 }  // namespace
 
-CPDF_SimpleFont::CPDF_SimpleFont(CPDF_Document* pDocument,
+CPDF_SimpleFont::CPDF_SimpleFont(CPDF_Document* document,
                                  RetainPtr<CPDF_Dictionary> pFontDict)
-    : CPDF_Font(pDocument, std::move(pFontDict)) {
+    : CPDF_Font(document, std::move(pFontDict)) {
   char_width_.fill(0xffff);
   glyph_index_.fill(0xffff);
   char_bbox_.fill(FX_RECT(-1, -1, -1, -1));

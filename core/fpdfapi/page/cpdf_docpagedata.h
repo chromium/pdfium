@@ -48,7 +48,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
 
   // CPDF_Font::FormFactoryIFace:
   std::unique_ptr<CPDF_Font::FormIface> CreateForm(
-      CPDF_Document* pDocument,
+      CPDF_Document* document,
       RetainPtr<CPDF_Dictionary> pPageResources,
       RetainPtr<CPDF_Stream> pFormStream) override;
 

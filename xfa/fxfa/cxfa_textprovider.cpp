@@ -147,16 +147,16 @@ std::optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
   }
 
   CXFA_Node* pParent = node_->GetParent();
-  CXFA_Document* pDocument = node_->GetDocument();
+  CXFA_Document* document = node_->GetDocument();
   CXFA_Node* pIDNode = nullptr;
   if (pParent) {
-    pIDNode = pDocument->GetNodeByID(pParent, wsAttr.AsStringView());
+    pIDNode = document->GetNodeByID(pParent, wsAttr.AsStringView());
   }
 
   if (!pIDNode) {
-    pIDNode = pDocument->GetNodeByID(
-        ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Form)),
-        wsAttr.AsStringView());
+    pIDNode =
+        document->GetNodeByID(ToNode(document->GetXFAObject(XFA_HASHCODE_Form)),
+                              wsAttr.AsStringView());
   }
   if (!pIDNode || !pIDNode->IsWidgetReady()) {
     return std::nullopt;

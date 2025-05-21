@@ -8,9 +8,9 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* pDocument,
+CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* document,
                                          CXFA_Node* pAttachNode)
-    : CXFA_TreeList(pDocument), attach_node_(pAttachNode) {}
+    : CXFA_TreeList(document), attach_node_(pAttachNode) {}
 
 CXFA_AttachNodeList::~CXFA_AttachNodeList() = default;
 

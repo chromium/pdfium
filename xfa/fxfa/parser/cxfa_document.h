@@ -74,7 +74,7 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
     virtual void SetForceRelayout() = 0;
     virtual void SetHasChangedContainer() = 0;
 
-    void SetDocument(CXFA_Document* pDocument) { document_ = pDocument; }
+    void SetDocument(CXFA_Document* document) { document_ = document; }
     CXFA_Document* GetDocument() const { return document_; }
 
    private:

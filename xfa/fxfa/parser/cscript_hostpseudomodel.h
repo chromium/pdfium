@@ -13,7 +13,7 @@ class CXFA_Document;
 
 class CScript_HostPseudoModel final : public CXFA_Object {
  public:
-  explicit CScript_HostPseudoModel(CXFA_Document* pDocument);
+  explicit CScript_HostPseudoModel(CXFA_Document* document);
   ~CScript_HostPseudoModel() override;
 };
 

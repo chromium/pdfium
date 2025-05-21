@@ -25,7 +25,7 @@ bool XFA_DataMerge_NeedGenerateForm(CXFA_Node* pTemplateChild,
   return true;
 }
 
-CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* pDocument,
+CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* document,
                                              XFA_Element eType,
                                              uint32_t dwNameHash,
                                              CXFA_Node* pFormParent) {
@@ -40,7 +40,7 @@ CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* pDocument,
 }
 
 CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
-    CXFA_Document* pDocument,
+    CXFA_Document* document,
     CXFA_Node* pFormParent,
     CXFA_Node* pTemplateNode,
     bool bRecursive,
@@ -51,8 +51,8 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
   CXFA_Node* pExistingNode = nullptr;
   if (!pSubformArray) {
     pExistingNode = XFA_DataMerge_FindFormDOMInstance(
-        pDocument, pTemplateNode->GetElementType(),
-        pTemplateNode->GetNameHash(), pFormParent);
+        document, pTemplateNode->GetElementType(), pTemplateNode->GetNameHash(),
+        pFormParent);
   } else if (!pSubformArray->empty()) {
     pExistingNode = pSubformArray->front();
     pSubformArray->erase(pSubformArray->begin());
@@ -71,7 +71,7 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
            pTemplateChild; pTemplateChild = pTemplateChild->GetNextSibling()) {
         if (XFA_DataMerge_NeedGenerateForm(pTemplateChild, true)) {
           XFA_NodeMerge_CloneOrMergeContainer(
-              pDocument, pExistingNode, pTemplateChild, bRecursive, nullptr);
+              document, pExistingNode, pTemplateChild, bRecursive, nullptr);
         }
       }
     }

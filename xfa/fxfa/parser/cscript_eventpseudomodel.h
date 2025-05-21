@@ -13,7 +13,7 @@ class CXFA_Document;
 
 class CScript_EventPseudoModel final : public CXFA_Object {
  public:
-  explicit CScript_EventPseudoModel(CXFA_Document* pDocument);
+  explicit CScript_EventPseudoModel(CXFA_Document* document);
   ~CScript_EventPseudoModel() override;
 };
 

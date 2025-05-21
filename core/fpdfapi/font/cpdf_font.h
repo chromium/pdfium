@@ -54,7 +54,7 @@ class CPDF_Font : public Retainable, public Observable {
     virtual ~FormFactoryIface() = default;
 
     virtual std::unique_ptr<FormIface> CreateForm(
-        CPDF_Document* pDocument,
+        CPDF_Document* document,
         RetainPtr<CPDF_Dictionary> pPageResources,
         RetainPtr<CPDF_Stream> pFormStream) = 0;
   };
@@ -137,7 +137,7 @@ class CPDF_Font : public Retainable, public Observable {
   void SetResourceName(const ByteString& name) { resource_name_ = name; }
 
  protected:
-  CPDF_Font(CPDF_Document* pDocument, RetainPtr<CPDF_Dictionary> pFontDict);
+  CPDF_Font(CPDF_Document* document, RetainPtr<CPDF_Dictionary> pFontDict);
   ~CPDF_Font() override;
 
   // Commonly used wrappers for UseTTCharmap().

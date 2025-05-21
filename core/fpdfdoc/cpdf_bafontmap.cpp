@@ -66,10 +66,10 @@ CPDF_BAFontMap::Data::Data() = default;
 
 CPDF_BAFontMap::Data::~Data() = default;
 
-CPDF_BAFontMap::CPDF_BAFontMap(CPDF_Document* pDocument,
+CPDF_BAFontMap::CPDF_BAFontMap(CPDF_Document* document,
                                RetainPtr<CPDF_Dictionary> pAnnotDict,
                                const ByteString& sAPType)
-    : document_(pDocument),
+    : document_(document),
       annot_dict_(std::move(pAnnotDict)),
       ap_type_(sAPType) {
   FX_Charset nCharset = FX_Charset::kDefault;

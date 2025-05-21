@@ -20,11 +20,11 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/contains.h"
 
-CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
+CPDF_Page::CPDF_Page(CPDF_Document* document,
                      RetainPtr<CPDF_Dictionary> pPageDict)
-    : CPDF_PageObjectHolder(pDocument, std::move(pPageDict), nullptr, nullptr),
+    : CPDF_PageObjectHolder(document, std::move(pPageDict), nullptr, nullptr),
       page_size_(100, 100),
-      pdf_document_(pDocument) {
+      pdf_document_(document) {
   // Cannot initialize |resources_| and |page_resources_| via the
   // CPDF_PageObjectHolder ctor because GetPageAttr() requires
   // CPDF_PageObjectHolder to finish initializing first.

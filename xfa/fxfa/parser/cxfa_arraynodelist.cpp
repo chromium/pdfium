@@ -12,8 +12,8 @@
 #include "fxjs/gc/container_trace.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
-    : CXFA_TreeList(pDocument) {}
+CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* document)
+    : CXFA_TreeList(document) {}
 
 CXFA_ArrayNodeList::~CXFA_ArrayNodeList() = default;
 

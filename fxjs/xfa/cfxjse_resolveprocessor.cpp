@@ -143,13 +143,13 @@ bool CFXJSE_ResolveProcessor::ResolveDollar(v8::Isolate* pIsolate,
     return false;
   }
 
-  CXFA_Document* pDocument = engine_->GetDocument();
+  CXFA_Document* document = engine_->GetDocument();
   XFA_HashCode dwNameHash = static_cast<XFA_HashCode>(
       FX_HashCode_GetW(wsName.AsStringView().Last(nNameLen - 1)));
   if (dwNameHash == XFA_HASHCODE_Xfa) {
-    rnd.result_.objects.emplace_back(pDocument->GetRoot());
+    rnd.result_.objects.emplace_back(document->GetRoot());
   } else {
-    CXFA_Object* pObjNode = pDocument->GetXFAObject(dwNameHash);
+    CXFA_Object* pObjNode = document->GetXFAObject(dwNameHash);
     if (pObjNode) {
       rnd.result_.objects.emplace_back(pObjNode);
     }

@@ -515,8 +515,8 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
   switch (pFormNode->GetIntact()) {
     case XFA_AttributeValue::None: {
       bool bAnyChanged = false;
-      CXFA_Document* pDocument = pFormNode->GetDocument();
-      CXFA_FFNotify* pNotify = pDocument->GetNotify();
+      CXFA_Document* document = pFormNode->GetDocument();
+      CXFA_FFNotify* pNotify = document->GetNotify();
       float fCurTopMargin = 0;
       float fCurBottomMargin = 0;
       CXFA_Margin* pMarginNode =
@@ -2196,8 +2196,8 @@ void CXFA_ContentLayoutProcessor::DoLayoutField() {
     return;
   }
 
-  CXFA_Document* pDocument = GetFormNode()->GetDocument();
-  CXFA_FFNotify* pNotify = pDocument->GetNotify();
+  CXFA_Document* document = GetFormNode()->GetDocument();
+  CXFA_FFNotify* pNotify = document->GetNotify();
   CFX_SizeF size(-1, -1);
   pNotify->StartFieldDrawLayout(GetFormNode(), &size.width, &size.height);
 

@@ -100,7 +100,7 @@ class CPDFSDK_InteractiveForm final
   void AfterCheckedStatusChange(CPDF_FormField* pField) override;
   void AfterFormReset(CPDF_InteractiveForm* pForm) override;
 
-  int GetPageIndexByAnnotDict(CPDF_Document* pDocument,
+  int GetPageIndexByAnnotDict(CPDF_Document* document,
                               const CPDF_Dictionary* pAnnotDict) const;
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> const form_fill_env_;

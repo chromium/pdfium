@@ -172,7 +172,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
     return nullptr;
   }
 
-  CXFA_Document* pDocument = pPageSetRoot->GetDocument();
+  CXFA_Document* document = pPageSetRoot->GetDocument();
   if (pTargetAll->IsEmpty()) {
     return nullptr;
   }
@@ -199,8 +199,8 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
 
     bTargetAllFind = false;
     if (wsExpr[0] == '#') {
-      CXFA_Node* pNode = pDocument->GetNodeByID(
-          ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Template)),
+      CXFA_Node* pNode = document->GetNodeByID(
+          ToNode(document->GetXFAObject(XFA_HASHCODE_Template)),
           wsExpr.Last(wsExpr.GetLength() - 1).AsStringView());
       if (pNode) {
         return pNode;
@@ -212,7 +212,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
       }
 
       std::optional<CFXJSE_Engine::ResolveResult> maybeResult =
-          pDocument->GetScriptContext()->ResolveObjects(
+          document->GetScriptContext()->ResolveObjects(
               pPageSetRoot, wsProcessedTarget.AsStringView(),
               Mask<XFA_ResolveFlag>{
                   XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kProperties,
@@ -433,12 +433,12 @@ bool CXFA_ViewLayoutProcessor::InitLayoutPage(CXFA_Node* pFormNode) {
     return false;
   }
 
-  CXFA_Document* pDocument = pTemplateNode->GetDocument();
+  CXFA_Document* document = pTemplateNode->GetDocument();
   pPageArea =
       page_set_node_->GetChild<CXFA_Node>(0, XFA_Element::PageArea, false);
   if (!pPageArea) {
-    pPageArea = pDocument->CreateNode(page_set_node_->GetPacketType(),
-                                      XFA_Element::PageArea);
+    pPageArea = document->CreateNode(page_set_node_->GetPacketType(),
+                                     XFA_Element::PageArea);
     if (!pPageArea) {
       return false;
     }
@@ -449,7 +449,7 @@ bool CXFA_ViewLayoutProcessor::InitLayoutPage(CXFA_Node* pFormNode) {
   CXFA_ContentArea* pContentArea =
       pPageArea->GetChild<CXFA_ContentArea>(0, XFA_Element::ContentArea, false);
   if (!pContentArea) {
-    pContentArea = static_cast<CXFA_ContentArea*>(pDocument->CreateNode(
+    pContentArea = static_cast<CXFA_ContentArea*>(document->CreateNode(
         pPageArea->GetPacketType(), XFA_Element::ContentArea));
     if (!pContentArea) {
       return false;
@@ -470,7 +470,7 @@ bool CXFA_ViewLayoutProcessor::InitLayoutPage(CXFA_Node* pFormNode) {
       pPageArea->GetChild<CXFA_Medium>(0, XFA_Element::Medium, false);
   if (!pMedium) {
     pMedium = static_cast<CXFA_Medium*>(
-        pDocument->CreateNode(pPageArea->GetPacketType(), XFA_Element::Medium));
+        document->CreateNode(pPageArea->GetPacketType(), XFA_Element::Medium));
     if (!pContentArea) {
       return false;
     }
@@ -919,7 +919,7 @@ CXFA_ViewLayoutProcessor::ProcessBreakBeforeOrAfter(const CXFA_Node* pBreakNode,
   }
 
   BreakData break_data = ExecuteBreakBeforeOrAfter(pBreakNode, bBefore);
-  CXFA_Document* pDocument = pBreakNode->GetDocument();
+  CXFA_Document* document = pBreakNode->GetDocument();
   CXFA_Node* pDataScope = nullptr;
   pFormNode = pFormNode->GetContainerParent();
   if (break_data.pLeader) {
@@ -928,13 +928,13 @@ CXFA_ViewLayoutProcessor::ProcessBreakBeforeOrAfter(const CXFA_Node* pBreakNode,
     }
 
     pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
-    break_data.pLeader = pDocument->DataMerge_CopyContainer(
+    break_data.pLeader = document->DataMerge_CopyContainer(
         break_data.pLeader, pFormNode, pDataScope, true, true, true);
     if (!break_data.pLeader) {
       return std::nullopt;
     }
 
-    pDocument->DataMerge_UpdateBindingRelations(break_data.pLeader);
+    document->DataMerge_UpdateBindingRelations(break_data.pLeader);
     SetLayoutGeneratedNodeFlag(break_data.pLeader);
   }
   if (break_data.pTrailer) {
@@ -946,13 +946,13 @@ CXFA_ViewLayoutProcessor::ProcessBreakBeforeOrAfter(const CXFA_Node* pBreakNode,
       pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
     }
 
-    break_data.pTrailer = pDocument->DataMerge_CopyContainer(
+    break_data.pTrailer = document->DataMerge_CopyContainer(
         break_data.pTrailer, pFormNode, pDataScope, true, true, true);
     if (!break_data.pTrailer) {
       return std::nullopt;
     }
 
-    pDocument->DataMerge_UpdateBindingRelations(break_data.pTrailer);
+    document->DataMerge_UpdateBindingRelations(break_data.pTrailer);
     SetLayoutGeneratedNodeFlag(break_data.pTrailer);
   }
   return break_data;
@@ -978,15 +978,15 @@ CXFA_Node* CXFA_ViewLayoutProcessor::ProcessBookendLeaderOrTrailer(
     return nullptr;
   }
 
-  CXFA_Document* pDocument = pBookendNode->GetDocument();
+  CXFA_Document* document = pBookendNode->GetDocument();
   CXFA_Node* pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
-  CXFA_Node* pBookendAppendNode = pDocument->DataMerge_CopyContainer(
+  CXFA_Node* pBookendAppendNode = document->DataMerge_CopyContainer(
       pLeaderTemplate, pFormNode, pDataScope, true, true, true);
   if (!pBookendAppendNode) {
     return nullptr;
   }
 
-  pDocument->DataMerge_UpdateBindingRelations(pBookendAppendNode);
+  document->DataMerge_UpdateBindingRelations(pBookendAppendNode);
   SetLayoutGeneratedNodeFlag(pBookendAppendNode);
   return pBookendAppendNode;
 }
@@ -1094,18 +1094,18 @@ CXFA_ViewLayoutProcessor::ProcessOverflow(CXFA_Node* pFormNode,
         pFormNode = pCurNode->GetParent();
       }
 
-      CXFA_Document* pDocument = pCurNode->GetDocument();
+      CXFA_Document* document = pCurNode->GetDocument();
       CXFA_Node* pDataScope = nullptr;
       if (pLeaderTemplate) {
         pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
 
-        overflow_data.pLeader = pDocument->DataMerge_CopyContainer(
+        overflow_data.pLeader = document->DataMerge_CopyContainer(
             pLeaderTemplate, pFormNode, pDataScope, true, true, true);
         if (!overflow_data.pLeader) {
           return std::nullopt;
         }
 
-        pDocument->DataMerge_UpdateBindingRelations(overflow_data.pLeader);
+        document->DataMerge_UpdateBindingRelations(overflow_data.pLeader);
         SetLayoutGeneratedNodeFlag(overflow_data.pLeader);
       }
       if (pTrailerTemplate) {
@@ -1113,13 +1113,13 @@ CXFA_ViewLayoutProcessor::ProcessOverflow(CXFA_Node* pFormNode,
           pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
         }
 
-        overflow_data.pTrailer = pDocument->DataMerge_CopyContainer(
+        overflow_data.pTrailer = document->DataMerge_CopyContainer(
             pTrailerTemplate, pFormNode, pDataScope, true, true, true);
         if (!overflow_data.pTrailer) {
           return std::nullopt;
         }
 
-        pDocument->DataMerge_UpdateBindingRelations(overflow_data.pTrailer);
+        document->DataMerge_UpdateBindingRelations(overflow_data.pTrailer);
         SetLayoutGeneratedNodeFlag(overflow_data.pTrailer);
       }
       return overflow_data;
@@ -1716,9 +1716,9 @@ void CXFA_ViewLayoutProcessor::ClearData() {
 
 void CXFA_ViewLayoutProcessor::SaveLayoutItemChildren(
     CXFA_LayoutItem* pParentLayoutItem) {
-  CXFA_Document* pDocument = page_set_node_->GetDocument();
-  CXFA_FFNotify* pNotify = pDocument->GetNotify();
-  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(pDocument);
+  CXFA_Document* document = page_set_node_->GetDocument();
+  CXFA_FFNotify* pNotify = document->GetNotify();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(document);
   CXFA_LayoutItem* pCurLayoutItem = pParentLayoutItem->GetFirstChild();
   while (pCurLayoutItem) {
     CXFA_LayoutItem* pNextLayoutItem = pCurLayoutItem->GetNextSibling();
@@ -1762,11 +1762,11 @@ CXFA_Node* CXFA_ViewLayoutProcessor::QueryOverflow(CXFA_Node* pFormNode) {
 }
 
 void CXFA_ViewLayoutProcessor::MergePageSetContents() {
-  CXFA_Document* pDocument = page_set_node_->GetDocument();
-  pDocument->SetPendingNodesUnusedAndUnbound();
+  CXFA_Document* document = page_set_node_->GetDocument();
+  document->SetPendingNodesUnusedAndUnbound();
 
-  CXFA_FFNotify* pNotify = pDocument->GetNotify();
-  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(pDocument);
+  CXFA_FFNotify* pNotify = document->GetNotify();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(document);
   CXFA_ViewLayoutItem* pRootLayout = GetRootLayoutItem();
 
   size_t pending_index = 0;
@@ -1777,8 +1777,8 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
     CXFA_ViewLayoutItem* pRootPageSetViewItem = iterator.GetCurrent();
     DCHECK(pRootPageSetViewItem->GetFormNode()->GetElementType() ==
            XFA_Element::PageSet);
-    if (pending_index < pDocument->GetPendingNodesCount()) {
-      pPendingPageSet = pDocument->GetPendingNodeAtIndex(pending_index);
+    if (pending_index < document->GetPendingNodesCount()) {
+      pPendingPageSet = document->GetPendingNodeAtIndex(pending_index);
       ++pending_index;
     }
     if (!pPendingPageSet) {
@@ -1808,7 +1808,7 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
           CXFA_Node* pParentNode = pViewItem->GetParent()->GetFormNode();
           CXFA_Node* pOldNode = pViewItem->GetFormNode();
           CXFA_Node* pNewNode = XFA_NodeMerge_CloneOrMergeContainer(
-              pDocument, pParentNode, pOldNode, true, nullptr);
+              document, pParentNode, pOldNode, true, nullptr);
           if (pOldNode != pNewNode) {
             pOldNode->JSObject()->SetLayoutItem(nullptr);
             pViewItem->SetFormNode(pNewNode);
@@ -1837,7 +1837,7 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
             if (pViewItem->GetOldSubform() &&
                 pViewItem->GetOldSubform() != pNewSubform) {
               CXFA_Node* pExistingNode = XFA_DataMerge_FindFormDOMInstance(
-                  pDocument, pViewItem->GetFormNode()->GetElementType(),
+                  document, pViewItem->GetFormNode()->GetElementType(),
                   pViewItem->GetFormNode()->GetNameHash(), pParentNode);
               CXFA_ContainerIterator sIterator(pExistingNode);
               for (CXFA_Node* pIter = sIterator.GetCurrent(); pIter;
@@ -1858,9 +1858,9 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
             pViewItem->SetOldSubform(pNewSubform);
           }
           CXFA_Node* pOldNode = pViewItem->GetFormNode();
-          CXFA_Node* pNewNode = pDocument->DataMerge_CopyContainer(
+          CXFA_Node* pNewNode = document->DataMerge_CopyContainer(
               pOldNode, pParentNode,
-              ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record)), true, true,
+              ToNode(document->GetXFAObject(XFA_HASHCODE_Record)), true, true,
               true);
           if (pOldNode != pNewNode) {
             pOldNode->JSObject()->SetLayoutItem(nullptr);
@@ -1886,7 +1886,7 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
       }
     }
     if (!pPendingPageSet->GetParent()) {
-      CXFA_Node* pNode = ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Form));
+      CXFA_Node* pNode = ToNode(document->GetXFAObject(XFA_HASHCODE_Form));
       if (pNode) {
         CXFA_Node* pFormToplevelSubform =
             pNode->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
@@ -1895,7 +1895,7 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
         }
       }
     }
-    pDocument->DataMerge_UpdateBindingRelations(pPendingPageSet);
+    document->DataMerge_UpdateBindingRelations(pPendingPageSet);
     pPendingPageSet->SetInitializedFlagAndNotify();
   }
 

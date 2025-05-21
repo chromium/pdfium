@@ -112,7 +112,7 @@ class CFXJSE_Engine final : public CFX_V8 {
                                                   ByteStringView szPropName,
                                                   bool bQueryIn);
 
-  CFXJSE_Engine(CXFA_Document* pDocument, CJS_Runtime* fxjs_runtime);
+  CFXJSE_Engine(CXFA_Document* document, CJS_Runtime* fxjs_runtime);
   ~CFXJSE_Engine() override;
 
   class EventParamScope {

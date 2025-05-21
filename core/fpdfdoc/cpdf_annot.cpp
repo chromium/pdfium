@@ -126,9 +126,9 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
 }  // namespace
 
 CPDF_Annot::CPDF_Annot(RetainPtr<CPDF_Dictionary> pDict,
-                       CPDF_Document* pDocument)
+                       CPDF_Document* document)
     : annot_dict_(std::move(pDict)),
-      document_(pDocument),
+      document_(document),
       subtype_(StringToAnnotSubtype(
           annot_dict_->GetByteStringFor(pdfium::annotation::kSubtype))),
       is_text_markup_annotation_(IsTextMarkupAnnotation(subtype_)),

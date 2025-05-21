@@ -70,7 +70,7 @@ bool PopupAppearsForAnnotType(CPDF_Annot::Subtype subtype) {
   }
 }
 
-std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
+std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* document,
                                              CPDF_Page* pPage,
                                              CPDF_Annot* pAnnot) {
   if (!PopupAppearsForAnnotType(pAnnot->GetSubtype())) {
@@ -90,7 +90,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
     return nullptr;
   }
 
-  auto pAnnotDict = pDocument->New<CPDF_Dictionary>();
+  auto pAnnotDict = document->New<CPDF_Dictionary>();
   pAnnotDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "Annot");
   pAnnotDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Popup");
   pAnnotDict->SetNewFor<CPDF_String>(
@@ -120,7 +120,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
   pAnnotDict->SetNewFor<CPDF_Number>(pdfium::annotation::kF, 0);
 
   auto pPopupAnnot =
-      std::make_unique<CPDF_Annot>(std::move(pAnnotDict), pDocument);
+      std::make_unique<CPDF_Annot>(std::move(pAnnotDict), document);
   pAnnot->SetPopupAnnot(pPopupAnnot.get());
   return pPopupAnnot;
 }

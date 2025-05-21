@@ -13,7 +13,7 @@ class CXFA_Document;
 
 class CScript_LogPseudoModel final : public CXFA_Object {
  public:
-  explicit CScript_LogPseudoModel(CXFA_Document* pDocument);
+  explicit CScript_LogPseudoModel(CXFA_Document* document);
   ~CScript_LogPseudoModel() override;
 };
 

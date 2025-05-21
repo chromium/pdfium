@@ -95,7 +95,7 @@ class CXFA_Object : public cppgc::GarbageCollected<CXFA_Object> {
   WideString GetSOMExpression();
 
  protected:
-  CXFA_Object(CXFA_Document* pDocument,
+  CXFA_Object(CXFA_Document* document,
               XFA_ObjectType objectType,
               XFA_Element eType,
               CJX_Object* jsObject);

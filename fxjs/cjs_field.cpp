@@ -658,10 +658,10 @@ CJS_Field::CJS_Field(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 
 CJS_Field::~CJS_Field() = default;
 
-bool CJS_Field::AttachField(CJS_Document* pDocument,
+bool CJS_Field::AttachField(CJS_Document* document,
                             const WideString& csFieldName) {
-  js_doc_.Reset(pDocument);
-  form_fill_env_.Reset(pDocument->GetFormFillEnv());
+  js_doc_.Reset(document);
+  form_fill_env_.Reset(document->GetFormFillEnv());
   can_set_ = form_fill_env_->HasPermissions(
       pdfium::access_permissions::kFillForm |
       pdfium::access_permissions::kModifyAnnotation |

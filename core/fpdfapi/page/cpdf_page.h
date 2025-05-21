@@ -96,7 +96,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   void UpdateDimensions();
 
  private:
-  CPDF_Page(CPDF_Document* pDocument, RetainPtr<CPDF_Dictionary> pPageDict);
+  CPDF_Page(CPDF_Document* document, RetainPtr<CPDF_Dictionary> pPageDict);
   ~CPDF_Page() override;
 
   RetainPtr<CPDF_Object> GetMutablePageAttr(ByteStringView name);

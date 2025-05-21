@@ -281,9 +281,9 @@ void LoadMetricsArray(RetainPtr<const CPDF_Array> pArray,
 
 }  // namespace
 
-CPDF_CIDFont::CPDF_CIDFont(CPDF_Document* pDocument,
+CPDF_CIDFont::CPDF_CIDFont(CPDF_Document* document,
                            RetainPtr<CPDF_Dictionary> pFontDict)
-    : CPDF_Font(pDocument, std::move(pFontDict)) {
+    : CPDF_Font(document, std::move(pFontDict)) {
   for (size_t i = 0; i < std::size(char_bbox_); ++i) {
     char_bbox_[i] = FX_RECT(-1, -1, -1, -1);
   }

@@ -20,7 +20,7 @@ class CXFA_TreeList : public CXFA_List {
   CXFA_Node* NamedItem(WideStringView wsName);
 
  protected:
-  explicit CXFA_TreeList(CXFA_Document* pDocument);
+  explicit CXFA_TreeList(CXFA_Document* document);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TREELIST_H_

@@ -29,7 +29,7 @@ class CXFA_AttachNodeList final : public CXFA_TreeList {
   CXFA_Node* Item(size_t iIndex) override;
 
  private:
-  CXFA_AttachNodeList(CXFA_Document* pDocument, CXFA_Node* pAttachNode);
+  CXFA_AttachNodeList(CXFA_Document* document, CXFA_Node* pAttachNode);
 
   cppgc::Member<CXFA_Node> const attach_node_;
 };

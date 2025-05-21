@@ -213,19 +213,19 @@ FPDF_DOCUMENT LoadDocumentImpl(RetainPtr<IFX_SeekableReadStream> pFileAccess,
     return nullptr;
   }
 
-  auto pDocument =
+  auto document =
       std::make_unique<CPDF_Document>(std::make_unique<CPDF_DocRenderData>(),
                                       std::make_unique<CPDF_DocPageData>());
 
   CPDF_Parser::Error error =
-      pDocument->LoadDoc(std::move(pFileAccess), password);
+      document->LoadDoc(std::move(pFileAccess), password);
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);
     return nullptr;
   }
 
-  ReportUnsupportedFeatures(pDocument.get());
-  return FPDFDocumentFromCPDFDocument(pDocument.release());
+  ReportUnsupportedFeatures(document.get());
+  return FPDFDocumentFromCPDFDocument(document.release());
 }
 
 }  // namespace

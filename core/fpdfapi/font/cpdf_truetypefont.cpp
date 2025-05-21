@@ -35,9 +35,9 @@ bool IsWinAnsiOrMacRomanEncoding(FontEncoding encoding) {
 
 }  // namespace
 
-CPDF_TrueTypeFont::CPDF_TrueTypeFont(CPDF_Document* pDocument,
+CPDF_TrueTypeFont::CPDF_TrueTypeFont(CPDF_Document* document,
                                      RetainPtr<CPDF_Dictionary> pFontDict)
-    : CPDF_SimpleFont(pDocument, std::move(pFontDict)) {}
+    : CPDF_SimpleFont(document, std::move(pFontDict)) {}
 
 CPDF_TrueTypeFont::~CPDF_TrueTypeFont() = default;
 

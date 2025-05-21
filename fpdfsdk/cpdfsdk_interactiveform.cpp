@@ -136,19 +136,19 @@ CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetWidget(
     return pWidget;
   }
 
-  CPDF_Document* pDocument = form_fill_env_->GetPDFDocument();
+  CPDF_Document* document = form_fill_env_->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
   RetainPtr<const CPDF_Dictionary> pControlDict = pControl->GetWidgetDict();
   RetainPtr<const CPDF_Dictionary> pPageDict = pControlDict->GetDictFor("P");
   if (pPageDict) {
-    int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
+    int nPageIndex = document->GetPageIndex(pPageDict->GetObjNum());
     if (nPageIndex >= 0) {
       pPage = form_fill_env_->GetPageViewAtIndex(nPageIndex);
     }
   }
 
   if (!pPage) {
-    int nPageIndex = GetPageIndexByAnnotDict(pDocument, pControlDict);
+    int nPageIndex = GetPageIndexByAnnotDict(document, pControlDict);
     if (nPageIndex >= 0) {
       pPage = form_fill_env_->GetPageViewAtIndex(nPageIndex);
     }
@@ -182,13 +182,12 @@ void CPDFSDK_InteractiveForm::GetWidgets(
 }
 
 int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
-    CPDF_Document* pDocument,
+    CPDF_Document* document,
     const CPDF_Dictionary* pAnnotDict) const {
   DCHECK(pAnnotDict);
 
-  for (int i = 0, sz = pDocument->GetPageCount(); i < sz; i++) {
-    RetainPtr<const CPDF_Dictionary> pPageDict =
-        pDocument->GetPageDictionary(i);
+  for (int i = 0, sz = document->GetPageCount(); i < sz; i++) {
+    RetainPtr<const CPDF_Dictionary> pPageDict = document->GetPageDictionary(i);
     if (!pPageDict) {
       continue;
     }

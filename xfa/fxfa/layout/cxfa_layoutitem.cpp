@@ -22,9 +22,9 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
     XFA_ReleaseLayoutItem(pNode);
     pNode = pNext;
   }
-  CXFA_Document* pDocument = pLayoutItem->GetFormNode()->GetDocument();
-  CXFA_FFNotify* pNotify = pDocument->GetNotify();
-  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(pDocument);
+  CXFA_Document* document = pLayoutItem->GetFormNode()->GetDocument();
+  CXFA_FFNotify* pNotify = document->GetNotify();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(document);
   pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
   if (pLayoutItem->GetFormNode()->GetElementType() == XFA_Element::PageArea) {
     pNotify->OnPageViewEvent(ToViewLayoutItem(pLayoutItem),

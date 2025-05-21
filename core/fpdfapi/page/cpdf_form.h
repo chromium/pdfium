@@ -36,10 +36,10 @@ class CPDF_Form final : public CPDF_PageObjectHolder,
                                               CPDF_Dictionary* pParentResources,
                                               CPDF_Dictionary* pPageResources);
 
-  CPDF_Form(CPDF_Document* pDocument,
+  CPDF_Form(CPDF_Document* document,
             RetainPtr<CPDF_Dictionary> pPageResources,
             RetainPtr<CPDF_Stream> pFormStream);
-  CPDF_Form(CPDF_Document* pDocument,
+  CPDF_Form(CPDF_Document* document,
             RetainPtr<CPDF_Dictionary> pPageResources,
             RetainPtr<CPDF_Stream> pFormStream,
             CPDF_Dictionary* pParentResources);

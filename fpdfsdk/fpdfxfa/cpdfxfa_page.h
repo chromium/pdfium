@@ -60,7 +60,7 @@ class CPDFXFA_Page final : public IPDF_Page {
 
  private:
   // Refcounted class.
-  CPDFXFA_Page(CPDF_Document* pDocument, int page_index);
+  CPDFXFA_Page(CPDF_Document* document, int page_index);
   ~CPDFXFA_Page() override;
 
   bool LoadPDFPage();

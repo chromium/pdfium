@@ -157,13 +157,13 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
       state.GetStrokeAlpha() != 1.0f || state.GetFillAlpha() != 1.0f) {
     return StartDIBBase();
   }
-  CPDF_Document* pDocument = nullptr;
+  CPDF_Document* document = nullptr;
   CPDF_Page* pPage = nullptr;
   if (auto* pPageCache = render_status_->GetContext()->GetPageCache()) {
     pPage = pPageCache->GetPage();
-    pDocument = pPage->GetDocument();
+    document = pPage->GetDocument();
   } else {
-    pDocument = image_object_->GetImage()->GetDocument();
+    document = image_object_->GetImage()->GetDocument();
   }
   RetainPtr<const CPDF_Dictionary> pPageResources =
       pPage ? pPage->GetPageResources() : nullptr;
@@ -171,7 +171,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
       image_object_->GetImage()->GetStream()->GetDict();
   RetainPtr<const CPDF_Object> pCSObj =
       pStreamDict->GetDirectObjectFor("ColorSpace");
-  auto* pData = CPDF_DocPageData::FromDocument(pDocument);
+  auto* pData = CPDF_DocPageData::FromDocument(document);
   RetainPtr<CPDF_ColorSpace> pColorSpace =
       pData->GetColorSpace(pCSObj.Get(), pPageResources);
   if (pColorSpace) {

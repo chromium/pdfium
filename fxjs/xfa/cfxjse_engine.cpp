@@ -119,14 +119,13 @@ CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_HostObject* pHostObj) {
   return pJSObject ? pJSObject->GetXFAObject() : nullptr;
 }
 
-CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
-                             CJS_Runtime* fxjs_runtime)
+CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* document, CJS_Runtime* fxjs_runtime)
     : CFX_V8(fxjs_runtime->GetIsolate()),
       subordinate_runtime_(fxjs_runtime),
-      document_(pDocument),
+      document_(document),
       js_context_(CFXJSE_Context::Create(fxjs_runtime->GetIsolate(),
                                          &kGlobalClassDescriptor,
-                                         pDocument->GetRoot()->JSObject(),
+                                         document->GetRoot()->JSObject(),
                                          nullptr)),
       node_helper_(std::make_unique<CFXJSE_NodeHelper>()),
       resolve_processor_(

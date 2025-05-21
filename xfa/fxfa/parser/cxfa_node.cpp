@@ -2143,7 +2143,7 @@ void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
 }
 
 CXFA_Node* CXFA_Node::CreateInstanceIfPossible(bool bDataMerge) {
-  CXFA_Document* pDocument = GetDocument();
+  CXFA_Document* document = GetDocument();
   CXFA_Node* pTemplateNode = GetTemplateNodeIfExists();
   if (!pTemplateNode) {
     return nullptr;
@@ -2160,14 +2160,14 @@ CXFA_Node* CXFA_Node::CreateInstanceIfPossible(bool bDataMerge) {
     }
   }
   if (!pDataScope) {
-    pDataScope = ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record));
+    pDataScope = ToNode(document->GetXFAObject(XFA_HASHCODE_Record));
     DCHECK(pDataScope);
   }
 
-  CXFA_Node* pInstance = pDocument->DataMerge_CopyContainer(
+  CXFA_Node* pInstance = document->DataMerge_CopyContainer(
       pTemplateNode, pFormParent, pDataScope, true, bDataMerge, true);
   if (pInstance) {
-    pDocument->DataMerge_UpdateBindingRelations(pInstance);
+    document->DataMerge_UpdateBindingRelations(pInstance);
     pFormParent->RemoveChildAndNotify(pInstance, true);
   }
   return pInstance;
