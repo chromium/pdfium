@@ -9,12 +9,12 @@ class CXFASimpleParserEmbedderTest : public EmbedderTest {};
 
 TEST_F(CXFASimpleParserEmbedderTest, Bug216) {
   ASSERT_TRUE(OpenDocument("bug_216.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 }
 
 TEST_F(CXFASimpleParserEmbedderTest, Bug709793) {
   ASSERT_TRUE(OpenDocument("bug_709793.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 }

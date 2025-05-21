@@ -520,9 +520,8 @@ int EmbedderTest::GetPageCount() {
   return page_count;
 }
 
-EmbedderTest::ScopedEmbedderTestPage EmbedderTest::LoadScopedPage(
-    int page_index) {
-  return ScopedEmbedderTestPage(this, page_index);
+EmbedderTest::ScopedPage EmbedderTest::LoadScopedPage(int page_index) {
+  return ScopedPage(this, page_index);
 }
 
 FPDF_PAGE EmbedderTest::LoadPage(int page_index) {
@@ -907,26 +906,22 @@ void EmbedderTest::ClosePDFFileForWrite() {
 }
 #endif
 
-EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage()
-    : test_(nullptr), page_(nullptr) {}
+EmbedderTest::ScopedPage::ScopedPage() : test_(nullptr), page_(nullptr) {}
 
-EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage(EmbedderTest* test,
-                                                             int page_index)
+EmbedderTest::ScopedPage::ScopedPage(EmbedderTest* test, int page_index)
     : test_(test), page_(test->LoadPage(page_index)) {}
 
-EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage(
-    EmbedderTest::ScopedEmbedderTestPage&& that) noexcept
+EmbedderTest::ScopedPage::ScopedPage(EmbedderTest::ScopedPage&& that) noexcept
     : test_(std::move(that.test_)), page_(std::exchange(that.page_, nullptr)) {}
 
-EmbedderTest::ScopedEmbedderTestPage&
-EmbedderTest::ScopedEmbedderTestPage::operator=(
-    EmbedderTest::ScopedEmbedderTestPage&& that) noexcept {
+EmbedderTest::ScopedPage& EmbedderTest::ScopedPage::operator=(
+    EmbedderTest::ScopedPage&& that) noexcept {
   test_ = std::move(that.test_);
   page_ = std::exchange(that.page_, nullptr);
   return *this;
 }
 
-EmbedderTest::ScopedEmbedderTestPage::~ScopedEmbedderTestPage() {
+EmbedderTest::ScopedPage::~ScopedPage() {
   if (page_) {
     test_->UnloadPage(page_);
   }

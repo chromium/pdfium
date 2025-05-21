@@ -27,9 +27,9 @@ class CPDFSDKAnnotIteratorTest : public EmbedderTest {};
 
 TEST_F(CPDFSDKAnnotIteratorTest, AnnotIterator) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  ScopedEmbedderTestPage page0 = LoadScopedPage(0);
-  ScopedEmbedderTestPage page1 = LoadScopedPage(1);
-  ScopedEmbedderTestPage page2 = LoadScopedPage(2);
+  ScopedPage page0 = LoadScopedPage(0);
+  ScopedPage page1 = LoadScopedPage(1);
+  ScopedPage page2 = LoadScopedPage(2);
   ASSERT_TRUE(page0);
   ASSERT_TRUE(page1);
   ASSERT_TRUE(page2);

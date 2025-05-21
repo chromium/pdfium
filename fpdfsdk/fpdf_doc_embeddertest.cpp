@@ -220,7 +220,7 @@ TEST_F(FPDFDocEmbedderTest, Bug1506First) {
 TEST_F(FPDFDocEmbedderTest, Bug1506Second) {
   ASSERT_TRUE(OpenDocument("bug_1506.pdf"));
 
-  std::vector<ScopedEmbedderTestPage> pages;
+  std::vector<ScopedPage> pages;
   for (int i : {0, 2}) {
     pages.push_back(LoadScopedPage(i));
   }
@@ -233,7 +233,7 @@ TEST_F(FPDFDocEmbedderTest, Bug1506Second) {
 TEST_F(FPDFDocEmbedderTest, Bug1506Third) {
   ASSERT_TRUE(OpenDocument("bug_1506.pdf"));
 
-  std::vector<ScopedEmbedderTestPage> pages;
+  std::vector<ScopedPage> pages;
   for (int i : {0, 1, 3}) {
     pages.push_back(LoadScopedPage(i));
   }
@@ -255,7 +255,7 @@ TEST_F(FPDFDocEmbedderTest, Bug680376) {
 TEST_F(FPDFDocEmbedderTest, Bug821454) {
   ASSERT_TRUE(OpenDocument("bug_821454.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Cover some invalid argument cases while we're at it.
@@ -332,7 +332,7 @@ TEST_F(FPDFDocEmbedderTest, ActionBadArguments) {
 TEST_F(FPDFDocEmbedderTest, ActionLaunch) {
   ASSERT_TRUE(OpenDocument("launch_action.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // The target action is nearly the size of the whole page.
@@ -361,7 +361,7 @@ TEST_F(FPDFDocEmbedderTest, ActionLaunch) {
 TEST_F(FPDFDocEmbedderTest, ActionUri) {
   ASSERT_TRUE(OpenDocument("uri_action.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // The target action is nearly the size of the whole page.
@@ -390,7 +390,7 @@ TEST_F(FPDFDocEmbedderTest, ActionUri) {
 TEST_F(FPDFDocEmbedderTest, ActionUriNonAscii) {
   ASSERT_TRUE(OpenDocument("uri_action_nonascii.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // The target action is nearly the size of the whole page.
@@ -418,7 +418,7 @@ TEST_F(FPDFDocEmbedderTest, ActionUriNonAscii) {
 
 TEST_F(FPDFDocEmbedderTest, LinkToAnnotConversion) {
   ASSERT_TRUE(OpenDocument("annots.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   {
     FPDF_LINK first_link = FPDFLink_GetLinkAtPoint(page.get(), 69.00, 653.00);
@@ -440,7 +440,7 @@ TEST_F(FPDFDocEmbedderTest, LinkToAnnotConversion) {
 TEST_F(FPDFDocEmbedderTest, ActionGoto) {
   ASSERT_TRUE(OpenDocument("goto_action.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // The target action is nearly the size of the whole page.
@@ -463,7 +463,7 @@ TEST_F(FPDFDocEmbedderTest, ActionGoto) {
 TEST_F(FPDFDocEmbedderTest, ActionEmbeddedGoto) {
   ASSERT_TRUE(OpenDocument("gotoe_action.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // The target action is nearly the size of the whole page.
@@ -498,7 +498,7 @@ TEST_F(FPDFDocEmbedderTest, ActionEmbeddedGoto) {
 TEST_F(FPDFDocEmbedderTest, ActionNonesuch) {
   ASSERT_TRUE(OpenDocument("nonesuch_action.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // The target action is nearly the size of the whole page.
@@ -672,7 +672,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
   ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
   EXPECT_EQ(5, FPDF_GetPageCount(document()));
   for (int i = 0; i < 5; ++i) {
-    ScopedEmbedderTestPage page = LoadScopedPage(i);
+    ScopedPage page = LoadScopedPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     const PageData& expected = expected_page_data[i];
@@ -684,7 +684,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
   FPDFPage_Delete(document(), 0);
   EXPECT_EQ(4, FPDF_GetPageCount(document()));
   for (int i = 0; i < 4; ++i) {
-    ScopedEmbedderTestPage page = LoadScopedPage(i);
+    ScopedPage page = LoadScopedPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     const PageData& expected = expected_page_data[i + 1];
@@ -696,7 +696,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
   FPDFPage_Delete(document(), 3);
   EXPECT_EQ(3, FPDF_GetPageCount(document()));
   for (int i = 0; i < 3; ++i) {
-    ScopedEmbedderTestPage page = LoadScopedPage(i);
+    ScopedPage page = LoadScopedPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     const PageData& expected = expected_page_data[i + 1];
@@ -708,7 +708,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
   FPDFPage_Delete(document(), 1);
   EXPECT_EQ(2, FPDF_GetPageCount(document()));
   for (int i = 0; i < 2; ++i) {
-    ScopedEmbedderTestPage page = LoadScopedPage(i);
+    ScopedPage page = LoadScopedPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     int adjusted_index = i == 0 ? 1 : 3;
@@ -926,7 +926,7 @@ TEST_F(FPDFDocEmbedderTest, GetMetaTextFromNewDocument) {
 
 TEST_F(FPDFDocEmbedderTest, GetPageAAction) {
   ASSERT_TRUE(OpenDocument("get_page_aaction.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   EXPECT_FALSE(FPDF_GetPageAAction(nullptr, FPDFPAGE_AACTION_OPEN));
@@ -947,7 +947,7 @@ TEST_F(FPDFDocEmbedderTest, GetPageAAction) {
   EXPECT_EQ(kExpectedLength, FPDFAction_GetFilePath(action, buf, bufsize));
   EXPECT_STREQ(kExpectedResult, buf);
 
-  ScopedEmbedderTestPage page1 = LoadScopedPage(1);
+  ScopedPage page1 = LoadScopedPage(1);
 
   EXPECT_TRUE(page1.get());
   EXPECT_FALSE(FPDF_GetPageAAction(page1.get(), -1));

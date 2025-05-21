@@ -10,7 +10,7 @@ class FPDFSearchExEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFSearchExEmbedderTest, GetCharIndexFromTextIndex) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -32,7 +32,7 @@ TEST_F(FPDFSearchExEmbedderTest, GetCharIndexFromTextIndex) {
 TEST_F(FPDFSearchExEmbedderTest,
        GetCharIndexFromTextIndexWithNonPrintableChar) {
   ASSERT_TRUE(OpenDocument("bug_1139.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -62,7 +62,7 @@ TEST_F(FPDFSearchExEmbedderTest, GetCharIndexFromTextIndexInvalid) {
 
 TEST_F(FPDFSearchExEmbedderTest, GetTextIndexFromCharIndex) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -84,7 +84,7 @@ TEST_F(FPDFSearchExEmbedderTest, GetTextIndexFromCharIndex) {
 TEST_F(FPDFSearchExEmbedderTest,
        GetTextIndexFromCharIndexWithNonPrintableChar) {
   ASSERT_TRUE(OpenDocument("bug_1139.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {

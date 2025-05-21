@@ -54,13 +54,13 @@ class CFWLEditEmbedderTest : public XFAJSEmbedderTest {
 
 TEST_F(CFWLEditEmbedderTest, Trivial) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_EQ(0u, delegate().GetAlerts().size());
 }
 
 TEST_F(CFWLEditEmbedderTest, LeftClickMouseSelection) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
   for (size_t i = 0; i < 10; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
@@ -87,7 +87,7 @@ TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
   }
 
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
   for (size_t i = 0; i < 10; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
@@ -121,7 +121,7 @@ TEST_F(CFWLEditEmbedderTest, SimpleFill) {
   }
 
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   const char kBlankMD5[] = "8dda78a3afaf9f7b5210eb81cacc4600";
   {
     ScopedFPDFBitmap page_bitmap =
@@ -148,7 +148,7 @@ TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithoutMultiline) {
   }
 
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
   for (size_t i = 0; i < 5; ++i) {
     FORM_OnChar(form_handle(), page.get(), 'a' + i, 0);
@@ -168,7 +168,7 @@ TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithoutMultiline) {
 // Disabled due to flakiness.
 TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
   CreateAndInitializeFormPDF("xfa/xfa_multiline_textfield.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
 
   for (size_t i = 0; i < 5; ++i) {
@@ -228,7 +228,7 @@ TEST_F(CFWLEditEmbedderTest, DateTimePickerTest) {
   }
 
   CreateAndInitializeFormPDF("xfa/xfa_date_time_edit.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
 
   // Give focus to date time widget, creating down-arrow button.
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
@@ -267,7 +267,7 @@ TEST_F(CFWLEditEmbedderTest, DateTimePickerTest) {
 
 TEST_F(CFWLEditEmbedderTest, ImageEditTest) {
   CreateAndInitializeFormPDF("xfa/xfa_image_edit.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);
   const char* filled_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
@@ -282,7 +282,7 @@ TEST_F(CFWLEditEmbedderTest, ImageEditTest) {
 
 TEST_F(CFWLEditEmbedderTest, ComboBoxTest) {
   CreateAndInitializeFormPDF("xfa/xfa_combobox.pdf");
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
 
   // Give focus to widget.
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 115, 58);

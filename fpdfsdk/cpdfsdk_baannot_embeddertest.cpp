@@ -20,17 +20,17 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
     ASSERT_TRUE(OpenDocument("links_highlights_annots.pdf"));
   }
 
-  ScopedEmbedderTestPage SetUpBAAnnot() {
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage SetUpBAAnnot() {
+    ScopedPage page = LoadScopedPage(0);
     if (!page) {
       ADD_FAILURE();
-      return ScopedEmbedderTestPage();
+      return ScopedPage();
     }
     form_fill_env_ =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
     if (!form_fill_env_) {
       ADD_FAILURE();
-      return ScopedEmbedderTestPage();
+      return ScopedPage();
     }
 
     page_view_ =
@@ -38,7 +38,7 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
 
     if (!page_view_) {
       ADD_FAILURE();
-      return ScopedEmbedderTestPage();
+      return ScopedPage();
     }
 
     return page;
@@ -68,7 +68,7 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
 };
 
 TEST_F(CPDFSDKBAAnnotTest, TabToLinkOrHighlightAnnot) {
-  ScopedEmbedderTestPage page = SetUpBAAnnot();
+  ScopedPage page = SetUpBAAnnot();
   ASSERT_TRUE(page);
 
   std::vector<CPDF_Annot::Subtype> focusable_annot_types = {

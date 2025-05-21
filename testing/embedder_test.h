@@ -89,15 +89,15 @@ class EmbedderTest : public ::testing::Test,
                                                  int modifiers) {}
   };
 
-  class ScopedEmbedderTestPage {
+  class ScopedPage {
    public:
-    ScopedEmbedderTestPage();
-    ScopedEmbedderTestPage(EmbedderTest* test, int page_index);
-    ScopedEmbedderTestPage(const ScopedEmbedderTestPage&) = delete;
-    ScopedEmbedderTestPage& operator=(const ScopedEmbedderTestPage&) = delete;
-    ScopedEmbedderTestPage(ScopedEmbedderTestPage&&) noexcept;
-    ScopedEmbedderTestPage& operator=(ScopedEmbedderTestPage&&) noexcept;
-    ~ScopedEmbedderTestPage();
+    ScopedPage();
+    ScopedPage(EmbedderTest* test, int page_index);
+    ScopedPage(const ScopedPage&) = delete;
+    ScopedPage& operator=(const ScopedPage&) = delete;
+    ScopedPage(ScopedPage&&) noexcept;
+    ScopedPage& operator=(ScopedPage&&) noexcept;
+    ~ScopedPage();
 
     FPDF_PAGE get() { return page_; }
 
@@ -171,14 +171,13 @@ class EmbedderTest : public ::testing::Test,
 
   // Load a specific page of the open document with a given non-negative
   // `page_index`. On success, fire form events for the page and return a
-  // ScopedEmbedderTestPage with the page handle. On failure, return an empty
-  // ScopedEmbedderTestPage.
-  // The caller needs to let the ScopedEmbedderTestPage go out of scope to
-  // properly unload the page, and must do so before the page's document and
-  // `this` get destroyed.
+  // ScopedPage with the page handle. On failure, return an empty ScopedPage.
+  // The caller needs to let the ScopedPage go out of scope to properly unload
+  // the page, and must do so before the page's document and `this` get
+  // destroyed.
   // The caller cannot call this for a `page_index` if it already obtained and
   // holds the page handle for that page.
-  ScopedEmbedderTestPage LoadScopedPage(int page_index);
+  ScopedPage LoadScopedPage(int page_index);
 
   // Prefer LoadScopedPage() above.
   //

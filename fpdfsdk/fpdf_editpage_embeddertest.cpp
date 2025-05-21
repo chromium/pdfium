@@ -29,7 +29,7 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
 
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     {
@@ -84,7 +84,7 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
 TEST_F(FPDFEditPageEmbedderTest, HasTransparencyImage) {
   static constexpr int kExpectedObjectCount = 39;
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page.get()));
 
@@ -104,7 +104,7 @@ TEST_F(FPDFEditPageEmbedderTest, HasTransparencyInvalid) {
 TEST_F(FPDFEditPageEmbedderTest, HasTransparencyPath) {
   static constexpr int kExpectedObjectCount = 8;
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page.get()));
 
@@ -120,7 +120,7 @@ TEST_F(FPDFEditPageEmbedderTest, HasTransparencyPath) {
 TEST_F(FPDFEditPageEmbedderTest, HasTransparencyText) {
   static constexpr int kExpectedObjectCount = 2;
   ASSERT_TRUE(OpenDocument("text_render_mode.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page.get()));
 
@@ -137,7 +137,7 @@ TEST_F(FPDFEditPageEmbedderTest, GetFillAndStrokeForImage) {
   static constexpr int kExpectedObjectCount = 39;
   static constexpr int kImageObjectsStartIndex = 33;
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page.get()));
@@ -183,7 +183,7 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
 
   static constexpr int kExpectedObjectCount = 3;
   ASSERT_TRUE(OpenDocument("dashed_lines.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page.get()));
@@ -296,7 +296,7 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
 
 TEST_F(FPDFEditPageEmbedderTest, GetRotatedBoundsBadParameters) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 0);
@@ -310,7 +310,7 @@ TEST_F(FPDFEditPageEmbedderTest, GetRotatedBoundsBadParameters) {
 
 TEST_F(FPDFEditPageEmbedderTest, GetBoundsForNormalText) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 0);
@@ -345,7 +345,7 @@ TEST_F(FPDFEditPageEmbedderTest, GetBoundsForNormalText) {
 
 TEST_F(FPDFEditPageEmbedderTest, GetBoundsForRotatedText) {
   ASSERT_TRUE(OpenDocument("rotated_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 0);
@@ -380,7 +380,7 @@ TEST_F(FPDFEditPageEmbedderTest, GetBoundsForRotatedText) {
 
 TEST_F(FPDFEditPageEmbedderTest, GetBoundsForNormalImage) {
   ASSERT_TRUE(OpenDocument("matte.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 2);
@@ -415,7 +415,7 @@ TEST_F(FPDFEditPageEmbedderTest, GetBoundsForNormalImage) {
 
 TEST_F(FPDFEditPageEmbedderTest, GetBoundsForRotatedImage) {
   ASSERT_TRUE(OpenDocument("rotated_image.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 0);
@@ -504,7 +504,7 @@ TEST_F(FPDFEditPageEmbedderTest, PageObjectActiveState) {
   }();
 
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   const int page_width = static_cast<int>(FPDF_GetPageWidth(page.get()));
   const int page_height = static_cast<int>(FPDF_GetPageHeight(page.get()));
@@ -586,7 +586,7 @@ TEST_F(FPDFEditPageEmbedderTest, Bug378120423) {
   const char kBlankChecksum[] = "eee4600ac08b458ac7ac2320e225674c";
 
   ASSERT_TRUE(OpenDocument("bug_378120423.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   const int page_width = static_cast<int>(FPDF_GetPageWidth(page.get()));
   const int page_height = static_cast<int>(FPDF_GetPageHeight(page.get()));
@@ -652,7 +652,7 @@ TEST_F(FPDFEditPageEmbedderTest, Bug378120423) {
 
 TEST_F(FPDFEditPageEmbedderTest, Bug378464305) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   const int page_width = static_cast<int>(FPDF_GetPageWidth(page.get()));
   const int page_height = static_cast<int>(FPDF_GetPageHeight(page.get()));

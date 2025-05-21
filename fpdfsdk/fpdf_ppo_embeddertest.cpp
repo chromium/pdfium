@@ -91,7 +91,7 @@ TEST_F(FPDFPPOEmbedderTest, ViewerPreferences) {
 TEST_F(FPDFPPOEmbedderTest, ImportPagesByIndex) {
   ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
@@ -107,7 +107,7 @@ TEST_F(FPDFPPOEmbedderTest, ImportPagesByIndex) {
 TEST_F(FPDFPPOEmbedderTest, ImportPages) {
   ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
@@ -291,7 +291,7 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObjectWithSameDoc) {
   FPDF_XOBJECT xobject = FPDF_NewXObjectFromPage(document(), document(), 0);
   ASSERT_TRUE(xobject);
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -365,7 +365,7 @@ TEST_F(FPDFPPOEmbedderTest, Bug1229106) {
   // Show all pages render the same.
   ASSERT_EQ(kPageCount, FPDF_GetPageCount(document()));
   for (int i = 0; i < kPageCount; ++i) {
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), 792, 612, kRectsChecksum);
   }
@@ -452,7 +452,7 @@ TEST_F(FPDFPPOEmbedderTest, CopyViewerPrefTypes) {
 TEST_F(FPDFPPOEmbedderTest, BadIndices) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
@@ -478,7 +478,7 @@ TEST_F(FPDFPPOEmbedderTest, BadIndices) {
 TEST_F(FPDFPPOEmbedderTest, GoodIndices) {
   ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
@@ -517,7 +517,7 @@ TEST_F(FPDFPPOEmbedderTest, GoodIndices) {
 TEST_F(FPDFPPOEmbedderTest, BadRanges) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
@@ -537,7 +537,7 @@ TEST_F(FPDFPPOEmbedderTest, BadRanges) {
 TEST_F(FPDFPPOEmbedderTest, GoodRanges) {
   ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
@@ -556,7 +556,7 @@ TEST_F(FPDFPPOEmbedderTest, GoodRanges) {
 TEST_F(FPDFPPOEmbedderTest, Bug664284) {
   ASSERT_TRUE(OpenDocument("bug_664284.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_NE(nullptr, page.get());
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
@@ -572,7 +572,7 @@ TEST_F(FPDFPPOEmbedderTest, Bug750568) {
   ASSERT_EQ(4, FPDF_GetPageCount(document()));
 
   for (size_t i = 0; i < 4; ++i) {
-    ScopedEmbedderTestPage page = LoadScopedPage(i);
+    ScopedPage page = LoadScopedPage(i);
     ASSERT_TRUE(page);
 
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
@@ -597,7 +597,7 @@ TEST_F(FPDFPPOEmbedderTest, Bug750568) {
 
 TEST_F(FPDFPPOEmbedderTest, ImportWithZeroLengthStream) {
   ASSERT_TRUE(OpenDocument("zero_length_stream.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
@@ -668,13 +668,13 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
   }();
   const char new_page_2_checksum[] = "39336760026e7f3d26135e3b765125c3";
   {
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderPage(page.get());
     CompareBitmap(bitmap.get(), 200, 300, new_page_1_checksum);
   }
   {
-    ScopedEmbedderTestPage page = LoadScopedPage(1);
+    ScopedPage page = LoadScopedPage(1);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderPage(page.get());
     CompareBitmap(bitmap.get(), 200, 100, new_page_2_checksum);

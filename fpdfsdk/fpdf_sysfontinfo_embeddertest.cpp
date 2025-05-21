@@ -127,7 +127,7 @@ TEST_F(FPDFUnavailableSysFontInfoEmbedderTest, Bug972518) {
   ASSERT_TRUE(OpenDocument("bug_972518.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 }
 
@@ -135,7 +135,7 @@ TEST_F(FPDFSysFontInfoEmbedderTest, DefaultSystemFontInfo) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {

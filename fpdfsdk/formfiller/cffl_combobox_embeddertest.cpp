@@ -10,7 +10,7 @@
 class CFFLComboBoxEmbedderTest : public CPWLComboBoxEmbedderTest {};
 
 TEST_F(CFFLComboBoxEmbedderTest, GetActionData) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
   {
@@ -37,7 +37,7 @@ TEST_F(CFFLComboBoxEmbedderTest, GetActionData) {
 }
 
 TEST_F(CFFLComboBoxEmbedderTest, SetActionData) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
   CFFL_FieldAction input_fa;

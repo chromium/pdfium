@@ -269,7 +269,7 @@ TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
   }
 
   ASSERT_TRUE(OpenDocument("bug_2034.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   std::set<int> image_ids;

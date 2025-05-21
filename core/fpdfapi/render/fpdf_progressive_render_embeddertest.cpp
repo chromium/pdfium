@@ -237,7 +237,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithoutPause) {
   // Test rendering of page content using progressive render APIs
   // without pausing the rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   FakePause pause(false);
   EXPECT_TRUE(StartRenderPage(page.get(), &pause));
@@ -250,7 +250,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithPause) {
   // Test rendering of page content using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   FakePause pause(true);
   bool render_done = StartRenderPage(page.get(), &pause);
@@ -268,7 +268,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderAnnotWithPause) {
   // Test rendering of the page with annotations using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   FakePause pause(true);
   bool render_done = StartRenderPageWithFlags(page.get(), &pause, FPDF_ANNOT);
@@ -286,7 +286,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormsWithPause) {
   // Test rendering of the page with forms using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   FakePause pause(true);
   bool render_done = StartRenderPage(page.get(), &pause);
@@ -310,7 +310,7 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
     const char* md5) {
   ASSERT_TRUE(document());
 
-  ScopedEmbedderTestPage page = LoadScopedPage(page_num);
+  ScopedPage page = LoadScopedPage(page_num);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderPageWithForcedColorScheme(
@@ -396,7 +396,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderPathObjectUsability) {
   }();
 
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Check rendering result before modifications.

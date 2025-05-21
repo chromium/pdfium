@@ -16,7 +16,7 @@ class FPDFStructTreeEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -77,7 +77,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetActualText) {
   ASSERT_TRUE(OpenDocument("tagged_actual_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -120,7 +120,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetActualText) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -181,7 +181,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetStringAttributeBadStructElement) {
   ASSERT_TRUE(OpenDocument("tagged_table_bad_elem.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -219,7 +219,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttributeBadStructElement) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetID) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -262,7 +262,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetID) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetLang) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -310,7 +310,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetLang) {
 // marked contents using FPDFPageObj_GetMark() and related API.
 TEST_F(FPDFStructTreeEmbedderTest, GetMarkedContentID) {
   ASSERT_TRUE(OpenDocument("marked_content_id.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -326,7 +326,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetMarkedContentID) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetMarkedContentIdAtIndex) {
   ASSERT_TRUE(OpenDocument("tagged_marked_content.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -381,7 +381,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetChildMarkedContentID) {
 
   // Using the loop to make difference clear
   for (int page_i : {0, 1}) {
-    ScopedEmbedderTestPage page = LoadScopedPage(page_i);
+    ScopedPage page = LoadScopedPage(page_i);
     ASSERT_TRUE(page);
     ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page.get()));
     ASSERT_TRUE(struct_tree);
@@ -424,7 +424,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetChildMarkedContentID) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetType) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -456,7 +456,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetType) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetObjType) {
   ASSERT_TRUE(OpenDocument("tagged_table_bad_elem.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -507,7 +507,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetObjType) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetParent) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -537,7 +537,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetParent) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -580,7 +580,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
   ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -765,7 +765,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetAttributesFromChildAttributes) {
   ASSERT_TRUE(OpenDocument("tagged_actual_text.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -847,7 +847,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributesFromChildAttributes) {
 
 TEST_F(FPDFStructTreeEmbedderTest, GetStructTreeForNestedTaggedPDF) {
   ASSERT_TRUE(OpenDocument("tagged_nested.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -859,7 +859,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStructTreeForNestedTaggedPDF) {
 
 TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
   ASSERT_TRUE(OpenDocument("tagged_mcr_objr.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -943,7 +943,7 @@ TEST_F(FPDFStructTreeEmbedderTest, MarkedContentReferenceAndObjectReference) {
 
 TEST_F(FPDFStructTreeEmbedderTest, Bug1768) {
   ASSERT_TRUE(OpenDocument("bug_1768.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -960,7 +960,7 @@ TEST_F(FPDFStructTreeEmbedderTest, Bug1768) {
 
 TEST_F(FPDFStructTreeEmbedderTest, Bug1296920) {
   ASSERT_TRUE(OpenDocument("bug_1296920.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -974,7 +974,7 @@ TEST_F(FPDFStructTreeEmbedderTest, Bug1296920) {
 
 TEST_F(FPDFStructTreeEmbedderTest, Bug1443100) {
   ASSERT_TRUE(OpenDocument("tagged_table_bad_parent.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {

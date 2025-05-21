@@ -182,7 +182,7 @@ TEST_F(PDFEditImgTest, Bug2132) {
       "617b1d57c30c516beee86e0781ff7810";
 
   ASSERT_TRUE(OpenDocument("bug_2132.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -230,7 +230,7 @@ TEST_F(PDFEditImgTest, GetAndSetMatrixForFormWithImage) {
       "fcb9007fd901d2052e2bd1c147b82800";
 
   ASSERT_TRUE(OpenDocument("form_object_with_image.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {

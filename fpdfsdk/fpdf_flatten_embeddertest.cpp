@@ -21,7 +21,7 @@ class FPDFFlattenEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFFlattenEmbedderTest, FlatNothing) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   EXPECT_EQ(FLATTEN_NOTHINGTODO,
             FPDFPage_Flatten(page.get(), FLAT_NORMALDISPLAY));
@@ -29,21 +29,21 @@ TEST_F(FPDFFlattenEmbedderTest, FlatNothing) {
 
 TEST_F(FPDFFlattenEmbedderTest, FlatNormal) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_NORMALDISPLAY));
 }
 
 TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
 }
 
 TEST_F(FPDFFlattenEmbedderTest, FlatWithBadFont) {
   ASSERT_TRUE(OpenDocument("344775293.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   FORM_OnLButtonDown(form_handle(), page.get(), 0, 20, 30);
@@ -57,7 +57,7 @@ TEST_F(FPDFFlattenEmbedderTest, FlatWithBadFont) {
 
 TEST_F(FPDFFlattenEmbedderTest, FlatWithFontNoBaseEncoding) {
   ASSERT_TRUE(OpenDocument("363015187.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
@@ -83,7 +83,7 @@ TEST_F(FPDFFlattenEmbedderTest, Bug861842) {
   }();
 
   ASSERT_TRUE(OpenDocument("bug_861842.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
@@ -132,7 +132,7 @@ TEST_F(FPDFFlattenEmbedderTest, Bug889099) {
   }();
 
   ASSERT_TRUE(OpenDocument("bug_889099.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // The original document has a malformed media box; the height is -400.
@@ -153,7 +153,7 @@ TEST_F(FPDFFlattenEmbedderTest, Bug890322) {
     return "6c674642154408e877d88c6c082d67e9";
   }();
   ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
@@ -173,7 +173,7 @@ TEST_F(FPDFFlattenEmbedderTest, Bug896366) {
     return "f71ab085c52c8445ae785eca3ec858b1";
   }();
   ASSERT_TRUE(OpenDocument("bug_896366.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);

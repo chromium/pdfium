@@ -41,7 +41,7 @@ TEST_F(CPDFParserEmbedderTest, Bug602650) {
   // Test the case that cross reference entries, which are well formed,
   // but do not match with the objects.
   ASSERT_TRUE(OpenDocument("bug_602650.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
   EXPECT_TRUE(text_page);
@@ -61,7 +61,7 @@ TEST_F(CPDFParserEmbedderTest, LoadMainCrossRefTable) {
   // check that the second page was correctly loaded. Because it is contains
   // crossrefs for second page.
   EXPECT_EQ(2, GetPageCount());
-  ScopedEmbedderTestPage page = LoadScopedPage(1);
+  ScopedPage page = LoadScopedPage(1);
   EXPECT_TRUE(page);
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
   EXPECT_TRUE(text_page);
@@ -72,7 +72,7 @@ TEST_F(CPDFParserEmbedderTest, LoadMainCrossRefTable) {
 
 TEST_F(CPDFParserEmbedderTest, Bug828049) {
   ASSERT_TRUE(OpenDocument("bug_828049.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 }
 

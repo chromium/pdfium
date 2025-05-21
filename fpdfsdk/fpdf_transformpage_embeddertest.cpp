@@ -33,7 +33,7 @@ TEST_F(FPDFTransformEmbedderTest, GetBoundingBoxes) {
   ASSERT_EQ(4, FPDF_GetPageCount(document()));
 
   {
-    ScopedEmbedderTestPage page = LoadScopedPage(1);
+    ScopedPage page = LoadScopedPage(1);
     ASSERT_TRUE(page);
 
     FS_RECTF mediabox;
@@ -80,7 +80,7 @@ TEST_F(FPDFTransformEmbedderTest, GetBoundingBoxes) {
   }
 
   {
-    ScopedEmbedderTestPage page = LoadScopedPage(3);
+    ScopedPage page = LoadScopedPage(3);
     ASSERT_TRUE(page);
 
     FS_RECTF mediabox;
@@ -142,7 +142,7 @@ TEST_F(FPDFTransformEmbedderTest, NoCropBox) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FS_RECTF cropbox = {-1.0f, 0.0f, 3.0f, -2.0f};
@@ -158,7 +158,7 @@ TEST_F(FPDFTransformEmbedderTest, NoBleedBox) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FS_RECTF bleedbox = {-1.0f, 10.f, 3.0f, -1.0f};
@@ -175,7 +175,7 @@ TEST_F(FPDFTransformEmbedderTest, NoTrimBox) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FS_RECTF trimbox = {-11.0f, 0.0f, 3.0f, -10.0f};
@@ -191,7 +191,7 @@ TEST_F(FPDFTransformEmbedderTest, NoArtBox) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   FS_RECTF artbox = {-1.0f, 0.0f, 3.0f, -1.0f};
@@ -212,7 +212,7 @@ TEST_F(FPDFTransformEmbedderTest, SetCropBox) {
   }();
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     {
@@ -290,7 +290,7 @@ TEST_F(FPDFTransformEmbedderTest, SetMediaBox) {
 
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     {
@@ -364,7 +364,7 @@ TEST_F(FPDFTransformEmbedderTest, SetMediaBox) {
 TEST_F(FPDFTransformEmbedderTest, ClipPath) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFClipPath clip(FPDF_CreateClipPath(10.0f, 10.0f, 90.0f, 90.0f));
@@ -385,7 +385,7 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClip) {
 
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   EXPECT_FALSE(FPDFPage_TransFormWithClip(nullptr, nullptr, nullptr));
@@ -404,7 +404,7 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipWithPatterns) {
 
   ASSERT_TRUE(OpenDocument("bug_547706.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   EXPECT_TRUE(FPDFPage_TransFormWithClip(page.get(), &half_matrix, nullptr));
@@ -415,7 +415,7 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipWithPatterns) {
 TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSave) {
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     {
@@ -474,7 +474,7 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSaveWithLocale) {
 
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
     {

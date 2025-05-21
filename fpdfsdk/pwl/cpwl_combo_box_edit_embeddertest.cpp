@@ -18,7 +18,7 @@
 class CPWLComboBoxEditEmbedderTest : public CPWLComboBoxEmbedderTest {};
 
 TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicNormal) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
@@ -43,7 +43,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicNormal) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsNormal) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
@@ -72,7 +72,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsNormal) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicEditable) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -104,7 +104,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicEditable) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsEditable) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -137,7 +137,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsEditable) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEntireTextSelection) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -152,7 +152,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEntireTextSelection) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionMiddle) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -167,7 +167,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionMiddle) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionLeft) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -182,7 +182,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionLeft) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionRight) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -197,7 +197,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionRight) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEmptyTextSelection) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -209,7 +209,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEmptyTextSelection) {
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, InsertTextInEmptyEditableComboBox) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -219,7 +219,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, InsertTextInEmptyEditableComboBox) {
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextInPopulatedEditableComboBoxLeft) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -234,7 +234,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextInPopulatedEditableComboBoxMiddle) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -251,7 +251,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextInPopulatedEditableComboBoxRight) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -263,7 +263,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxWhole) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -277,7 +277,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxLeft) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -291,7 +291,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxMiddle) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -305,7 +305,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 
 TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxRight) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
@@ -318,7 +318,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
 }
 
 TEST_F(CPWLComboBoxEditEmbedderTest, ReplaceAndKeepSelection) {
-  ScopedEmbedderTestPage page = CreateAndInitializeFormComboboxPDF();
+  ScopedPage page = CreateAndInitializeFormComboboxPDF();
   ASSERT_TRUE(page);
 
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());

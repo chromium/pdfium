@@ -44,7 +44,7 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
   void OpenAndVerifyHelloWorldDocumentWithPassword(const char* filename,
                                                    const char* password) {
     ASSERT_TRUE(OpenDocumentWithPassword(filename, password));
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     VerifyHelloWorldPage(page.get());
   }
 
@@ -78,7 +78,7 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
   }
 
   void RemoveGoodbyeObject() {
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     {
       ScopedFPDFPageObject goodbye_object(FPDFPage_GetObject(page.get(), 1));
       ASSERT_TRUE(goodbye_object);
@@ -160,7 +160,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
     ASSERT_TRUE(OpenDocumentWithOptions("encrypted.pdf", "5678",
                                         LinearizeOption::kMustLinearize,
                                         JavaScriptOption::kEnableJavaScript));
-    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    ScopedPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
     FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
     ASSERT_TRUE(red_rect);

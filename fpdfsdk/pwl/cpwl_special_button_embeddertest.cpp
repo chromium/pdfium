@@ -100,7 +100,7 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
 };
 
 TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyCheckBox) {
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   CreateAndInitializeFormPDF();
 
@@ -113,7 +113,7 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyCheckBox) {
 }
 
 TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnCheckBox) {
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   CreateAndInitializeFormPDF();
 
@@ -129,7 +129,7 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnCheckBox) {
 }
 
 TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyRadioButton) {
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   CreateAndInitializeFormPDF();
 
@@ -142,7 +142,7 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyRadioButton) {
 }
 
 TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnRadioButton) {
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   CreateAndInitializeFormPDF();
 

@@ -18,7 +18,7 @@ class CPWLComboBoxEmbedderTest : public EmbedderTest {
  protected:
   void SetUp() override;
 
-  ScopedEmbedderTestPage CreateAndInitializeFormComboboxPDF();
+  ScopedPage CreateAndInitializeFormComboboxPDF();
   void FormFillerAndWindowSetup(CPDFSDK_Widget* pAnnotCombobox);
   void TypeTextIntoTextField(int num_chars);
   CPWL_ComboBox* GetCPWLComboBox() const { return combo_box_; }

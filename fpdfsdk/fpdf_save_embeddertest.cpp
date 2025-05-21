@@ -83,7 +83,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocBadFlags) {
 TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
@@ -94,7 +94,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
 
 TEST_F(FPDFSaveEmbedderTest, Bug42271133) {
   ASSERT_TRUE(OpenDocument("bug_42271133.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Arbitrarily remove the first page object.
@@ -134,7 +134,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
 
   ASSERT_TRUE(OpenDocument("linearized.pdf"));
   for (int i = 0; i < kPageCount; ++i) {
-    ScopedEmbedderTestPage page = LoadScopedPage(i);
+    ScopedPage page = LoadScopedPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     EXPECT_EQ(612, FPDFBitmap_GetWidth(bitmap.get()));
@@ -167,7 +167,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
 
 TEST_F(FPDFSaveEmbedderTest, Bug1409) {
   ASSERT_TRUE(OpenDocument("jpx_lzw.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   while (FPDFPage_CountObjects(page.get()) > 0) {
     ScopedFPDFPageObject object(FPDFPage_GetObject(page.get(), 0));

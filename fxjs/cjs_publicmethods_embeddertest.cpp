@@ -187,7 +187,7 @@ TEST_F(CJSPublicMethodsEmbedderTest, AFSimpleCalculateSum) {
   v8::Context::Scope context_scope(GetV8Context());
 
   ASSERT_TRUE(OpenDocument("calculate.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   CJS_Runtime runtime(
@@ -220,7 +220,7 @@ TEST_F(CJSPublicMethodsEmbedderTest, AFNumberKeystroke) {
   v8::Context::Scope context_scope(GetV8Context());
 
   ASSERT_TRUE(OpenDocument("calculate.pdf"));
-  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ScopedPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   CJS_Runtime runtime(
