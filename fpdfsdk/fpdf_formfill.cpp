@@ -227,7 +227,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, fpdf_page);
 
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  CFX_Matrix matrix = pPage->GetDisplayMatrix(rect, rotate);
+  CFX_Matrix matrix = pPage->GetDisplayMatrixForRect(rect, rotate);
 
   auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
   if (dest_is_bitmap) {

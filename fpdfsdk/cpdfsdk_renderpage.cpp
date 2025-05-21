@@ -115,6 +115,6 @@ void CPDFSDK_RenderPageWithContext(CPDF_PageRenderContext* pContext,
                                    bool need_to_restore,
                                    CPDFSDK_PauseAdapter* pause) {
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  RenderPageImpl(pContext, pPage, pPage->GetDisplayMatrix(rect, rotate), rect,
-                 flags, color_scheme, need_to_restore, pause);
+  RenderPageImpl(pContext, pPage, pPage->GetDisplayMatrixForRect(rect, rotate),
+                 rect, flags, color_scheme, need_to_restore, pause);
 }

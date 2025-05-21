@@ -262,8 +262,8 @@ CFX_RectF CXFA_FFPageView::GetPageViewRect() const {
   return CFX_RectF(0, 0, pItem->GetPageSize());
 }
 
-CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
-                                             int32_t rotation) const {
+CFX_Matrix CXFA_FFPageView::GetDisplayMatrixForRect(const FX_RECT& rtDisp,
+                                                    int32_t rotation) const {
   auto* pItem = GetLayoutItem();
   if (!pItem) {
     return CFX_Matrix();

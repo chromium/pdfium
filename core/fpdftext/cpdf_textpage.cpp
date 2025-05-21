@@ -275,7 +275,7 @@ bool EndVerticalLine(const CFX_FloatRect& this_rect,
 CFX_Matrix GetPageMatrix(const CPDF_Page* pPage) {
   const FX_RECT rect(0, 0, static_cast<int>(pPage->GetPageWidth()),
                      static_cast<int>(pPage->GetPageHeight()));
-  return pPage->GetDisplayMatrix(rect, 0);
+  return pPage->GetDisplayMatrixForRect(rect, 0);
 }
 
 float GetFontSize(const CPDF_TextObject* text_object) {

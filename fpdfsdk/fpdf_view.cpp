@@ -570,7 +570,7 @@ RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
   }
 
   FX_RECT page_rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  CFX_Matrix matrix = pPage->GetDisplayMatrix(page_rect, rotate);
+  CFX_Matrix matrix = pPage->GetDisplayMatrixForRect(page_rect, rotate);
   if (IsScalingTooSmall(matrix)) {
     return nullptr;
   }
@@ -821,7 +821,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   FX_RECT clip_rect = clipping_rect.ToFxRect();
 
   const FX_RECT rect(0, 0, pPage->GetPageWidth(), pPage->GetPageHeight());
-  CFX_Matrix transform_matrix = pPage->GetDisplayMatrix(rect, 0);
+  CFX_Matrix transform_matrix = pPage->GetDisplayMatrixForRect(rect, 0);
   if (matrix) {
     transform_matrix *= CFXMatrixFromFSMatrix(*matrix);
   }
