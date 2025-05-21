@@ -27,7 +27,7 @@ ByteString GetDefaultAppearanceString(const CPDF_Dictionary* annot_dict,
   if (default_appearance_object) {
     default_appearance_string = default_appearance_object->GetString();
   }
-  if (default_appearance_string.IsEmpty()) {
+  if (default_appearance_string.IsEmpty() && acroform_dict) {
     default_appearance_string = acroform_dict->GetByteStringFor("DA");
   }
   return default_appearance_string;

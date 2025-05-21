@@ -357,6 +357,27 @@ RetainPtr<const CPDF_Array> GetInkList(FPDF_ANNOTATION annot) {
                     : nullptr;
 }
 
+std::optional<CFX_Color::TypeAndARGB> GetFreetextFontColor(
+    FPDF_FORMHANDLE handle,
+    FPDF_ANNOTATION annot) {
+  const CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  CHECK(annot_dict);  // Has to be true to determine `annot` is for Freetext.
+
+  CPDFSDK_InteractiveForm* form = FormHandleToInteractiveForm(handle);
+  CPDF_Document* doc = form ? form->GetInteractiveForm()->document() : nullptr;
+  const CPDF_Dictionary* root_dict = doc ? doc->GetRoot() : nullptr;
+  RetainPtr<const CPDF_Dictionary> acroform_dict =
+      root_dict ? root_dict->GetDictFor("AcroForm") : nullptr;
+  CPDF_DefaultAppearance default_appearance(annot_dict, acroform_dict);
+  return default_appearance.GetColorARGB();
+}
+
+std::optional<FX_COLORREF> GetWidgetFontColor(FPDF_FORMHANDLE handle,
+                                              FPDF_ANNOTATION annot) {
+  const CPDFSDK_Widget* widget = GetWidgetOfTypes(handle, annot, {});
+  return widget ? widget->GetTextColor() : std::nullopt;
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -1533,19 +1554,32 @@ FPDFAnnot_GetFontColor(FPDF_FORMHANDLE hHandle,
     return false;
   }
 
-  const CPDFSDK_Widget* widget = GetWidgetOfTypes(hHandle, annot, {});
-  if (!widget) {
-    return false;
+  FX_COLORREF font_color;
+  switch (FPDFAnnot_GetSubtype(annot)) {
+    case FPDF_ANNOT_FREETEXT: {
+      auto maybe_font_color = GetFreetextFontColor(hHandle, annot);
+      if (!maybe_font_color.has_value()) {
+        return false;
+      }
+      font_color = ArgbToColorRef(maybe_font_color.value().argb);
+      break;
+    }
+    case FPDF_ANNOT_WIDGET: {
+      auto maybe_font_color = GetWidgetFontColor(hHandle, annot);
+      if (!maybe_font_color.has_value()) {
+        return false;
+      }
+      font_color = maybe_font_color.value();
+      break;
+    }
+    default: {
+      return false;
+    }
   }
 
-  std::optional<FX_COLORREF> text_color = widget->GetTextColor();
-  if (!text_color) {
-    return false;
-  }
-
-  *R = FXSYS_GetRValue(*text_color);
-  *G = FXSYS_GetGValue(*text_color);
-  *B = FXSYS_GetBValue(*text_color);
+  *R = FXSYS_GetRValue(font_color);
+  *G = FXSYS_GetGValue(font_color);
+  *B = FXSYS_GetBValue(font_color);
   return true;
 }
 

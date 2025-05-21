@@ -2792,10 +2792,22 @@ TEST_F(FPDFAnnotEmbedderTest, SetFontColor) {
     ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
-    // TODO(thestig): Check FPDFAnnot_GetFontColor() results before and after,
-    // when the API supports freetext annotations.
+    unsigned int r = 1;
+    unsigned int g = 2;
+    unsigned int b = 3;
+    ASSERT_TRUE(FPDFAnnot_GetFontColor(form_handle(), annot.get(), &r, &g, &b));
+    EXPECT_EQ(0u, r);
+    EXPECT_EQ(0u, g);
+    EXPECT_EQ(0u, b);
+
     ASSERT_TRUE(
         FPDFAnnot_SetFontColor(form_handle(), annot.get(), 60, 120, 180));
+
+    ASSERT_TRUE(FPDFAnnot_GetFontColor(form_handle(), annot.get(), &r, &g, &b));
+    EXPECT_EQ(60u, r);
+    EXPECT_EQ(120u, g);
+    EXPECT_EQ(180u, b);
+
     bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), kDimension, kDimension, modified_checksum);
   }
