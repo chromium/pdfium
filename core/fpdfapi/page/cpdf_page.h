@@ -74,6 +74,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   void ParseContent();
   const CFX_SizeF& GetPageSize() const { return page_size_; }
   const CFX_Matrix& GetPageMatrix() const { return page_matrix_; }
+  CFX_Matrix GetDisplayMatrix() const;
   int GetPageRotation() const;
 
   RetainPtr<CPDF_Array> GetOrCreateAnnotsArray();
@@ -101,6 +102,8 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   RetainPtr<CPDF_Object> GetMutablePageAttr(ByteStringView name);
   RetainPtr<const CPDF_Object> GetPageAttr(ByteStringView name) const;
   CFX_FloatRect GetBox(ByteStringView name) const;
+  CFX_Matrix GetDisplayMatrixForFloatRect(const CFX_FloatRect& rect,
+                                          int rotation) const;
 
   CFX_SizeF page_size_;
   CFX_Matrix page_matrix_;

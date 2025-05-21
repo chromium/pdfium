@@ -124,6 +124,11 @@ std::optional<CFX_PointF> CPDF_Page::PageToDevice(
 
 CFX_Matrix CPDF_Page::GetDisplayMatrixForRect(const FX_RECT& rect,
                                               int rotation) const {
+  return GetDisplayMatrixForFloatRect(CFX_FloatRect(rect), rotation);
+}
+
+CFX_Matrix CPDF_Page::GetDisplayMatrixForFloatRect(const CFX_FloatRect& rect,
+                                                   int rotation) const {
   if (page_size_.width == 0 || page_size_.height == 0) {
     return CFX_Matrix();
   }
@@ -137,41 +142,40 @@ CFX_Matrix CPDF_Page::GetDisplayMatrixForRect(const FX_RECT& rect,
   // This code implicitly inverts the y-axis to account for page coordinates
   // pointing up and bitmap coordinates pointing down. (x0, y0) is the base
   // point, (x1, y1) is that point translated on y and (x2, y2) is the point
-  // translated on x. On rotation = 0, y0 is rect.bottom and the translation
-  // to get y1 is performed as negative. This results in the desired
-  // transformation.
+  // translated on x. On rotation = 0, y0 is rect.top and the translation to get
+  // y1 is performed as negative. This results in the desired transformation.
   switch (rotation % 4) {
     case 0:
       x0 = rect.left;
-      y0 = rect.bottom;
+      y0 = rect.top;
       x1 = rect.left;
-      y1 = rect.top;
+      y1 = rect.bottom;
       x2 = rect.right;
-      y2 = rect.bottom;
+      y2 = rect.top;
       break;
     case 1:
       x0 = rect.left;
-      y0 = rect.top;
+      y0 = rect.bottom;
+      x1 = rect.right;
+      y1 = rect.bottom;
+      x2 = rect.left;
+      y2 = rect.top;
+      break;
+    case 2:
+      x0 = rect.right;
+      y0 = rect.bottom;
       x1 = rect.right;
       y1 = rect.top;
       x2 = rect.left;
       y2 = rect.bottom;
       break;
-    case 2:
-      x0 = rect.right;
-      y0 = rect.top;
-      x1 = rect.right;
-      y1 = rect.bottom;
-      x2 = rect.left;
-      y2 = rect.top;
-      break;
     case 3:
       x0 = rect.right;
-      y0 = rect.bottom;
+      y0 = rect.top;
       x1 = rect.left;
-      y1 = rect.bottom;
+      y1 = rect.top;
       x2 = rect.right;
-      y2 = rect.top;
+      y2 = rect.bottom;
       break;
     default:
       CHECK_LT(rotation, 0);
@@ -183,6 +187,11 @@ CFX_Matrix CPDF_Page::GetDisplayMatrixForRect(const FX_RECT& rect,
                     (x1 - x0) / page_size_.height,
                     (y1 - y0) / page_size_.height, x0, y0);
   return page_matrix_ * matrix;
+}
+
+CFX_Matrix CPDF_Page::GetDisplayMatrix() const {
+  const CFX_FloatRect rect(0, 0, GetPageWidth(), GetPageHeight());
+  return GetDisplayMatrixForFloatRect(rect, 0);
 }
 
 int CPDF_Page::GetPageRotation() const {
