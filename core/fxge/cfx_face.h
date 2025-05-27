@@ -81,7 +81,7 @@ class CFX_Face final : public Retainable, public Observable {
   int GetGlyphCount() const;
   // TODO(crbug.com/pdfium/2037): Can this method be private?
   FX_RECT GetGlyphBBox() const;
-  std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* pFont,
+  std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* font,
                                                uint32_t glyph_index,
                                                bool bFontStyle,
                                                const CFX_Matrix& matrix,

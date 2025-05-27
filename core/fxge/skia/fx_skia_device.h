@@ -104,7 +104,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                         const CFX_Matrix& matrix,
                         BlendMode blend_type);
   bool DrawDeviceText(pdfium::span<const TextCharPos> pCharPos,
-                      CFX_Font* pFont,
+                      CFX_Font* font,
                       const CFX_Matrix& mtObject2Device,
                       float font_size,
                       uint32_t color,
@@ -164,7 +164,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   explicit CFX_SkiaDeviceDriver(SkCanvas& canvas);
 
   bool TryDrawText(pdfium::span<const TextCharPos> char_pos,
-                   const CFX_Font* pFont,
+                   const CFX_Font* font,
                    const CFX_Matrix& matrix,
                    float font_size,
                    uint32_t color,

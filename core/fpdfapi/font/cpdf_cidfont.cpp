@@ -282,8 +282,8 @@ void LoadMetricsArray(RetainPtr<const CPDF_Array> pArray,
 }  // namespace
 
 CPDF_CIDFont::CPDF_CIDFont(CPDF_Document* document,
-                           RetainPtr<CPDF_Dictionary> pFontDict)
-    : CPDF_Font(document, std::move(pFontDict)) {
+                           RetainPtr<CPDF_Dictionary> font_dict)
+    : CPDF_Font(document, std::move(font_dict)) {
   for (size_t i = 0; i < std::size(char_bbox_); ++i) {
     char_bbox_[i] = FX_RECT(-1, -1, -1, -1);
   }
@@ -427,13 +427,13 @@ bool CPDF_CIDFont::Load() {
     return true;
   }
 
-  RetainPtr<const CPDF_Array> pFonts =
+  RetainPtr<const CPDF_Array> fonts =
       font_dict_->GetArrayFor("DescendantFonts");
-  if (!pFonts || pFonts->size() != 1) {
+  if (!fonts || fonts->size() != 1) {
     return false;
   }
 
-  RetainPtr<const CPDF_Dictionary> pCIDFontDict = pFonts->GetDictAt(0);
+  RetainPtr<const CPDF_Dictionary> pCIDFontDict = fonts->GetDictAt(0);
   if (!pCIDFontDict) {
     return false;
   }
@@ -461,7 +461,7 @@ bool CPDF_CIDFont::Load() {
     return false;
   }
 
-  auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
+  auto* font_globals = CPDF_FontGlobals::GetInstance();
   const CPDF_Stream* pEncodingStream = pEncoding->AsStream();
   if (pEncodingStream) {
     auto pAcc =
@@ -472,13 +472,13 @@ bool CPDF_CIDFont::Load() {
   } else {
     DCHECK(pEncoding->IsName());
     ByteString cmap = pEncoding->GetString();
-    cmap_ = pFontGlobals->GetPredefinedCMap(cmap);
+    cmap_ = font_globals->GetPredefinedCMap(cmap);
   }
 
-  RetainPtr<const CPDF_Dictionary> pFontDesc =
+  RetainPtr<const CPDF_Dictionary> font_desc =
       pCIDFontDict->GetDictFor("FontDescriptor");
-  if (pFontDesc) {
-    LoadFontDescriptor(pFontDesc.Get());
+  if (font_desc) {
+    LoadFontDescriptor(font_desc.Get());
   }
 
   charset_ = cmap_->GetCharset();
@@ -491,7 +491,7 @@ bool CPDF_CIDFont::Load() {
     }
   }
   if (charset_ != CIDSET_UNKNOWN) {
-    cid2unicode_map_ = pFontGlobals->GetCID2UnicodeMap(charset_);
+    cid2unicode_map_ = font_globals->GetCID2UnicodeMap(charset_);
   }
   RetainPtr<CFX_Face> face = font_.GetFace();
   if (face) {
@@ -880,13 +880,13 @@ void CPDF_CIDFont::LoadGB2312() {
   base_font_name_ = font_dict_->GetByteStringFor("BaseFont");
   charset_ = CIDSET_GB1;
 
-  auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
-  cmap_ = pFontGlobals->GetPredefinedCMap("GBK-EUC-H");
-  cid2unicode_map_ = pFontGlobals->GetCID2UnicodeMap(charset_);
-  RetainPtr<const CPDF_Dictionary> pFontDesc =
+  auto* font_globals = CPDF_FontGlobals::GetInstance();
+  cmap_ = font_globals->GetPredefinedCMap("GBK-EUC-H");
+  cid2unicode_map_ = font_globals->GetCID2UnicodeMap(charset_);
+  RetainPtr<const CPDF_Dictionary> font_desc =
       font_dict_->GetDictFor("FontDescriptor");
-  if (pFontDesc) {
-    LoadFontDescriptor(pFontDesc.Get());
+  if (font_desc) {
+    LoadFontDescriptor(font_desc.Get());
   }
 
   if (!IsEmbedded()) {

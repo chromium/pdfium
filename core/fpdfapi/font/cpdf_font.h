@@ -63,7 +63,7 @@ class CPDF_Font : public Retainable, public Observable {
 
   // |pFactory| only required for Type3 fonts.
   static RetainPtr<CPDF_Font> Create(CPDF_Document* pDoc,
-                                     RetainPtr<CPDF_Dictionary> pFontDict,
+                                     RetainPtr<CPDF_Dictionary> font_dict,
                                      FormFactoryIface* pFactory);
   static RetainPtr<CPDF_Font> GetStockFont(CPDF_Document* pDoc,
                                            ByteStringView fontname);
@@ -137,7 +137,7 @@ class CPDF_Font : public Retainable, public Observable {
   void SetResourceName(const ByteString& name) { resource_name_ = name; }
 
  protected:
-  CPDF_Font(CPDF_Document* document, RetainPtr<CPDF_Dictionary> pFontDict);
+  CPDF_Font(CPDF_Document* document, RetainPtr<CPDF_Dictionary> font_dict);
   ~CPDF_Font() override;
 
   // Commonly used wrappers for UseTTCharmap().
@@ -161,7 +161,7 @@ class CPDF_Font : public Retainable, public Observable {
   virtual bool Load() = 0;
 
   void LoadUnicodeMap() const;  // logically const only.
-  void LoadFontDescriptor(const CPDF_Dictionary* pFontDesc);
+  void LoadFontDescriptor(const CPDF_Dictionary* font_desc);
   void CheckFontMetrics();
 
   UnownedPtr<CPDF_Document> const document_;

@@ -54,7 +54,7 @@ class CPWL_EditImpl {
                 IPWL_FillerNotify* pFillerNotify,
                 IPWL_FillerNotify::PerWindowData* pSystemData);
 
-  void SetFontMap(IPVT_FontMap* pFontMap);
+  void SetFontMap(IPVT_FontMap* font_map);
   void SetNotify(CPWL_Edit* pNotify);
 
   // Returns an iterator for the contents. Should not be released.

@@ -33,7 +33,7 @@ CPWL_Wnd::CreateParams CFFL_ComboBox::GetCreateParam() {
     cp.dwFlags |= PCBS_ALLOWCUSTOMTEXT;
   }
 
-  cp.pFontMap = GetOrCreateFontMap();
+  cp.font_map = GetOrCreateFontMap();
   return cp;
 }
 

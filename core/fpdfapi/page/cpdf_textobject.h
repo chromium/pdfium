@@ -77,7 +77,7 @@ class CPDF_TextObject final : public CPDF_PageObject {
   CFX_PointF CalcPositionData(float horz_scale);
 
  private:
-  float CalcPositionDataInternal(const RetainPtr<CPDF_Font>& pFont);
+  float CalcPositionDataInternal(const RetainPtr<CPDF_Font>& font);
 
   CFX_PointF pos_;
   std::vector<uint32_t> char_codes_;

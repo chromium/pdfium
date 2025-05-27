@@ -30,7 +30,7 @@ void DoNothing(void* info, const void* data, size_t size) {}
 
 bool CGDrawGlyphRun(CGContextRef pContext,
                     pdfium::span<const TextCharPos> pCharPos,
-                    CFX_Font* pFont,
+                    CFX_Font* font,
                     const CFX_Matrix& mtObject2Device,
                     float font_size,
                     uint32_t argb) {
@@ -47,13 +47,13 @@ bool CGDrawGlyphRun(CGContextRef pContext,
   CQuartz2D& quartz2d =
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
           ->quartz_2d_;
-  if (!pFont->GetPlatformFont()) {
-    if (pFont->GetPsName() == "DFHeiStd-W5") {
+  if (!font->GetPlatformFont()) {
+    if (font->GetPsName() == "DFHeiStd-W5") {
       return false;
     }
 
-    pFont->SetPlatformFont(quartz2d.CreateFont(pFont->GetFontSpan()));
-    if (!pFont->GetPlatformFont()) {
+    font->SetPlatformFont(quartz2d.CreateFont(font->GetFontSpan()));
+    if (!font->GetPlatformFont()) {
       return false;
     }
   }
@@ -77,7 +77,7 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     new_matrix.d = -new_matrix.d;
   }
   quartz2d.SetGraphicsTextMatrix(pContext, new_matrix);
-  return quartz2d.DrawGraphicsString(pContext, pFont->GetPlatformFont(),
+  return quartz2d.DrawGraphicsString(pContext, font->GetPlatformFont(),
                                      font_size, glyph_indices, glyph_positions,
                                      argb);
 }
@@ -105,19 +105,18 @@ void CFX_AggDeviceDriver::DestroyPlatform() {
 
 bool CFX_AggDeviceDriver::DrawDeviceText(
     pdfium::span<const TextCharPos> pCharPos,
-    CFX_Font* pFont,
+    CFX_Font* font,
     const CFX_Matrix& mtObject2Device,
     float font_size,
     uint32_t color,
     const CFX_TextRenderOptions& /*options*/) {
-  if (!pFont) {
+  if (!font) {
     return false;
   }
 
-  bool bBold = pFont->IsBold();
-  if (!bBold && pFont->GetSubstFont() &&
-      pFont->GetSubstFont()->weight_ >= 500 &&
-      pFont->GetSubstFont()->weight_ <= 600) {
+  bool bBold = font->IsBold();
+  if (!bBold && font->GetSubstFont() && font->GetSubstFont()->weight_ >= 500 &&
+      font->GetSubstFont()->weight_ <= 600) {
     return false;
   }
   for (const auto& cp : pCharPos) {
@@ -167,7 +166,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
     color = ArgbEncode(a, b, g, r);
   }
   bool ret =
-      CGDrawGlyphRun(ctx, pCharPos, pFont, mtObject2Device, font_size, color);
+      CGDrawGlyphRun(ctx, pCharPos, font, mtObject2Device, font_size, color);
   if (pImageCG) {
     CGImageRelease(pImageCG);
   }
@@ -178,7 +177,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
 }  // namespace pdfium
 
 std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph_Nativetext(
-    const CFX_Font* pFont,
+    const CFX_Font* font,
     uint32_t glyph_index,
     const CFX_Matrix& matrix,
     int dest_width,

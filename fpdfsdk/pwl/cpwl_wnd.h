@@ -95,7 +95,7 @@ class CPWL_Wnd : public Observable {
     CFX_FloatRect rcRectWnd;
     ObservedPtr<CFX_Timer::HandlerIface> const pTimerHandler;
     UnownedPtr<IPWL_FillerNotify> const pFillerNotify;
-    UnownedPtr<IPVT_FontMap> pFontMap;
+    UnownedPtr<IPVT_FontMap> font_map;
     ObservedPtr<ProviderIface> pProvider;
 
     // Optional:
@@ -261,7 +261,7 @@ class CPWL_Wnd : public Observable {
   CFX_PointF GetCenterPoint() const;
   const CFX_FloatRect& GetClipRect() const;
 
-  IPVT_FontMap* GetFontMap() const { return creation_params_.pFontMap; }
+  IPVT_FontMap* GetFontMap() const { return creation_params_.font_map; }
 
  private:
   void DrawChildAppearance(CFX_RenderDevice* pDevice,

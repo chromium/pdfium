@@ -205,12 +205,12 @@ CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
 }
 
 std::optional<WideString> CPDF_FormControl::GetDefaultControlFontName() const {
-  RetainPtr<CPDF_Font> pFont = GetDefaultControlFont();
-  if (!pFont) {
+  RetainPtr<CPDF_Font> font = GetDefaultControlFont();
+  if (!font) {
     return std::nullopt;
   }
 
-  return WideString::FromDefANSI(pFont->GetBaseFontName().AsStringView());
+  return WideString::FromDefANSI(font->GetBaseFontName().AsStringView());
 }
 
 RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
@@ -225,15 +225,15 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
   RetainPtr<CPDF_Dictionary> pDRDict = ToDictionary(
       CPDF_FormField::GetMutableFieldAttrForDict(widget_dict_.Get(), "DR"));
   if (pDRDict) {
-    RetainPtr<CPDF_Dictionary> pFonts = pDRDict->GetMutableDictFor("Font");
-    if (ValidateFontResourceDict(pFonts.Get())) {
+    RetainPtr<CPDF_Dictionary> fonts = pDRDict->GetMutableDictFor("Font");
+    if (ValidateFontResourceDict(fonts.Get())) {
       RetainPtr<CPDF_Dictionary> pElement =
-          pFonts->GetMutableDictFor(font_name.AsStringView());
+          fonts->GetMutableDictFor(font_name.AsStringView());
       if (pElement) {
-        RetainPtr<CPDF_Font> pFont =
+        RetainPtr<CPDF_Font> font =
             form_->GetFontForElement(std::move(pElement));
-        if (pFont) {
-          return pFont;
+        if (font) {
+          return font;
         }
       }
     }
@@ -250,13 +250,13 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pFonts = pDict->GetMutableDictFor("Font");
-  if (!ValidateFontResourceDict(pFonts.Get())) {
+  RetainPtr<CPDF_Dictionary> fonts = pDict->GetMutableDictFor("Font");
+  if (!ValidateFontResourceDict(fonts.Get())) {
     return nullptr;
   }
 
   RetainPtr<CPDF_Dictionary> pElement =
-      pFonts->GetMutableDictFor(font_name.AsStringView());
+      fonts->GetMutableDictFor(font_name.AsStringView());
   if (!pElement) {
     return nullptr;
   }

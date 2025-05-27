@@ -29,8 +29,8 @@ RetainPtr<CPDF_Font> CPDF_TextState::GetFont() const {
   return ref_.GetObject()->font_;
 }
 
-void CPDF_TextState::SetFont(RetainPtr<CPDF_Font> pFont) {
-  ref_.GetPrivateCopy()->SetFont(std::move(pFont));
+void CPDF_TextState::SetFont(RetainPtr<CPDF_Font> font) {
+  ref_.GetPrivateCopy()->SetFont(std::move(font));
 }
 
 float CPDF_TextState::GetFontSize() const {
@@ -116,9 +116,9 @@ RetainPtr<CPDF_TextState::TextData> CPDF_TextState::TextData::Clone() const {
   return pdfium::MakeRetain<CPDF_TextState::TextData>(*this);
 }
 
-void CPDF_TextState::TextData::SetFont(RetainPtr<CPDF_Font> pFont) {
-  document_ = pFont ? pFont->GetDocument() : nullptr;
-  font_ = std::move(pFont);
+void CPDF_TextState::TextData::SetFont(RetainPtr<CPDF_Font> font) {
+  document_ = font ? font->GetDocument() : nullptr;
+  font_ = std::move(font);
 }
 
 float CPDF_TextState::TextData::GetFontSizeH() const {

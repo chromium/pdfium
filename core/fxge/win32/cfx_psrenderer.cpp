@@ -685,13 +685,13 @@ void CFX_PSRenderer::SetColor(uint32_t color) {
 }
 
 void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
-                                     CFX_Font* pFont,
+                                     CFX_Font* font,
                                      const TextCharPos& charpos,
                                      int* ps_fontnum,
                                      int* ps_glyphindex) {
   for (size_t i = 0; i < psfont_list_.size(); ++i) {
     const Glyph& glyph = *psfont_list_[i];
-    if (glyph.font == pFont && glyph.glyph_index == charpos.glyph_index_ &&
+    if (glyph.font == font && glyph.glyph_index == charpos.glyph_index_ &&
         glyph.adjust_matrix.has_value() == charpos.glyph_adjust_) {
       bool found;
       if (glyph.adjust_matrix.has_value()) {
@@ -712,7 +712,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
     }
   }
 
-  psfont_list_.push_back(std::make_unique<Glyph>(pFont, charpos.glyph_index_));
+  psfont_list_.push_back(std::make_unique<Glyph>(font, charpos.glyph_index_));
   *ps_fontnum = pdfium::checked_cast<int>((psfont_list_.size() - 1) / 256);
   *ps_glyphindex = (psfont_list_.size() - 1) % 256;
   if (*ps_glyphindex == 0) {
@@ -742,8 +742,8 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
         CFX_Matrix(charpos.adjust_matrix_[0], charpos.adjust_matrix_[1],
                    charpos.adjust_matrix_[2], charpos.adjust_matrix_[3], 0, 0);
   }
-  const CFX_Path* pPath = pGlyphCache->LoadGlyphPath(
-      pFont, charpos.glyph_index_, charpos.font_char_width_);
+  const CFX_Path* pPath = pGlyphCache->LoadGlyphPath(font, charpos.glyph_index_,
+                                                     charpos.font_char_width_);
   if (!pPath) {
     return;
   }
@@ -852,7 +852,7 @@ bool CFX_PSRenderer::DrawTextAsType42Font(int char_count,
 
 bool CFX_PSRenderer::DrawText(int nChars,
                               const TextCharPos* pCharPos,
-                              CFX_Font* pFont,
+                              CFX_Font* font,
                               const CFX_Matrix& mtObject2Device,
                               float font_size,
                               uint32_t color) {
@@ -882,8 +882,8 @@ bool CFX_PSRenderer::DrawText(int nChars,
       << mtObject2Device.c << " " << mtObject2Device.d << " "
       << mtObject2Device.e << " " << mtObject2Device.f << "]cm\n";
 
-  if (!DrawTextAsType42Font(nChars, pCharPos, pFont, font_size, buf)) {
-    DrawTextAsType3Font(nChars, pCharPos, pFont, font_size, buf);
+  if (!DrawTextAsType42Font(nChars, pCharPos, font, font_size, buf)) {
+    DrawTextAsType3Font(nChars, pCharPos, font, font_size, buf);
   }
 
   buf << "Q\n";

@@ -1131,7 +1131,7 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
       pTP->iLineThrough =
           text_parser_->GetLinethrough(text_provider_, pStyle.Get());
       pTP->dwColor = text_parser_->GetColor(text_provider_, pStyle.Get());
-      pTP->pFont =
+      pTP->font =
           text_parser_->GetFont(doc_.Get(), text_provider_, pStyle.Get());
       pTP->fFontSize = text_parser_->GetFontSize(text_provider_, pStyle.Get());
       pTP->rtPiece.left = pPiece->GetStartPos() / 20000.0f;
@@ -1243,7 +1243,7 @@ void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
   const TextPiece* pPiece = pPieceLine->text_pieces_[szPiece].get();
   size_t szCount = GetDisplayPos(pPiece, pCharPos);
   if (szCount > 0) {
-    CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont,
+    CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->font,
                              pCharPos.first(szCount), pPiece->fFontSize,
                              mtDoc2Device);
   }

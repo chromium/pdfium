@@ -25,14 +25,14 @@ class CAndroidPlatform : public CFX_GEModule::PlatformIface {
   void Init() override { device_module_ = CFPF_GetSkiaDeviceModule(); }
 
   std::unique_ptr<SystemFontInfoIface> CreateDefaultSystemFontInfo() override {
-    CFPF_SkiaFontMgr* pFontMgr = device_module_->GetFontMgr();
-    if (!pFontMgr) {
+    CFPF_SkiaFontMgr* font_mgr = device_module_->GetFontMgr();
+    if (!font_mgr) {
       return nullptr;
     }
 
-    auto pFontInfo = std::make_unique<CFX_AndroidFontInfo>();
-    pFontInfo->Init(pFontMgr, CFX_GEModule::Get()->GetUserFontPaths());
-    return pFontInfo;
+    auto font_info = std::make_unique<CFX_AndroidFontInfo>();
+    font_info->Init(font_mgr, CFX_GEModule::Get()->GetUserFontPaths());
+    return font_info;
   }
 
  private:

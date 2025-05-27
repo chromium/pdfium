@@ -32,11 +32,11 @@
 namespace {
 
 bool FindNativeTrueTypeFont(ByteStringView sFontFaceName) {
-  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
-  CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
-  pFontMapper->LoadInstalledFonts();
-  return pFontMapper->HasInstalledFont(sFontFaceName) ||
-         pFontMapper->HasLocalizedFont(sFontFaceName);
+  CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
+  CFX_FontMapper* font_mapper = font_mgr->GetBuiltinMapper();
+  font_mapper->LoadInstalledFonts();
+  return font_mapper->HasInstalledFont(sFontFaceName) ||
+         font_mapper->HasLocalizedFont(sFontFaceName);
 }
 
 RetainPtr<CPDF_Font> AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
@@ -99,7 +99,7 @@ CPDF_BAFontMap::~CPDF_BAFontMap() = default;
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::GetPDFFont(int32_t nFontIndex) {
   if (fxcrt::IndexInBounds(data_, nFontIndex)) {
-    return data_[nFontIndex]->pFont;
+    return data_[nFontIndex]->font;
   }
   return nullptr;
 }
@@ -154,12 +154,12 @@ int32_t CPDF_BAFontMap::CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) {
   }
 
   Data* pData = data_[nFontIndex].get();
-  if (!pData->pFont) {
+  if (!pData->font) {
     return -1;
   }
 
-  if (pData->pFont->IsUnicodeCompatible()) {
-    return pData->pFont->CharCodeFromUnicode(word);
+  if (pData->font->IsUnicodeCompatible()) {
+    return pData->font->CharCodeFromUnicode(word);
   }
 
   return word < 0xFF ? word : -1;
@@ -217,13 +217,13 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
     return nullptr;
   }
 
-  RetainPtr<const CPDF_Dictionary> pFonts = pResDict->GetDictFor("Font");
-  if (!pFonts) {
+  RetainPtr<const CPDF_Dictionary> fonts = pResDict->GetDictFor("Font");
+  if (!fonts) {
     return nullptr;
   }
 
   RetainPtr<CPDF_Font> pFind;
-  CPDF_DictionaryLocker locker(pFonts);
+  CPDF_DictionaryLocker locker(fonts);
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
     RetainPtr<CPDF_Dictionary> pElement =
@@ -233,15 +233,15 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
     }
 
     auto* pData = CPDF_DocPageData::FromDocument(document_);
-    RetainPtr<CPDF_Font> pFont = pData->GetFont(std::move(pElement));
-    if (!pFont) {
+    RetainPtr<CPDF_Font> font = pData->GetFont(std::move(pElement));
+    if (!font) {
       continue;
     }
 
-    auto maybe_charset = pFont->GetSubstFontCharset();
+    auto maybe_charset = font->GetSubstFontCharset();
     if (maybe_charset.has_value() && maybe_charset.value() == nCharset) {
       *sFontAlias = csKey;
-      pFind = std::move(pFont);
+      pFind = std::move(font);
     }
   }
   return pFind;
@@ -283,7 +283,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
     sAlias->clear();
   }
 
-  RetainPtr<CPDF_Dictionary> pFontDict;
+  RetainPtr<CPDF_Dictionary> font_dict;
   if (RetainPtr<CPDF_Dictionary> pAPDict =
           annot_dict_->GetMutableDictFor(pdfium::annotation::kAP)) {
     if (RetainPtr<CPDF_Dictionary> pNormalDict =
@@ -292,30 +292,30 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
               pNormalDict->GetMutableDictFor("Resources")) {
         if (RetainPtr<CPDF_Dictionary> pResFontDict =
                 pNormalResDict->GetMutableDictFor("Font")) {
-          pFontDict = pResFontDict->GetMutableDictFor(sAlias->AsStringView());
+          font_dict = pResFontDict->GetMutableDictFor(sAlias->AsStringView());
         }
       }
     }
   }
-  if (bWidget && !pFontDict && pAcroFormDict) {
+  if (bWidget && !font_dict && pAcroFormDict) {
     if (RetainPtr<CPDF_Dictionary> pDRDict =
             pAcroFormDict->GetMutableDictFor("DR")) {
       if (RetainPtr<CPDF_Dictionary> pDRFontDict =
               pDRDict->GetMutableDictFor("Font")) {
-        pFontDict = pDRFontDict->GetMutableDictFor(sAlias->AsStringView());
+        font_dict = pDRFontDict->GetMutableDictFor(sAlias->AsStringView());
       }
     }
   }
-  if (!pFontDict) {
+  if (!font_dict) {
     return nullptr;
   }
 
-  return CPDF_DocPageData::FromDocument(document_)->GetFont(pFontDict);
+  return CPDF_DocPageData::FromDocument(document_)->GetFont(font_dict);
 }
 
-void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
+void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& font,
                                         const ByteString& sAlias) {
-  if (!pFont) {
+  if (!font) {
     return;
   }
 
@@ -346,10 +346,10 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
                                               pStreamResFontList->GetObjNum());
   }
   if (!pStreamResFontList->KeyExist(sAlias.AsStringView())) {
-    RetainPtr<const CPDF_Dictionary> pFontDict = pFont->GetFontDict();
-    RetainPtr<CPDF_Object> pObject = pFontDict->IsInline()
-                                         ? pFontDict->Clone()
-                                         : pFontDict->MakeReference(document_);
+    RetainPtr<const CPDF_Dictionary> font_dict = font->GetFontDict();
+    RetainPtr<CPDF_Object> pObject = font_dict->IsInline()
+                                         ? font_dict->Clone()
+                                         : font_dict->MakeReference(document_);
     pStreamResFontList->SetFor(sAlias, std::move(pObject));
   }
 }
@@ -368,21 +368,21 @@ int32_t CPDF_BAFontMap::GetFontIndex(const ByteString& sFontName,
   }
 
   ByteString sAlias;
-  RetainPtr<CPDF_Font> pFont =
+  RetainPtr<CPDF_Font> font =
       bFind ? FindFontSameCharset(&sAlias, nCharset) : nullptr;
-  if (!pFont) {
-    pFont = AddFontToDocument(sFontName, nCharset);
+  if (!font) {
+    font = AddFontToDocument(sFontName, nCharset);
     sAlias = EncodeFontAlias(sFontName, nCharset);
   }
-  AddFontToAnnotDict(pFont, sAlias);
-  return AddFontData(pFont, sAlias, nCharset);
+  AddFontToAnnotDict(font, sAlias);
+  return AddFontData(font, sAlias, nCharset);
 }
 
-int32_t CPDF_BAFontMap::AddFontData(const RetainPtr<CPDF_Font>& pFont,
+int32_t CPDF_BAFontMap::AddFontData(const RetainPtr<CPDF_Font>& font,
                                     const ByteString& sFontAlias,
                                     FX_Charset nCharset) {
   auto pNewData = std::make_unique<Data>();
-  pNewData->pFont = pFont;
+  pNewData->font = font;
   pNewData->sFontName = sFontAlias;
   pNewData->nCharset = nCharset;
   data_.push_back(std::move(pNewData));

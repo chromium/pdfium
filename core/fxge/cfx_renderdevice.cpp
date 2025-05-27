@@ -310,14 +310,14 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
   }
 }
 
-bool ShouldDrawDeviceText(const CFX_Font* pFont,
+bool ShouldDrawDeviceText(const CFX_Font* font,
                           const CFX_TextRenderOptions& options) {
 #if BUILDFLAG(IS_APPLE)
   if (options.font_is_cid) {
     return false;
   }
 
-  const ByteString bsPsName = pFont->GetPsName();
+  const ByteString bsPsName = font->GetPsName();
   if (bsPsName.Contains("+ZJHL")) {
     return false;
   }
@@ -1086,7 +1086,7 @@ void CFX_RenderDevice::SyncInternalBitmaps() {
 #endif  // defined(PDF_USE_SKIA)
 
 bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
-                                      CFX_Font* pFont,
+                                      CFX_Font* font,
                                       float font_size,
                                       const CFX_Matrix& mtText2Device,
                                       uint32_t fill_color,
@@ -1128,7 +1128,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
         // rendering options provided by |text_options|. No change needs to be
         // done for |text_options| here.
         anti_alias = FT_RENDER_MODE_LCD;
-        normalize = !pFont->GetFaceRec() ||
+        normalize = !font->GetFaceRec() ||
                     options.aliasing_type != CFX_TextRenderOptions::kLcd;
       }
     }
@@ -1144,9 +1144,9 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
 
 #if BUILDFLAG(IS_WIN)
   if (GetDeviceType() == DeviceType::kPrinter) {
-    if (ShouldDrawDeviceText(pFont, options) &&
-        device_driver_->DrawDeviceText(pCharPos, pFont, mtText2Device,
-                                       font_size, fill_color, text_options)) {
+    if (ShouldDrawDeviceText(font, options) &&
+        device_driver_->DrawDeviceText(pCharPos, font, mtText2Device, font_size,
+                                       fill_color, text_options)) {
       return true;
     }
     if (FXARGB_A(fill_color) < 255) {
@@ -1158,9 +1158,9 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
 #endif
 
   if (try_native_text && options.native_text) {
-    if (ShouldDrawDeviceText(pFont, options) &&
-        device_driver_->DrawDeviceText(pCharPos, pFont, mtText2Device,
-                                       font_size, fill_color, text_options)) {
+    if (ShouldDrawDeviceText(font, options) &&
+        device_driver_->DrawDeviceText(pCharPos, font, mtText2Device, font_size,
+                                       fill_color, text_options)) {
       return true;
     }
   }
@@ -1169,10 +1169,10 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   CFX_Matrix text2Device = mtText2Device;
   char2device.Scale(font_size, -font_size);
   if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f || is_printer) {
-    if (pFont->GetFaceRec()) {
+    if (font->GetFaceRec()) {
       CFX_FillRenderOptions path_options;
       path_options.aliased_path = !is_text_smooth;
-      return DrawTextPath(pCharPos, pFont, font_size, mtText2Device, nullptr,
+      return DrawTextPath(pCharPos, font, font_size, mtText2Device, nullptr,
                           nullptr, fill_color, 0, nullptr, path_options);
     }
   }
@@ -1185,7 +1185,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     glyph.origin_.y = FXSYS_roundf(glyph.device_origin_.y);
 
     CFX_Matrix matrix = charpos.GetEffectiveMatrix(char2device);
-    glyph.glyph_ = pFont->LoadGlyphBitmap(
+    glyph.glyph_ = font->LoadGlyphBitmap(
         charpos.glyph_index_, charpos.font_style_, matrix,
         charpos.font_char_width_, anti_alias, &text_options);
   }
@@ -1300,7 +1300,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
 }
 
 bool CFX_RenderDevice::DrawTextPath(pdfium::span<const TextCharPos> pCharPos,
-                                    CFX_Font* pFont,
+                                    CFX_Font* font,
                                     float font_size,
                                     const CFX_Matrix& mtText2User,
                                     const CFX_Matrix* pUser2Device,
@@ -1311,7 +1311,7 @@ bool CFX_RenderDevice::DrawTextPath(pdfium::span<const TextCharPos> pCharPos,
                                     const CFX_FillRenderOptions& fill_options) {
   for (const auto& charpos : pCharPos) {
     const CFX_Path* pPath =
-        pFont->LoadGlyphPath(charpos.glyph_index_, charpos.font_char_width_);
+        font->LoadGlyphPath(charpos.glyph_index_, charpos.font_char_width_);
     if (!pPath) {
       continue;
     }

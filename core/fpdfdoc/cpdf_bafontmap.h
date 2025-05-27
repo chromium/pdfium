@@ -42,7 +42,7 @@ class CPDF_BAFontMap final : public IPVT_FontMap {
     ~Data();
 
     FX_Charset nCharset = FX_Charset::kANSI;
-    RetainPtr<CPDF_Font> pFont;
+    RetainPtr<CPDF_Font> font;
     ByteString sFontName;
   };
 
@@ -57,7 +57,7 @@ class CPDF_BAFontMap final : public IPVT_FontMap {
                                               ByteString* sFontAlias,
                                               FX_Charset nCharset);
   RetainPtr<CPDF_Font> GetAnnotDefaultFont(ByteString* sAlias);
-  void AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
+  void AddFontToAnnotDict(const RetainPtr<CPDF_Font>& font,
                           const ByteString& sAlias);
 
   bool KnowWord(int32_t nFontIndex, uint16_t word);
@@ -65,7 +65,7 @@ class CPDF_BAFontMap final : public IPVT_FontMap {
   int32_t GetFontIndex(const ByteString& sFontName,
                        FX_Charset nCharset,
                        bool bFind);
-  int32_t AddFontData(const RetainPtr<CPDF_Font>& pFont,
+  int32_t AddFontData(const RetainPtr<CPDF_Font>& font,
                       const ByteString& sFontAlias,
                       FX_Charset nCharset);
 

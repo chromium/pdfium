@@ -52,8 +52,8 @@ CPDF_TextObject::Item CPDF_TextObject::GetItemInfo(size_t index) const {
     return info;
   }
 
-  RetainPtr<CPDF_Font> pFont = GetFont();
-  const CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
+  RetainPtr<CPDF_Font> font = GetFont();
+  const CPDF_CIDFont* pCIDFont = font->AsCIDFont();
   if (!IsVertWritingCIDFont(pCIDFont)) {
     return info;
   }
@@ -107,13 +107,13 @@ CPDF_TextObject::Item CPDF_TextObject::GetCharInfo(size_t index) const {
 }
 
 int CPDF_TextObject::CountWords() const {
-  RetainPtr<CPDF_Font> pFont = GetFont();
+  RetainPtr<CPDF_Font> font = GetFont();
   bool bInLatinWord = false;
   int nWords = 0;
   for (size_t i = 0, sz = CountChars(); i < sz; ++i) {
     uint32_t charcode = GetCharCode(i);
 
-    WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
+    WideString swUnicode = font->UnicodeFromCharCode(charcode);
     uint16_t unicode = 0;
     if (swUnicode.GetLength() > 0) {
       unicode = swUnicode[0];
@@ -134,14 +134,14 @@ int CPDF_TextObject::CountWords() const {
 }
 
 WideString CPDF_TextObject::GetWordString(int nWordIndex) const {
-  RetainPtr<CPDF_Font> pFont = GetFont();
+  RetainPtr<CPDF_Font> font = GetFont();
   WideString swRet;
   int nWords = 0;
   bool bInLatinWord = false;
   for (size_t i = 0, sz = CountChars(); i < sz; ++i) {
     uint32_t charcode = GetCharCode(i);
 
-    WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
+    WideString swUnicode = font->UnicodeFromCharCode(charcode);
     uint16_t unicode = 0;
     if (swUnicode.GetLength() > 0) {
       unicode = swUnicode[0];
@@ -213,10 +213,10 @@ void CPDF_TextObject::SetSegments(pdfium::span<const ByteString> strings,
   CHECK(nSegs);
   char_codes_.clear();
   char_pos_.clear();
-  RetainPtr<CPDF_Font> pFont = GetFont();
+  RetainPtr<CPDF_Font> font = GetFont();
   size_t nChars = nSegs - 1;
   for (const auto& str : strings) {
-    nChars += pFont->CountChar(str.AsStringView());
+    nChars += font->CountChar(str.AsStringView());
   }
   CHECK(nChars);
   char_codes_.resize(nChars);
@@ -227,7 +227,7 @@ void CPDF_TextObject::SetSegments(pdfium::span<const ByteString> strings,
     size_t offset = 0;
     while (offset < segment.GetLength()) {
       DCHECK(index < char_codes_.size());
-      char_codes_[index++] = pFont->GetNextChar(segment, &offset);
+      char_codes_[index++] = font->GetNextChar(segment, &offset);
     }
     if (i != nSegs - 1) {
       char_pos_[index - 1] = kernings[i];
@@ -244,10 +244,10 @@ void CPDF_TextObject::SetText(const ByteString& str) {
 
 float CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
   const float fontsize = GetFontSize() / 1000;
-  RetainPtr<CPDF_Font> pFont = GetFont();
-  const CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
+  RetainPtr<CPDF_Font> font = GetFont();
+  const CPDF_CIDFont* pCIDFont = font->AsCIDFont();
   if (!IsVertWritingCIDFont(pCIDFont)) {
-    return pFont->GetCharWidthF(charcode) * fontsize;
+    return font->GetCharWidthF(charcode) * fontsize;
   }
 
   uint16_t cid = pCIDFont->CIDFromCharCode(charcode);
@@ -272,22 +272,22 @@ void CPDF_TextObject::SetTextRenderMode(TextRenderingMode mode) {
 }
 
 CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
-  RetainPtr<CPDF_Font> pFont = GetFont();
-  const float curpos = CalcPositionDataInternal(pFont);
-  if (IsVertWritingCIDFont(pFont->AsCIDFont())) {
+  RetainPtr<CPDF_Font> font = GetFont();
+  const float curpos = CalcPositionDataInternal(font);
+  if (IsVertWritingCIDFont(font->AsCIDFont())) {
     return {0, curpos};
   }
   return {curpos * horz_scale, 0};
 }
 
 float CPDF_TextObject::CalcPositionDataInternal(
-    const RetainPtr<CPDF_Font>& pFont) {
+    const RetainPtr<CPDF_Font>& font) {
   float curpos = 0;
   float min_x = 10000.0f;
   float max_x = -10000.0f;
   float min_y = 10000.0f;
   float max_y = -10000.0f;
-  const CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
+  const CPDF_CIDFont* pCIDFont = font->AsCIDFont();
   const bool bVertWriting = IsVertWritingCIDFont(pCIDFont);
   const float fontsize = GetFontSize();
 
@@ -301,7 +301,7 @@ float CPDF_TextObject::CalcPositionDataInternal(
       char_pos_[i - 1] = curpos;
     }
 
-    FX_RECT char_rect = pFont->GetCharBBox(charcode);
+    FX_RECT char_rect = font->GetCharBBox(charcode);
     float charwidth;
     if (bVertWriting) {
       uint16_t cid = pCIDFont->CIDFromCharCode(charcode);
@@ -325,7 +325,7 @@ float CPDF_TextObject::CalcPositionDataInternal(
       const float char_right = curpos + char_rect.right * fontsize / 1000;
       min_x = std::min({min_x, char_left, char_right});
       max_x = std::max({max_x, char_left, char_right});
-      charwidth = pFont->GetCharWidthF(charcode) * fontsize / 1000;
+      charwidth = font->GetCharWidthF(charcode) * fontsize / 1000;
     }
     curpos += charwidth;
     if (charcode == ' ' && (!pCIDFont || pCIDFont->GetCharSize(' ') == 1)) {

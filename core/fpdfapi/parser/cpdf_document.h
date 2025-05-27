@@ -52,7 +52,7 @@ class CPDF_Document : public Observable,
 
     virtual void ClearStockFont() = 0;
     virtual RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
-        RetainPtr<const CPDF_Stream> pFontStream) = 0;
+        RetainPtr<const CPDF_Stream> font_stream) = 0;
     virtual void MaybePurgeFontFileStreamAcc(
         RetainPtr<CPDF_StreamAcc>&& pStreamAcc) = 0;
     virtual void MaybePurgeImage(uint32_t objnum) = 0;
@@ -118,7 +118,7 @@ class CPDF_Document : public Observable,
 
   // PageDataIface wrappers, try to avoid explicit getter calls.
   RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
-      RetainPtr<const CPDF_Stream> pFontStream);
+      RetainPtr<const CPDF_Stream> font_stream);
   void MaybePurgeFontFileStreamAcc(RetainPtr<CPDF_StreamAcc>&& pStreamAcc);
   void MaybePurgeImage(uint32_t objnum);
 

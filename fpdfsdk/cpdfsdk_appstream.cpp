@@ -589,14 +589,14 @@ ByteString GetRadioButtonAppStream(const CFX_FloatRect& rcBBox,
   }
 }
 
-ByteString GetFontSetString(IPVT_FontMap* pFontMap,
+ByteString GetFontSetString(IPVT_FontMap* font_map,
                             int32_t nFontIndex,
                             float fFontSize) {
-  if (!pFontMap) {
+  if (!font_map) {
     return ByteString();
   }
 
-  ByteString sFontAlias = pFontMap->GetPDFFontAlias(nFontIndex);
+  ByteString sFontAlias = font_map->GetPDFFontAlias(nFontIndex);
   if (sFontAlias.GetLength() <= 0 || fFontSize <= 0) {
     return ByteString();
   }
@@ -753,7 +753,7 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
 }
 
 ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
-                                  IPVT_FontMap* pFontMap,
+                                  IPVT_FontMap* font_map,
                                   RetainPtr<CPDF_Stream> pIconStream,
                                   CPDF_IconFit& IconFit,
                                   const WideString& sLabel,
@@ -763,7 +763,7 @@ ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   const float fAutoFontScale = 1.0f / 3.0f;
 
   auto pEdit = std::make_unique<CPWL_EditImpl>();
-  pEdit->SetFontMap(pFontMap);
+  pEdit->SetFontMap(font_map);
   pEdit->SetAlignmentH(1);
   pEdit->SetAlignmentV(1);
   pEdit->SetMultiLine(false);

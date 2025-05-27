@@ -431,7 +431,7 @@ int CFX_Face::GetGlyphCount() const {
   return pdfium::checked_cast<int>(GetRec()->num_glyphs);
 }
 
-std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
+std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* font,
                                                        uint32_t glyph_index,
                                                        bool bFontStyle,
                                                        const CFX_Matrix& matrix,
@@ -443,7 +443,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
   ft_matrix.yx = matrix.b / 64 * 65536;
   ft_matrix.yy = matrix.d / 64 * 65536;
   bool bUseCJKSubFont = false;
-  const CFX_SubstFont* pSubstFont = pFont->GetSubstFont();
+  const CFX_SubstFont* pSubstFont = font->GetSubstFont();
   if (pSubstFont) {
     bUseCJKSubFont = pSubstFont->subst_cjk_ && bFontStyle;
     int angle;
@@ -454,15 +454,15 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
     }
     if (angle) {
       int skew = GetSkewFromAngle(angle);
-      if (pFont->IsVertical()) {
+      if (font->IsVertical()) {
         ft_matrix.yx += ft_matrix.yy * skew / 100;
       } else {
         ft_matrix.xy -= ft_matrix.xx * skew / 100;
       }
     }
     if (pSubstFont->IsBuiltInGenericFont()) {
-      pFont->GetFace()->AdjustVariationParams(glyph_index, dest_width,
-                                              pFont->GetSubstFont()->weight_);
+      font->GetFace()->AdjustVariationParams(glyph_index, dest_width,
+                                             font->GetSubstFont()->weight_);
     }
   }
 

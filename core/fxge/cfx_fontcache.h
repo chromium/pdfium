@@ -20,9 +20,9 @@ class CFX_FontCache {
   CFX_FontCache();
   ~CFX_FontCache();
 
-  RetainPtr<CFX_GlyphCache> GetGlyphCache(const CFX_Font* pFont);
+  RetainPtr<CFX_GlyphCache> GetGlyphCache(const CFX_Font* font);
 #if defined(PDF_USE_SKIA)
-  CFX_TypeFace* GetDeviceCache(const CFX_Font* pFont);
+  CFX_TypeFace* GetDeviceCache(const CFX_Font* font);
 #endif
 
  private:

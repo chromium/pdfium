@@ -66,7 +66,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
                           const FXDIB_ResampleOptions& options,
                           BlendMode blend_type) override;
   bool DrawDeviceText(pdfium::span<const TextCharPos> pCharPos,
-                      CFX_Font* pFont,
+                      CFX_Font* font,
                       const CFX_Matrix& mtObject2Device,
                       float font_size,
                       uint32_t color,

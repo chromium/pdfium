@@ -2453,14 +2453,14 @@ WideString FGAS_FontNameToEnglishName(const WideString& wsLocalName) {
       FX_HashCode_GetLoweredW(wsLocalName.AsStringView());
   const FGAS_FontInfo* pBegin = std::begin(kXFAFontsMap);
   const FGAS_FontInfo* pEnd = std::end(kXFAFontsMap);
-  const FGAS_FontInfo* pFontInfo =
+  const FGAS_FontInfo* font_info =
       std::lower_bound(pBegin, pEnd, dwLocalNameHash,
                        [](const FGAS_FontInfo& entry, uint32_t hash) {
                          return entry.dwFontNameHash < hash;
                        });
 
-  if (pFontInfo < pEnd && pFontInfo->dwFontNameHash == dwLocalNameHash) {
-    return WideString::FromASCII(ByteStringView(pFontInfo->pPsName));
+  if (font_info < pEnd && font_info->dwFontNameHash == dwLocalNameHash) {
+    return WideString::FromASCII(ByteStringView(font_info->pPsName));
   }
   return wsLocalName;
 }
@@ -2472,14 +2472,14 @@ const FGAS_FontInfo* FGAS_FontInfoByFontName(WideStringView wsFontName) {
       FX_HashCode_GetLoweredW(wsFontNameTemp.AsStringView());
   const FGAS_FontInfo* pBegin = std::begin(kXFAFontsMap);
   const FGAS_FontInfo* pEnd = std::end(kXFAFontsMap);
-  const FGAS_FontInfo* pFontInfo =
+  const FGAS_FontInfo* font_info =
       std::lower_bound(pBegin, pEnd, dwCurFontNameHash,
                        [](const FGAS_FontInfo& entry, uint32_t hash) {
                          return entry.dwFontNameHash < hash;
                        });
 
-  if (pFontInfo < pEnd && pFontInfo->dwFontNameHash == dwCurFontNameHash) {
-    return pFontInfo;
+  if (font_info < pEnd && font_info->dwFontNameHash == dwCurFontNameHash) {
+    return font_info;
   }
   return nullptr;
 }

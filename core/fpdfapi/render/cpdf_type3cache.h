@@ -32,7 +32,7 @@ class CPDF_Type3Cache final : public Retainable, public Observable {
  private:
   using SizeKey = std::tuple<int, int, int, int>;
 
-  explicit CPDF_Type3Cache(CPDF_Type3Font* pFont);
+  explicit CPDF_Type3Cache(CPDF_Type3Font* font);
   ~CPDF_Type3Cache() override;
 
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(CPDF_Type3GlyphMap* pSize,

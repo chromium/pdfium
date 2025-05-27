@@ -70,7 +70,7 @@ class CFGAS_FontDescriptor {
 
 struct CFGAS_FontDescriptorInfo {
  public:
-  UNOWNED_PTR_EXCLUSION CFGAS_FontDescriptor* pFont;  // POD struct.
+  UNOWNED_PTR_EXCLUSION CFGAS_FontDescriptor* font;  // POD struct.
   int32_t nPenalty;
 
   bool operator>(const CFGAS_FontDescriptorInfo& other) const {
@@ -122,7 +122,7 @@ class CFGAS_FontMgr {
 #else   // BUILDFLAG(IS_WIN)
   bool EnumFontsFromFontMapper();
   void RegisterFace(RetainPtr<CFX_Face> pFace, const WideString& wsFaceName);
-  void RegisterFaces(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
+  void RegisterFaces(const RetainPtr<IFX_SeekableReadStream>& font_stream,
                      const WideString& wsFaceName);
   std::vector<CFGAS_FontDescriptorInfo> MatchFonts(FX_CodePage wCodePage,
                                                    uint32_t dwFontStyles,

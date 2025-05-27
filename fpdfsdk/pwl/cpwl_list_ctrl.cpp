@@ -25,8 +25,8 @@ CPWL_ListCtrl::Item::Item() : edit_(std::make_unique<CPWL_EditImpl>()) {
 
 CPWL_ListCtrl::Item::~Item() = default;
 
-void CPWL_ListCtrl::Item::SetFontMap(IPVT_FontMap* pFontMap) {
-  edit_->SetFontMap(pFontMap);
+void CPWL_ListCtrl::Item::SetFontMap(IPVT_FontMap* font_map) {
+  edit_->SetFontMap(font_map);
 }
 
 void CPWL_ListCtrl::Item::SetText(const WideString& text) {

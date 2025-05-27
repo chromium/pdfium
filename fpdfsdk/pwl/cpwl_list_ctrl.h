@@ -66,7 +66,7 @@ class CPWL_ListCtrl {
   void SetCaret(int32_t nItemIndex);
   WideString GetText() const;
 
-  void SetFontMap(IPVT_FontMap* pFontMap) { font_map_ = pFontMap; }
+  void SetFontMap(IPVT_FontMap* font_map) { font_map_ = font_map; }
   void SetFontSize(float fFontSize) { font_size_ = fFontSize; }
   CFX_FloatRect GetPlateRect() const { return plate_rect_; }
   void SetPlateRect(const CFX_FloatRect& rect);
@@ -87,7 +87,7 @@ class CPWL_ListCtrl {
     Item();
     ~Item();
 
-    void SetFontMap(IPVT_FontMap* pFontMap);
+    void SetFontMap(IPVT_FontMap* font_map);
     CPWL_EditImpl* GetEdit() const { return edit_.get(); }
 
     void SetRect(const CFX_FloatRect& rect) { list_item_rect_ = rect; }

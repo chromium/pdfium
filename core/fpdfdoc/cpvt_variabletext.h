@@ -49,7 +49,7 @@ class CPVT_VariableText {
 
   class Provider {
    public:
-    explicit Provider(IPVT_FontMap* pFontMap);
+    explicit Provider(IPVT_FontMap* font_map);
     virtual ~Provider();
 
     virtual int GetCharWidth(int32_t nFontIndex, uint16_t word);

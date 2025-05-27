@@ -24,7 +24,7 @@ class CPDF_TrueTypeFont final : public CPDF_SimpleFont {
   enum class CharmapType { kMSUnicode, kMSSymbol, kMacRoman, kOther };
 
   CPDF_TrueTypeFont(CPDF_Document* document,
-                    RetainPtr<CPDF_Dictionary> pFontDict);
+                    RetainPtr<CPDF_Dictionary> font_dict);
 
   // CPDF_Font:
   bool Load() override;

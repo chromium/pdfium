@@ -87,9 +87,9 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedFontDesc(
     int weight,
     bool bItalic,
     FixedSizeDataVector<uint8_t> data) {
-  auto pFontDesc = pdfium::MakeRetain<FontDesc>(std::move(data));
-  face_map_[{face_name, weight, bItalic}].Reset(pFontDesc.Get());
-  return pFontDesc;
+  auto font_desc = pdfium::MakeRetain<FontDesc>(std::move(data));
+  face_map_[{face_name, weight, bItalic}].Reset(font_desc.Get());
+  return font_desc;
 }
 
 RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedTTCFontDesc(

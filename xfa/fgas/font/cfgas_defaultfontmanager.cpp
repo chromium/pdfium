@@ -19,11 +19,11 @@
 RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
     WideString wsFontName,
     uint32_t dwFontStyles) {
-  CFGAS_FontMgr* pFontMgr = CFGAS_GEModule::Get()->GetFontMgr();
-  RetainPtr<CFGAS_GEFont> pFont = pFontMgr->LoadFont(
+  CFGAS_FontMgr* font_mgr = CFGAS_GEModule::Get()->GetFontMgr();
+  RetainPtr<CFGAS_GEFont> font = font_mgr->LoadFont(
       wsFontName.c_str(), dwFontStyles, FX_CodePage::kFailure);
-  if (pFont) {
-    return pFont;
+  if (font) {
+    return font;
   }
   const FGAS_FontInfo* pCurFont =
       FGAS_FontInfoByFontName(wsFontName.AsStringView());
@@ -49,10 +49,10 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
       segment = replace_view;
       replace_view = ByteStringView();
     }
-    pFont = pFontMgr->LoadFont(WideString::FromASCII(segment).c_str(), dwStyle,
-                               FX_CodePage::kFailure);
-    if (pFont) {
-      return pFont;
+    font = font_mgr->LoadFont(WideString::FromASCII(segment).c_str(), dwStyle,
+                              FX_CodePage::kFailure);
+    if (font) {
+      return font;
     }
   }
   return nullptr;
@@ -61,12 +61,12 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
 // static
 RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetDefaultFont(
     uint32_t dwFontStyles) {
-  CFGAS_FontMgr* pFontMgr = CFGAS_GEModule::Get()->GetFontMgr();
-  RetainPtr<CFGAS_GEFont> pFont =
-      pFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, FX_CodePage::kFailure);
-  if (pFont) {
-    return pFont;
+  CFGAS_FontMgr* font_mgr = CFGAS_GEModule::Get()->GetFontMgr();
+  RetainPtr<CFGAS_GEFont> font =
+      font_mgr->LoadFont(L"Arial Narrow", dwFontStyles, FX_CodePage::kFailure);
+  if (font) {
+    return font;
   }
 
-  return pFontMgr->LoadFont(nullptr, dwFontStyles, FX_CodePage::kFailure);
+  return font_mgr->LoadFont(nullptr, dwFontStyles, FX_CodePage::kFailure);
 }

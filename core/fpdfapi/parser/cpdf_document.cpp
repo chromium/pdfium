@@ -472,8 +472,8 @@ uint32_t CPDF_Document::GetUserPermissions(bool get_owner_perms) const {
 }
 
 RetainPtr<CPDF_StreamAcc> CPDF_Document::GetFontFileStreamAcc(
-    RetainPtr<const CPDF_Stream> pFontStream) {
-  return doc_page_->GetFontFileStreamAcc(std::move(pFontStream));
+    RetainPtr<const CPDF_Stream> font_stream) {
+  return doc_page_->GetFontFileStreamAcc(std::move(font_stream));
 }
 
 void CPDF_Document::MaybePurgeFontFileStreamAcc(

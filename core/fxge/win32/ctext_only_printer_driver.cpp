@@ -122,7 +122,7 @@ RenderDeviceDriverIface::StartResult CTextOnlyPrinterDriver::StartDIBits(
 
 bool CTextOnlyPrinterDriver::DrawDeviceText(
     pdfium::span<const TextCharPos> pCharPos,
-    CFX_Font* pFont,
+    CFX_Font* font,
     const CFX_Matrix& mtObject2Device,
     float font_size,
     uint32_t color,
@@ -130,7 +130,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
   if (g_pdfium_print_mode != WindowsPrintMode::kTextOnly) {
     return false;
   }
-  if (pCharPos.empty() || !pFont) {
+  if (pCharPos.empty() || !font) {
     return false;
   }
 

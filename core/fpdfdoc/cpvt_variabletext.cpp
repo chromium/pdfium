@@ -33,8 +33,8 @@ constexpr auto kFontSizeSteps = std::to_array<const uint8_t>(
 
 }  // namespace
 
-CPVT_VariableText::Provider::Provider(IPVT_FontMap* pFontMap)
-    : font_map_(pFontMap) {
+CPVT_VariableText::Provider::Provider(IPVT_FontMap* font_map)
+    : font_map_(font_map) {
   DCHECK(font_map_);
 }
 

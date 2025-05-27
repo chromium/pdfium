@@ -137,13 +137,13 @@ class CFX_RenderDevice {
                       PauseIndicatorIface* pPause);
 
   bool DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
-                      CFX_Font* pFont,
+                      CFX_Font* font,
                       float font_size,
                       const CFX_Matrix& mtText2Device,
                       uint32_t fill_color,
                       const CFX_TextRenderOptions& options);
   bool DrawTextPath(pdfium::span<const TextCharPos> pCharPos,
-                    CFX_Font* pFont,
+                    CFX_Font* font,
                     float font_size,
                     const CFX_Matrix& mtText2User,
                     const CFX_Matrix* pUser2Device,

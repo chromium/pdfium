@@ -148,8 +148,8 @@ int CALLBACK FontEnumProc(const LOGFONTA* plf,
                           const TEXTMETRICA* lpntme,
                           uint32_t font_type,
                           LPARAM lParam) {
-  CFX_Win32FontInfo* pFontInfo = reinterpret_cast<CFX_Win32FontInfo*>(lParam);
-  pFontInfo->AddInstalledFont(plf, font_type);
+  CFX_Win32FontInfo* font_info = reinterpret_cast<CFX_Win32FontInfo*>(lParam);
+  font_info->AddInstalledFont(plf, font_type);
   return 1;
 }
 

@@ -93,7 +93,7 @@ class CFX_PSRenderer {
                   const FXDIB_ResampleOptions& options);
   bool DrawText(int nChars,
                 const TextCharPos* pCharPos,
-                CFX_Font* pFont,
+                CFX_Font* font,
                 const CFX_Matrix& mtObject2Device,
                 float font_size,
                 uint32_t color);
@@ -141,7 +141,7 @@ class CFX_PSRenderer {
   void SetGraphState(const CFX_GraphStateData* pGraphState);
   void SetColor(uint32_t color);
   void FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
-                       CFX_Font* pFont,
+                       CFX_Font* font,
                        const TextCharPos& charpos,
                        int* ps_fontnum,
                        int* ps_glyphindex);

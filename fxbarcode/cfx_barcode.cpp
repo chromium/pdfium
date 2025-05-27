@@ -152,7 +152,7 @@ bool CFX_Barcode::SetCalChecksum(bool state) {
   }
 }
 
-bool CFX_Barcode::SetFont(CFX_Font* pFont) {
+bool CFX_Barcode::SetFont(CFX_Font* font) {
   if (!bc_engine_) {
     return false;
   }
@@ -166,7 +166,7 @@ bool CFX_Barcode::SetFont(CFX_Font* pFont) {
     case BC_TYPE::kEAN8:
     case BC_TYPE::kEAN13:
     case BC_TYPE::kUPCA:
-      return static_cast<CBC_OneCode*>(bc_engine_.get())->SetFont(pFont);
+      return static_cast<CBC_OneCode*>(bc_engine_.get())->SetFont(font);
     default:
       return false;
   }

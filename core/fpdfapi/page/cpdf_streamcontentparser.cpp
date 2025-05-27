@@ -1191,9 +1191,9 @@ void CPDF_StreamContentParser::Handle_MoveTextPoint_SetLeading() {
 
 void CPDF_StreamContentParser::Handle_SetFont() {
   cur_states_->mutable_text_state().SetFontSize(GetNumber(0));
-  RetainPtr<CPDF_Font> pFont = FindFont(GetString(1));
-  if (pFont) {
-    cur_states_->mutable_text_state().SetFont(std::move(pFont));
+  RetainPtr<CPDF_Font> font = FindFont(GetString(1));
+  if (font) {
+    cur_states_->mutable_text_state().SetFont(std::move(font));
   }
 }
 
@@ -1225,23 +1225,23 @@ RetainPtr<CPDF_Object> CPDF_StreamContentParser::FindResourceObj(
 
 RetainPtr<CPDF_Font> CPDF_StreamContentParser::FindFont(
     const ByteString& name) {
-  RetainPtr<CPDF_Dictionary> pFontDict(
+  RetainPtr<CPDF_Dictionary> font_dict(
       ToDictionary(FindResourceObj("Font", name)));
-  if (!pFontDict) {
+  if (!font_dict) {
     return CPDF_Font::GetStockFont(document_, CFX_Font::kDefaultAnsiFontName);
   }
-  RetainPtr<CPDF_Font> pFont =
-      CPDF_DocPageData::FromDocument(document_)->GetFont(std::move(pFontDict));
-  if (pFont) {
+  RetainPtr<CPDF_Font> font =
+      CPDF_DocPageData::FromDocument(document_)->GetFont(std::move(font_dict));
+  if (font) {
     // Save `name` for later retrieval by the CPDF_TextObject that uses the
     // font.
-    pFont->SetResourceName(name);
-    if (pFont->IsType3Font()) {
-      pFont->AsType3Font()->SetPageResources(resources_.Get());
-      pFont->AsType3Font()->CheckType3FontMetrics();
+    font->SetResourceName(name);
+    if (font->IsType3Font()) {
+      font->AsType3Font()->SetPageResources(resources_.Get());
+      font->AsType3Font()->CheckType3FontMetrics();
     }
   }
-  return pFont;
+  return font;
 }
 
 CPDF_PageObjectHolder::CTMMap CPDF_StreamContentParser::TakeAllCTMs() {
@@ -1307,12 +1307,12 @@ void CPDF_StreamContentParser::AddTextObject(
     pdfium::span<const ByteString> strings,
     pdfium::span<const float> kernings,
     float initial_kerning) {
-  RetainPtr<CPDF_Font> pFont = cur_states_->text_state().GetFont();
-  if (!pFont) {
+  RetainPtr<CPDF_Font> font = cur_states_->text_state().GetFont();
+  if (!font) {
     return;
   }
   if (initial_kerning != 0) {
-    if (pFont->IsVertWriting()) {
+    if (font->IsVertWriting()) {
       cur_states_->IncrementTextPositionY(
           -GetVerticalTextSize(initial_kerning));
     } else {
@@ -1324,11 +1324,11 @@ void CPDF_StreamContentParser::AddTextObject(
     return;
   }
   const TextRenderingMode text_mode =
-      pFont->IsType3Font() ? TextRenderingMode::MODE_FILL
-                           : cur_states_->text_state().GetTextMode();
+      font->IsType3Font() ? TextRenderingMode::MODE_FILL
+                          : cur_states_->text_state().GetTextMode();
   {
     auto pText = std::make_unique<CPDF_TextObject>(GetCurrentStreamIndex());
-    pText->SetResourceName(pFont->GetResourceName());
+    pText->SetResourceName(font->GetResourceName());
     SetGraphicStates(pText.get(), true, true, true);
     if (TextRenderingModeIsStrokeMode(text_mode)) {
       const CFX_Matrix& ctm = cur_states_->current_transformation_matrix();
@@ -1353,7 +1353,7 @@ void CPDF_StreamContentParser::AddTextObject(
     object_holder_->AppendPageObject(std::move(pText));
   }
   if (!kernings.empty() && kernings.back() != 0) {
-    if (pFont->IsVertWriting()) {
+    if (font->IsVertWriting()) {
       cur_states_->IncrementTextPositionY(
           -GetVerticalTextSize(kernings.back()));
     } else {

@@ -28,7 +28,7 @@ class CFGAS_TextPiece {
   int32_t iBidiLevel = 0;
   float fFontSize = 0.0f;
   CFX_RectF rtPiece;
-  RetainPtr<CFGAS_GEFont> pFont;
+  RetainPtr<CFGAS_GEFont> font;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_TEXTPIECE_H_

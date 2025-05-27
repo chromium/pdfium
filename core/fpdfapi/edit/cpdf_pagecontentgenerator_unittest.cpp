@@ -345,12 +345,12 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessText) {
     pDict->SetNewFor<CPDF_Name>("Type", "Font");
     pDict->SetNewFor<CPDF_Name>("Subtype", "TrueType");
 
-    RetainPtr<CPDF_Font> pFont = CPDF_Font::GetStockFont(pDoc.get(), "Arial");
-    pDict->SetNewFor<CPDF_Name>("BaseFont", pFont->GetBaseFontName());
+    RetainPtr<CPDF_Font> font = CPDF_Font::GetStockFont(pDoc.get(), "Arial");
+    pDict->SetNewFor<CPDF_Name>("BaseFont", font->GetBaseFontName());
 
     auto pDesc = pDoc->NewIndirect<CPDF_Dictionary>();
     pDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
-    pDesc->SetNewFor<CPDF_Name>("FontName", pFont->GetBaseFontName());
+    pDesc->SetNewFor<CPDF_Name>("FontName", font->GetBaseFontName());
     pDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc.get(),
                                      pDesc->GetObjNum());
 

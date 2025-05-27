@@ -12,8 +12,7 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
 
-CFX_UnicodeEncoding::CFX_UnicodeEncoding(const CFX_Font* pFont)
-    : font_(pFont) {}
+CFX_UnicodeEncoding::CFX_UnicodeEncoding(const CFX_Font* font) : font_(font) {}
 
 CFX_UnicodeEncoding::~CFX_UnicodeEncoding() = default;
 

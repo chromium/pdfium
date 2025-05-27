@@ -153,20 +153,20 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_AddInstalledFont(void* mapper,
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
-FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
+FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* font_infoExt) {
   auto* mapper = CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper();
-  if (!pFontInfoExt) {
+  if (!font_infoExt) {
     std::unique_ptr<SystemFontInfoIface> info = mapper->TakeSystemFontInfo();
     // Delete `info` when it goes out of scope here.
     return;
   }
 
-  if (pFontInfoExt->version != 1) {
+  if (font_infoExt->version != 1) {
     return;
   }
 
   mapper->SetSystemFontInfo(
-      std::make_unique<CFX_ExternalFontInfo>(pFontInfoExt));
+      std::make_unique<CFX_ExternalFontInfo>(font_infoExt));
 
 #ifdef PDF_ENABLE_XFA
   CFGAS_GEModule::Get()->GetFontMgr()->EnumFonts();
@@ -270,28 +270,28 @@ static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
 }
 
 FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo() {
-  std::unique_ptr<SystemFontInfoIface> pFontInfo =
+  std::unique_ptr<SystemFontInfoIface> font_info =
       CFX_GEModule::Get()->GetPlatform()->CreateDefaultSystemFontInfo();
-  if (!pFontInfo) {
+  if (!font_info) {
     return nullptr;
   }
 
-  FPDF_SYSFONTINFO_DEFAULT* pFontInfoExt =
+  FPDF_SYSFONTINFO_DEFAULT* font_infoExt =
       FX_Alloc(FPDF_SYSFONTINFO_DEFAULT, 1);
-  pFontInfoExt->DeleteFont = DefaultDeleteFont;
-  pFontInfoExt->EnumFonts = DefaultEnumFonts;
-  pFontInfoExt->GetFaceName = DefaultGetFaceName;
-  pFontInfoExt->GetFont = DefaultGetFont;
-  pFontInfoExt->GetFontCharset = DefaultGetFontCharset;
-  pFontInfoExt->GetFontData = DefaultGetFontData;
-  pFontInfoExt->MapFont = DefaultMapFont;
-  pFontInfoExt->Release = DefaultRelease;
-  pFontInfoExt->version = 1;
-  pFontInfoExt->font_info_ = pFontInfo.release();
-  return pFontInfoExt;
+  font_infoExt->DeleteFont = DefaultDeleteFont;
+  font_infoExt->EnumFonts = DefaultEnumFonts;
+  font_infoExt->GetFaceName = DefaultGetFaceName;
+  font_infoExt->GetFont = DefaultGetFont;
+  font_infoExt->GetFontCharset = DefaultGetFontCharset;
+  font_infoExt->GetFontData = DefaultGetFontData;
+  font_infoExt->MapFont = DefaultMapFont;
+  font_infoExt->Release = DefaultRelease;
+  font_infoExt->version = 1;
+  font_infoExt->font_info_ = font_info.release();
+  return font_infoExt;
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
-FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo) {
-  FX_Free(static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pFontInfo));
+FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* font_info) {
+  FX_Free(static_cast<FPDF_SYSFONTINFO_DEFAULT*>(font_info));
 }

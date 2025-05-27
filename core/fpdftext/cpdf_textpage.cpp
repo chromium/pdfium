@@ -180,24 +180,24 @@ bool IsRightToLeft(const CPDF_TextObject& text_obj) {
          CFX_BidiChar::Direction::kRight;
 }
 
-int GetCharWidth(uint32_t charCode, CPDF_Font* pFont) {
+int GetCharWidth(uint32_t charCode, CPDF_Font* font) {
   if (charCode == CPDF_Font::kInvalidCharCode) {
     return 0;
   }
 
-  int w = pFont->GetCharWidthF(charCode);
+  int w = font->GetCharWidthF(charCode);
   if (w > 0) {
     return w;
   }
 
   ByteString str;
-  pFont->AppendChar(&str, charCode);
-  w = pFont->GetStringWidth(str.AsStringView());
+  font->AppendChar(&str, charCode);
+  w = font->GetStringWidth(str.AsStringView());
   if (w > 0) {
     return w;
   }
 
-  FX_RECT rect = pFont->GetCharBBox(charCode);
+  FX_RECT rect = font->GetCharBBox(charCode);
   if (!rect.Valid()) {
     return 0;
   }
@@ -980,10 +980,10 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
     return MarkedContentState::kPass;
   }
 
-  RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
+  RetainPtr<CPDF_Font> font = pTextObj->GetFont();
   bExist = false;
   for (size_t i = 0; i < actual_text.GetLength(); ++i) {
-    if (pFont->CharCodeFromUnicode(actual_text[i]) !=
+    if (font->CharCodeFromUnicode(actual_text[i]) !=
         CPDF_Font::kInvalidCharCode) {
       bExist = true;
       break;

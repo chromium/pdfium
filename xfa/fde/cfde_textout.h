@@ -30,7 +30,7 @@ class CFDE_TextOut {
  public:
   static bool DrawString(CFX_RenderDevice* device,
                          FX_ARGB color,
-                         const RetainPtr<CFGAS_GEFont>& pFont,
+                         const RetainPtr<CFGAS_GEFont>& font,
                          span<TextCharPos> pCharPos,
                          float fFontSize,
                          const CFX_Matrix& matrix);
@@ -38,7 +38,7 @@ class CFDE_TextOut {
   CFDE_TextOut();
   ~CFDE_TextOut();
 
-  void SetFont(RetainPtr<CFGAS_GEFont> pFont);
+  void SetFont(RetainPtr<CFGAS_GEFont> font);
   void SetFontSize(float fFontSize);
   void SetTextColor(FX_ARGB color) { txt_color_ = color; }
   void SetStyles(const FDE_TextStyle& dwStyles);

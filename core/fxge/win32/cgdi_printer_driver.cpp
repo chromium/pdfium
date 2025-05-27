@@ -174,7 +174,7 @@ RenderDeviceDriverIface::StartResult CGdiPrinterDriver::StartDIBits(
 
 bool CGdiPrinterDriver::DrawDeviceText(
     pdfium::span<const TextCharPos> pCharPos,
-    CFX_Font* pFont,
+    CFX_Font* font,
     const CFX_Matrix& mtObject2Device,
     float font_size,
     uint32_t color,

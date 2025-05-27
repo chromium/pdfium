@@ -385,8 +385,8 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
     }
   }
 
-  CXFA_FontMgr* pFontMgr = doc->GetApp()->GetXFAFontMgr();
-  return pFontMgr->GetFont(doc, wsFamily, dwStyle);
+  CXFA_FontMgr* font_mgr = doc->GetApp()->GetXFAFontMgr();
+  return font_mgr->GetFont(doc, wsFamily, dwStyle);
 }
 
 float CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,

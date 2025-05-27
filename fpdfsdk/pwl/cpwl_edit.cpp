@@ -275,14 +275,14 @@ bool CPWL_Edit::IsTextFull() const {
   return edit_impl_->IsTextFull();
 }
 
-float CPWL_Edit::GetCharArrayAutoFontSize(const CPDF_Font* pFont,
+float CPWL_Edit::GetCharArrayAutoFontSize(const CPDF_Font* font,
                                           const CFX_FloatRect& rcPlate,
                                           int32_t nCharArray) {
-  if (!pFont || pFont->IsStandardFont()) {
+  if (!font || font->IsStandardFont()) {
     return 0.0f;
   }
 
-  const FX_RECT& rcBBox = pFont->GetFontBBox();
+  const FX_RECT& rcBBox = font->GetFontBBox();
 
   CFX_FloatRect rcCell = rcPlate;
   float xdiv = rcCell.Width() / nCharArray * 1000.0f / rcBBox.Width();
@@ -304,12 +304,12 @@ void CPWL_Edit::SetCharArray(int32_t nCharArray) {
     return;
   }
 
-  IPVT_FontMap* pFontMap = GetFontMap();
-  if (!pFontMap) {
+  IPVT_FontMap* font_map = GetFontMap();
+  if (!font_map) {
     return;
   }
 
-  float fFontSize = GetCharArrayAutoFontSize(pFontMap->GetPDFFont(0).Get(),
+  float fFontSize = GetCharArrayAutoFontSize(font_map->GetPDFFont(0).Get(),
                                              GetClientRect(), nCharArray);
   if (fFontSize <= 0.0f) {
     return;
@@ -437,10 +437,10 @@ bool CPWL_Edit::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
       return false;
     }
   }
-  if (IPVT_FontMap* pFontMap = this_observed->GetFontMap()) {
+  if (IPVT_FontMap* font_map = this_observed->GetFontMap()) {
     FX_Charset nOldCharSet = this_observed->GetCharSet();
     FX_Charset nNewCharSet =
-        pFontMap->CharSetFromUnicode(nChar, FX_Charset::kDefault);
+        font_map->CharSetFromUnicode(nChar, FX_Charset::kDefault);
     if (nOldCharSet != nNewCharSet) {
       this_observed->SetCharSet(nNewCharSet);
     }

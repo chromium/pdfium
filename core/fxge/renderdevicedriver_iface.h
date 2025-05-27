@@ -112,7 +112,7 @@ class RenderDeviceDriverIface {
   virtual bool ContinueDIBits(CFX_AggImageRenderer* handle,
                               PauseIndicatorIface* pPause);
   virtual bool DrawDeviceText(pdfium::span<const TextCharPos> pCharPos,
-                              CFX_Font* pFont,
+                              CFX_Font* font,
                               const CFX_Matrix& mtObject2Device,
                               float font_size,
                               uint32_t color,

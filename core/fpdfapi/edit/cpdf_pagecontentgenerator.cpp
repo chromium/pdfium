@@ -946,44 +946,44 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
     WriteMatrix(*buf, matrix) << " Tm ";
   }
 
-  RetainPtr<CPDF_Font> pFont(pTextObj->GetFont());
-  if (!pFont) {
-    pFont = CPDF_Font::GetStockFont(document_, "Helvetica");
+  RetainPtr<CPDF_Font> font(pTextObj->GetFont());
+  if (!font) {
+    font = CPDF_Font::GetStockFont(document_, "Helvetica");
   }
 
   FontData data;
   const CPDF_FontEncoding* pEncoding = nullptr;
-  if (pFont->IsType1Font()) {
+  if (font->IsType1Font()) {
     data.type = "Type1";
-    pEncoding = pFont->AsType1Font()->GetEncoding();
-  } else if (pFont->IsTrueTypeFont()) {
+    pEncoding = font->AsType1Font()->GetEncoding();
+  } else if (font->IsTrueTypeFont()) {
     data.type = "TrueType";
-    pEncoding = pFont->AsTrueTypeFont()->GetEncoding();
-  } else if (pFont->IsCIDFont()) {
+    pEncoding = font->AsTrueTypeFont()->GetEncoding();
+  } else if (font->IsCIDFont()) {
     data.type = "Type0";
   } else {
     return;
   }
-  data.baseFont = pFont->GetBaseFontName();
+  data.baseFont = font->GetBaseFontName();
 
   ByteString dict_name;
   std::optional<ByteString> maybe_name = obj_holder_->FontsMapSearch(data);
   if (maybe_name.has_value()) {
     dict_name = std::move(maybe_name.value());
   } else {
-    RetainPtr<const CPDF_Object> pIndirectFont = pFont->GetFontDict();
+    RetainPtr<const CPDF_Object> pIndirectFont = font->GetFontDict();
     if (pIndirectFont->IsInline()) {
       // In this case we assume it must be a standard font
-      auto pFontDict = pdfium::MakeRetain<CPDF_Dictionary>();
-      pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
-      pFontDict->SetNewFor<CPDF_Name>("Subtype", data.type);
-      pFontDict->SetNewFor<CPDF_Name>("BaseFont", data.baseFont);
+      auto font_dict = pdfium::MakeRetain<CPDF_Dictionary>();
+      font_dict->SetNewFor<CPDF_Name>("Type", "Font");
+      font_dict->SetNewFor<CPDF_Name>("Subtype", data.type);
+      font_dict->SetNewFor<CPDF_Name>("BaseFont", data.baseFont);
       if (pEncoding) {
-        pFontDict->SetFor("Encoding",
+        font_dict->SetFor("Encoding",
                           pEncoding->Realize(document_->GetByteStringPool()));
       }
-      document_->AddIndirectObject(pFontDict);
-      pIndirectFont = std::move(pFontDict);
+      document_->AddIndirectObject(font_dict);
+      pIndirectFont = std::move(font_dict);
     }
     dict_name = RealizeResource(std::move(pIndirectFont), "Font");
     obj_holder_->FontsMapInsert(data, dict_name);
@@ -996,7 +996,7 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
   ByteString text;
   for (uint32_t charcode : pTextObj->GetCharCodes()) {
     if (charcode != CPDF_Font::kInvalidCharCode) {
-      pFont->AppendChar(&text, charcode);
+      font->AppendChar(&text, charcode);
     }
   }
   *buf << PDF_HexEncodeString(text.AsStringView()) << " Tj ET";

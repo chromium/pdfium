@@ -57,13 +57,13 @@ void CFGAS_Break::SetVerticalScale(int32_t iScale) {
   vertical_scale_ = iScale;
 }
 
-void CFGAS_Break::SetFont(RetainPtr<CFGAS_GEFont> pFont) {
-  if (!pFont || pFont == font_) {
+void CFGAS_Break::SetFont(RetainPtr<CFGAS_GEFont> font) {
+  if (!font || font == font_) {
     return;
   }
 
   SetBreakStatus();
-  font_ = std::move(pFont);
+  font_ = std::move(font);
 }
 
 void CFGAS_Break::SetFontSize(float fFontSize) {

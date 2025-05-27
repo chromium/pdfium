@@ -26,9 +26,9 @@ constexpr int kMaxType3FormLevel = 4;
 }  // namespace
 
 CPDF_Type3Font::CPDF_Type3Font(CPDF_Document* document,
-                               RetainPtr<CPDF_Dictionary> pFontDict,
+                               RetainPtr<CPDF_Dictionary> font_dict,
                                FormFactoryIface* pFormFactory)
-    : CPDF_SimpleFont(document, std::move(pFontDict)),
+    : CPDF_SimpleFont(document, std::move(font_dict)),
       form_factory_(pFormFactory) {
   DCHECK(GetDocument());
 }

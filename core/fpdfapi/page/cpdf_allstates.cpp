@@ -79,14 +79,14 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         mutable_general_state().SetRenderIntent(pObject->GetString());
         break;
       case FXBSTR_ID('F', 'o', 'n', 't'): {
-        const CPDF_Array* pFont = pObject->AsArray();
-        if (!pFont) {
+        const CPDF_Array* font = pObject->AsArray();
+        if (!font) {
           break;
         }
 
-        mutable_text_state().SetFontSize(pFont->GetFloatAt(1));
+        mutable_text_state().SetFontSize(font->GetFloatAt(1));
         mutable_text_state().SetFont(
-            pParser->FindFont(pFont->GetByteStringAt(0)));
+            pParser->FindFont(font->GetByteStringAt(0)));
         break;
       }
       case FXBSTR_ID('T', 'R', 0, 0):

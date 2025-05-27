@@ -75,12 +75,12 @@ RetainPtr<CPDF_Font> CPDF_FontGlobals::Find(
 
 void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
                            CFX_FontMapper::StandardFont index,
-                           RetainPtr<CPDF_Font> pFont) {
+                           RetainPtr<CPDF_Font> font) {
   UnownedPtr<CPDF_Document> pKey(pDoc);
   if (!pdfium::Contains(stock_map_, pKey)) {
     stock_map_[pKey] = std::make_unique<CFX_StockFontArray>();
   }
-  stock_map_[pKey]->SetFont(index, std::move(pFont));
+  stock_map_[pKey]->SetFont(index, std::move(font));
 }
 
 void CPDF_FontGlobals::Clear(CPDF_Document* pDoc) {

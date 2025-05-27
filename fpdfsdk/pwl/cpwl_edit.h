@@ -92,7 +92,7 @@ class CPWL_Edit final : public CPWL_Wnd {
   void SetText(const WideString& csText);
   bool IsTextFull() const;
 
-  static float GetCharArrayAutoFontSize(const CPDF_Font* pFont,
+  static float GetCharArrayAutoFontSize(const CPDF_Font* font,
                                         const CFX_FloatRect& rcPlate,
                                         int32_t nCharArray);
 

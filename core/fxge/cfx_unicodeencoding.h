@@ -15,7 +15,7 @@ class CFX_Font;
 
 class CFX_UnicodeEncoding {
  public:
-  explicit CFX_UnicodeEncoding(const CFX_Font* pFont);
+  explicit CFX_UnicodeEncoding(const CFX_Font* font);
   virtual ~CFX_UnicodeEncoding();
 
   virtual uint32_t GlyphFromCharCode(uint32_t charcode);

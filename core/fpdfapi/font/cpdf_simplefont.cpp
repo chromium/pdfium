@@ -36,8 +36,8 @@ void GetPredefinedEncoding(const ByteString& value, FontEncoding* basemap) {
 }  // namespace
 
 CPDF_SimpleFont::CPDF_SimpleFont(CPDF_Document* document,
-                                 RetainPtr<CPDF_Dictionary> pFontDict)
-    : CPDF_Font(document, std::move(pFontDict)) {
+                                 RetainPtr<CPDF_Dictionary> font_dict)
+    : CPDF_Font(document, std::move(font_dict)) {
   char_width_.fill(0xffff);
   glyph_index_.fill(0xffff);
   char_bbox_.fill(FX_RECT(-1, -1, -1, -1));
@@ -243,12 +243,12 @@ FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode) {
 }
 
 bool CPDF_SimpleFont::LoadCommon() {
-  RetainPtr<const CPDF_Dictionary> pFontDesc =
+  RetainPtr<const CPDF_Dictionary> font_desc =
       font_dict_->GetDictFor("FontDescriptor");
-  if (pFontDesc) {
-    LoadFontDescriptor(pFontDesc.Get());
+  if (font_desc) {
+    LoadFontDescriptor(font_desc.Get());
   }
-  LoadCharWidths(pFontDesc.Get());
+  LoadCharWidths(font_desc.Get());
   if (font_file_) {
     if (base_font_name_.GetLength() > 7 && base_font_name_[6] == '+') {
       base_font_name_ = base_font_name_.Last(base_font_name_.GetLength() - 7);

@@ -16,11 +16,11 @@
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/fx_fontencoding.h"
 
-CFPF_SkiaFont::CFPF_SkiaFont(CFPF_SkiaFontMgr* pFontMgr,
-                             const CFPF_SkiaPathFont* pFont,
+CFPF_SkiaFont::CFPF_SkiaFont(CFPF_SkiaFontMgr* font_mgr,
+                             const CFPF_SkiaPathFont* font,
                              FX_Charset uCharset)
-    : font_mgr_(pFontMgr),
-      font_(pFont),
+    : font_mgr_(font_mgr),
+      font_(font),
       face_(font_mgr_->GetFontFace(font_->path(), font_->face_index())),
       charset_(uCharset) {}
 

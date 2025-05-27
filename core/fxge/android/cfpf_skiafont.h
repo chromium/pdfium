@@ -21,8 +21,8 @@ class CFPF_SkiaPathFont;
 
 class CFPF_SkiaFont {
  public:
-  CFPF_SkiaFont(CFPF_SkiaFontMgr* pFontMgr,
-                const CFPF_SkiaPathFont* pFont,
+  CFPF_SkiaFont(CFPF_SkiaFontMgr* font_mgr,
+                const CFPF_SkiaPathFont* font,
                 FX_Charset uCharset);
   ~CFPF_SkiaFont();
 

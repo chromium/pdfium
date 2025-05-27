@@ -36,7 +36,7 @@ CPWL_Wnd::CreateParams CFFL_ListBox::GetCreateParam() {
     cp.fFontSize = kDefaultListBoxFontSize;
   }
 
-  cp.pFontMap = GetOrCreateFontMap();
+  cp.font_map = GetOrCreateFontMap();
   return cp;
 }
 

@@ -1087,7 +1087,7 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharRects(
   tr.pEdtEngine = this;
   tr.iStart = piece.nStart;
   tr.iLength = piece.nCount;
-  tr.pFont = font_;
+  tr.font = font_;
   tr.fFontSize = font_size_;
   tr.dwStyles = text_break_.GetLayoutStyles();
   tr.dwCharStyles = piece.dwCharStyles;
@@ -1105,7 +1105,7 @@ std::vector<TextCharPos> CFDE_TextEditEngine::GetDisplayPos(
   tr.pEdtEngine = this;
   tr.iStart = piece.nStart;
   tr.iLength = piece.nCount;
-  tr.pFont = font_;
+  tr.font = font_;
   tr.fFontSize = font_size_;
   tr.dwStyles = text_break_.GetLayoutStyles();
   tr.dwCharStyles = piece.dwCharStyles;

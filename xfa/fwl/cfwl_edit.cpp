@@ -480,12 +480,12 @@ void CFWL_Edit::UpdateEditParams() {
   CFWL_ThemePart part(CFWL_ThemePart::Part::kNone, this);
   font_size_ = theme->GetFontSize(part);
 
-  RetainPtr<CFGAS_GEFont> pFont = theme->GetFont(part);
-  if (!pFont) {
+  RetainPtr<CFGAS_GEFont> font = theme->GetFont(part);
+  if (!font) {
     return;
   }
 
-  edit_engine_->SetFont(pFont);
+  edit_engine_->SetFont(font);
   edit_engine_->SetFontColor(theme->GetTextColor(part));
   edit_engine_->SetFontSize(font_size_);
   edit_engine_->SetLineSpace(theme->GetLineHeight(part));

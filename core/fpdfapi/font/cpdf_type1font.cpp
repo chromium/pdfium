@@ -72,8 +72,8 @@ bool UseType1Charmap(const RetainPtr<CFX_Face>& face) {
 }  // namespace
 
 CPDF_Type1Font::CPDF_Type1Font(CPDF_Document* document,
-                               RetainPtr<CPDF_Dictionary> pFontDict)
-    : CPDF_SimpleFont(document, std::move(pFontDict)) {
+                               RetainPtr<CPDF_Dictionary> font_dict)
+    : CPDF_SimpleFont(document, std::move(font_dict)) {
 #if BUILDFLAG(IS_APPLE)
   ext_gid_.fill(0xffff);
 #endif
@@ -99,10 +99,10 @@ bool CPDF_Type1Font::Load() {
     return LoadCommon();
   }
 
-  RetainPtr<const CPDF_Dictionary> pFontDesc =
+  RetainPtr<const CPDF_Dictionary> font_desc =
       font_dict_->GetDictFor("FontDescriptor");
-  if (pFontDesc && pFontDesc->KeyExist("Flags")) {
-    flags_ = pFontDesc->GetIntegerFor("Flags");
+  if (font_desc && font_desc->KeyExist("Flags")) {
+    flags_ = font_desc->GetIntegerFor("Flags");
   } else if (IsSymbolicFont()) {
     flags_ = pdfium::kFontStyleSymbolic;
   } else {

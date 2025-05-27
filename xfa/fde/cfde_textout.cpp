@@ -538,7 +538,7 @@ size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
   tr.wsStr = text_.Substr(pPiece->start_char);
   tr.pWidths = pdfium::span(char_widths_).subspan(pPiece->start_char);
   tr.iLength = checked_cast<int32_t>(pPiece->char_count);
-  tr.pFont = font_;
+  tr.font = font_;
   tr.fFontSize = font_size_;
   tr.dwStyles = txt_bk_styles_;
   tr.dwCharStyles = pPiece->char_styles;

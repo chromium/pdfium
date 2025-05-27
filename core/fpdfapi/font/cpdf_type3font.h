@@ -45,7 +45,7 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
 
  private:
   CPDF_Type3Font(CPDF_Document* document,
-                 RetainPtr<CPDF_Dictionary> pFontDict,
+                 RetainPtr<CPDF_Dictionary> font_dict,
                  FormFactoryIface* pFormFactory);
 
   // CPDF_Font:
