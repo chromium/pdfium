@@ -117,24 +117,32 @@ def get_properties_by_name(name):
 
     return properties
 
-def get_reclient_properties(name, bucket):
-    """Returns reclient properties for a given builder name and bucket
+def get_rbe_properties(name, bucket):
+    """Returns RBE properties for a given builder name and bucket
 
     Args:
         name: name of the builder
         bucket: builder's bucket
 
     Returns:
-        Reclient properties if the builder should use remote execution; empty dict otherwise.
+        $build/{reclient, siso} properties
     """
-    props = {
+    reclient_props = {
         "instance": "rbe-chromium-trusted" if bucket == "ci" else "rbe-chromium-untrusted",
         "metrics_project": "chromium-reclient-metrics",
     }
+    siso_props = {
+        "project": "rbe-chromium-trusted" if bucket == "ci" else "rbe-chromium-untrusted",
+        "configs": ["builder"],
+        "enable_cloud_profiler": True,
+        "enable_cloud_trace": True,
+        "enable_monitoring": True,
+    }
     if name.startswith("mac"):
-        props.update({"scandeps_server": True})
+        reclient_props.update({"scandeps_server": True})
     return {
-        "$build/reclient": props,
+        "$build/reclient": reclient_props,
+        "$build/siso": siso_props,
     }
 
 def pdfium_internal_builder(name, bucket, swarm_tests):
@@ -187,7 +195,7 @@ def pdfium_internal_builder(name, bucket, swarm_tests):
     # Update properties based on the builder name.
     properties.update(get_properties_by_name(name))
 
-    properties.update(get_reclient_properties(name, bucket))
+    properties.update(get_rbe_properties(name, bucket))
 
     if swarm_tests:
         properties.update({
