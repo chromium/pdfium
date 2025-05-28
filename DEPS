@@ -210,6 +210,10 @@ vars = {
   # and whatever else without interference from each other.
   'simdutf_revision': '9d3e4d7c1afb30ed528443d73afab23f22443434',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling siso
+  # and whatever else without interference from each other.
+  'siso_version': 'git_revision:d9393c2115244b6e4a797189055e4a2b6769a64d',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
   'skia_revision': 'b82ac22e2deeae74c390cf735bc0d14d9658ada7',
@@ -538,6 +542,16 @@ deps = {
     'condition': 'checkout_v8',
   },
 
+  'third_party/siso/cipd': {
+    'packages': [
+      {
+        'package': 'infra/build/siso/${{platform}}',
+        'version': Var('siso_version'),
+      }
+    ],
+    'dep_type': 'cipd',
+  },
+
   'third_party/skia': {
     'url': Var('skia_git') + '/skia.git@' + Var('skia_revision'),
     'condition': 'checkout_skia',
@@ -806,6 +820,16 @@ hooks = [
                Var('rewrapper_cfg_project'),
                '--skip_remoteexec_cfg_fetch',
                '--quiet',
+               ],
+  },
+  # Configure Siso for developer builds.
+  {
+    'name': 'configure_siso',
+    'pattern': '.',
+    'action': ['python3',
+               'build/config/siso/configure_siso.py',
+               '--rbe_instance',
+               Var('rbe_instance'),
                ],
   },
 ]
