@@ -194,6 +194,7 @@ struct Options {
   bool croscore_font_names = false;
   OutputFormat output_format = OutputFormat::kNone;
   std::string password;
+  std::string render_repeats_as_string;
   std::string scale_factor_as_string;
   std::string exe_path;
   std::string bin_directory;
@@ -697,6 +698,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->password = value;
+    } else if (ParseSwitchKeyValue(cur_arg, "--render-repeats=", &value)) {
+      if (!options->render_repeats_as_string.empty()) {
+        fprintf(stderr, "Duplicate --render-repeats argument\n");
+        return false;
+      }
+      options->render_repeats_as_string = value;
     } else if (ParseSwitchKeyValue(cur_arg, "--scale=", &value)) {
       if (!options->scale_factor_as_string.empty()) {
         fprintf(stderr, "Duplicate --scale argument\n");
@@ -1697,6 +1704,11 @@ void Processor::ProcessPdf(const std::string& name,
   }
 #endif
 
+  int render_repeats = 1;
+  if (!options().render_repeats_as_string.empty()) {
+    std::stringstream(options().render_repeats_as_string) >> render_repeats;
+  }
+
   int page_count = FPDF_GetPageCount(doc.get());
   int processed_pages = 0;
   int bad_pages = 0;
@@ -1704,25 +1716,28 @@ void Processor::ProcessPdf(const std::string& name,
   int last_page = options().pages ? options().last_page + 1 : page_count;
   PdfProcessor pdf_processor(this, &name, &events, doc.get(), form.get(),
                              &form_callbacks);
-  for (int i = first_page; i < last_page; ++i) {
-    if (is_linearized) {
-      int avail_status = PDF_DATA_NOTAVAIL;
-      while (avail_status == PDF_DATA_NOTAVAIL) {
-        avail_status = FPDFAvail_IsPageAvail(pdf_avail.get(), i, &hints);
-      }
 
-      if (avail_status == PDF_DATA_ERROR) {
-        fprintf(stderr, "Unknown error in checking if page %d is available.\n",
-                i);
-        return;
+  for (int repetition = 0; repetition < render_repeats; ++repetition) {
+    for (int i = first_page; i < last_page; ++i) {
+      if (is_linearized) {
+        int avail_status = PDF_DATA_NOTAVAIL;
+        while (avail_status == PDF_DATA_NOTAVAIL) {
+          avail_status = FPDFAvail_IsPageAvail(pdf_avail.get(), i, &hints);
+        }
+
+        if (avail_status == PDF_DATA_ERROR) {
+          fprintf(stderr,
+                  "Unknown error in checking if page %d is available.\n", i);
+          return;
+        }
       }
+      if (pdf_processor.ProcessPage(i)) {
+        ++processed_pages;
+      } else {
+        ++bad_pages;
+      }
+      Idle();
     }
-    if (pdf_processor.ProcessPage(i)) {
-      ++processed_pages;
-    } else {
-      ++bad_pages;
-    }
-    Idle();
   }
 
   FORM_DoDocumentAAction(form.get(), FPDFDOC_AACTION_WC);
@@ -1775,6 +1790,7 @@ constexpr char kUsageString[] =
     "  --mem-document         - load document with FPDF_LoadMemDocument()\n"
     "  --render-oneshot       - render image without using progressive "
     "renderer\n"
+    "  --render-repeats=<n>   - render PDF n times; useful for benchmarking\n"
     "  --lcd-text             - render text optimized for LCD displays\n"
     "  --no-nativetext        - render without using the native text output\n"
     "  --grayscale            - render grayscale output\n"
