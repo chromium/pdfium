@@ -31,6 +31,7 @@ endobj
       /Shj 14 0 R
       /Shk 15 0 R
       /Shl 16 0 R
+      /Shm 17 0 R
     >>
   >>
 >>
@@ -106,9 +107,14 @@ q
 /Shk sh
 Q
 q
-1 0 0 1 100 -20 cm
+1 0 0 1 80 -20 cm
 0 0 100 100 re W n
 /Shl sh
+Q
+q
+1 0 0 1 155 10 cm
+0 0 100 100 re W n
+/Shm sh
 Q
 
 endstream
@@ -411,6 +417,30 @@ stream
 012F 0126  01C2 00FA
 01C2 015E  01C2 01C2
 015E 01C2  00FA 01C2
+
+80ff00 80ff00 80ff00 80ff00
+>
+endstream
+endobj
+
+{{object 17 0}} <<
+  /ShadingType 7
+  /ColorSpace /DeviceRGB
+  /BitsPerCoordinate 16
+  /BitsPerComponent 8
+  /BitsPerFlag 8
+  /Decode [0 40 0 40 0 1 0 1 0 1]
+  /Filter /ASCIIHexDecode
+  {{streamlen}}
+>>
+stream
+00
+           0000 0000  0000 5000
+0000 a000  0000 f000  5000 f000
+a000 f000  f000 f000  a000 f000
+5000 f000  0000 f000  0000 a000
+0000 5000
+5000 5000  5000 a000  a000 a000  5000 a000
 
 80ff00 80ff00 80ff00 80ff00
 >
