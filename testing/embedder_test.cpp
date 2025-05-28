@@ -685,6 +685,10 @@ std::string EmbedderTest::GetPostScriptFromEmf(
 }
 #endif  // BUILDFLAG(IS_WIN)
 
+EmbedderTest::ScopedSavedDoc EmbedderTest::OpenScopedSavedDocument() {
+  return ScopedSavedDoc(this);
+}
+
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocument() {
   return OpenSavedDocumentWithPassword(nullptr);
 }
@@ -721,6 +725,11 @@ void EmbedderTest::CloseSavedDocument() {
   saved_form_handle_.reset();
   saved_document_.reset();
   saved_avail_.reset();
+}
+
+EmbedderTest::ScopedSavedPage EmbedderTest::LoadScopedSavedPage(
+    int page_index) {
+  return ScopedSavedPage(this, page_index);
 }
 
 FPDF_PAGE EmbedderTest::LoadSavedPage(int page_index) {
@@ -906,13 +915,41 @@ void EmbedderTest::ClosePDFFileForWrite() {
 }
 #endif
 
-EmbedderTest::ScopedPage::ScopedPage() : test_(nullptr), page_(nullptr) {}
+EmbedderTest::ScopedSavedDoc::ScopedSavedDoc()
+    : test_(nullptr), doc_(nullptr) {}
+
+EmbedderTest::ScopedSavedDoc::ScopedSavedDoc(EmbedderTest* test)
+    : test_(test), doc_(test->OpenSavedDocument()) {}
+
+EmbedderTest::ScopedSavedDoc::ScopedSavedDoc(ScopedSavedDoc&& that) noexcept
+    : test_(std::move(that.test_)), doc_(std::exchange(that.doc_, nullptr)) {}
+
+EmbedderTest::ScopedSavedDoc& EmbedderTest::ScopedSavedDoc::operator=(
+    ScopedSavedDoc&& that) noexcept {
+  test_ = std::move(that.test_);
+  doc_ = std::exchange(that.doc_, nullptr);
+  return *this;
+}
+
+EmbedderTest::ScopedSavedDoc::~ScopedSavedDoc() {
+  if (doc_) {
+    test_->CloseSavedDocument();
+  }
+}
+
+EmbedderTest::ScopedPageBase::ScopedPageBase(EmbedderTest* test, FPDF_PAGE page)
+    : test_(test), page_(page) {}
+
+EmbedderTest::ScopedPageBase::~ScopedPageBase() = default;
+
+EmbedderTest::ScopedPage::ScopedPage() : ScopedPageBase(nullptr, nullptr) {}
 
 EmbedderTest::ScopedPage::ScopedPage(EmbedderTest* test, int page_index)
-    : test_(test), page_(test->LoadPage(page_index)) {}
+    : ScopedPageBase(test, test->LoadPage(page_index)) {}
 
 EmbedderTest::ScopedPage::ScopedPage(EmbedderTest::ScopedPage&& that) noexcept
-    : test_(std::move(that.test_)), page_(std::exchange(that.page_, nullptr)) {}
+    : ScopedPageBase(std::move(that.test_),
+                     std::exchange(that.page_, nullptr)) {}
 
 EmbedderTest::ScopedPage& EmbedderTest::ScopedPage::operator=(
     EmbedderTest::ScopedPage&& that) noexcept {
@@ -924,5 +961,30 @@ EmbedderTest::ScopedPage& EmbedderTest::ScopedPage::operator=(
 EmbedderTest::ScopedPage::~ScopedPage() {
   if (page_) {
     test_->UnloadPage(page_);
+  }
+}
+
+EmbedderTest::ScopedSavedPage::ScopedSavedPage()
+    : ScopedPageBase(nullptr, nullptr) {}
+
+EmbedderTest::ScopedSavedPage::ScopedSavedPage(EmbedderTest* test,
+                                               int page_index)
+    : ScopedPageBase(test, test->LoadSavedPage(page_index)) {}
+
+EmbedderTest::ScopedSavedPage::ScopedSavedPage(
+    EmbedderTest::ScopedSavedPage&& that) noexcept
+    : ScopedPageBase(std::move(that.test_),
+                     std::exchange(that.page_, nullptr)) {}
+
+EmbedderTest::ScopedSavedPage& EmbedderTest::ScopedSavedPage::operator=(
+    EmbedderTest::ScopedSavedPage&& that) noexcept {
+  test_ = std::move(that.test_);
+  page_ = std::exchange(that.page_, nullptr);
+  return *this;
+}
+
+EmbedderTest::ScopedSavedPage::~ScopedSavedPage() {
+  if (page_) {
+    test_->CloseSavedPage(page_);
   }
 }

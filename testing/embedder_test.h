@@ -89,7 +89,40 @@ class EmbedderTest : public ::testing::Test,
                                                  int modifiers) {}
   };
 
-  class ScopedPage {
+  class ScopedSavedDoc {
+   public:
+    ScopedSavedDoc();
+    explicit ScopedSavedDoc(EmbedderTest* test);
+    ScopedSavedDoc(const ScopedSavedDoc&) = delete;
+    ScopedSavedDoc& operator=(const ScopedSavedDoc&) = delete;
+    ScopedSavedDoc(ScopedSavedDoc&&) noexcept;
+    ScopedSavedDoc& operator=(ScopedSavedDoc&&) noexcept;
+    ~ScopedSavedDoc();
+
+    FPDF_DOCUMENT get() { return doc_; }
+
+    explicit operator bool() const { return !!doc_; }
+
+   private:
+    UnownedPtr<EmbedderTest> test_;
+    FPDF_DOCUMENT doc_;
+  };
+
+  class ScopedPageBase {
+   public:
+    FPDF_PAGE get() { return page_; }
+
+    explicit operator bool() const { return !!page_; }
+
+   protected:
+    ScopedPageBase(EmbedderTest* test, FPDF_PAGE page);
+    ~ScopedPageBase();
+
+    UnownedPtr<EmbedderTest> test_;
+    FPDF_PAGE page_;
+  };
+
+  class ScopedPage : public ScopedPageBase {
    public:
     ScopedPage();
     ScopedPage(EmbedderTest* test, int page_index);
@@ -98,14 +131,17 @@ class EmbedderTest : public ::testing::Test,
     ScopedPage(ScopedPage&&) noexcept;
     ScopedPage& operator=(ScopedPage&&) noexcept;
     ~ScopedPage();
+  };
 
-    FPDF_PAGE get() { return page_; }
-
-    explicit operator bool() const { return !!page_; }
-
-   private:
-    UnownedPtr<EmbedderTest> test_;
-    FPDF_PAGE page_;
+  class ScopedSavedPage : public ScopedPageBase {
+   public:
+    ScopedSavedPage();
+    ScopedSavedPage(EmbedderTest* test, int page_index);
+    ScopedSavedPage(const ScopedSavedPage&) = delete;
+    ScopedSavedPage& operator=(const ScopedSavedPage&) = delete;
+    ScopedSavedPage(ScopedSavedPage&&) noexcept;
+    ScopedSavedPage& operator=(ScopedSavedPage&&) noexcept;
+    ~ScopedSavedPage();
   };
 
   EmbedderTest();
@@ -283,9 +319,11 @@ class EmbedderTest : public ::testing::Test,
                                 unsigned long size);
 
   // See comments in the respective non-Saved versions of these methods.
+  ScopedSavedDoc OpenScopedSavedDocument();
   FPDF_DOCUMENT OpenSavedDocument();
   FPDF_DOCUMENT OpenSavedDocumentWithPassword(const char* password);
   void CloseSavedDocument();
+  ScopedSavedPage LoadScopedSavedPage(int page_index);
   FPDF_PAGE LoadSavedPage(int page_index);
   void CloseSavedPage(FPDF_PAGE page);
 
