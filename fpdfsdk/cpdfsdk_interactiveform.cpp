@@ -198,8 +198,8 @@ int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
     }
 
     for (size_t j = 0, jsz = pAnnots->size(); j < jsz; j++) {
-      RetainPtr<const CPDF_Object> pDict = pAnnots->GetDirectObjectAt(j);
-      if (pAnnotDict == pDict) {
+      RetainPtr<const CPDF_Object> dict = pAnnots->GetDirectObjectAt(j);
+      if (pAnnotDict == dict) {
         return i;
       }
     }

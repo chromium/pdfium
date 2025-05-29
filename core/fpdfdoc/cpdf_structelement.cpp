@@ -25,9 +25,9 @@ CPDF_StructElement::Kid::Kid(const Kid& that) = default;
 CPDF_StructElement::Kid::~Kid() = default;
 
 CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
-                                       RetainPtr<const CPDF_Dictionary> pDict)
+                                       RetainPtr<const CPDF_Dictionary> dict)
     : tree_(pTree),
-      dict_(std::move(pDict)),
+      dict_(std::move(dict)),
       type_(tree_->GetRoleMapNameFor(dict_->GetNameFor("S").AsStringView())) {
   LoadKids();
 }
@@ -96,11 +96,11 @@ int CPDF_StructElement::GetKidContentId(size_t index) const {
              : -1;
 }
 
-bool CPDF_StructElement::UpdateKidIfElement(const CPDF_Dictionary* pDict,
+bool CPDF_StructElement::UpdateKidIfElement(const CPDF_Dictionary* dict,
                                             CPDF_StructElement* pElement) {
   bool bSave = false;
   for (auto& kid : kids_) {
-    if (kid.type_ == Kid::kElement && kid.dict_ == pDict) {
+    if (kid.type_ == Kid::kElement && kid.dict_ == dict) {
       kid.element_.Reset(pElement);
       bSave = true;
     }

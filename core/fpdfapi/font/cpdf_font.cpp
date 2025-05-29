@@ -294,13 +294,13 @@ RetainPtr<CPDF_Font> CPDF_Font::GetStockFont(CPDF_Document* pDoc,
     return font;
   }
 
-  auto pDict = pDoc->New<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Name>("Type", "Font");
-  pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
-  pDict->SetNewFor<CPDF_Name>("BaseFont", fontname);
-  pDict->SetNewFor<CPDF_Name>("Encoding",
-                              pdfium::font_encodings::kWinAnsiEncoding);
-  font = CPDF_Font::Create(nullptr, std::move(pDict), nullptr);
+  auto dict = pDoc->New<CPDF_Dictionary>();
+  dict->SetNewFor<CPDF_Name>("Type", "Font");
+  dict->SetNewFor<CPDF_Name>("Subtype", "Type1");
+  dict->SetNewFor<CPDF_Name>("BaseFont", fontname);
+  dict->SetNewFor<CPDF_Name>("Encoding",
+                             pdfium::font_encodings::kWinAnsiEncoding);
+  font = CPDF_Font::Create(nullptr, std::move(dict), nullptr);
   font_globals->Set(pDoc, font_id.value(), font);
   return font;
 }

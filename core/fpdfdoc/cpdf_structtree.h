@@ -40,10 +40,10 @@ class CPDF_StructTree {
 
   void LoadPageTree(RetainPtr<const CPDF_Dictionary> pPageDict);
   RetainPtr<CPDF_StructElement> AddPageNode(
-      RetainPtr<const CPDF_Dictionary> pDict,
+      RetainPtr<const CPDF_Dictionary> dict,
       StructElementMap* map,
       int nLevel);
-  bool AddTopLevelNode(const CPDF_Dictionary* pDict,
+  bool AddTopLevelNode(const CPDF_Dictionary* dict,
                        const RetainPtr<CPDF_StructElement>& pElement);
 
   RetainPtr<const CPDF_Dictionary> const tree_root_;

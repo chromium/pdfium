@@ -96,14 +96,14 @@ CPDF_Document* CPDFXFA_Page::GetDocument() const {
 }
 
 bool CPDFXFA_Page::LoadPDFPage() {
-  RetainPtr<CPDF_Dictionary> pDict =
+  RetainPtr<CPDF_Dictionary> dict =
       GetDocument()->GetMutablePageDictionary(page_index_);
-  if (!pDict) {
+  if (!dict) {
     return false;
   }
 
-  if (!pdfpage_ || pdfpage_->GetDict() != pDict) {
-    LoadPDFPageFromDict(std::move(pDict));
+  if (!pdfpage_ || pdfpage_->GetDict() != dict) {
+    LoadPDFPageFromDict(std::move(dict));
   }
 
   return true;

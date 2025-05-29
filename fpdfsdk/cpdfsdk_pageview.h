@@ -51,7 +51,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool IsValidSDKAnnot(const CPDFSDK_Annot* p) const;
 
   std::vector<CPDFSDK_Annot*> GetAnnotList() const;
-  CPDFSDK_Annot* GetAnnotByDict(const CPDF_Dictionary* pDict);
+  CPDFSDK_Annot* GetAnnotByDict(const CPDF_Dictionary* dict);
 
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_Annot* AddAnnotForFFWidget(CXFA_FFWidget* pWidget);

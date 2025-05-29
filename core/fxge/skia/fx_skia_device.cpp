@@ -1188,9 +1188,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
   if (nFuncs > 1) {  // TODO(caryclark) remove this restriction
     return false;
   }
-  RetainPtr<const CPDF_Dictionary> pDict =
-      pattern.GetShadingObject()->GetDict();
-  RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
+  RetainPtr<const CPDF_Dictionary> dict = pattern.GetShadingObject()->GetDict();
+  RetainPtr<const CPDF_Array> pCoords = dict->GetArrayFor("Coords");
   if (!pCoords) {
     return false;
   }
@@ -1225,7 +1224,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
       return false;
     }
   }
-  RetainPtr<const CPDF_Array> pArray = pDict->GetArrayFor("Extend");
+  RetainPtr<const CPDF_Array> pArray = dict->GetArrayFor("Extend");
   bool clipStart = !pArray || !pArray->GetIntegerAt(0);
   bool clipEnd = !pArray || !pArray->GetIntegerAt(1);
   SkPaint paint;

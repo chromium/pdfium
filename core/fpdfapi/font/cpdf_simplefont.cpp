@@ -196,14 +196,14 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
     return;
   }
 
-  const CPDF_Dictionary* pDict = pEncoding->AsDictionary();
-  if (!pDict) {
+  const CPDF_Dictionary* dict = pEncoding->AsDictionary();
+  if (!dict) {
     return;
   }
 
   if (base_encoding_ != FontEncoding::kAdobeSymbol &&
       base_encoding_ != FontEncoding::kZapfDingbats) {
-    ByteString bsEncoding = pDict->GetByteStringFor("BaseEncoding");
+    ByteString bsEncoding = dict->GetByteStringFor("BaseEncoding");
     if (bTrueType && bsEncoding == pdfium::font_encodings::kMacExpertEncoding) {
       bsEncoding = pdfium::font_encodings::kWinAnsiEncoding;
     }
@@ -213,7 +213,7 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
     base_encoding_ = FontEncoding::kStandard;
   }
 
-  LoadDifferences(pDict);
+  LoadDifferences(dict);
 }
 
 int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {

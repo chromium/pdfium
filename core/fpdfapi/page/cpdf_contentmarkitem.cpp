@@ -31,9 +31,9 @@ RetainPtr<CPDF_Dictionary> CPDF_ContentMarkItem::GetParam() {
       const_cast<CPDF_Dictionary*>(std::as_const(*this).GetParam().Get()));
 }
 
-void CPDF_ContentMarkItem::SetDirectDict(RetainPtr<CPDF_Dictionary> pDict) {
+void CPDF_ContentMarkItem::SetDirectDict(RetainPtr<CPDF_Dictionary> dict) {
   param_type_ = kDirectDict;
-  direct_dict_ = std::move(pDict);
+  direct_dict_ = std::move(dict);
 }
 
 void CPDF_ContentMarkItem::SetPropertiesHolder(

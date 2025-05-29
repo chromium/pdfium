@@ -605,7 +605,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
         pool_, PDF_NameDecode(ByteStringView(word_span).Substr(1)));
   }
   if (word == "<<") {
-    RetainPtr<CPDF_Dictionary> pDict =
+    RetainPtr<CPDF_Dictionary> dict =
         pdfium::MakeRetain<CPDF_Dictionary>(pool_);
     while (true) {
       WordResult inner_word_result = GetNextWord();
@@ -646,16 +646,16 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
       // `key` has to be "/X" at the minimum.
       // `pObj` cannot be a stream, per ISO 32000-1:2008 section 7.3.8.1.
       if (key.GetLength() > 1 && !pObj->IsStream()) {
-        pDict->SetFor(key.Substr(1), std::move(pObj));
+        dict->SetFor(key.Substr(1), std::move(pObj));
       }
     }
 
     AutoRestorer<FX_FILESIZE> pos_restorer(&pos_);
     if (GetNextWord().word != "stream") {
-      return pDict;
+      return dict;
     }
     pos_restorer.AbandonRestoration();
-    return ReadStream(std::move(pDict));
+    return ReadStream(std::move(dict));
   }
   if (word == ">>") {
     pos_ = SavedObjPos;
@@ -769,9 +769,9 @@ FX_FILESIZE CPDF_SyntaxParser::FindStreamEndPos() {
 }
 
 RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
-    RetainPtr<CPDF_Dictionary> pDict) {
+    RetainPtr<CPDF_Dictionary> dict) {
   RetainPtr<const CPDF_Number> pLenObj =
-      ToNumber(pDict->GetDirectObjectFor("Length"));
+      ToNumber(dict->GetDirectObjectFor("Length"));
   FX_FILESIZE len = pLenObj ? pLenObj->GetInteger() : -1;
 
   // Locate the start of stream.
@@ -865,10 +865,10 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
         pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(std::move(data));
 
     stream = pdfium::MakeRetain<CPDF_Stream>(std::move(data_as_stream),
-                                             std::move(pDict));
+                                             std::move(dict));
   } else {
     DCHECK(!len);
-    stream = pdfium::MakeRetain<CPDF_Stream>(std::move(pDict));
+    stream = pdfium::MakeRetain<CPDF_Stream>(std::move(dict));
   }
   const FX_FILESIZE end_stream_offset = GetPos();
   const size_t zap_length = kEndObjStr.GetLength() + 1;

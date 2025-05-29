@@ -11,33 +11,33 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(CPDFFunction, BadFunctionType) {
-  auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Number>("FunctionType", -2);
-  EXPECT_FALSE(CPDF_Function::Load(pDict));
+  auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  dict->SetNewFor<CPDF_Number>("FunctionType", -2);
+  EXPECT_FALSE(CPDF_Function::Load(dict));
 
-  pDict->SetNewFor<CPDF_Number>("FunctionType", 5);
-  EXPECT_FALSE(CPDF_Function::Load(pDict));
+  dict->SetNewFor<CPDF_Number>("FunctionType", 5);
+  EXPECT_FALSE(CPDF_Function::Load(dict));
 }
 
 TEST(CPDFFunction, NoDomain) {
-  auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Number>("FunctionType", 0);
-  EXPECT_FALSE(CPDF_Function::Load(pDict));
+  auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  dict->SetNewFor<CPDF_Number>("FunctionType", 0);
+  EXPECT_FALSE(CPDF_Function::Load(dict));
 }
 
 TEST(CPDFFunction, EmptyDomain) {
-  auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Number>("FunctionType", 0);
-  pDict->SetNewFor<CPDF_Array>("Domain");
-  EXPECT_FALSE(CPDF_Function::Load(pDict));
+  auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  dict->SetNewFor<CPDF_Number>("FunctionType", 0);
+  dict->SetNewFor<CPDF_Array>("Domain");
+  EXPECT_FALSE(CPDF_Function::Load(dict));
 }
 
 TEST(CPDFFunction, NoRange) {
-  auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Number>("FunctionType", 0);
+  auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  dict->SetNewFor<CPDF_Number>("FunctionType", 0);
 
-  auto pArray = pDict->SetNewFor<CPDF_Array>("Domain");
+  auto pArray = dict->SetNewFor<CPDF_Array>("Domain");
   pArray->AppendNew<CPDF_Number>(0);
   pArray->AppendNew<CPDF_Number>(10);
-  EXPECT_FALSE(CPDF_Function::Load(pDict));
+  EXPECT_FALSE(CPDF_Function::Load(dict));
 }

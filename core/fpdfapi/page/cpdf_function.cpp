@@ -63,8 +63,8 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
   int iType = -1;
   if (const CPDF_Stream* pStream = pFuncObj->AsStream()) {
     iType = pStream->GetDict()->GetIntegerFor("FunctionType");
-  } else if (const CPDF_Dictionary* pDict = pFuncObj->AsDictionary()) {
-    iType = pDict->GetIntegerFor("FunctionType");
+  } else if (const CPDF_Dictionary* dict = pFuncObj->AsDictionary()) {
+    iType = dict->GetIntegerFor("FunctionType");
   }
 
   std::unique_ptr<CPDF_Function> pFunc;
@@ -92,10 +92,10 @@ CPDF_Function::~CPDF_Function() = default;
 
 bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   const CPDF_Stream* pStream = pObj->AsStream();
-  RetainPtr<const CPDF_Dictionary> pDict =
+  RetainPtr<const CPDF_Dictionary> dict =
       pStream ? pStream->GetDict() : pdfium::WrapRetain(pObj->AsDictionary());
 
-  RetainPtr<const CPDF_Array> pDomains = pDict->GetArrayFor("Domain");
+  RetainPtr<const CPDF_Array> pDomains = dict->GetArrayFor("Domain");
   if (!pDomains) {
     return false;
   }
@@ -108,7 +108,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   size_t nInputs = inputs_ * 2;
   domains_ = ReadArrayElementsToVector(pDomains.Get(), nInputs);
 
-  RetainPtr<const CPDF_Array> pRanges = pDict->GetArrayFor("Range");
+  RetainPtr<const CPDF_Array> pRanges = dict->GetArrayFor("Range");
   outputs_ = pRanges ? fxcrt::CollectionSize<uint32_t>(*pRanges) / 2 : 0;
 
   // Ranges are required for type 0 and type 4 functions. A non-zero

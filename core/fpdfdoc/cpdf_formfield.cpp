@@ -113,8 +113,8 @@ WideString CPDF_FormField::GetFullNameForDict(
 }
 
 CPDF_FormField::CPDF_FormField(CPDF_InteractiveForm* pForm,
-                               RetainPtr<CPDF_Dictionary> pDict)
-    : form_(pForm), dict_(std::move(pDict)) {
+                               RetainPtr<CPDF_Dictionary> dict)
+    : form_(pForm), dict_(std::move(dict)) {
   InitFieldFlags();
 }
 

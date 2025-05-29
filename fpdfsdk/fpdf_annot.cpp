@@ -410,16 +410,16 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
     return nullptr;
   }
 
-  auto pDict = pPage->GetDocument()->New<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "Annot");
-  pDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype,
-                              CPDF_Annot::AnnotSubtypeToString(
-                                  static_cast<CPDF_Annot::Subtype>(subtype)));
+  auto dict = pPage->GetDocument()->New<CPDF_Dictionary>();
+  dict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "Annot");
+  dict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype,
+                             CPDF_Annot::AnnotSubtypeToString(
+                                 static_cast<CPDF_Annot::Subtype>(subtype)));
   auto pNewAnnot =
-      std::make_unique<CPDF_AnnotContext>(pDict, IPDFPageFromFPDFPage(page));
+      std::make_unique<CPDF_AnnotContext>(dict, IPDFPageFromFPDFPage(page));
 
   RetainPtr<CPDF_Array> pAnnotList = pPage->GetOrCreateAnnotsArray();
-  pAnnotList->Append(pDict);
+  pAnnotList->Append(dict);
 
   // Caller takes ownership.
   return FPDFAnnotationFromCPDFAnnotContext(pNewAnnot.release());
@@ -447,14 +447,14 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pDict =
+  RetainPtr<CPDF_Dictionary> dict =
       ToDictionary(pAnnots->GetMutableDirectObjectAt(index));
-  if (!pDict) {
+  if (!dict) {
     return nullptr;
   }
 
   auto pNewAnnot = std::make_unique<CPDF_AnnotContext>(
-      std::move(pDict), IPDFPageFromFPDFPage(page));
+      std::move(dict), IPDFPageFromFPDFPage(page));
 
   // Caller takes ownership.
   return FPDFAnnotationFromCPDFAnnotContext(pNewAnnot.release());
@@ -658,9 +658,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
   }
 
   if (!pAnnot->HasForm()) {
-    RetainPtr<CPDF_Dictionary> pDict = pAnnot->GetMutableAnnotDict();
+    RetainPtr<CPDF_Dictionary> dict = pAnnot->GetMutableAnnotDict();
     RetainPtr<CPDF_Stream> pStream =
-        GetAnnotAP(pDict.Get(), CPDF_Annot::AppearanceMode::kNormal);
+        GetAnnotAP(dict.Get(), CPDF_Annot::AppearanceMode::kNormal);
     if (!pStream) {
       return 0;
     }
@@ -1189,16 +1189,16 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
 
   const char* mode_key = kModeKeyForMode[appearanceMode];
 
-  RetainPtr<CPDF_Dictionary> pApDict =
+  RetainPtr<CPDF_Dictionary> ap_dict =
       pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
 
   // If `value` is null, then the action is to remove.
   if (!value) {
-    if (pApDict) {
+    if (ap_dict) {
       if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL) {
         pAnnotDict->RemoveFor(pdfium::annotation::kAP);
       } else {
-        pApDict->RemoveFor(mode_key);
+        ap_dict->RemoveFor(mode_key);
       }
     }
     return true;
@@ -1240,10 +1240,10 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   new_stream->SetData(new_stream_data.unsigned_span());
 
   // Storing reference to indirect object in annotation's AP
-  if (!pApDict) {
-    pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
+  if (!ap_dict) {
+    ap_dict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
   }
-  pApDict->SetNewFor<CPDF_Reference>(mode_key, pDoc, new_stream->GetObjNum());
+  ap_dict->SetNewFor<CPDF_Reference>(mode_key, pDoc, new_stream->GetObjNum());
 
   return true;
 }

@@ -244,13 +244,13 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
   }
 
   RetainPtr<CPDF_Dictionary> pPageDict = widget_dict_->GetMutableDictFor("P");
-  RetainPtr<CPDF_Dictionary> pDict = ToDictionary(
+  RetainPtr<CPDF_Dictionary> dict = ToDictionary(
       CPDF_FormField::GetMutableFieldAttrForDict(pPageDict.Get(), "Resources"));
-  if (!pDict) {
+  if (!dict) {
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> fonts = pDict->GetMutableDictFor("Font");
+  RetainPtr<CPDF_Dictionary> fonts = dict->GetMutableDictFor("Font");
   if (!ValidateFontResourceDict(fonts.Get())) {
     return nullptr;
   }

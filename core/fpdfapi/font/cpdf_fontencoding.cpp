@@ -1731,11 +1731,11 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
     pDiff->AppendNew<CPDF_Name>(AdobeNameFromUnicode(unicodes_[i]));
   }
 
-  auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(pPool);
-  pDict->SetNewFor<CPDF_Name>("BaseEncoding",
-                              pdfium::font_encodings::kWinAnsiEncoding);
-  pDict->SetFor("Differences", pDiff);
-  return pDict;
+  auto dict = pdfium::MakeRetain<CPDF_Dictionary>(pPool);
+  dict->SetNewFor<CPDF_Name>("BaseEncoding",
+                             pdfium::font_encodings::kWinAnsiEncoding);
+  dict->SetFor("Differences", pDiff);
+  return dict;
 }
 
 uint32_t CharCodeFromUnicodeForEncoding(fxge::FontEncoding encoding,

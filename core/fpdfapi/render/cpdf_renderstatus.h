@@ -183,7 +183,7 @@ class CPDF_RenderStatus {
                                     const CFX_Matrix& smask_matrix);
   // Optionally write the colorspace family value into |pCSFamily|.
   FX_ARGB GetBackgroundColor(const CPDF_Dictionary* pSMaskDict,
-                             const CPDF_Dictionary* pGroupDict,
+                             const CPDF_Dictionary* group_dict,
                              CPDF_ColorSpace::Family* pCSFamily);
   FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
   FX_RECT GetObjectClippedRect(const CPDF_PageObject* pObj,

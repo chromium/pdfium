@@ -43,8 +43,8 @@ constexpr auto kActionTypeStrings = std::to_array<const char*>({
 
 }  // namespace
 
-CPDF_Action::CPDF_Action(RetainPtr<const CPDF_Dictionary> pDict)
-    : dict_(std::move(pDict)) {}
+CPDF_Action::CPDF_Action(RetainPtr<const CPDF_Dictionary> dict)
+    : dict_(std::move(dict)) {}
 
 CPDF_Action::CPDF_Action(const CPDF_Action& that) = default;
 
@@ -217,9 +217,9 @@ CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
     return CPDF_Action(pArray->GetDictAt(iIndex));
   }
 
-  if (const CPDF_Dictionary* pDict = pNext->AsDictionary()) {
+  if (const CPDF_Dictionary* dict = pNext->AsDictionary()) {
     if (iIndex == 0) {
-      return CPDF_Action(pdfium::WrapRetain(pDict));
+      return CPDF_Action(pdfium::WrapRetain(dict));
     }
   }
   return CPDF_Action(nullptr);

@@ -43,8 +43,8 @@ constexpr const std::array<const char*, CPDF_AAction::kNumberOfActions - 1>
 
 }  // namespace
 
-CPDF_AAction::CPDF_AAction(RetainPtr<const CPDF_Dictionary> pDict)
-    : dict_(std::move(pDict)) {}
+CPDF_AAction::CPDF_AAction(RetainPtr<const CPDF_Dictionary> dict)
+    : dict_(std::move(dict)) {}
 
 CPDF_AAction::CPDF_AAction(const CPDF_AAction& that) = default;
 

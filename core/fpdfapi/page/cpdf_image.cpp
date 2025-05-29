@@ -108,7 +108,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pDict =
+  RetainPtr<CPDF_Dictionary> dict =
       CreateXObjectImageDict(info.width, info.height);
   const char* csname = nullptr;
   if (info.num_components == 1) {
@@ -117,24 +117,24 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     csname = "DeviceRGB";
   } else if (info.num_components == 4) {
     csname = "DeviceCMYK";
-    auto pDecode = pDict->SetNewFor<CPDF_Array>("Decode");
+    auto pDecode = dict->SetNewFor<CPDF_Array>("Decode");
     for (int n = 0; n < 4; n++) {
       pDecode->AppendNew<CPDF_Number>(1);
       pDecode->AppendNew<CPDF_Number>(0);
     }
   }
-  pDict->SetNewFor<CPDF_Name>("ColorSpace", csname);
-  pDict->SetNewFor<CPDF_Number>("BitsPerComponent", info.bits_per_components);
-  pDict->SetNewFor<CPDF_Name>("Filter", "DCTDecode");
+  dict->SetNewFor<CPDF_Name>("ColorSpace", csname);
+  dict->SetNewFor<CPDF_Number>("BitsPerComponent", info.bits_per_components);
+  dict->SetNewFor<CPDF_Name>("Filter", "DCTDecode");
   if (!info.color_transform) {
     auto pParms =
-        pDict->SetNewFor<CPDF_Dictionary>(pdfium::stream::kDecodeParms);
+        dict->SetNewFor<CPDF_Dictionary>(pdfium::stream::kDecodeParms);
     pParms->SetNewFor<CPDF_Number>("ColorTransform", 0);
   }
   is_mask_ = false;
   width_ = info.width;
   height_ = info.height;
-  return pDict;
+  return dict;
 }
 
 void CPDF_Image::SetJpegImage(RetainPtr<IFX_SeekableReadStream> pFile) {
@@ -189,7 +189,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     return;
   }
 
-  RetainPtr<CPDF_Dictionary> pDict =
+  RetainPtr<CPDF_Dictionary> dict =
       CreateXObjectImageDict(BitmapWidth, BitmapHeight);
   const int32_t bpp = pBitmap->GetBPP();
   size_t dest_pitch = 0;
@@ -202,14 +202,14 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       set_bgra = ArgbToBGRAStruct(pBitmap->GetPaletteArgb(1));
     }
     if (set_bgra.alpha == 0 || reset_bgra.alpha == 0) {
-      pDict->SetNewFor<CPDF_Boolean>("ImageMask", true);
+      dict->SetNewFor<CPDF_Boolean>("ImageMask", true);
       if (reset_bgra.alpha == 0) {
-        auto pArray = pDict->SetNewFor<CPDF_Array>("Decode");
+        auto pArray = dict->SetNewFor<CPDF_Array>("Decode");
         pArray->AppendNew<CPDF_Number>(1);
         pArray->AppendNew<CPDF_Number>(0);
       }
     } else {
-      auto pCS = pDict->SetNewFor<CPDF_Array>("ColorSpace");
+      auto pCS = dict->SetNewFor<CPDF_Array>("ColorSpace");
       pCS->AppendNew<CPDF_Name>("Indexed");
       pCS->AppendNew<CPDF_Name>("DeviceRGB");
       pCS->AppendNew<CPDF_Number>(1);
@@ -217,7 +217,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
                              set_bgra.red,   set_bgra.green,   set_bgra.blue};
       pCS->AppendNew<CPDF_String>(ct, CPDF_String::DataType::kIsHex);
     }
-    pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 1);
+    dict->SetNewFor<CPDF_Number>("BitsPerComponent", 1);
     dest_pitch = (BitmapWidth + 7) / 8;
   } else if (bpp == 8) {
     size_t palette_size = pBitmap->GetRequiredPaletteSize();
@@ -240,16 +240,16 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       auto pCTS = document_->NewIndirect<CPDF_Stream>(std::move(color_table),
                                                       std::move(pNewDict));
       pCS->AppendNew<CPDF_Reference>(document_, pCTS->GetObjNum());
-      pDict->SetNewFor<CPDF_Reference>("ColorSpace", document_,
-                                       pCS->GetObjNum());
+      dict->SetNewFor<CPDF_Reference>("ColorSpace", document_,
+                                      pCS->GetObjNum());
     } else {
-      pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
+      dict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
     }
-    pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
+    dict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
     dest_pitch = BitmapWidth;
   } else {
-    pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceRGB");
-    pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
+    dict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceRGB");
+    dict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
     dest_pitch = BitmapWidth * 3;
     bCopyWithoutAlpha = false;
   }
@@ -280,8 +280,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
         "Length", pdfium::checked_cast<int>(mask_buf.size()));
     auto pNewStream = document_->NewIndirect<CPDF_Stream>(std::move(mask_buf),
                                                           std::move(pMaskDict));
-    pDict->SetNewFor<CPDF_Reference>("SMask", document_,
-                                     pNewStream->GetObjNum());
+    dict->SetNewFor<CPDF_Reference>("SMask", document_,
+                                    pNewStream->GetObjNum());
   }
 
   DataVector<uint8_t> dest_buf(Fx2DSizeOrDie(dest_pitch, BitmapHeight));
@@ -313,7 +313,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   }
 
   stream_ =
-      pdfium::MakeRetain<CPDF_Stream>(std::move(dest_buf), std::move(pDict));
+      pdfium::MakeRetain<CPDF_Stream>(std::move(dest_buf), std::move(dict));
   is_mask_ = pBitmap->IsMaskFormat();
   width_ = BitmapWidth;
   height_ = BitmapHeight;

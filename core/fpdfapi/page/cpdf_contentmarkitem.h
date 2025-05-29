@@ -24,7 +24,7 @@ class CPDF_ContentMarkItem final : public Retainable {
   RetainPtr<CPDF_Dictionary> GetParam();
   const ByteString& GetPropertyName() const { return property_name_; }
 
-  void SetDirectDict(RetainPtr<CPDF_Dictionary> pDict);
+  void SetDirectDict(RetainPtr<CPDF_Dictionary> dict);
   void SetPropertiesHolder(RetainPtr<CPDF_Dictionary> pHolder,
                            const ByteString& property_name);
 

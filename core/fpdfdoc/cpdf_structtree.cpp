@@ -106,7 +106,7 @@ void CPDF_StructTree::LoadPageTree(RetainPtr<const CPDF_Dictionary> pPageDict) {
 }
 
 RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
-    RetainPtr<const CPDF_Dictionary> pDict,
+    RetainPtr<const CPDF_Dictionary> dict,
     StructElementMap* map,
     int nLevel) {
   static constexpr int kStructTreeMaxRecursion = 32;
@@ -114,17 +114,17 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
     return nullptr;
   }
 
-  auto it = map->find(pDict);
+  auto it = map->find(dict);
   if (it != map->end()) {
     return it->second;
   }
 
-  RetainPtr<const CPDF_Dictionary> key(pDict);
-  auto pElement = pdfium::MakeRetain<CPDF_StructElement>(this, pDict);
+  RetainPtr<const CPDF_Dictionary> key(dict);
+  auto pElement = pdfium::MakeRetain<CPDF_StructElement>(this, dict);
   (*map)[key] = pElement;
-  RetainPtr<const CPDF_Dictionary> pParent = pDict->GetDictFor("P");
+  RetainPtr<const CPDF_Dictionary> pParent = dict->GetDictFor("P");
   if (!pParent || pParent->GetNameFor("Type") == "StructTreeRoot") {
-    if (!AddTopLevelNode(pDict, pElement)) {
+    if (!AddTopLevelNode(dict, pElement)) {
       map->erase(key);
     }
     return pElement;
@@ -136,7 +136,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
     return pElement;
   }
 
-  if (!pParentElement->UpdateKidIfElement(pDict, pElement.Get())) {
+  if (!pParentElement->UpdateKidIfElement(dict, pElement.Get())) {
     map->erase(key);
     return pElement;
   }
@@ -146,7 +146,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
 }
 
 bool CPDF_StructTree::AddTopLevelNode(
-    const CPDF_Dictionary* pDict,
+    const CPDF_Dictionary* dict,
     const RetainPtr<CPDF_StructElement>& pElement) {
   RetainPtr<const CPDF_Object> pObj = tree_root_->GetDirectObjectFor("K");
   if (!pObj) {
@@ -154,7 +154,7 @@ bool CPDF_StructTree::AddTopLevelNode(
   }
 
   if (pObj->IsDictionary()) {
-    if (pObj->GetObjNum() != pDict->GetObjNum()) {
+    if (pObj->GetObjNum() != dict->GetObjNum()) {
       return false;
     }
     kids_[0] = pElement;
@@ -169,7 +169,7 @@ bool CPDF_StructTree::AddTopLevelNode(
   for (size_t i = 0; i < pTopKids->size(); i++) {
     RetainPtr<const CPDF_Reference> pKidRef =
         ToReference(pTopKids->GetObjectAt(i));
-    if (pKidRef && pKidRef->GetRefObjNum() == pDict->GetObjNum()) {
+    if (pKidRef && pKidRef->GetRefObjNum() == dict->GetObjNum()) {
       kids_[i] = pElement;
       bSave = true;
     }

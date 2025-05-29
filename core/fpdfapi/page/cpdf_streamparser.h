@@ -43,7 +43,7 @@ class CPDF_StreamParser {
                                         bool bInArray,
                                         uint32_t dwRecursionLevel);
   RetainPtr<CPDF_Stream> ReadInlineStream(CPDF_Document* pDoc,
-                                          RetainPtr<CPDF_Dictionary> pDict,
+                                          RetainPtr<CPDF_Dictionary> dict,
                                           const CPDF_Object* pCSObj);
 
  private:

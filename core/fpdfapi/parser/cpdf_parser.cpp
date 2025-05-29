@@ -843,13 +843,13 @@ bool CPDF_Parser::LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref) {
     return false;
   }
 
-  RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
-  int32_t prev = pDict->GetIntegerFor("Prev");
+  RetainPtr<const CPDF_Dictionary> dict = pStream->GetDict();
+  int32_t prev = dict->GetIntegerFor("Prev");
   if (prev < 0) {
     return false;
   }
 
-  int32_t size = pDict->GetIntegerFor("Size");
+  int32_t size = dict->GetIntegerFor("Size");
   if (size < 0) {
     return false;
   }
@@ -857,7 +857,7 @@ bool CPDF_Parser::LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref) {
   *pos = prev;
 
   auto new_cross_ref_table = std::make_unique<CPDF_CrossRefTable>(
-      /*trailer=*/ToDictionary(pDict->Clone()),
+      /*trailer=*/ToDictionary(dict->Clone()),
       /*trailer_object_number=*/pStream->GetObjNum());
   if (is_main_xref) {
     cross_ref_table_ = std::move(new_cross_ref_table);
@@ -868,10 +868,10 @@ bool CPDF_Parser::LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref) {
   }
 
   std::vector<CrossRefStreamIndexEntry> indices =
-      GetCrossRefStreamIndices(pDict->GetArrayFor("Index").Get(), size);
+      GetCrossRefStreamIndices(dict->GetArrayFor("Index").Get(), size);
 
   std::vector<uint32_t> field_widths =
-      GetFieldWidths(pDict->GetArrayFor("W").Get());
+      GetFieldWidths(dict->GetArrayFor("W").Get());
   if (field_widths.size() < kMinFieldCount) {
     return false;
   }

@@ -71,7 +71,7 @@ class CPDF_PageObjectHolder {
       std::deque<std::unique_ptr<CPDF_PageObject>>::const_iterator;
 
   CPDF_PageObjectHolder(CPDF_Document* pDoc,
-                        RetainPtr<CPDF_Dictionary> pDict,
+                        RetainPtr<CPDF_Dictionary> dict,
                         RetainPtr<CPDF_Dictionary> pPageResources,
                         RetainPtr<CPDF_Dictionary> pResources);
   virtual ~CPDF_PageObjectHolder();
@@ -87,8 +87,8 @@ class CPDF_PageObjectHolder {
   RetainPtr<CPDF_Dictionary> GetMutableDict() { return dict_; }
   RetainPtr<const CPDF_Dictionary> GetResources() const { return resources_; }
   RetainPtr<CPDF_Dictionary> GetMutableResources() { return resources_; }
-  void SetResources(RetainPtr<CPDF_Dictionary> pDict) {
-    resources_ = std::move(pDict);
+  void SetResources(RetainPtr<CPDF_Dictionary> dict) {
+    resources_ = std::move(dict);
   }
   RetainPtr<const CPDF_Dictionary> GetPageResources() const {
     return page_resources_;

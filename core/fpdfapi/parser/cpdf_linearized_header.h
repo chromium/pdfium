@@ -43,7 +43,7 @@ class CPDF_LinearizedHeader {
   uint32_t GetHintLength() const { return hint_length_; }
 
  protected:
-  CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
+  CPDF_LinearizedHeader(const CPDF_Dictionary* dict,
                         FX_FILESIZE szLastXRefOffset);
 
  private:

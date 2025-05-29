@@ -50,20 +50,20 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
     return false;
   }
 
-  RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
-  RetainPtr<const CPDF_Array> pSize = pDict->GetArrayFor("Size");
+  RetainPtr<const CPDF_Dictionary> dict = pStream->GetDict();
+  RetainPtr<const CPDF_Array> pSize = dict->GetArrayFor("Size");
   if (!pSize || pSize->IsEmpty()) {
     return false;
   }
 
-  bits_per_sample_ = pDict->GetIntegerFor("BitsPerSample");
+  bits_per_sample_ = dict->GetIntegerFor("BitsPerSample");
   if (!IsValidBitsPerSample(bits_per_sample_)) {
     return false;
   }
 
   FX_SAFE_UINT32 nTotalSampleBits = bits_per_sample_;
   nTotalSampleBits *= outputs_;
-  RetainPtr<const CPDF_Array> pEncode = pDict->GetArrayFor("Encode");
+  RetainPtr<const CPDF_Array> pEncode = dict->GetArrayFor("Encode");
   encode_info_.resize(inputs_);
   for (uint32_t i = 0; i < inputs_; i++) {
     int size = pSize->GetIntegerAt(i);
@@ -94,7 +94,7 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
     return false;
   }
 
-  RetainPtr<const CPDF_Array> pDecode = pDict->GetArrayFor("Decode");
+  RetainPtr<const CPDF_Array> pDecode = dict->GetArrayFor("Decode");
   decode_info_.resize(outputs_);
   for (uint32_t i = 0; i < outputs_; i++) {
     if (pDecode) {

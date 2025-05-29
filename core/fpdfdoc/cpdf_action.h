@@ -43,7 +43,7 @@ class CPDF_Action {
     kLast = kGoTo3DView
   };
 
-  explicit CPDF_Action(RetainPtr<const CPDF_Dictionary> pDict);
+  explicit CPDF_Action(RetainPtr<const CPDF_Dictionary> dict);
   CPDF_Action(const CPDF_Action& that);
   ~CPDF_Action();
 

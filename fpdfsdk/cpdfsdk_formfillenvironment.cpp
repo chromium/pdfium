@@ -716,12 +716,12 @@ bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
     return true;
   }
 
-  RetainPtr<const CPDF_Dictionary> pDict = ToDictionary(pOpenAction);
-  if (!pDict) {
+  RetainPtr<const CPDF_Dictionary> dict = ToDictionary(pOpenAction);
+  if (!dict) {
     return false;
   }
 
-  DoActionDocOpen(CPDF_Action(std::move(pDict)));
+  DoActionDocOpen(CPDF_Action(std::move(dict)));
   return true;
 }
 
@@ -987,12 +987,12 @@ bool CPDFSDK_FormFillEnvironment::DoActionField(const CPDF_Action& action,
 bool CPDFSDK_FormFillEnvironment::ExecuteDocumentOpenAction(
     const CPDF_Action& action,
     std::set<const CPDF_Dictionary*>* visited) {
-  const CPDF_Dictionary* pDict = action.GetDict();
-  if (pdfium::Contains(*visited, pDict)) {
+  const CPDF_Dictionary* dict = action.GetDict();
+  if (pdfium::Contains(*visited, dict)) {
     return false;
   }
 
-  visited->insert(pDict);
+  visited->insert(dict);
 
   if (action.GetType() == CPDF_Action::Type::kJavaScript) {
     if (IsJSPlatformPresent()) {
@@ -1019,12 +1019,12 @@ bool CPDFSDK_FormFillEnvironment::ExecuteDocumentPageAction(
     const CPDF_Action& action,
     CPDF_AAction::AActionType type,
     std::set<const CPDF_Dictionary*>* visited) {
-  const CPDF_Dictionary* pDict = action.GetDict();
-  if (pdfium::Contains(*visited, pDict)) {
+  const CPDF_Dictionary* dict = action.GetDict();
+  if (pdfium::Contains(*visited, dict)) {
     return false;
   }
 
-  visited->insert(pDict);
+  visited->insert(dict);
 
   if (action.GetType() == CPDF_Action::Type::kJavaScript) {
     if (IsJSPlatformPresent()) {
@@ -1062,12 +1062,12 @@ bool CPDFSDK_FormFillEnvironment::ExecuteFieldAction(
     CPDF_FormField* pFormField,
     CFFL_FieldAction* data,
     std::set<const CPDF_Dictionary*>* visited) {
-  const CPDF_Dictionary* pDict = action.GetDict();
-  if (pdfium::Contains(*visited, pDict)) {
+  const CPDF_Dictionary* dict = action.GetDict();
+  if (pdfium::Contains(*visited, dict)) {
     return false;
   }
 
-  visited->insert(pDict);
+  visited->insert(dict);
 
   if (action.GetType() == CPDF_Action::Type::kJavaScript) {
     if (IsJSPlatformPresent()) {

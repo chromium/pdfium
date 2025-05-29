@@ -30,18 +30,18 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   }
 
   CHECK(pObj->IsDictionary() || pObj->IsStream());
-  RetainPtr<const CPDF_Dictionary> pDict = pObj->GetDict();
-  RetainPtr<const CPDF_Array> pFunctionsArray = pDict->GetArrayFor("Functions");
+  RetainPtr<const CPDF_Dictionary> dict = pObj->GetDict();
+  RetainPtr<const CPDF_Array> pFunctionsArray = dict->GetArrayFor("Functions");
   if (!pFunctionsArray) {
     return false;
   }
 
-  RetainPtr<const CPDF_Array> pBoundsArray = pDict->GetArrayFor("Bounds");
+  RetainPtr<const CPDF_Array> pBoundsArray = dict->GetArrayFor("Bounds");
   if (!pBoundsArray) {
     return false;
   }
 
-  RetainPtr<const CPDF_Array> pEncodeArray = pDict->GetArrayFor("Encode");
+  RetainPtr<const CPDF_Array> pEncodeArray = dict->GetArrayFor("Encode");
   if (!pEncodeArray) {
     return false;
   }

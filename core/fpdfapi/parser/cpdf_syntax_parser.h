@@ -108,7 +108,7 @@ class CPDF_SyntaxParser {
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
   FX_FILESIZE FindWordPos(ByteStringView word);
   FX_FILESIZE FindStreamEndPos();
-  RetainPtr<CPDF_Stream> ReadStream(RetainPtr<CPDF_Dictionary> pDict);
+  RetainPtr<CPDF_Stream> ReadStream(RetainPtr<CPDF_Dictionary> dict);
 
   bool IsPositionRead(FX_FILESIZE pos) const;
 

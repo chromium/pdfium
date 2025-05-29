@@ -951,14 +951,14 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
 
   WideString actual_text;
   bool bExist = false;
-  RetainPtr<const CPDF_Dictionary> pDict;
+  RetainPtr<const CPDF_Dictionary> dict;
   for (size_t i = 0; i < nContentMarks; ++i) {
     const CPDF_ContentMarkItem* item = pMarks->GetItem(i);
-    pDict = item->GetParam();
-    if (!pDict) {
+    dict = item->GetParam();
+    if (!dict) {
       continue;
     }
-    RetainPtr<const CPDF_String> temp = pDict->GetStringFor("ActualText");
+    RetainPtr<const CPDF_String> temp = dict->GetStringFor("ActualText");
     if (temp) {
       bExist = true;
       actual_text = temp->GetUnicodeText();
@@ -971,7 +971,7 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
   if (prev_text_obj_) {
     const CPDF_ContentMarks* pPrevMarks = prev_text_obj_->GetContentMarks();
     if (pPrevMarks->CountItems() == nContentMarks &&
-        pPrevMarks->GetItem(nContentMarks - 1)->GetParam() == pDict) {
+        pPrevMarks->GetItem(nContentMarks - 1)->GetParam() == dict) {
       return MarkedContentState::kDone;
     }
   }
@@ -1015,9 +1015,9 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
   WideString actual_text;
   for (size_t n = 0; n < nContentMarks; ++n) {
     const CPDF_ContentMarkItem* item = pMarks->GetItem(n);
-    RetainPtr<const CPDF_Dictionary> pDict = item->GetParam();
-    if (pDict) {
-      actual_text = pDict->GetUnicodeTextFor("ActualText");
+    RetainPtr<const CPDF_Dictionary> dict = item->GetParam();
+    if (dict) {
+      actual_text = dict->GetUnicodeTextFor("ActualText");
     }
   }
   if (actual_text.IsEmpty()) {

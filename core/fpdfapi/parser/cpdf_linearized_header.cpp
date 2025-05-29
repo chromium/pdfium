@@ -25,14 +25,14 @@ constexpr FX_FILESIZE kLinearizedHeaderOffset = 9;
 constexpr size_t kMaxInt = static_cast<size_t>(std::numeric_limits<int>::max());
 
 template <class T>
-bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
+bool IsValidNumericDictionaryValue(const CPDF_Dictionary* dict,
                                    ByteStringView key,
                                    T min_value,
                                    bool must_exist = true) {
-  if (!pDict->KeyExist(key)) {
+  if (!dict->KeyExist(key)) {
     return !must_exist;
   }
-  RetainPtr<const CPDF_Number> pNum = pDict->GetNumberFor(key);
+  RetainPtr<const CPDF_Number> pNum = dict->GetNumberFor(key);
   if (!pNum || !pNum->IsInteger()) {
     return false;
   }
@@ -63,16 +63,16 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
     CPDF_SyntaxParser* parser) {
   parser->SetPos(kLinearizedHeaderOffset);
 
-  const auto pDict = ToDictionary(
+  const auto dict = ToDictionary(
       parser->GetIndirectObject(nullptr, CPDF_SyntaxParser::ParseType::kLoose));
 
-  if (!pDict || !pDict->KeyExist("Linearized") ||
-      !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.Get(), "L", 1) ||
-      !IsValidNumericDictionaryValue<uint32_t>(pDict.Get(), "P", 0, false) ||
-      !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.Get(), "T", 1) ||
-      !IsValidNumericDictionaryValue<uint32_t>(pDict.Get(), "N", 1) ||
-      !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.Get(), "E", 1) ||
-      !IsValidNumericDictionaryValue<uint32_t>(pDict.Get(), "O", 1)) {
+  if (!dict || !dict->KeyExist("Linearized") ||
+      !IsValidNumericDictionaryValue<FX_FILESIZE>(dict.Get(), "L", 1) ||
+      !IsValidNumericDictionaryValue<uint32_t>(dict.Get(), "P", 0, false) ||
+      !IsValidNumericDictionaryValue<FX_FILESIZE>(dict.Get(), "T", 1) ||
+      !IsValidNumericDictionaryValue<uint32_t>(dict.Get(), "N", 1) ||
+      !IsValidNumericDictionaryValue<FX_FILESIZE>(dict.Get(), "E", 1) ||
+      !IsValidNumericDictionaryValue<uint32_t>(dict.Get(), "O", 1)) {
     return nullptr;
   }
   // Move parser to the start of the xref table for the documents first page.
@@ -82,7 +82,7 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
   }
 
   auto result = pdfium::WrapUnique(
-      new CPDF_LinearizedHeader(pDict.Get(), parser->GetPos()));
+      new CPDF_LinearizedHeader(dict.Get(), parser->GetPos()));
 
   if (!IsLinearizedHeaderValid(result.get(), parser->GetDocumentSize())) {
     return nullptr;
@@ -91,16 +91,16 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
   return result;
 }
 
-CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
+CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* dict,
                                              FX_FILESIZE szLastXRefOffset)
-    : file_size_(pDict->GetIntegerFor("L")),
-      first_page_no_(pDict->GetIntegerFor("P")),
-      main_xref_table_first_entry_offset_(pDict->GetIntegerFor("T")),
-      page_count_(pDict->GetIntegerFor("N")),
-      first_page_end_offset_(pDict->GetIntegerFor("E")),
-      first_page_obj_num_(pDict->GetIntegerFor("O")),
+    : file_size_(dict->GetIntegerFor("L")),
+      first_page_no_(dict->GetIntegerFor("P")),
+      main_xref_table_first_entry_offset_(dict->GetIntegerFor("T")),
+      page_count_(dict->GetIntegerFor("N")),
+      first_page_end_offset_(dict->GetIntegerFor("E")),
+      first_page_obj_num_(dict->GetIntegerFor("O")),
       last_xref_offset_(szLastXRefOffset) {
-  RetainPtr<const CPDF_Array> pHintStreamRange = pDict->GetArrayFor("H");
+  RetainPtr<const CPDF_Array> pHintStreamRange = dict->GetArrayFor("H");
   const size_t nHintStreamSize =
       pHintStreamRange ? pHintStreamRange->size() : 0;
   if (nHintStreamSize == 2 || nHintStreamSize == 4) {

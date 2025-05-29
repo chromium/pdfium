@@ -12,8 +12,8 @@
 
 CPDF_Link::CPDF_Link() = default;
 
-CPDF_Link::CPDF_Link(RetainPtr<CPDF_Dictionary> pDict)
-    : dict_(std::move(pDict)) {}
+CPDF_Link::CPDF_Link(RetainPtr<CPDF_Dictionary> dict)
+    : dict_(std::move(dict)) {}
 
 CPDF_Link::CPDF_Link(const CPDF_Link& that) = default;
 

@@ -190,24 +190,24 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
   bool bRegenerateAP =
       pAcroForm && pAcroForm->GetBooleanFor("NeedAppearances", false);
   for (size_t i = 0; i < pAnnots->size(); ++i) {
-    RetainPtr<CPDF_Dictionary> pDict =
+    RetainPtr<CPDF_Dictionary> dict =
         ToDictionary(pAnnots->GetMutableDirectObjectAt(i));
-    if (!pDict) {
+    if (!dict) {
       continue;
     }
     const ByteString subtype =
-        pDict->GetByteStringFor(pdfium::annotation::kSubtype);
+        dict->GetByteStringFor(pdfium::annotation::kSubtype);
     if (subtype == "Popup") {
       // Skip creating Popup annotations in the PDF document since PDFium
       // provides its own Popup annotations.
       continue;
     }
     pAnnots->ConvertToIndirectObjectAt(i, document_);
-    annot_list_.push_back(std::make_unique<CPDF_Annot>(pDict, document_));
+    annot_list_.push_back(std::make_unique<CPDF_Annot>(dict, document_));
     if (bRegenerateAP && subtype == "Widget" &&
         CPDF_InteractiveForm::IsUpdateAPEnabled() &&
-        !pDict->GetDictFor(pdfium::annotation::kAP)) {
-      GenerateAP(document_, pDict.Get());
+        !dict->GetDictFor(pdfium::annotation::kAP)) {
+      GenerateAP(document_, dict.Get());
     }
   }
 

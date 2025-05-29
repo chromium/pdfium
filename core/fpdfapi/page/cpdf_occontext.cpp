@@ -14,10 +14,10 @@
 
 namespace {
 
-bool HasIntent(const CPDF_Dictionary* pDict,
+bool HasIntent(const CPDF_Dictionary* dict,
                ByteStringView csElement,
                ByteStringView csDef) {
-  RetainPtr<const CPDF_Object> pIntent = pDict->GetDirectObjectFor("Intent");
+  RetainPtr<const CPDF_Object> pIntent = dict->GetDirectObjectFor("Intent");
   if (!pIntent) {
     return csElement == csDef;
   }
@@ -210,8 +210,8 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
     if (!pOCGObj) {
       return false;
     }
-    if (const CPDF_Dictionary* pDict = pOCGObj->AsDictionary()) {
-      return !GetOCGVisible(pDict);
+    if (const CPDF_Dictionary* dict = pOCGObj->AsDictionary()) {
+      return !GetOCGVisible(dict);
     }
     if (const CPDF_Array* pArray = pOCGObj->AsArray()) {
       return !GetOCGVE(pArray, nLevel + 1);
@@ -231,8 +231,8 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
     }
 
     bool bItem = false;
-    if (const CPDF_Dictionary* pDict = pOCGObj->AsDictionary()) {
-      bItem = GetOCGVisible(pDict);
+    if (const CPDF_Dictionary* dict = pOCGObj->AsDictionary()) {
+      bItem = GetOCGVisible(dict);
     } else if (const CPDF_Array* pArray = pOCGObj->AsArray()) {
       bItem = GetOCGVE(pArray, nLevel + 1);
     }
@@ -262,8 +262,8 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
     return true;
   }
 
-  if (const CPDF_Dictionary* pDict = pOCGObj->AsDictionary()) {
-    return GetOCGVisible(pDict);
+  if (const CPDF_Dictionary* dict = pOCGObj->AsDictionary()) {
+    return GetOCGVisible(dict);
   }
 
   const CPDF_Array* pArray = pOCGObj->AsArray();

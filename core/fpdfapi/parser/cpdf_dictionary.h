@@ -159,22 +159,22 @@ class CPDF_DictionaryLocker {
   FX_STACK_ALLOCATED();
   using const_iterator = CPDF_Dictionary::const_iterator;
 
-  explicit CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary);
-  explicit CPDF_DictionaryLocker(RetainPtr<CPDF_Dictionary> pDictionary);
-  explicit CPDF_DictionaryLocker(RetainPtr<const CPDF_Dictionary> pDictionary);
+  explicit CPDF_DictionaryLocker(const CPDF_Dictionary* dict);
+  explicit CPDF_DictionaryLocker(RetainPtr<CPDF_Dictionary> dict);
+  explicit CPDF_DictionaryLocker(RetainPtr<const CPDF_Dictionary> dict);
   ~CPDF_DictionaryLocker();
 
   const_iterator begin() const {
-    CHECK(dictionary_->IsLocked());
-    return dictionary_->map_.begin();
+    CHECK(dict_->IsLocked());
+    return dict_->map_.begin();
   }
   const_iterator end() const {
-    CHECK(dictionary_->IsLocked());
-    return dictionary_->map_.end();
+    CHECK(dict_->IsLocked());
+    return dict_->map_.end();
   }
 
  private:
-  RetainPtr<const CPDF_Dictionary> const dictionary_;
+  RetainPtr<const CPDF_Dictionary> const dict_;
 };
 
 inline CPDF_Dictionary* ToDictionary(CPDF_Object* obj) {

@@ -19,8 +19,8 @@ constexpr float kDefaultPosition = 0.5f;
 
 }  // namespace
 
-CPDF_IconFit::CPDF_IconFit(RetainPtr<const CPDF_Dictionary> pDict)
-    : dict_(std::move(pDict)) {}
+CPDF_IconFit::CPDF_IconFit(RetainPtr<const CPDF_Dictionary> dict)
+    : dict_(std::move(dict)) {}
 
 CPDF_IconFit::CPDF_IconFit(const CPDF_IconFit& that) = default;
 

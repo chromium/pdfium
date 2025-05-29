@@ -500,14 +500,14 @@ void CPDF_Document::CreateNewDoc() {
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Document::CreateNewPage(int iPage) {
-  auto pDict = NewIndirect<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Name>("Type", "Page");
-  uint32_t dwObjNum = pDict->GetObjNum();
-  if (!InsertNewPage(iPage, pDict)) {
+  auto dict = NewIndirect<CPDF_Dictionary>();
+  dict->SetNewFor<CPDF_Name>("Type", "Page");
+  uint32_t dwObjNum = dict->GetObjNum();
+  if (!InsertNewPage(iPage, dict)) {
     DeleteIndirectObject(dwObjNum);
     return nullptr;
   }
-  return pDict;
+  return dict;
 }
 
 bool CPDF_Document::InsertDeletePDFPage(

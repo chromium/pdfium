@@ -66,7 +66,7 @@ fxcodec::DataAndBytesConsumed FlateOrLZWDecode(
     const CPDF_Dictionary* pParams,
     uint32_t estimated_size);
 
-// Returns std::nullopt if the filter in |pDict| is the wrong type or an
+// Returns std::nullopt if the filter in |dict| is the wrong type or an
 // invalid decoder pipeline.
 // Returns an empty vector if there is no filter, or if the filter is an empty
 // array.
@@ -74,7 +74,7 @@ fxcodec::DataAndBytesConsumed FlateOrLZWDecode(
 using DecoderArray =
     std::vector<std::pair<ByteString, RetainPtr<const CPDF_Object>>>;
 std::optional<DecoderArray> GetDecoderArray(
-    RetainPtr<const CPDF_Dictionary> pDict);
+    RetainPtr<const CPDF_Dictionary> dict);
 
 struct PDFDataDecodeResult {
   PDFDataDecodeResult();

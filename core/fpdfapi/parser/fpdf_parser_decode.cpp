@@ -388,8 +388,8 @@ DataAndBytesConsumed FlateOrLZWDecode(bool use_lzw,
 }
 
 std::optional<DecoderArray> GetDecoderArray(
-    RetainPtr<const CPDF_Dictionary> pDict) {
-  RetainPtr<const CPDF_Object> pFilter = pDict->GetDirectObjectFor("Filter");
+    RetainPtr<const CPDF_Dictionary> dict) {
+  RetainPtr<const CPDF_Object> pFilter = dict->GetDirectObjectFor("Filter");
   if (!pFilter) {
     return DecoderArray();
   }
@@ -399,7 +399,7 @@ std::optional<DecoderArray> GetDecoderArray(
   }
 
   RetainPtr<const CPDF_Object> pParams =
-      pDict->GetDirectObjectFor(pdfium::stream::kDecodeParms);
+      dict->GetDirectObjectFor(pdfium::stream::kDecodeParms);
 
   DecoderArray decoder_array;
   if (const CPDF_Array* pDecoders = pFilter->AsArray()) {

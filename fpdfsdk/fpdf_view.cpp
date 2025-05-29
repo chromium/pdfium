@@ -453,8 +453,8 @@ FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
     return -1;
   }
 
-  RetainPtr<const CPDF_Dictionary> pDict = pDoc->GetParser()->GetEncryptDict();
-  return pDict ? pDict->GetIntegerFor("R") : -1;
+  RetainPtr<const CPDF_Dictionary> dict = pDoc->GetParser()->GetEncryptDict();
+  return dict ? dict->GetIntegerFor("R") : -1;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document) {
@@ -486,12 +486,12 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
   }
 #endif  // PDF_ENABLE_XFA
 
-  RetainPtr<CPDF_Dictionary> pDict = pDoc->GetMutablePageDictionary(page_index);
-  if (!pDict) {
+  RetainPtr<CPDF_Dictionary> dict = pDoc->GetMutablePageDictionary(page_index);
+  if (!dict) {
     return nullptr;
   }
 
-  auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(pDict));
+  auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(dict));
   pPage->AddPageImageCache();
   pPage->ParseContent();
 
@@ -1135,12 +1135,12 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
   }
 #endif  // PDF_ENABLE_XFA
 
-  RetainPtr<CPDF_Dictionary> pDict = pDoc->GetMutablePageDictionary(page_index);
-  if (!pDict) {
+  RetainPtr<CPDF_Dictionary> dict = pDoc->GetMutablePageDictionary(page_index);
+  if (!dict) {
     return false;
   }
 
-  auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(pDict));
+  auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(dict));
   page->AddPageImageCache();
   size->width = page->GetPageWidth();
   size->height = page->GetPageHeight();
@@ -1424,8 +1424,8 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!pDestObj) {
     return nullptr;
   }
-  if (const CPDF_Dictionary* pDict = pDestObj->AsDictionary()) {
-    pDestObj = pDict->GetArrayFor("D");
+  if (const CPDF_Dictionary* dict = pDestObj->AsDictionary()) {
+    pDestObj = dict->GetArrayFor("D");
     if (!pDestObj) {
       return nullptr;
     }

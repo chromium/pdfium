@@ -42,9 +42,9 @@ std::unique_ptr<CPDF_DataAvail> MakeDataAvailFromFile(
 
 class TestLinearizedHeader final : public CPDF_LinearizedHeader {
  public:
-  TestLinearizedHeader(const CPDF_Dictionary* pDict,
+  TestLinearizedHeader(const CPDF_Dictionary* dict,
                        FX_FILESIZE szLastXRefOffset)
-      : CPDF_LinearizedHeader(pDict, szLastXRefOffset) {}
+      : CPDF_LinearizedHeader(dict, szLastXRefOffset) {}
 
   static std::unique_ptr<CPDF_LinearizedHeader> MakeHeader(
       ByteString inline_data) {

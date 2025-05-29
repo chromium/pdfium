@@ -23,15 +23,15 @@ CPDF_ExpIntFunc::~CPDF_ExpIntFunc() = default;
 
 bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   CHECK(pObj->IsDictionary() || pObj->IsStream());
-  RetainPtr<const CPDF_Dictionary> pDict = pObj->GetDict();
-  RetainPtr<const CPDF_Number> pExponent = pDict->GetNumberFor("N");
+  RetainPtr<const CPDF_Dictionary> dict = pObj->GetDict();
+  RetainPtr<const CPDF_Number> pExponent = dict->GetNumberFor("N");
   if (!pExponent) {
     return false;
   }
 
   exponent_ = pExponent->GetNumber();
 
-  RetainPtr<const CPDF_Array> pArray0 = pDict->GetArrayFor("C0");
+  RetainPtr<const CPDF_Array> pArray0 = dict->GetArrayFor("C0");
   if (pArray0 && outputs_ == 0) {
     outputs_ = fxcrt::CollectionSize<uint32_t>(*pArray0);
   }
@@ -39,7 +39,7 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
     outputs_ = 1;
   }
 
-  RetainPtr<const CPDF_Array> pArray1 = pDict->GetArrayFor("C1");
+  RetainPtr<const CPDF_Array> pArray1 = dict->GetArrayFor("C1");
   begin_values_ = DataVector<float>(Fx2DSizeOrDie(outputs_, 2));
   end_values_ = DataVector<float>(begin_values_.size());
   for (uint32_t i = 0; i < outputs_; i++) {

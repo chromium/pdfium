@@ -278,18 +278,18 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
       pObj = pObj->GetMutableDirect();
     }
 
-    RetainPtr<CPDF_Dictionary> pDict;
+    RetainPtr<CPDF_Dictionary> dict;
     if (pObj->IsDictionary()) {
-      pDict.Reset(pObj->AsMutableDictionary());
+      dict.Reset(pObj->AsMutableDictionary());
     } else if (CPDF_Stream* pObjStream = pObj->AsMutableStream()) {
-      pDict = pObjStream->GetMutableDict();
+      dict = pObjStream->GetMutableDict();
     } else {
       continue;
     }
 
     if (matrix) {
       CFX_Matrix m = CFXMatrixFromFSMatrix(*matrix);
-      pDict->SetMatrixFor("Matrix", pDict->GetMatrixFor("Matrix") * m);
+      dict->SetMatrixFor("Matrix", dict->GetMatrixFor("Matrix") * m);
     }
   }
 

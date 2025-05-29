@@ -35,12 +35,12 @@
 
 namespace {
 
-RetainPtr<CPDF_Object> GetResourceObject(RetainPtr<CPDF_Dictionary> pDict) {
+RetainPtr<CPDF_Object> GetResourceObject(RetainPtr<CPDF_Dictionary> dict) {
   static constexpr size_t kMaxHierarchyDepth = 64;
   size_t depth = 0;
 
-  while (pDict) {
-    RetainPtr<CPDF_Object> result = pDict->GetMutableObjectFor("Resources");
+  while (dict) {
+    RetainPtr<CPDF_Object> result = dict->GetMutableObjectFor("Resources");
     if (result) {
       return result;
     }
@@ -48,8 +48,8 @@ RetainPtr<CPDF_Object> GetResourceObject(RetainPtr<CPDF_Dictionary> pDict) {
       // We have cycle in parents hierarchy.
       return nullptr;
     }
-    RetainPtr<CPDF_Object> parent = pDict->GetMutableObjectFor("Parent");
-    pDict = parent ? parent->GetMutableDict() : nullptr;
+    RetainPtr<CPDF_Object> parent = dict->GetMutableObjectFor("Parent");
+    dict = parent ? parent->GetMutableDict() : nullptr;
   }
   return nullptr;
 }
@@ -363,12 +363,12 @@ bool CPDF_DataAvail::CheckPage() {
 }
 
 bool CPDF_DataAvail::GetPageKids(CPDF_Object* pPages) {
-  RetainPtr<const CPDF_Dictionary> pDict = pPages->GetDict();
-  if (!pDict) {
+  RetainPtr<const CPDF_Dictionary> dict = pPages->GetDict();
+  if (!dict) {
     return true;
   }
 
-  RetainPtr<const CPDF_Object> pKids = pDict->GetObjectFor("Kids");
+  RetainPtr<const CPDF_Object> pKids = dict->GetObjectFor("Kids");
   if (!pKids) {
     return true;
   }
@@ -616,8 +616,8 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
   }
 
   pPageNode->page_no_ = dwPageNo;
-  RetainPtr<CPDF_Dictionary> pDict = pPage->GetMutableDict();
-  const ByteString type = pDict->GetNameFor("Type");
+  RetainPtr<CPDF_Dictionary> dict = pPage->GetMutableDict();
+  const ByteString type = dict->GetNameFor("Type");
   if (type == "Page") {
     pPageNode->type_ = PageNode::Type::kPage;
     return true;
@@ -629,7 +629,7 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
   }
 
   pPageNode->type_ = PageNode::Type::kPages;
-  RetainPtr<CPDF_Object> pKids = pDict->GetMutableObjectFor("Kids");
+  RetainPtr<CPDF_Object> pKids = dict->GetMutableObjectFor("Kids");
   if (!pKids) {
     internal_status_ = InternalStatus::kPage;
     return true;

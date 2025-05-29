@@ -104,8 +104,8 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
     return pStream;
   }
 
-  CPDF_Dictionary* pDict = psub->AsMutableDictionary();
-  if (!pDict) {
+  CPDF_Dictionary* dict = psub->AsMutableDictionary();
+  if (!dict) {
     return nullptr;
   }
 
@@ -117,17 +117,16 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
           pAnnotDict->GetDictFor("Parent");
       value = pParentDict ? pParentDict->GetByteStringFor("V") : ByteString();
     }
-    as = (!value.IsEmpty() && pDict->KeyExist(value.AsStringView())) ? value
-                                                                     : "Off";
+    as = (!value.IsEmpty() && dict->KeyExist(value.AsStringView())) ? value
+                                                                    : "Off";
   }
-  return pDict->GetMutableStreamFor(as.AsStringView());
+  return dict->GetMutableStreamFor(as.AsStringView());
 }
 
 }  // namespace
 
-CPDF_Annot::CPDF_Annot(RetainPtr<CPDF_Dictionary> pDict,
-                       CPDF_Document* document)
-    : annot_dict_(std::move(pDict)),
+CPDF_Annot::CPDF_Annot(RetainPtr<CPDF_Dictionary> dict, CPDF_Document* document)
+    : annot_dict_(std::move(dict)),
       document_(document),
       subtype_(StringToAnnotSubtype(
           annot_dict_->GetByteStringFor(pdfium::annotation::kSubtype))),

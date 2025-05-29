@@ -139,7 +139,7 @@ CPDF_StreamParser::~CPDF_StreamParser() = default;
 
 RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     CPDF_Document* pDoc,
-    RetainPtr<CPDF_Dictionary> pDict,
+    RetainPtr<CPDF_Dictionary> dict,
     const CPDF_Object* pCSObj) {
   auto stream_span = buf_.subspan(pos_);
   if (stream_span.empty()) {
@@ -156,30 +156,30 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
 
   ByteString decoder;
   RetainPtr<const CPDF_Dictionary> param_dict;
-  RetainPtr<const CPDF_Object> filter = pDict->GetDirectObjectFor("Filter");
+  RetainPtr<const CPDF_Object> filter = dict->GetDirectObjectFor("Filter");
   if (filter) {
     const CPDF_Array* array = filter->AsArray();
     if (array) {
       decoder = array->GetByteStringAt(0);
       RetainPtr<const CPDF_Array> params =
-          pDict->GetArrayFor(pdfium::stream::kDecodeParms);
+          dict->GetArrayFor(pdfium::stream::kDecodeParms);
       if (params) {
         param_dict = params->GetDictAt(0);
       }
     } else {
       decoder = filter->GetString();
-      param_dict = pDict->GetDictFor(pdfium::stream::kDecodeParms);
+      param_dict = dict->GetDictFor(pdfium::stream::kDecodeParms);
     }
   }
-  uint32_t width = pDict->GetIntegerFor("Width");
-  uint32_t height = pDict->GetIntegerFor("Height");
+  uint32_t width = dict->GetIntegerFor("Width");
+  uint32_t height = dict->GetIntegerFor("Height");
   uint32_t bpc = 1;
   uint32_t nComponents = 1;
   if (pCSObj) {
     RetainPtr<CPDF_ColorSpace> pCS =
         CPDF_DocPageData::FromDocument(pDoc)->GetColorSpace(pCSObj, nullptr);
     nComponents = pCS ? pCS->ComponentCount() : 3;
-    bpc = pDict->GetIntegerFor("BitsPerComponent");
+    bpc = dict->GetIntegerFor("BitsPerComponent");
   }
   std::optional<uint32_t> maybe_size =
       fxge::CalculatePitch8(bpc, nComponents, width);
@@ -231,8 +231,8 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     data = DataVector<uint8_t>(src_span.begin(), src_span.end());
     pos_ += actual_stream_size;
   }
-  pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(actual_stream_size));
-  return pdfium::MakeRetain<CPDF_Stream>(std::move(data), std::move(pDict));
+  dict->SetNewFor<CPDF_Number>("Length", static_cast<int>(actual_stream_size));
+  return pdfium::MakeRetain<CPDF_Stream>(std::move(data), std::move(dict));
 }
 
 CPDF_StreamParser::ElementType CPDF_StreamParser::ParseNextElement() {
@@ -355,7 +355,7 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
                                              CPDF_String::DataType::kIsHex);
     }
 
-    auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(pool_);
+    auto dict = pdfium::MakeRetain<CPDF_Dictionary>(pool_);
     while (true) {
       GetNextWord(bIsNumber);
       if (word_size_ == 2 && word_buffer_[0] == '>') {
@@ -373,9 +373,9 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
         return nullptr;
       }
 
-      pDict->SetFor(key, std::move(pObj));
+      dict->SetFor(key, std::move(pObj));
     }
-    return pDict;
+    return dict;
   }
 
   if (first_char == '[') {

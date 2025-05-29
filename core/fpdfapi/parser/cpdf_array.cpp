@@ -164,9 +164,9 @@ RetainPtr<CPDF_Dictionary> CPDF_Array::GetMutableDictAt(size_t index) {
   if (!p) {
     return nullptr;
   }
-  CPDF_Dictionary* pDict = p->AsMutableDictionary();
-  if (pDict) {
-    return pdfium::WrapRetain(pDict);
+  CPDF_Dictionary* dict = p->AsMutableDictionary();
+  if (dict) {
+    return pdfium::WrapRetain(dict);
   }
   CPDF_Stream* pStream = p->AsMutableStream();
   if (pStream) {

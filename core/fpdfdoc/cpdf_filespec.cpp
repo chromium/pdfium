@@ -100,27 +100,26 @@ WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
 
 WideString CPDF_FileSpec::GetFileName() const {
   WideString csFileName;
-  if (const CPDF_Dictionary* pDict = obj_->AsDictionary()) {
-    RetainPtr<const CPDF_String> pUF =
-        ToString(pDict->GetDirectObjectFor("UF"));
+  if (const CPDF_Dictionary* dict = obj_->AsDictionary()) {
+    RetainPtr<const CPDF_String> pUF = ToString(dict->GetDirectObjectFor("UF"));
     if (pUF) {
       csFileName = pUF->GetUnicodeText();
     }
     if (csFileName.IsEmpty()) {
       RetainPtr<const CPDF_String> pK =
-          ToString(pDict->GetDirectObjectFor(pdfium::stream::kF));
+          ToString(dict->GetDirectObjectFor(pdfium::stream::kF));
       if (pK) {
         csFileName = WideString::FromDefANSI(pK->GetString().AsStringView());
       }
     }
-    if (pDict->GetByteStringFor("FS") == "URL") {
+    if (dict->GetByteStringFor("FS") == "URL") {
       return csFileName;
     }
 
     if (csFileName.IsEmpty()) {
       for (const auto* key : {"DOS", "Mac", "Unix"}) {
         RetainPtr<const CPDF_String> pValue =
-            ToString(pDict->GetDirectObjectFor(key));
+            ToString(dict->GetDirectObjectFor(key));
         if (pValue) {
           csFileName =
               WideString::FromDefANSI(pValue->GetString().AsStringView());
@@ -135,13 +134,13 @@ WideString CPDF_FileSpec::GetFileName() const {
 }
 
 RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
-  const CPDF_Dictionary* pDict = obj_->AsDictionary();
-  if (!pDict) {
+  const CPDF_Dictionary* dict = obj_->AsDictionary();
+  if (!dict) {
     return nullptr;
   }
 
   // Get the embedded files dictionary.
-  RetainPtr<const CPDF_Dictionary> pFiles = pDict->GetDictFor("EF");
+  RetainPtr<const CPDF_Dictionary> pFiles = dict->GetDictFor("EF");
   if (!pFiles) {
     return nullptr;
   }
@@ -150,10 +149,10 @@ RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
   // Follows the same precedence order as GetFileName().
   static constexpr std::array<const char*, 5> kKeys = {
       {"UF", "F", "DOS", "Mac", "Unix"}};
-  size_t end = pDict->GetByteStringFor("FS") == "URL" ? 2 : std::size(kKeys);
+  size_t end = dict->GetByteStringFor("FS") == "URL" ? 2 : std::size(kKeys);
   for (size_t i = 0; i < end; ++i) {
     ByteStringView key = kKeys[i];
-    if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
+    if (!dict->GetUnicodeTextFor(key).IsEmpty()) {
       RetainPtr<const CPDF_Stream> pStream = pFiles->GetStreamFor(key);
       if (pStream) {
         return pStream;

@@ -17,38 +17,38 @@ CPDF_ViewerPreferences::CPDF_ViewerPreferences(const CPDF_Document* pDoc)
 CPDF_ViewerPreferences::~CPDF_ViewerPreferences() = default;
 
 bool CPDF_ViewerPreferences::IsDirectionR2L() const {
-  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
-  return pDict && pDict->GetByteStringFor("Direction") == "R2L";
+  RetainPtr<const CPDF_Dictionary> dict = GetViewerPreferences();
+  return dict && dict->GetByteStringFor("Direction") == "R2L";
 }
 
 bool CPDF_ViewerPreferences::PrintScaling() const {
-  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
-  return !pDict || pDict->GetByteStringFor("PrintScaling") != "None";
+  RetainPtr<const CPDF_Dictionary> dict = GetViewerPreferences();
+  return !dict || dict->GetByteStringFor("PrintScaling") != "None";
 }
 
 int32_t CPDF_ViewerPreferences::NumCopies() const {
-  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
-  return pDict ? pDict->GetIntegerFor("NumCopies") : 1;
+  RetainPtr<const CPDF_Dictionary> dict = GetViewerPreferences();
+  return dict ? dict->GetIntegerFor("NumCopies") : 1;
 }
 
 RetainPtr<const CPDF_Array> CPDF_ViewerPreferences::PrintPageRange() const {
-  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
-  return pDict ? pDict->GetArrayFor("PrintPageRange") : nullptr;
+  RetainPtr<const CPDF_Dictionary> dict = GetViewerPreferences();
+  return dict ? dict->GetArrayFor("PrintPageRange") : nullptr;
 }
 
 ByteString CPDF_ViewerPreferences::Duplex() const {
-  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
-  return pDict ? pDict->GetByteStringFor("Duplex") : ByteString("None");
+  RetainPtr<const CPDF_Dictionary> dict = GetViewerPreferences();
+  return dict ? dict->GetByteStringFor("Duplex") : ByteString("None");
 }
 
 std::optional<ByteString> CPDF_ViewerPreferences::GenericName(
     ByteStringView key) const {
-  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
-  if (!pDict) {
+  RetainPtr<const CPDF_Dictionary> dict = GetViewerPreferences();
+  if (!dict) {
     return std::nullopt;
   }
 
-  RetainPtr<const CPDF_Name> pName = ToName(pDict->GetObjectFor(key));
+  RetainPtr<const CPDF_Name> pName = ToName(dict->GetObjectFor(key));
   if (!pName) {
     return std::nullopt;
   }
@@ -58,6 +58,6 @@ std::optional<ByteString> CPDF_ViewerPreferences::GenericName(
 
 RetainPtr<const CPDF_Dictionary> CPDF_ViewerPreferences::GetViewerPreferences()
     const {
-  const CPDF_Dictionary* pDict = doc_->GetRoot();
-  return pDict ? pDict->GetDictFor("ViewerPreferences") : nullptr;
+  const CPDF_Dictionary* dict = doc_->GetRoot();
+  return dict ? dict->GetDictFor("ViewerPreferences") : nullptr;
 }

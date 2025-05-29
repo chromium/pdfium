@@ -51,11 +51,11 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
     return nullptr;
   }
 
-  auto pDict = std::make_unique<CJBig2_PatternDict>(GRAYMAX + 1);
+  auto dict = std::make_unique<CJBig2_PatternDict>(GRAYMAX + 1);
   for (uint32_t GRAY = 0; GRAY <= GRAYMAX; ++GRAY) {
-    pDict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
+    dict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
   }
-  return pDict;
+  return dict;
 }
 
 std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeMMR(
@@ -71,11 +71,11 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeMMR(
     return nullptr;
   }
 
-  auto pDict = std::make_unique<CJBig2_PatternDict>(GRAYMAX + 1);
+  auto dict = std::make_unique<CJBig2_PatternDict>(GRAYMAX + 1);
   for (uint32_t GRAY = 0; GRAY <= GRAYMAX; ++GRAY) {
-    pDict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
+    dict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
   }
-  return pDict;
+  return dict;
 }
 
 std::unique_ptr<CJBig2_GRDProc> CJBig2_PDDProc::CreateGRDProc() {

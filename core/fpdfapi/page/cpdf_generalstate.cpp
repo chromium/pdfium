@@ -165,8 +165,8 @@ RetainPtr<CPDF_Dictionary> CPDF_GeneralState::GetMutableSoftMask() {
   return pData ? pData->soft_mask_ : nullptr;
 }
 
-void CPDF_GeneralState::SetSoftMask(RetainPtr<CPDF_Dictionary> pDict) {
-  ref_.GetPrivateCopy()->soft_mask_ = std::move(pDict);
+void CPDF_GeneralState::SetSoftMask(RetainPtr<CPDF_Dictionary> dict) {
+  ref_.GetPrivateCopy()->soft_mask_ = std::move(dict);
 }
 
 RetainPtr<const CPDF_Object> CPDF_GeneralState::GetTR() const {

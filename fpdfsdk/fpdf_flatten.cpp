@@ -57,9 +57,9 @@ bool IsValidRect(const CFX_FloatRect& rect, const CFX_FloatRect& rcPage) {
 }
 
 void GetContentsRect(CPDF_Document* pDoc,
-                     RetainPtr<CPDF_Dictionary> pDict,
+                     RetainPtr<CPDF_Dictionary> dict,
                      std::vector<CFX_FloatRect>* pRectArray) {
-  auto pPDFPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict);
+  auto pPDFPage = pdfium::MakeRetain<CPDF_Page>(pDoc, dict);
   pPDFPage->ParseContent();
 
   for (const auto& pPageObject : *pPDFPage) {
@@ -68,7 +68,7 @@ void GetContentsRect(CPDF_Document* pDoc,
     }
 
     const CFX_FloatRect& rc = pPageObject->GetRect();
-    if (IsValidRect(rc, pDict->GetRectFor(pdfium::page_object::kMediaBox))) {
+    if (IsValidRect(rc, dict->GetRectFor(pdfium::page_object::kMediaBox))) {
       pRectArray->push_back(rc);
     }
   }

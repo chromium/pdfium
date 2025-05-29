@@ -153,14 +153,14 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* resource_dict,
     m++;
   }
 
-  RetainPtr<const CPDF_Dictionary> pDict = resource_dict->GetDictFor("Font");
-  DCHECK(pDict);
+  RetainPtr<const CPDF_Dictionary> dict = resource_dict->GetDictFor("Font");
+  DCHECK(dict);
 
   int num = 0;
   ByteString key_number;
   while (true) {
     ByteString key = actual_prefix + key_number;
-    if (!pDict->KeyExist(key.AsStringView())) {
+    if (!dict->KeyExist(key.AsStringView())) {
       return key;
     }
 

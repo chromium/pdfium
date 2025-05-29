@@ -69,7 +69,7 @@ class CPDF_FormField {
     kSign
   };
 
-  CPDF_FormField(CPDF_InteractiveForm* pForm, RetainPtr<CPDF_Dictionary> pDict);
+  CPDF_FormField(CPDF_InteractiveForm* pForm, RetainPtr<CPDF_Dictionary> dict);
   ~CPDF_FormField();
 
   static std::optional<FormFieldType> IntToFormFieldType(int value);

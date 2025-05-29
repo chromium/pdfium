@@ -40,12 +40,12 @@ bool FontData::operator<(const FontData& other) const {
 
 CPDF_PageObjectHolder::CPDF_PageObjectHolder(
     CPDF_Document* pDoc,
-    RetainPtr<CPDF_Dictionary> pDict,
+    RetainPtr<CPDF_Dictionary> dict,
     RetainPtr<CPDF_Dictionary> pPageResources,
     RetainPtr<CPDF_Dictionary> pResources)
     : page_resources_(std::move(pPageResources)),
       resources_(std::move(pResources)),
-      dict_(std::move(pDict)),
+      dict_(std::move(dict)),
       document_(pDoc) {
   DCHECK(dict_);
 }

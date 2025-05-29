@@ -341,21 +341,21 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessText) {
   {
     // Set the text object font and text
     auto pTextObj = std::make_unique<CPDF_TextObject>();
-    auto pDict = pDoc->NewIndirect<CPDF_Dictionary>();
-    pDict->SetNewFor<CPDF_Name>("Type", "Font");
-    pDict->SetNewFor<CPDF_Name>("Subtype", "TrueType");
+    auto dict = pDoc->NewIndirect<CPDF_Dictionary>();
+    dict->SetNewFor<CPDF_Name>("Type", "Font");
+    dict->SetNewFor<CPDF_Name>("Subtype", "TrueType");
 
     RetainPtr<CPDF_Font> font = CPDF_Font::GetStockFont(pDoc.get(), "Arial");
-    pDict->SetNewFor<CPDF_Name>("BaseFont", font->GetBaseFontName());
+    dict->SetNewFor<CPDF_Name>("BaseFont", font->GetBaseFontName());
 
     auto pDesc = pDoc->NewIndirect<CPDF_Dictionary>();
     pDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
     pDesc->SetNewFor<CPDF_Name>("FontName", font->GetBaseFontName());
-    pDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc.get(),
-                                     pDesc->GetObjNum());
+    dict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc.get(),
+                                    pDesc->GetObjNum());
 
     pTextObj->mutable_text_state().SetFont(
-        CPDF_DocPageData::FromDocument(pDoc.get())->GetFont(pDict));
+        CPDF_DocPageData::FromDocument(pDoc.get())->GetFont(dict));
     pTextObj->mutable_text_state().SetFontSize(15.5f);
     pTextObj->SetText("I am indirect");
     pTextObj->SetTextRenderMode(TextRenderingMode::MODE_FILL_CLIP);

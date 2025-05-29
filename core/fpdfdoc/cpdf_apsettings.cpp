@@ -14,8 +14,8 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 
-CPDF_ApSettings::CPDF_ApSettings(RetainPtr<CPDF_Dictionary> pDict)
-    : dict_(std::move(pDict)) {}
+CPDF_ApSettings::CPDF_ApSettings(RetainPtr<CPDF_Dictionary> dict)
+    : dict_(std::move(dict)) {}
 
 CPDF_ApSettings::CPDF_ApSettings(const CPDF_ApSettings& that) = default;
 

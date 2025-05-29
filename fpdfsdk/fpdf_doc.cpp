@@ -411,14 +411,14 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
     return false;
   }
   for (size_t i = *start_pos; i < pAnnots->size(); i++) {
-    RetainPtr<CPDF_Dictionary> pDict =
+    RetainPtr<CPDF_Dictionary> dict =
         ToDictionary(pAnnots->GetMutableDirectObjectAt(i));
-    if (!pDict) {
+    if (!dict) {
       continue;
     }
-    if (pDict->GetByteStringFor("Subtype") == "Link") {
+    if (dict->GetByteStringFor("Subtype") == "Link") {
       *start_pos = static_cast<int>(i + 1);
-      *link_annot = FPDFLinkFromCPDFDictionary(pDict.Get());
+      *link_annot = FPDFLinkFromCPDFDictionary(dict.Get());
       return true;
     }
   }

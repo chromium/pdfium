@@ -87,12 +87,12 @@ bool CPDFSDK_BAAnnot::IsAppearanceValid() {
 }
 
 void CPDFSDK_BAAnnot::SetAnnotName(const WideString& sName) {
-  RetainPtr<CPDF_Dictionary> pDict = GetMutableAnnotDict();
+  RetainPtr<CPDF_Dictionary> dict = GetMutableAnnotDict();
   if (sName.IsEmpty()) {
-    pDict->RemoveFor(pdfium::annotation::kNM);
+    dict->RemoveFor(pdfium::annotation::kNM);
     return;
   }
-  pDict->SetNewFor<CPDF_String>(pdfium::annotation::kNM, sName.AsStringView());
+  dict->SetNewFor<CPDF_String>(pdfium::annotation::kNM, sName.AsStringView());
 }
 
 WideString CPDFSDK_BAAnnot::GetAnnotName() const {
@@ -109,8 +109,8 @@ uint32_t CPDFSDK_BAAnnot::GetFlags() const {
 }
 
 void CPDFSDK_BAAnnot::SetAppStateOff() {
-  RetainPtr<CPDF_Dictionary> pDict = GetMutableAnnotDict();
-  pDict->SetNewFor<CPDF_String>(pdfium::annotation::kAS, "Off");
+  RetainPtr<CPDF_Dictionary> dict = GetMutableAnnotDict();
+  dict->SetNewFor<CPDF_String>(pdfium::annotation::kAS, "Off");
 }
 
 ByteString CPDFSDK_BAAnnot::GetAppState() const {

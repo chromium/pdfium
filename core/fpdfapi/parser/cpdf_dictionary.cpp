@@ -378,23 +378,22 @@ bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive,
   return archive->WriteString(">>");
 }
 
-CPDF_DictionaryLocker::CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary)
-    : dictionary_(pDictionary) {
-  dictionary_->lock_count_++;
+CPDF_DictionaryLocker::CPDF_DictionaryLocker(const CPDF_Dictionary* dict)
+    : dict_(dict) {
+  dict_->lock_count_++;
+}
+
+CPDF_DictionaryLocker::CPDF_DictionaryLocker(RetainPtr<CPDF_Dictionary> dict)
+    : dict_(std::move(dict)) {
+  dict_->lock_count_++;
 }
 
 CPDF_DictionaryLocker::CPDF_DictionaryLocker(
-    RetainPtr<CPDF_Dictionary> pDictionary)
-    : dictionary_(std::move(pDictionary)) {
-  dictionary_->lock_count_++;
-}
-
-CPDF_DictionaryLocker::CPDF_DictionaryLocker(
-    RetainPtr<const CPDF_Dictionary> pDictionary)
-    : dictionary_(std::move(pDictionary)) {
-  dictionary_->lock_count_++;
+    RetainPtr<const CPDF_Dictionary> dict)
+    : dict_(std::move(dict)) {
+  dict_->lock_count_++;
 }
 
 CPDF_DictionaryLocker::~CPDF_DictionaryLocker() {
-  dictionary_->lock_count_--;
+  dict_->lock_count_--;
 }

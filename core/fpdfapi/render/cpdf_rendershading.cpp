@@ -97,7 +97,7 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
 
 void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       const CFX_Matrix& mtObject2Bitmap,
-                      const CPDF_Dictionary* pDict,
+                      const CPDF_Dictionary* dict,
                       const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                       const RetainPtr<CPDF_ColorSpace>& pCS,
                       int alpha) {
@@ -108,7 +108,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     return;
   }
 
-  RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
+  RetainPtr<const CPDF_Array> pCoords = dict->GetArrayFor("Coords");
   if (!pCoords) {
     return;
   }
@@ -119,12 +119,12 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float end_y = pCoords->GetFloatAt(3);
   float t_min = 0;
   float t_max = 1.0f;
-  RetainPtr<const CPDF_Array> pArray = pDict->GetArrayFor("Domain");
+  RetainPtr<const CPDF_Array> pArray = dict->GetArrayFor("Domain");
   if (pArray) {
     t_min = pArray->GetFloatAt(0);
     t_max = pArray->GetFloatAt(1);
   }
-  pArray = pDict->GetArrayFor("Extend");
+  pArray = dict->GetArrayFor("Extend");
   const bool bStartExtend = pArray && pArray->GetBooleanAt(0, false);
   const bool bEndExtend = pArray && pArray->GetBooleanAt(1, false);
 
@@ -168,7 +168,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
 void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                        const CFX_Matrix& mtObject2Bitmap,
-                       const CPDF_Dictionary* pDict,
+                       const CPDF_Dictionary* dict,
                        const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                        const RetainPtr<CPDF_ColorSpace>& pCS,
                        int alpha) {
@@ -179,7 +179,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     return;
   }
 
-  RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
+  RetainPtr<const CPDF_Array> pCoords = dict->GetArrayFor("Coords");
   if (!pCoords) {
     return;
   }
@@ -192,12 +192,12 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float end_r = pCoords->GetFloatAt(5);
   float t_min = 0;
   float t_max = 1.0f;
-  RetainPtr<const CPDF_Array> pArray = pDict->GetArrayFor("Domain");
+  RetainPtr<const CPDF_Array> pArray = dict->GetArrayFor("Domain");
   if (pArray) {
     t_min = pArray->GetFloatAt(0);
     t_max = pArray->GetFloatAt(1);
   }
-  pArray = pDict->GetArrayFor("Extend");
+  pArray = dict->GetArrayFor("Extend");
   const bool bStartExtend = pArray && pArray->GetBooleanAt(0, false);
   const bool bEndExtend = pArray && pArray->GetBooleanAt(1, false);
 
@@ -271,7 +271,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
 void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                      const CFX_Matrix& mtObject2Bitmap,
-                     const CPDF_Dictionary* pDict,
+                     const CPDF_Dictionary* dict,
                      const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                      const RetainPtr<CPDF_ColorSpace>& pCS,
                      int alpha) {
@@ -282,7 +282,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     return;
   }
 
-  RetainPtr<const CPDF_Array> pDomain = pDict->GetArrayFor("Domain");
+  RetainPtr<const CPDF_Array> pDomain = dict->GetArrayFor("Domain");
   float xmin = 0.0f;
   float ymin = 0.0f;
   float xmax = 1.0f;
@@ -293,7 +293,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     ymin = pDomain->GetFloatAt(2);
     ymax = pDomain->GetFloatAt(3);
   }
-  CFX_Matrix mtDomain2Target = pDict->GetMatrixFor("Matrix");
+  CFX_Matrix mtDomain2Target = dict->GetMatrixFor("Matrix");
   CFX_Matrix matrix =
       mtObject2Bitmap.GetInverse() * mtDomain2Target.GetInverse();
   int width = pBitmap->GetWidth();
@@ -929,10 +929,10 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
   }
 
   FX_ARGB background = 0;
-  RetainPtr<const CPDF_Dictionary> pDict =
+  RetainPtr<const CPDF_Dictionary> dict =
       pPattern->GetShadingObject()->GetDict();
-  if (!pPattern->IsShadingObject() && pDict->KeyExist("Background")) {
-    RetainPtr<const CPDF_Array> pBackColor = pDict->GetArrayFor("Background");
+  if (!pPattern->IsShadingObject() && dict->KeyExist("Background")) {
+    RetainPtr<const CPDF_Array> pBackColor = dict->GetArrayFor("Background");
     if (pBackColor && pBackColor->size() >= pColorSpace->ComponentCount()) {
       std::vector<float> comps = ReadArrayElementsToVector(
           pBackColor.Get(), pColorSpace->ComponentCount());
@@ -944,9 +944,9 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     }
   }
   FX_RECT clip_rect_bbox = clip_rect;
-  if (pDict->KeyExist("BBox")) {
+  if (dict->KeyExist("BBox")) {
     clip_rect_bbox.Intersect(
-        mtMatrix.TransformRect(pDict->GetRectFor("BBox")).GetOuterRect());
+        mtMatrix.TransformRect(dict->GetRectFor("BBox")).GetOuterRect());
   }
 #if defined(PDF_USE_SKIA)
   if ((pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING) &&
@@ -970,15 +970,15 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     case kMaxShading:
       return;
     case kFunctionBasedShading:
-      DrawFuncShading(pBitmap, final_matrix, pDict.Get(), funcs, pColorSpace,
+      DrawFuncShading(pBitmap, final_matrix, dict.Get(), funcs, pColorSpace,
                       alpha);
       break;
     case kAxialShading:
-      DrawAxialShading(pBitmap, final_matrix, pDict.Get(), funcs, pColorSpace,
+      DrawAxialShading(pBitmap, final_matrix, dict.Get(), funcs, pColorSpace,
                        alpha);
       break;
     case kRadialShading:
-      DrawRadialShading(pBitmap, final_matrix, pDict.Get(), funcs, pColorSpace,
+      DrawRadialShading(pBitmap, final_matrix, dict.Get(), funcs, pColorSpace,
                         alpha);
       break;
     case kFreeFormGouraudTriangleMeshShading: {

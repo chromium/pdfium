@@ -187,10 +187,10 @@ ByteStringView FindFullName(pdfium::span<const AbbrPair> table,
 
 void ReplaceAbbr(RetainPtr<CPDF_Object> pObj);
 
-void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
+void ReplaceAbbrInDictionary(CPDF_Dictionary* dict) {
   std::vector<AbbrReplacementOp> replacements;
   {
-    CPDF_DictionaryLocker locker(pDict);
+    CPDF_DictionaryLocker locker(dict);
     for (const auto& it : locker) {
       ByteString key = it.first;
       ByteStringView fullname =
@@ -221,9 +221,9 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
   }
   for (const auto& op : replacements) {
     if (op.is_replace_key) {
-      pDict->ReplaceKey(op.key, ByteString(op.replacement));
+      dict->ReplaceKey(op.key, ByteString(op.replacement));
     } else {
-      pDict->SetNewFor<CPDF_Name>(op.key, ByteString(op.replacement));
+      dict->SetNewFor<CPDF_Name>(op.key, ByteString(op.replacement));
     }
   }
 }
@@ -245,9 +245,9 @@ void ReplaceAbbrInArray(CPDF_Array* pArray) {
 }
 
 void ReplaceAbbr(RetainPtr<CPDF_Object> pObj) {
-  CPDF_Dictionary* pDict = pObj->AsMutableDictionary();
-  if (pDict) {
-    ReplaceAbbrInDictionary(pDict);
+  CPDF_Dictionary* dict = pObj->AsMutableDictionary();
+  if (dict) {
+    ReplaceAbbrInDictionary(dict);
     return;
   }
 
@@ -641,7 +641,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
 
 void CPDF_StreamContentParser::Handle_BeginImage() {
   FX_FILESIZE savePos = syntax_->GetPos();
-  auto pDict = document_->New<CPDF_Dictionary>();
+  auto dict = document_->New<CPDF_Dictionary>();
   while (true) {
     CPDF_StreamParser::ElementType type = syntax_->ParseNextElement();
     if (type == CPDF_StreamParser::ElementType::kKeyword) {
@@ -658,28 +658,28 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     ByteString key(word.Last(word.GetLength() - 1));
     auto pObj = syntax_->ReadNextObject(false, false, 0);
     if (pObj && !pObj->IsInline()) {
-      pDict->SetNewFor<CPDF_Reference>(key, document_, pObj->GetObjNum());
+      dict->SetNewFor<CPDF_Reference>(key, document_, pObj->GetObjNum());
     } else {
-      pDict->SetFor(key, std::move(pObj));
+      dict->SetFor(key, std::move(pObj));
     }
   }
-  ReplaceAbbr(pDict);
+  ReplaceAbbr(dict);
   RetainPtr<const CPDF_Object> pCSObj;
-  if (pDict->KeyExist("ColorSpace")) {
-    pCSObj = pDict->GetDirectObjectFor("ColorSpace");
+  if (dict->KeyExist("ColorSpace")) {
+    pCSObj = dict->GetDirectObjectFor("ColorSpace");
     if (pCSObj->IsName()) {
       ByteString name = pCSObj->GetString();
       if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
         pCSObj = FindResourceObj("ColorSpace", name);
         if (pCSObj && pCSObj->IsInline()) {
-          pDict->SetFor("ColorSpace", pCSObj->Clone());
+          dict->SetFor("ColorSpace", pCSObj->Clone());
         }
       }
     }
   }
-  pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
+  dict->SetNewFor<CPDF_Name>("Subtype", "Image");
   RetainPtr<CPDF_Stream> pStream =
-      syntax_->ReadInlineStream(document_, std::move(pDict), pCSObj.Get());
+      syntax_->ReadInlineStream(document_, std::move(dict), pCSObj.Get());
   while (true) {
     CPDF_StreamParser::ElementType type = syntax_->ParseNextElement();
     if (type == CPDF_StreamParser::ElementType::kEndOfData) {
@@ -1203,9 +1203,9 @@ RetainPtr<CPDF_Dictionary> CPDF_StreamContentParser::FindResourceHolder(
     return nullptr;
   }
 
-  RetainPtr<CPDF_Dictionary> pDict = resources_->GetMutableDictFor(type);
-  if (pDict) {
-    return pDict;
+  RetainPtr<CPDF_Dictionary> dict = resources_->GetMutableDictFor(type);
+  if (dict) {
+    return dict;
   }
 
   if (resources_ == page_resources_ || !page_resources_) {

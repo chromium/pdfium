@@ -262,22 +262,22 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetStandardFont(
     return pdfium::WrapRetain(font);
   }
 
-  auto pDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Name>("Type", "Font");
-  pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
-  pDict->SetNewFor<CPDF_Name>("BaseFont", fontName);
+  auto dict = GetDocument()->NewIndirect<CPDF_Dictionary>();
+  dict->SetNewFor<CPDF_Name>("Type", "Font");
+  dict->SetNewFor<CPDF_Name>("Subtype", "Type1");
+  dict->SetNewFor<CPDF_Name>("BaseFont", fontName);
   if (pEncoding) {
-    pDict->SetFor("Encoding",
-                  pEncoding->Realize(GetDocument()->GetByteStringPool()));
+    dict->SetFor("Encoding",
+                 pEncoding->Realize(GetDocument()->GetByteStringPool()));
   }
 
   // Note: NULL FormFactoryIface OK since known Type1 font from above.
-  RetainPtr<CPDF_Font> font = CPDF_Font::Create(GetDocument(), pDict, nullptr);
+  RetainPtr<CPDF_Font> font = CPDF_Font::Create(GetDocument(), dict, nullptr);
   if (!font) {
     return nullptr;
   }
 
-  font_map_[std::move(pDict)].Reset(font.Get());
+  font_map_[std::move(dict)].Reset(font.Get());
   return font;
 }
 

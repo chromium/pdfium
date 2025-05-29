@@ -49,20 +49,18 @@ void CPDF_ContentMarks::AddMark(ByteString name) {
   mark_data_->AddMark(std::move(name));
 }
 
-void CPDF_ContentMarks::AddMarkWithDirectDict(
-    ByteString name,
-    RetainPtr<CPDF_Dictionary> pDict) {
+void CPDF_ContentMarks::AddMarkWithDirectDict(ByteString name,
+                                              RetainPtr<CPDF_Dictionary> dict) {
   EnsureMarkDataExists();
-  mark_data_->AddMarkWithDirectDict(std::move(name), std::move(pDict));
+  mark_data_->AddMarkWithDirectDict(std::move(name), std::move(dict));
 }
 
 void CPDF_ContentMarks::AddMarkWithPropertiesHolder(
     const ByteString& name,
-    RetainPtr<CPDF_Dictionary> pDict,
+    RetainPtr<CPDF_Dictionary> dict,
     const ByteString& property_name) {
   EnsureMarkDataExists();
-  mark_data_->AddMarkWithPropertiesHolder(name, std::move(pDict),
-                                          property_name);
+  mark_data_->AddMarkWithPropertiesHolder(name, std::move(dict), property_name);
 }
 
 bool CPDF_ContentMarks::RemoveMark(CPDF_ContentMarkItem* pMarkItem) {
@@ -125,9 +123,9 @@ const CPDF_ContentMarkItem* CPDF_ContentMarks::MarkData::GetItem(
 
 int CPDF_ContentMarks::MarkData::GetMarkedContentID() const {
   for (const auto& pMark : marks_) {
-    RetainPtr<const CPDF_Dictionary> pDict = pMark->GetParam();
-    if (pDict && pDict->KeyExist("MCID")) {
-      return pDict->GetIntegerFor("MCID");
+    RetainPtr<const CPDF_Dictionary> dict = pMark->GetParam();
+    if (dict && dict->KeyExist("MCID")) {
+      return dict->GetIntegerFor("MCID");
     }
   }
   return -1;
@@ -140,18 +138,18 @@ void CPDF_ContentMarks::MarkData::AddMark(ByteString name) {
 
 void CPDF_ContentMarks::MarkData::AddMarkWithDirectDict(
     ByteString name,
-    RetainPtr<CPDF_Dictionary> pDict) {
+    RetainPtr<CPDF_Dictionary> dict) {
   auto pItem = pdfium::MakeRetain<CPDF_ContentMarkItem>(std::move(name));
-  pItem->SetDirectDict(ToDictionary(pDict->Clone()));
+  pItem->SetDirectDict(ToDictionary(dict->Clone()));
   marks_.push_back(pItem);
 }
 
 void CPDF_ContentMarks::MarkData::AddMarkWithPropertiesHolder(
     const ByteString& name,
-    RetainPtr<CPDF_Dictionary> pDict,
+    RetainPtr<CPDF_Dictionary> dict,
     const ByteString& property_name) {
   auto pItem = pdfium::MakeRetain<CPDF_ContentMarkItem>(name);
-  pItem->SetPropertiesHolder(std::move(pDict), property_name);
+  pItem->SetPropertiesHolder(std::move(dict), property_name);
   marks_.push_back(std::move(pItem));
 }
 

@@ -44,7 +44,7 @@ class CPDF_GeneralState {
 
   RetainPtr<const CPDF_Dictionary> GetSoftMask() const;
   RetainPtr<CPDF_Dictionary> GetMutableSoftMask();
-  void SetSoftMask(RetainPtr<CPDF_Dictionary> pDict);
+  void SetSoftMask(RetainPtr<CPDF_Dictionary> dict);
 
   RetainPtr<const CPDF_Object> GetTR() const;
   void SetTR(RetainPtr<const CPDF_Object> pObject);
