@@ -65,6 +65,13 @@ class CPDF_MeshStream {
   uint32_t ComponentBits() const { return component_bits_; }
   uint32_t Components() const { return components_; }
 
+  float component_min(size_t component_index) const {
+    return color_min_[component_index];
+  }
+  float component_max(size_t component_index) const {
+    return color_max_[component_index];
+  }
+
  private:
   static constexpr uint32_t kMaxComponents = 8;
 

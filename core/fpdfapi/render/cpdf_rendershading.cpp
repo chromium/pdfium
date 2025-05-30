@@ -62,16 +62,20 @@ uint32_t GetValidatedOutputsCount(
   return funcs_outputs ? std::max(funcs_outputs, pCS->ComponentCount()) : 0;
 }
 
-std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
-    float t_min,
-    float t_max,
-    const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    const RetainPtr<CPDF_ColorSpace>& pCS,
-    int alpha,
-    size_t results_count) {
+bool GetShadingSteps(float t_min,
+                     float t_max,
+                     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+                     const RetainPtr<CPDF_ColorSpace>& pCS,
+                     int alpha,
+                     std::array<FX_ARGB, kShadingSteps>* output) {
+  const uint32_t results_count = GetValidatedOutputsCount(funcs, pCS);
+  if (results_count == 0) {
+    return false;
+  }
+
   CHECK_GE(results_count, CountOutputsFromFunctions(funcs));
   CHECK_GE(results_count, pCS->ComponentCount());
-  std::array<FX_ARGB, kShadingSteps> shading_steps;
+  std::array<FX_ARGB, kShadingSteps>& shading_steps = *output;
   std::vector<float> result_array(results_count);
   float diff = t_max - t_min;
   for (int i = 0; i < kShadingSteps; ++i) {
@@ -92,7 +96,7 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
         ArgbEncode(alpha, FXSYS_roundf(rgb.red * 255),
                    FXSYS_roundf(rgb.green * 255), FXSYS_roundf(rgb.blue * 255));
   }
-  return shading_steps;
+  return true;
 }
 
 void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
@@ -102,11 +106,6 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       const RetainPtr<CPDF_ColorSpace>& pCS,
                       int alpha) {
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kBgra);
-
-  const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
-  if (total_results == 0) {
-    return;
-  }
 
   RetainPtr<const CPDF_Array> pCoords = dict->GetArrayFor("Coords");
   if (!pCoords) {
@@ -134,8 +133,10 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float y_span = end_y - start_y;
   float axis_len_square = (x_span * x_span) + (y_span * y_span);
 
-  std::array<FX_ARGB, kShadingSteps> shading_steps =
-      GetShadingSteps(t_min, t_max, funcs, pCS, alpha, total_results);
+  std::array<FX_ARGB, kShadingSteps> shading_steps;
+  if (!GetShadingSteps(t_min, t_max, funcs, pCS, alpha, &shading_steps)) {
+    return;
+  }
 
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
@@ -174,11 +175,6 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                        int alpha) {
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kBgra);
 
-  const uint32_t total_results = GetValidatedOutputsCount(funcs, pCS);
-  if (total_results == 0) {
-    return;
-  }
-
   RetainPtr<const CPDF_Array> pCoords = dict->GetArrayFor("Coords");
   if (!pCoords) {
     return;
@@ -201,8 +197,10 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   const bool bStartExtend = pArray && pArray->GetBooleanAt(0, false);
   const bool bEndExtend = pArray && pArray->GetBooleanAt(1, false);
 
-  std::array<FX_ARGB, kShadingSteps> shading_steps =
-      GetShadingSteps(t_min, t_max, funcs, pCS, alpha, total_results);
+  std::array<FX_ARGB, kShadingSteps> shading_steps;
+  if (!GetShadingSteps(t_min, t_max, funcs, pCS, alpha, &shading_steps)) {
+    return;
+  }
 
   const float dx = end_x - start_x;
   const float dy = end_y - start_y;
@@ -351,7 +349,8 @@ bool GetScanlineIntersect(int y,
 
 void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
                  int alpha,
-                 pdfium::span<CPDF_MeshVertex, 3> triangle) {
+                 pdfium::span<CPDF_MeshVertex, 3> triangle,
+                 const std::array<FX_ARGB, kShadingSteps>* shading_steps) {
   float min_y = triangle[0].position.y;
   float max_y = triangle[0].position.y;
   for (int i = 1; i < 3; i++) {
@@ -429,12 +428,22 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
     for (int x = start_x; x < end_x; x++) {
       r_result += r_unit;
-      g_result += g_unit;
-      b_result += b_unit;
-      UNSAFE_TODO(FXARGB_SetDIB(
-          dib_span.data(), ArgbEncode(alpha, static_cast<int>(r_result * 255),
-                                      static_cast<int>(g_result * 255),
-                                      static_cast<int>(b_result * 255))));
+      if (shading_steps) {
+        int index = static_cast<int32_t>(r_result * (kShadingSteps - 1));
+        if (index < 0) {
+          index = 0;
+        } else if (index >= kShadingSteps) {
+          index = kShadingSteps - 1;
+        }
+        UNSAFE_TODO(FXARGB_SetDIB(dib_span.data(), (*shading_steps)[index]));
+      } else {
+        g_result += g_unit;
+        b_result += b_unit;
+        UNSAFE_TODO(FXARGB_SetDIB(
+            dib_span.data(), ArgbEncode(alpha, static_cast<int>(r_result * 255),
+                                        static_cast<int>(g_result * 255),
+                                        static_cast<int>(b_result * 255))));
+      }
       dib_span = dib_span.subspan<4u>();
     }
   }
@@ -450,9 +459,17 @@ void DrawFreeGouraudShading(
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kBgra);
 
   CPDF_MeshStream stream(kFreeFormGouraudTriangleMeshShading, funcs,
-                         std::move(pShadingStream), std::move(pCS));
+                         std::move(pShadingStream), pCS);
   if (!stream.Load()) {
     return;
+  }
+
+  std::array<FX_ARGB, kShadingSteps> shading_steps;
+  if (!funcs.empty()) {
+    if (!GetShadingSteps(stream.component_min(0), stream.component_max(0),
+                         funcs, pCS, alpha, &shading_steps)) {
+      return;
+    }
   }
 
   std::array<CPDF_MeshVertex, 3> triangle;
@@ -479,7 +496,8 @@ void DrawFreeGouraudShading(
       triangle[1] = triangle[2];
       triangle[2] = vertex;
     }
-    DrawGouraud(pBitmap, alpha, triangle);
+    DrawGouraud(pBitmap, alpha, triangle,
+                funcs.empty() ? nullptr : &shading_steps);
   }
 }
 
@@ -498,9 +516,17 @@ void DrawLatticeGouraudShading(
   }
 
   CPDF_MeshStream stream(kLatticeFormGouraudTriangleMeshShading, funcs,
-                         std::move(pShadingStream), std::move(pCS));
+                         std::move(pShadingStream), pCS);
   if (!stream.Load()) {
     return;
+  }
+
+  std::array<FX_ARGB, kShadingSteps> shading_steps;
+  if (!funcs.empty()) {
+    if (!GetShadingSteps(stream.component_min(0), stream.component_max(0),
+                         funcs, pCS, alpha, &shading_steps)) {
+      return;
+    }
   }
 
   std::array<std::vector<CPDF_MeshVertex>, 2> vertices;
@@ -521,9 +547,11 @@ void DrawLatticeGouraudShading(
       triangle[0] = vertices[last_index][i];
       triangle[1] = vertices[1 - last_index][i - 1];
       triangle[2] = vertices[last_index][i - 1];
-      DrawGouraud(pBitmap, alpha, triangle);
+      DrawGouraud(pBitmap, alpha, triangle,
+                  funcs.empty() ? nullptr : &shading_steps);
       triangle[2] = vertices[1 - last_index][i];
-      DrawGouraud(pBitmap, alpha, triangle);
+      DrawGouraud(pBitmap, alpha, triangle,
+                  funcs.empty() ? nullptr : &shading_steps);
     }
     last_index = 1 - last_index;
   }
@@ -684,7 +712,8 @@ struct PatchDrawer {
             int y_scale,
             int left,
             int bottom,
-            CubicBezierPatch patch) {
+            CubicBezierPatch patch,
+            const std::array<FX_ARGB, kShadingSteps>* shading_steps) {
     bool bSmall = patch.IsSmall();
 
     CoonColor div_colors[4];
@@ -726,11 +755,18 @@ struct PatchDrawer {
       if (bNoPathSmooth) {
         fill_options.aliased_path = true;
       }
-      pDevice->DrawPath(
-          path, nullptr, nullptr,
-          ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
-                     div_colors[0].comp[2]),
-          0, fill_options);
+
+      if (shading_steps) {
+        pDevice->DrawPath(path, nullptr, nullptr,
+                          (*shading_steps)[div_colors[0].comp[0]], 0,
+                          fill_options);
+      } else {
+        pDevice->DrawPath(
+            path, nullptr, nullptr,
+            ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
+                       div_colors[0].comp[2]),
+            0, fill_options);
+      }
     } else {
       if (d_bottom < kCoonColorThreshold && d_top < kCoonColorThreshold) {
         CubicBezierPatch top_patch;
@@ -738,8 +774,8 @@ struct PatchDrawer {
         patch.SubdivideVertical(top_patch, bottom_patch);
         y_scale *= 2;
         bottom *= 2;
-        Draw(x_scale, y_scale, left, bottom, top_patch);
-        Draw(x_scale, y_scale, left, bottom + 1, bottom_patch);
+        Draw(x_scale, y_scale, left, bottom, top_patch, shading_steps);
+        Draw(x_scale, y_scale, left, bottom + 1, bottom_patch, shading_steps);
       } else if (d_left < kCoonColorThreshold &&
                  d_right < kCoonColorThreshold) {
         CubicBezierPatch left_patch;
@@ -747,8 +783,8 @@ struct PatchDrawer {
         patch.SubdivideHorizontal(left_patch, right_patch);
         x_scale *= 2;
         left *= 2;
-        Draw(x_scale, y_scale, left, bottom, left_patch);
-        Draw(x_scale, y_scale, left + 1, bottom, right_patch);
+        Draw(x_scale, y_scale, left, bottom, left_patch, shading_steps);
+        Draw(x_scale, y_scale, left + 1, bottom, right_patch, shading_steps);
       } else {
         CubicBezierPatch top_left;
         CubicBezierPatch bottom_left;
@@ -759,10 +795,11 @@ struct PatchDrawer {
         y_scale *= 2;
         left *= 2;
         bottom *= 2;
-        Draw(x_scale, y_scale, left, bottom, top_left);
-        Draw(x_scale, y_scale, left, bottom + 1, bottom_left);
-        Draw(x_scale, y_scale, left + 1, bottom, top_right);
-        Draw(x_scale, y_scale, left + 1, bottom + 1, bottom_right);
+        Draw(x_scale, y_scale, left, bottom, top_left, shading_steps);
+        Draw(x_scale, y_scale, left, bottom + 1, bottom_left, shading_steps);
+        Draw(x_scale, y_scale, left + 1, bottom, top_right, shading_steps);
+        Draw(x_scale, y_scale, left + 1, bottom + 1, bottom_right,
+             shading_steps);
       }
     }
   }
@@ -791,10 +828,17 @@ void DrawCoonPatchMeshes(
   CFX_DefaultRenderDevice device;
   device.Attach(pBitmap);
 
-  CPDF_MeshStream stream(type, funcs, std::move(pShadingStream),
-                         std::move(pCS));
+  CPDF_MeshStream stream(type, funcs, std::move(pShadingStream), pCS);
   if (!stream.Load()) {
     return;
+  }
+
+  std::array<FX_ARGB, kShadingSteps> shading_steps;
+  if (!funcs.empty()) {
+    if (!GetShadingSteps(stream.component_min(0), stream.component_max(0),
+                         funcs, pCS, alpha, &shading_steps)) {
+      return;
+    }
   }
 
   PatchDrawer patch_drawer;
@@ -908,7 +952,8 @@ void DrawCoonPatchMeshes(
                            1.0f * patch.points[0][0]);
     }
 
-    patch_drawer.Draw(1, 1, 0, 0, patch);
+    patch_drawer.Draw(1, 1, 0, 0, patch,
+                      funcs.empty() ? nullptr : &shading_steps);
   }
 }
 
