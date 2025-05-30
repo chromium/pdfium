@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include <memory>
+#include <variant>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/span.h"
@@ -18,6 +19,11 @@
 
 class CFX_ScanlineCompositor {
  public:
+  struct GrayWithAlpha {
+    uint8_t gray;
+    uint8_t alpha;
+  };
+
   CFX_ScanlineCompositor();
   ~CFX_ScanlineCompositor();
 
@@ -77,7 +83,7 @@ class CFX_ScanlineCompositor {
 
   void InitSourcePalette(pdfium::span<const uint32_t> src_palette);
 
-  void InitSourceMask(uint32_t mask_color);
+  void InitSourceMask(FX_ARGB mask_color);
 
   void CompositeRgbBitmapLineSrcBgrx(
       pdfium::span<uint8_t> dest_scan,
@@ -111,10 +117,7 @@ class CFX_ScanlineCompositor {
   FXDIB_Format src_format_;
   FXDIB_Format dest_format_;
   Palette src_palette_;
-  int mask_alpha_;
-  int mask_red_;
-  int mask_green_;
-  int mask_blue_;
+  std::variant<FX_BGRA_STRUCT<uint8_t>, GrayWithAlpha> mask_color_;
   BlendMode blend_type_ = BlendMode::kNormal;
   bool rgb_byte_order_ = false;
 };
