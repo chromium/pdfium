@@ -233,13 +233,10 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
         break;
       }
       case TransformMethod::k8BppRgbToArgb: {
-        uint8_t* pScanline = scan_span.data();
-        UNSAFE_TODO({
-          for (int col = 0; col < sizeX; col++) {
-            FXARGB_SetDIB(pScanline, argb);
-            pScanline += 4;
-          }
-        });
+        for (int col = 0; col < sizeX; col++) {
+          FXARGB_SetDIB(scan_span.first<4u>(), argb);
+          scan_span = scan_span.subspan<4u>();
+        }
         break;
       }
       default:

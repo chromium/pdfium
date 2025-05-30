@@ -6,7 +6,6 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -139,7 +138,7 @@ TEST(CFXDIBitmapTest, UnPreMultiplyFromPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kBgraPremul));
   EXPECT_TRUE(bitmap->IsPremultiplied());
-  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f));
+  FXARGB_SetDIB(bitmap->GetWritableBuffer().first<4u>(), 0x7f'7f'7f'7f);
 
   bitmap->UnPreMultiply();
   EXPECT_FALSE(bitmap->IsPremultiplied());
@@ -150,7 +149,7 @@ TEST(CFXDIBitmapTest, UnPreMultiplyFromUnPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kBgra));
   EXPECT_FALSE(bitmap->IsPremultiplied());
-  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'ff'ff'ff));
+  FXARGB_SetDIB(bitmap->GetWritableBuffer().first<4u>(), 0x7f'ff'ff'ff);
 
   bitmap->UnPreMultiply();
   EXPECT_FALSE(bitmap->IsPremultiplied());
@@ -161,7 +160,7 @@ TEST(CFXDIBitmapTest, PreMultiplyFromUnPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kBgra));
   EXPECT_FALSE(bitmap->IsPremultiplied());
-  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'ff'ff'ff));
+  FXARGB_SetDIB(bitmap->GetWritableBuffer().first<4u>(), 0x7f'ff'ff'ff);
 
   bitmap->PreMultiply();
   EXPECT_TRUE(bitmap->IsPremultiplied());
@@ -172,7 +171,7 @@ TEST(CFXDIBitmapTest, PreMultiplyFromPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kBgraPremul));
   EXPECT_TRUE(bitmap->IsPremultiplied());
-  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f));
+  FXARGB_SetDIB(bitmap->GetWritableBuffer().first<4u>(), 0x7f'7f'7f'7f);
 
   bitmap->PreMultiply();
   EXPECT_TRUE(bitmap->IsPremultiplied());
