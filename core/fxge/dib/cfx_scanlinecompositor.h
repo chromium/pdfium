@@ -117,7 +117,7 @@ class CFX_ScanlineCompositor {
   FXDIB_Format src_format_;
   FXDIB_Format dest_format_;
   Palette src_palette_;
-  std::variant<FX_BGRA_STRUCT<uint8_t>, GrayWithAlpha> mask_color_;
+  std::variant<FX_BGRA_STRUCT<uint8_t>, GrayWithAlpha, uint8_t> mask_color_;
   BlendMode blend_type_ = BlendMode::kNormal;
   bool rgb_byte_order_ = false;
 };

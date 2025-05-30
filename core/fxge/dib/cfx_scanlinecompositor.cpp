@@ -2305,6 +2305,8 @@ void CFX_ScanlineCompositor::InitSourceMask(FX_ARGB mask_color) {
         .gray = static_cast<uint8_t>(FXRGB2GRAY(
             FXARGB_R(mask_color), FXARGB_G(mask_color), FXARGB_B(mask_color))),
         .alpha = FXARGB_A(mask_color)};
+  } else if (dest_format_ == FXDIB_Format::k8bppMask) {
+    mask_color_ = static_cast<uint8_t>(FXARGB_A(mask_color));
   } else {
     mask_color_ = reinterpret_cast<FX_BGRA_STRUCT<uint8_t>&>(mask_color);
   }
@@ -2780,10 +2782,9 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
     }
     case FXDIB_Format::k8bppMask: {
       CHECK(!rgb_byte_order_);  // Disallowed by Init();
-      CompositeRow_ByteMask2Mask(
-          dest_scan, src_scan,
-          std::get<FX_BGRA_STRUCT<uint8_t>>(mask_color_).alpha, width,
-          clip_scan);
+      CompositeRow_ByteMask2Mask(dest_scan, src_scan,
+                                 std::get<uint8_t>(mask_color_), width,
+                                 clip_scan);
       return;
     }
     case FXDIB_Format::kBgr:
@@ -2844,10 +2845,9 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
     }
     case FXDIB_Format::k8bppMask: {
       CHECK(!rgb_byte_order_);  // Disallowed by Init();
-      CompositeRow_BitMask2Mask(
-          dest_scan, src_scan,
-          std::get<FX_BGRA_STRUCT<uint8_t>>(mask_color_).alpha, src_left, width,
-          clip_scan);
+      CompositeRow_BitMask2Mask(dest_scan, src_scan,
+                                std::get<uint8_t>(mask_color_), src_left, width,
+                                clip_scan);
       return;
     }
     case FXDIB_Format::kBgr:
