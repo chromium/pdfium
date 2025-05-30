@@ -596,30 +596,30 @@ endobj
 
 {{object 22 0}} <<
   /FunctionType 2
-  /Domain [0 1]
+  /Domain [1 2]
   /Range [0 1]
-  /C0 [1]
-  /C1 [0]
+  /C0 [2]
+  /C1 [1]
   /N 1
 >>
 endobj
 
 {{object 23 0}} <<
   /FunctionType 2
-  /Domain [0 1]
+  /Domain [1 2]
   /Range [0 1]
-  /C0 [0]
-  /C1 [1]
+  /C0 [-1]
+  /C1 [0]
   /N 1
 >>
 endobj
 
 {{object 24 0}} <<
   /FunctionType 3
-  /Domain [0 1]
+  /Domain [1 2]
   /Functions [22 0 R 23 0 R]
-  /Bounds [.5]
-  /Encode [0 1 0 1]
+  /Bounds [1.5]
+  /Encode [1 2 1 2]
 >>
 endobj
 
@@ -630,7 +630,7 @@ endobj
   /AntiAlias false
   /ColorSpace /DeviceRGB
   /Coords [0 0 100 100]
-  /Domain [0 1]
+  /Domain [1 2]
   /Extend [false false]
   /Function [22 0 R 23 0 R 24 0 R]
   /ShadingType 2
@@ -641,7 +641,7 @@ endobj
   /AntiAlias false
   /ColorSpace /DeviceRGB
   /Coords [30 50 10 50 50 40]
-  /Domain [0 1]
+  /Domain [1 2]
   /Extend [true true]
   /Function [22 0 R 23 0 R 24 0 R]
   /ShadingType 3
@@ -655,7 +655,7 @@ endobj
   /BitsPerComponent 8
   /BitsPerFlag 8
   /Function [22 0 R 23 0 R 24 0 R]
-  /Decode [0 100 0 100 0 1]
+  /Decode [0 100 0 100 1 2]
   /Filter /ASCIIHexDecode
   {{streamlen}}
 >>
@@ -685,7 +685,7 @@ endobj
   /BitsPerComponent 8
   /VerticesPerRow 2
   /Function [22 0 R 23 0 R 24 0 R]
-  /Decode [0 100 0 100 0 1]
+  /Decode [0 100 0 100 1 2]
   /Filter /ASCIIHexDecode
   {{streamlen}}
 >>
@@ -703,7 +703,7 @@ endobj
   /BitsPerComponent 8
   /BitsPerFlag 8
   /Function [22 0 R 23 0 R 24 0 R]
-  /Decode [0 100 0 100 0 1]
+  /Decode [0 100 0 100 1 2]
   /Filter /ASCIIHexDecode
   {{streamlen}}
 >>
@@ -729,7 +729,7 @@ endobj
   /BitsPerComponent 8
   /BitsPerFlag 8
   /Function [22 0 R 23 0 R 24 0 R]
-  /Decode [0 100 0 100 0 1]
+  /Decode [0 100 0 100 1 2]
   /Filter /ASCIIHexDecode
   {{streamlen}}
 >>
@@ -755,7 +755,7 @@ endobj
   /BitsPerComponent 8
   /BitsPerFlag 8
   /Function [22 0 R 23 0 R 24 0 R]
-  /Decode [0 100 0 100 0 1]
+  /Decode [0 100 0 100 1 2]
   /Filter /ASCIIHexDecode
   {{streamlen}}
 >>
@@ -782,7 +782,7 @@ endobj
   /BitsPerComponent 8
   /BitsPerFlag 8
   /Function [22 0 R 23 0 R 24 0 R]
-  /Decode [0 100 0 100 0 1]
+  /Decode [0 100 0 100 1 2]
   /Filter /ASCIIHexDecode
   {{streamlen}}
 >>

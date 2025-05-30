@@ -99,6 +99,13 @@ bool GetShadingSteps(float t_min,
   return true;
 }
 
+float ComponentToShadingIndex(float c, float c_min, float c_max) {
+  if (c_min == c_max) {
+    return 0;
+  }
+  return ((c - c_min) / (c_max - c_min)) * (kShadingSteps - 1);
+}
+
 void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       const CFX_Matrix& mtObject2Bitmap,
                       const CPDF_Dictionary* dict,
@@ -429,7 +436,7 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
     for (int x = start_x; x < end_x; x++) {
       r_result += r_unit;
       if (shading_steps) {
-        int index = static_cast<int32_t>(r_result * (kShadingSteps - 1));
+        int index = static_cast<int32_t>(r_result);
         if (index < 0) {
           index = 0;
         } else if (index >= kShadingSteps) {
@@ -470,6 +477,8 @@ void DrawFreeGouraudShading(
       return;
     }
   }
+  float c0_min = stream.component_min(0);
+  float c0_max = stream.component_max(0);
 
   std::array<CPDF_MeshVertex, 3> triangle;
   while (!stream.IsEOF()) {
@@ -478,6 +487,9 @@ void DrawFreeGouraudShading(
     if (!stream.ReadVertex(mtObject2Bitmap, &vertex, &flag)) {
       return;
     }
+    if (!funcs.empty()) {
+      vertex.rgb.red = ComponentToShadingIndex(vertex.rgb.red, c0_min, c0_max);
+    }
 
     if (flag == 0) {
       triangle[0] = vertex;
@@ -485,6 +497,10 @@ void DrawFreeGouraudShading(
         uint32_t dummy_flag;
         if (!stream.ReadVertex(mtObject2Bitmap, &triangle[i], &dummy_flag)) {
           return;
+        }
+        if (!funcs.empty()) {
+          triangle[i].rgb.red =
+              ComponentToShadingIndex(triangle[i].rgb.red, c0_min, c0_max);
         }
       }
     } else {
@@ -527,11 +543,18 @@ void DrawLatticeGouraudShading(
       return;
     }
   }
+  float c0_min = stream.component_min(0);
+  float c0_max = stream.component_max(0);
 
   std::array<std::vector<CPDF_MeshVertex>, 2> vertices;
   vertices[0] = stream.ReadVertexRow(mtObject2Bitmap, row_verts);
   if (vertices[0].empty()) {
     return;
+  }
+  for (auto& vertex : vertices[0]) {
+    if (!funcs.empty()) {
+      vertex.rgb.red = ComponentToShadingIndex(vertex.rgb.red, c0_min, c0_max);
+    }
   }
 
   int last_index = 0;
@@ -539,6 +562,12 @@ void DrawLatticeGouraudShading(
     vertices[1 - last_index] = stream.ReadVertexRow(mtObject2Bitmap, row_verts);
     if (vertices[1 - last_index].empty()) {
       return;
+    }
+    for (auto& vertex : vertices[1 - last_index]) {
+      if (!funcs.empty()) {
+        vertex.rgb.red =
+            ComponentToShadingIndex(vertex.rgb.red, c0_min, c0_max);
+      }
     }
 
     CPDF_MeshVertex triangle[3];
@@ -839,6 +868,8 @@ void DrawCoonPatchMeshes(
       return;
     }
   }
+  float c0_min = stream.component_min(0);
+  float c0_max = stream.component_max(0);
 
   PatchDrawer patch_drawer;
   patch_drawer.alpha = alpha;
@@ -888,12 +919,19 @@ void DrawCoonPatchMeshes(
       }
 
       FX_RGB_STRUCT<float> rgb = stream.ReadColor();
-      patch_drawer.patch_colors[i].comp[0] =
-          static_cast<int32_t>(rgb.red * 255);
-      patch_drawer.patch_colors[i].comp[1] =
-          static_cast<int32_t>(rgb.green * 255);
-      patch_drawer.patch_colors[i].comp[2] =
-          static_cast<int32_t>(rgb.blue * 255);
+      if (funcs.empty()) {
+        patch_drawer.patch_colors[i].comp[0] =
+            static_cast<int32_t>(rgb.red * 255);
+        patch_drawer.patch_colors[i].comp[1] =
+            static_cast<int32_t>(rgb.green * 255);
+        patch_drawer.patch_colors[i].comp[2] =
+            static_cast<int32_t>(rgb.blue * 255);
+      } else {
+        patch_drawer.patch_colors[i].comp[0] = static_cast<int32_t>(
+            ComponentToShadingIndex(rgb.red, c0_min, c0_max));
+        patch_drawer.patch_colors[i].comp[1] = 0;
+        patch_drawer.patch_colors[i].comp[2] = 0;
+      }
     }
 
     CFX_FloatRect bbox = CFX_FloatRect::GetBBox(
