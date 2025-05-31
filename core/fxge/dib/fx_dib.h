@@ -226,16 +226,6 @@ inline void FXARGB_SetDIB(pdfium::span<uint8_t, 4> p, uint32_t argb) {
   p[3] = FXARGB_A(argb);
 }
 
-// PRECONDITIONS: Caller must ensure 4 valid bytes at `p`.
-UNSAFE_BUFFER_USAGE inline void FXARGB_SetRGBOrderDIB(uint8_t* p,
-                                                      uint32_t argb) {
-  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE.
-  UNSAFE_BUFFERS(p[0]) = FXARGB_R(argb);
-  UNSAFE_BUFFERS(p[1]) = FXARGB_G(argb);
-  UNSAFE_BUFFERS(p[2]) = FXARGB_B(argb);
-  UNSAFE_BUFFERS(p[3]) = FXARGB_A(argb);
-}
-
 // PRECONDITIONS: Caller must ensure 3 valid bytes at `dest` and `src`.
 UNSAFE_BUFFER_USAGE inline void ReverseCopy3Bytes(uint8_t* dest,
                                                   const uint8_t* src) {
