@@ -784,17 +784,11 @@ struct PatchDrawer {
         fill_options.aliased_path = true;
       }
 
-      if (shading_steps) {
-        pDevice->DrawPath(path, nullptr, nullptr,
-                          (*shading_steps)[div_colors[0].comp[0]], 0,
-                          fill_options);
-      } else {
-        pDevice->DrawPath(
-            path, nullptr, nullptr,
-            ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
-                       div_colors[0].comp[2]),
-            0, fill_options);
-      }
+      FX_ARGB color = shading_steps ? (*shading_steps)[div_colors[0].comp[0]]
+                                    : ArgbEncode(alpha, div_colors[0].comp[0],
+                                                 div_colors[0].comp[1],
+                                                 div_colors[0].comp[2]);
+      pDevice->DrawPath(path, nullptr, nullptr, color, 0, fill_options);
     } else {
       if (d_bottom < kCoonColorThreshold && d_top < kCoonColorThreshold) {
         CubicBezierPatch top_patch;
