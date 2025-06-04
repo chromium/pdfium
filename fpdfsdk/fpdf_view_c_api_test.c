@@ -250,6 +250,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_GetRotation);
     CHK(FPDFPage_HasTransparency);
     CHK(FPDFPage_InsertObject);
+    CHK(FPDFPage_InsertObjectAtIndex);
     CHK(FPDFPage_New);
     CHK(FPDFPage_RemoveObject);
     CHK(FPDFPage_SetRotation);

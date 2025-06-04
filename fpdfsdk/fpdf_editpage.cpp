@@ -284,6 +284,29 @@ FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object) {
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPage_InsertObjectAtIndex(FPDF_PAGE page,
+                             FPDF_PAGEOBJECT page_object,
+                             size_t index) {
+  CPDF_PageObject* cpage_object = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!cpage_object) {
+    return false;
+  }
+
+  // Take ownership back from the embedder across the C API.
+  std::unique_ptr<CPDF_PageObject> page_obj_holder(cpage_object);
+
+  CPDF_Page* cpage = CPDFPageFromFPDFPage(page);
+  if (!IsPageObject(cpage)) {
+    return false;
+  }
+
+  cpage_object->SetDirty(true);
+  CalcBoundingBox(cpage_object);
+
+  return cpage->InsertPageObjectAtIndex(index, std::move(page_obj_holder));
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj) {
@@ -295,7 +318,7 @@ FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object) {
     return false;
   }
 
-  // Caller takes ownership.
+  // Release ownership to the caller.
   return !!pPage->RemovePageObject(pPageObj).release();
 }
 
