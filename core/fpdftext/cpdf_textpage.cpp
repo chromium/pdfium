@@ -980,19 +980,6 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
     return MarkedContentState::kPass;
   }
 
-  RetainPtr<CPDF_Font> font = pTextObj->GetFont();
-  bExist = false;
-  for (size_t i = 0; i < actual_text.GetLength(); ++i) {
-    if (font->CharCodeFromUnicode(actual_text[i]) !=
-        CPDF_Font::kInvalidCharCode) {
-      bExist = true;
-      break;
-    }
-  }
-  if (!bExist) {
-    return MarkedContentState::kPass;
-  }
-
   bExist = false;
   for (size_t i = 0; i < actual_text.GetLength(); ++i) {
     wchar_t wChar = actual_text[i];
