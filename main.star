@@ -556,6 +556,7 @@ luci.cq(
     status_host = "chromium-cq-status.appspot.com",
     submit_burst_delay = 480 * time.second,
     submit_max_burst = 4,
+    gerrit_listener_type = cq.GERRIT_LISTENER_TYPE_LEGACY_POLLER,
 )
 
 luci.cq_group(
