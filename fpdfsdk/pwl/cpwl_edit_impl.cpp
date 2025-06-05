@@ -1855,7 +1855,9 @@ void CPWL_EditImpl::ReplaceAndKeepSelection(const WideString& text) {
   bool is_insert_undo_clear = ClearSelection();
   // It is necessary to determine whether the value of `undo_remaining_` is 2 or
   // 3 based on ClearSelection().
-  if (!is_insert_undo_clear) {
+  // Special case: when cutting (clearing selection and inserting empty text),
+  // we need to ensure proper undo counting to restore all characters.
+  if (!is_insert_undo_clear || text.IsEmpty()) {
     undo_.GetLastAddItem()->set_undo_remaining(2);
   }
   // Select the inserted text.
@@ -1865,7 +1867,7 @@ void CPWL_EditImpl::ReplaceAndKeepSelection(const WideString& text) {
   sel_state_.Set(caret_before_insert, caret_after_insert);
 
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, true));
-  if (!is_insert_undo_clear) {
+  if (!is_insert_undo_clear || text.IsEmpty()) {
     undo_.GetLastAddItem()->set_undo_remaining(2);
   }
 }
@@ -1875,12 +1877,14 @@ void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
   bool is_insert_undo_clear = ClearSelection();
   // It is necessary to determine whether the value of `undo_remaining_` is 2 or
   // 3 based on ClearSelection().
-  if (!is_insert_undo_clear) {
+  // Special case: when cutting (clearing selection and inserting empty text),
+  // we need to ensure proper undo counting to restore all characters.
+  if (!is_insert_undo_clear || text.IsEmpty()) {
     undo_.GetLastAddItem()->set_undo_remaining(2);
   }
   InsertText(text, FX_Charset::kDefault);
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, true));
-  if (!is_insert_undo_clear) {
+  if (!is_insert_undo_clear || text.IsEmpty()) {
     undo_.GetLastAddItem()->set_undo_remaining(2);
   }
 }

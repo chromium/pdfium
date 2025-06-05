@@ -3591,3 +3591,32 @@ TEST_F(FPDFFormFillActionUriTestVersion2, LinkActionInvokeTest) {
   ASSERT_FALSE(
       FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Control, modifier));
 }
+
+TEST_F(FPDFFormFillTextFormEmbedderTest, CutAllTextUndoRestoresAllCharacters) {
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+  CheckCanUndo(false);
+  CheckCanRedo(false);
+
+  // Type "ABC"
+  TypeTextIntoTextField(3, RegularFormBegin());
+  CheckFocusedFieldText("ABC");
+  CheckSelection("");
+  CheckCanUndo(true);
+
+  // Select all text
+  SelectAllRegularFormTextWithMouse();
+  CheckSelection("ABC");
+
+  // Cut all text (equivalent to ctrl+x) by replacing selection with empty
+  // string
+  FORM_ReplaceSelection(form_handle(), page(), nullptr);
+  CheckFocusedFieldText("");
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+
+  // Undo the cut operation - should restore all 3 characters "ABC"
+  PerformUndo();
+  CheckFocusedFieldText("ABC");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+}
