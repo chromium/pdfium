@@ -122,7 +122,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
-  'freetype_revision': '4792cff5c3884378351b35cced17286b976b9763',
+  'freetype_revision': '2f2dfad59778d31b475495e4210d9f081fa869bf',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling GN CIPD package version
   # and whatever else without interference from each other.
@@ -196,7 +196,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling pdfium_tests
   # and whatever else without interference from each other.
-  'pdfium_tests_revision': 'fb3c75ee0b59cb188a7f51b16f4dd0ae17443e31',
+  'pdfium_tests_revision': '24427d10bdb55e43dcc66d2d63f6943459625223',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling resultdb
   # and whatever else without interference from each other.
