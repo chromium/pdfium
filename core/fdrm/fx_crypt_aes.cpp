@@ -11,8 +11,7 @@
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
-#include "core/fxcrt/compiler_specific.h"
-#include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/stl_util.h"
 
 #define mulby2(x) (((x & 0x7F) << 1) ^ (x & 0x80 ? 0x1B : 0))
 
@@ -590,27 +589,27 @@ void CRYPT_AESSetIV(CRYPT_aes_context* ctx,
 void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
                       pdfium::span<uint8_t> dest,
                       pdfium::span<const uint8_t> src) {
-  uint32_t iv[4];
-  uint32_t x[4];
-  uint32_t ct[4];
   CHECK_EQ((src.size() & 15), 0);
   CHECK_EQ(src.size(), dest.size());
-  UNSAFE_TODO({
-    FXSYS_memcpy(iv, ctx->iv.data(), sizeof(iv));
-    while (!src.empty()) {
-      for (size_t i = 0; i < 4; i++) {
-        x[i] = ct[i] = fxcrt::GetUInt32MSBFirst(src.first<4u>());
-        src = src.subspan<4u>();
-      }
-      aes_decrypt_nb_4(ctx, x);
-      for (size_t i = 0; i < 4; i++) {
-        fxcrt::PutUInt32MSBFirst(iv[i] ^ x[i], dest.first<4u>());
-        dest = dest.subspan<4u>();
-        iv[i] = ct[i];
-      }
+
+  std::array<uint32_t, 4> iv;
+  std::array<uint32_t, 4> x;
+  std::array<uint32_t, 4> ct;
+
+  fxcrt::Copy(pdfium::span(ctx->iv).first<4u>(), iv);
+  while (src.size() != 0) {
+    for (size_t i = 0; i < 4; i++) {
+      x[i] = ct[i] = fxcrt::GetUInt32MSBFirst(src.first<4u>());
+      src = src.subspan<4u>();
     }
-    FXSYS_memcpy(ctx->iv.data(), iv, sizeof(iv));
-  });
+    aes_decrypt_nb_4(ctx, x);
+    for (size_t i = 0; i < 4; i++) {
+      fxcrt::PutUInt32MSBFirst(iv[i] ^ x[i], dest.first<4u>());
+      dest = dest.subspan<4u>();
+      iv[i] = ct[i];
+    }
+  }
+  fxcrt::Copy(iv, pdfium::span(ctx->iv).first<4u>());
 }
 
 void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
