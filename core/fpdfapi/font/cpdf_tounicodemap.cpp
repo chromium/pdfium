@@ -91,28 +91,7 @@ size_t CPDF_ToUnicodeMap::GetUnicodeCountByCharcodeForTesting(
 }
 
 // static
-std::optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView input) {
-  // Ignore whitespaces within `input`. See https://crbug.com/pdfium/2065.
-  std::set<char> seen_whitespace_chars;
-  for (char c : input) {
-    if (PDFCharIsWhitespace(c)) {
-      seen_whitespace_chars.insert(c);
-    }
-  }
-  ByteString str_without_whitespace_chars;  // Must outlive `str`.
-  ByteStringView str;
-  if (seen_whitespace_chars.empty()) {
-    str = input;
-  } else {
-    str_without_whitespace_chars.Reserve(input.GetLength());
-    for (char c : input) {
-      if (!pdfium::Contains(seen_whitespace_chars, c)) {
-        str_without_whitespace_chars += c;
-      }
-    }
-    str = str_without_whitespace_chars.AsStringView();
-  }
-
+std::optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
   size_t len = str.GetLength();
   if (len <= 2 || str[0] != '<' || str[len - 1] != '>') {
     return std::nullopt;
@@ -120,6 +99,10 @@ std::optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView input) {
 
   FX_SAFE_UINT32 code = 0;
   for (char c : str.Substr(1, len - 2)) {
+    // Ignore whitespace https://crbug.com/pdfium/2065
+    if (PDFCharIsWhitespace(c)) {
+      continue;
+    }
     if (!FXSYS_IsHexDigit(c)) {
       return std::nullopt;
     }
@@ -143,6 +126,10 @@ WideString CPDF_ToUnicodeMap::StringToWideString(ByteStringView str) {
   int byte_pos = 0;
   wchar_t ch = 0;
   for (char c : str.Substr(1, len - 2)) {
+    // Ignore whitespace https://crbug.com/pdfium/1022
+    if (PDFCharIsWhitespace(c)) {
+      continue;
+    }
     if (!FXSYS_IsHexDigit(c)) {
       break;
     }

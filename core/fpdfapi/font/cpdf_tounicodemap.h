@@ -34,7 +34,7 @@ class CPDF_ToUnicodeMap {
   friend class CPDFToUnicodeMapTest_StringToCode_Test;
   friend class CPDFToUnicodeMapTest_StringToWideString_Test;
 
-  static std::optional<uint32_t> StringToCode(ByteStringView input);
+  static std::optional<uint32_t> StringToCode(ByteStringView str);
   static WideString StringToWideString(ByteStringView str);
 
   void Load(RetainPtr<const CPDF_Stream> pStream);
