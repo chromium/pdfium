@@ -6,6 +6,8 @@
 
 #include "core/fdrm/fx_crypt_aes.h"
 
+#include <array>
+
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
@@ -431,29 +433,28 @@ constexpr std::array<uint32_t, 256> D3 = {{
     0xcb84617b, 0x32b670d5, 0x6c5c7448, 0xb85742d0,
 }};
 
-#define ADD_ROUND_KEY_4()                                        \
-  UNSAFE_TODO((block[0] ^= *keysched++, block[1] ^= *keysched++, \
-               block[2] ^= *keysched++, block[3] ^= *keysched++))
-#define MOVEWORD(i) UNSAFE_TODO((block[i] = newstate[i]))
-#define FMAKEWORD(i)                                                    \
-  UNSAFE_TODO((newstate[i] = (E0[(block[i] >> 24) & 0xFF] ^             \
-                              E1[(block[(i + C1) % Nb] >> 16) & 0xFF] ^ \
-                              E2[(block[(i + C2) % Nb] >> 8) & 0xFF] ^  \
-                              E3[block[(i + C3) % Nb] & 0xFF])))
-#define LASTWORD(i)                                                      \
-  UNSAFE_TODO(                                                           \
-      (newstate[i] = (Sbox[(block[i] >> 24) & 0xFF] << 24) |             \
-                     (Sbox[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
-                     (Sbox[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
-                     (Sbox[(block[(i + C3) % Nb]) & 0xFF])))
+#define ADD_ROUND_KEY_4()                                                     \
+  (block[0] ^= keysched[0], block[1] ^= keysched[1], block[2] ^= keysched[2], \
+   block[3] ^= keysched[3], keysched = keysched.subspan<4u>())
+#define MOVEWORD(i) (block[i] = newstate[i])
+#define FMAKEWORD(i)                                        \
+  (newstate[i] = (E0[(block[i] >> 24) & 0xFF] ^             \
+                  E1[(block[(i + C1) % Nb] >> 16) & 0xFF] ^ \
+                  E2[(block[(i + C2) % Nb] >> 8) & 0xFF] ^  \
+                  E3[block[(i + C3) % Nb] & 0xFF]))
+#define LASTWORD(i)                                                  \
+  (newstate[i] = (Sbox[(block[i] >> 24) & 0xFF] << 24) |             \
+                 (Sbox[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
+                 (Sbox[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
+                 (Sbox[(block[(i + C3) % Nb]) & 0xFF]))
 
-void aes_encrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
+void aes_encrypt_nb_4(CRYPT_aes_context* ctx, pdfium::span<uint32_t, 4> block) {
   const int C1 = 1;
   const int C2 = 2;
   const int C3 = 3;
   const int Nb = 4;
-  uint32_t* keysched = ctx->keysched.data();
-  uint32_t newstate[4];
+  pdfium::span<uint32_t> keysched(ctx->keysched);
+  std::array<uint32_t, 4> newstate;
   CHECK_NE(ctx->Nr, 0u);
   for (size_t i = 0; i < ctx->Nr - 1; i++) {
     ADD_ROUND_KEY_4();
@@ -480,25 +481,24 @@ void aes_encrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
 #undef FMAKEWORD
 #undef LASTWORD
 
-#define FMAKEWORD(i)                                                    \
-  UNSAFE_TODO((newstate[i] = (D0[(block[i] >> 24) & 0xFF] ^             \
-                              D1[(block[(i + C1) % Nb] >> 16) & 0xFF] ^ \
-                              D2[(block[(i + C2) % Nb] >> 8) & 0xFF] ^  \
-                              D3[block[(i + C3) % Nb] & 0xFF])))
-#define LASTWORD(i)                                                         \
-  UNSAFE_TODO(                                                              \
-      (newstate[i] = (Sboxinv[(block[i] >> 24) & 0xFF] << 24) |             \
-                     (Sboxinv[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
-                     (Sboxinv[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
-                     (Sboxinv[(block[(i + C3) % Nb]) & 0xFF])))
+#define FMAKEWORD(i)                                        \
+  (newstate[i] = (D0[(block[i] >> 24) & 0xFF] ^             \
+                  D1[(block[(i + C1) % Nb] >> 16) & 0xFF] ^ \
+                  D2[(block[(i + C2) % Nb] >> 8) & 0xFF] ^  \
+                  D3[block[(i + C3) % Nb] & 0xFF]))
+#define LASTWORD(i)                                                     \
+  (newstate[i] = (Sboxinv[(block[i] >> 24) & 0xFF] << 24) |             \
+                 (Sboxinv[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
+                 (Sboxinv[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
+                 (Sboxinv[(block[(i + C3) % Nb]) & 0xFF]))
 
-void aes_decrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
+void aes_decrypt_nb_4(CRYPT_aes_context* ctx, pdfium::span<uint32_t, 4> block) {
   const int C1 = 4 - 1;
   const int C2 = 4 - 2;
   const int C3 = 4 - 3;
   const int Nb = 4;
-  uint32_t* keysched = ctx->invkeysched.data();
-  uint32_t newstate[4];
+  pdfium::span<uint32_t> keysched(ctx->invkeysched);
+  std::array<uint32_t, 4> newstate;
   CHECK_NE(ctx->Nr, 0);
   for (size_t i = 0; i < ctx->Nr - 1; i++) {
     ADD_ROUND_KEY_4();
@@ -623,7 +623,7 @@ void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
       iv_element ^= fxcrt::GetUInt32MSBFirst(src.first<4u>());
       src = src.subspan(4u);
     }
-    aes_encrypt_nb_4(ctx, ctx_iv.data());
+    aes_encrypt_nb_4(ctx, ctx_iv);
     for (auto& iv_element : ctx_iv) {
       fxcrt::PutUInt32MSBFirst(iv_element, dest.first<4u>());
       dest = dest.subspan(4u);
