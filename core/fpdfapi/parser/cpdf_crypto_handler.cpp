@@ -70,8 +70,12 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     realkeylen = std::min(key_len_ + 5, sizeof(realkey));
   }
   if (cipher_ == Cipher::kAES) {
-    CRYPT_AESSetKey(aes_context_.get(),
-                    key_len_ == 32 ? encrypt_key_.data() : realkey, key_len_);
+    if (key_len_ == 32) {
+      CRYPT_AESSetKey(aes_context_.get(), encrypt_key_);
+    } else {
+      CRYPT_AESSetKey(aes_context_.get(),
+                      UNSAFE_TODO(pdfium::span(realkey, key_len_)));
+    }
 
     static constexpr size_t kIVSize = 16;
     static constexpr size_t kPaddingSize = 16;
@@ -80,15 +84,14 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
 
     DataVector<uint8_t> dest(kIVSize + source_data_size + kPaddingSize);
     auto dest_span = pdfium::span(dest);
-    auto dest_iv_span = dest_span.first(kIVSize);
+    auto dest_iv_span = dest_span.first<kIVSize>();
     auto dest_data_span = dest_span.subspan(kIVSize, source_data_size);
     auto dest_padding_span = dest_span.subspan(kIVSize + source_data_size);
 
     for (auto& v : dest_iv_span) {
       v = static_cast<uint8_t>(rand());
     }
-    CRYPT_AESSetIV(aes_context_.get(), dest_iv_span.data());
-
+    CRYPT_AESSetIV(aes_context_.get(), dest_iv_span);
     CRYPT_AESEncrypt(aes_context_.get(), dest_data_span,
                      source.first(source_data_size));
 
@@ -120,7 +123,7 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
     pContext->iv_ = true;
     pContext->block_offset_ = 0;
-    CRYPT_AESSetKey(&pContext->context_, encrypt_key_.data(), 32);
+    CRYPT_AESSetKey(&pContext->context_, encrypt_key_);
     return pContext;
   }
   uint8_t key1[48];
@@ -139,7 +142,7 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
     pContext->iv_ = true;
     pContext->block_offset_ = 0;
-    CRYPT_AESSetKey(&pContext->context_, realkey, 16);
+    CRYPT_AESSetKey(&pContext->context_, realkey);
     return pContext;
   }
   CRYPT_rc4_context* pContext = FX_Alloc(CRYPT_rc4_context, 1);
@@ -186,7 +189,7 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
         pContext->block_offset_ = 0;
       } else if (src_off < source.size()) {
         uint8_t block_buf[16];
-        CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_, 16);
+        CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_);
         dest_buf.AppendSpan(block_buf);
         pContext->block_offset_ = 0;
       }
@@ -214,7 +217,7 @@ bool CPDF_CryptoHandler::DecryptFinish(void* context, BinaryBuffer& dest_buf) {
   auto* pContext = static_cast<AESCryptContext*>(context);
   if (pContext->block_offset_ == 16) {
     uint8_t block_buf[16];
-    CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_, 16);
+    CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_);
     if (block_buf[15] < 16) {
       dest_buf.AppendSpan(pdfium::span(block_buf).first(
           static_cast<size_t>(16 - block_buf[15])));

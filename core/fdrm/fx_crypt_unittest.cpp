@@ -628,15 +628,14 @@ TEST_P(AESTest, EncryptDecryptRoundtrip) {
   std::vector<uint8_t> actual_ciphertext(plaintext_.size());
   std::vector<uint8_t> decrypted_plaintext(expected_ciphertext_.size());
 
-  CRYPT_AESSetKey(&encrypt_ctx_, key_.data(), key_.size());
-  CRYPT_AESSetIV(&encrypt_ctx_, iv_.data());
+  CRYPT_AESSetKey(&encrypt_ctx_, key_);
+  CRYPT_AESSetIV(&encrypt_ctx_, pdfium::span(iv_).first<16u>());
   CRYPT_AESEncrypt(&encrypt_ctx_, actual_ciphertext, plaintext_);
   ASSERT_EQ(actual_ciphertext, expected_ciphertext_);
 
-  CRYPT_AESSetKey(&decrypt_ctx_, key_.data(), key_.size());
-  CRYPT_AESSetIV(&decrypt_ctx_, iv_.data());
-  CRYPT_AESDecrypt(&decrypt_ctx_, decrypted_plaintext.data(),
-                   expected_ciphertext_.data(), expected_ciphertext_.size());
+  CRYPT_AESSetKey(&decrypt_ctx_, key_);
+  CRYPT_AESSetIV(&decrypt_ctx_, pdfium::span(iv_).first<16u>());
+  CRYPT_AESDecrypt(&decrypt_ctx_, decrypted_plaintext, expected_ciphertext_);
   EXPECT_EQ(decrypted_plaintext, plaintext_);
 }
 

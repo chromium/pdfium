@@ -18,21 +18,18 @@ struct CRYPT_aes_context {
   static constexpr int kMaxNr = 14;
   static constexpr int kSchedSize = (kMaxNr + 1) * kMaxNb;
 
-  int Nb;
-  int Nr;
+  size_t Nb;
+  size_t Nr;
   std::array<uint32_t, kSchedSize> keysched;
   std::array<uint32_t, kSchedSize> invkeysched;
   std::array<uint32_t, kMaxNb> iv;
 };
 
-void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
-                     const uint8_t* key,
-                     uint32_t keylen);
-void CRYPT_AESSetIV(CRYPT_aes_context* ctx, const uint8_t* iv);
+void CRYPT_AESSetKey(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> key);
+void CRYPT_AESSetIV(CRYPT_aes_context* ctx, pdfium::span<const uint8_t, 16> iv);
 void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
-                      uint8_t* dest,
-                      const uint8_t* src,
-                      uint32_t size);
+                      pdfium::span<uint8_t> dest,
+                      pdfium::span<const uint8_t> src);
 void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
                       pdfium::span<uint8_t> dest,
                       pdfium::span<const uint8_t> src);

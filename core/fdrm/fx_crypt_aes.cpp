@@ -448,14 +448,14 @@ constexpr std::array<uint32_t, 256> D3 = {{
                      (Sbox[(block[(i + C3) % Nb]) & 0xFF])))
 
 void aes_encrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
-  int i;
   const int C1 = 1;
   const int C2 = 2;
   const int C3 = 3;
   const int Nb = 4;
   uint32_t* keysched = ctx->keysched.data();
   uint32_t newstate[4];
-  for (i = 0; i < ctx->Nr - 1; i++) {
+  CHECK_NE(ctx->Nr, 0u);
+  for (size_t i = 0; i < ctx->Nr - 1; i++) {
     ADD_ROUND_KEY_4();
     FMAKEWORD(0);
     FMAKEWORD(1);
@@ -493,14 +493,14 @@ void aes_encrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
                      (Sboxinv[(block[(i + C3) % Nb]) & 0xFF])))
 
 void aes_decrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
-  int i;
   const int C1 = 4 - 1;
   const int C2 = 4 - 2;
   const int C3 = 4 - 3;
   const int Nb = 4;
   uint32_t* keysched = ctx->invkeysched.data();
   uint32_t newstate[4];
-  for (i = 0; i < ctx->Nr - 1; i++) {
+  CHECK_NE(ctx->Nr, 0);
+  for (size_t i = 0; i < ctx->Nr - 1; i++) {
     ADD_ROUND_KEY_4();
     FMAKEWORD(0);
     FMAKEWORD(1);
@@ -527,19 +527,16 @@ void aes_decrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
 
 }  // namespace
 
-void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
-                     const uint8_t* key,
-                     uint32_t keylen) {
-  DCHECK(keylen == 16 || keylen == 24 || keylen == 32);
-  auto keyspan = UNSAFE_TODO(pdfium::span(key, keylen));
-  int Nk = keylen / 4;
+void CRYPT_AESSetKey(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> key) {
+  CHECK(key.size() == 16 || key.size() == 24 || key.size() == 32);
+  size_t Nk = key.size() / 4;
   ctx->Nb = 4;
   ctx->Nr = 6 + (ctx->Nb > Nk ? ctx->Nb : Nk);
   int rconst = 1;
-  for (int i = 0; i < (ctx->Nr + 1) * ctx->Nb; i++) {
+  for (size_t i = 0; i < (ctx->Nr + 1) * ctx->Nb; i++) {
     if (i < Nk) {
       ctx->keysched[i] =
-          fxcrt::GetUInt32MSBFirst(keyspan.subspan(4u * i).first<4u>());
+          fxcrt::GetUInt32MSBFirst(key.subspan(4u * i).first<4u>());
     } else {
       uint32_t temp = ctx->keysched[i - 1];
       if (i % Nk == 0) {
@@ -565,10 +562,9 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
       ctx->keysched[i] = ctx->keysched[i - Nk] ^ temp;
     }
   }
-  for (int i = 0; i <= ctx->Nr; i++) {
-    for (int j = 0; j < ctx->Nb; j++) {
-      uint32_t temp;
-      temp = ctx->keysched[(ctx->Nr - i) * ctx->Nb + j];
+  for (size_t i = 0; i <= ctx->Nr; i++) {
+    for (size_t j = 0; j < ctx->Nb; j++) {
+      uint32_t temp = ctx->keysched[(ctx->Nr - i) * ctx->Nb + j];
       if (i != 0 && i != ctx->Nr) {
         int a = (temp >> 24) & 0xFF;
         int b = (temp >> 16) & 0xFF;
@@ -584,39 +580,34 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
   }
 }
 
-void CRYPT_AESSetIV(CRYPT_aes_context* ctx, const uint8_t* iv) {
-  for (int i = 0; i < ctx->Nb; i++) {
-    // TODO(tsepez): Pass actual span.
-    ctx->iv[i] = fxcrt::GetUInt32MSBFirst(
-        UNSAFE_TODO(pdfium::span(iv + 4u * i, 4u).first<4u>()));
+void CRYPT_AESSetIV(CRYPT_aes_context* ctx,
+                    pdfium::span<const uint8_t, 16> iv) {
+  for (size_t i = 0; i < ctx->Nb; i++) {
+    ctx->iv[i] = fxcrt::GetUInt32MSBFirst(iv.subspan(4u * i).first<4u>());
   }
 }
 
 void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
-                      uint8_t* dest,
-                      const uint8_t* src,
-                      uint32_t size) {
+                      pdfium::span<uint8_t> dest,
+                      pdfium::span<const uint8_t> src) {
   uint32_t iv[4];
   uint32_t x[4];
   uint32_t ct[4];
-  int i;
-  CHECK_EQ((size & 15), 0);
+  CHECK_EQ((src.size() & 15), 0);
+  CHECK_EQ(src.size(), dest.size());
   UNSAFE_TODO({
     FXSYS_memcpy(iv, ctx->iv.data(), sizeof(iv));
-    while (size != 0) {
-      for (i = 0; i < 4; i++) {
-        x[i] = ct[i] =
-            fxcrt::GetUInt32MSBFirst(pdfium::span(src + 4 * i, 4u).first<4u>());
+    while (!src.empty()) {
+      for (size_t i = 0; i < 4; i++) {
+        x[i] = ct[i] = fxcrt::GetUInt32MSBFirst(src.first<4u>());
+        src = src.subspan<4u>();
       }
       aes_decrypt_nb_4(ctx, x);
-      for (i = 0; i < 4; i++) {
-        fxcrt::PutUInt32MSBFirst(iv[i] ^ x[i],
-                                 pdfium::span(dest + 4 * i, 4u).first<4u>());
+      for (size_t i = 0; i < 4; i++) {
+        fxcrt::PutUInt32MSBFirst(iv[i] ^ x[i], dest.first<4u>());
+        dest = dest.subspan<4u>();
         iv[i] = ct[i];
       }
-      dest += 16;
-      src += 16;
-      size -= 16;
     }
     FXSYS_memcpy(ctx->iv.data(), iv, sizeof(iv));
   });
