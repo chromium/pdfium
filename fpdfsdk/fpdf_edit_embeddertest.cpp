@@ -5549,7 +5549,20 @@ TEST_F(FPDFEditEmbedderTest, FormModifyObject) {
   ASSERT_EQ(0, FPDFFormObj_CountObjects(form_obj));
 
   FPDFPageObj_Destroy(image_obj);
+
   ASSERT_TRUE(FPDFPage_GenerateContent(page));
 
+  // Save the document to the internal buffer
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  // Unload the original page and close the document
   UnloadPage(page);
+  CloseDocument();
+
+  const char kExpectedChecksumAfterRemoval[] =
+      "847febf1c7c38c1d2a1673cbea0bbe6b";
+  constexpr int kPageWidth = 200;
+  constexpr int kPageHeight = 300;
+
+  VerifySavedDocument(kPageWidth, kPageHeight, kExpectedChecksumAfterRemoval);
 }
