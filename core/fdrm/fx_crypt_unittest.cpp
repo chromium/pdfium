@@ -6,10 +6,12 @@
 
 #include <algorithm>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -31,6 +33,17 @@ void CheckArcFourContext(const CRYPT_rc4_context& context,
   EXPECT_EQ(expected_x, context.x);
   EXPECT_EQ(expected_y, context.y);
   EXPECT_THAT(context.m, ElementsAreArray(expected_permutation));
+}
+
+// Helper function to convert a hexadecimal string to a vector of bytes.
+std::vector<uint8_t> HexToBytes(const std::string& hex) {
+  std::vector<uint8_t> bytes;
+  bytes.reserve(hex.size() / 2);
+  for (size_t i = 0; i + 1 < hex.size(); i += 2) {
+    int val = 16 * FXSYS_HexCharToInt(hex[i]) + FXSYS_HexCharToInt(hex[i + 1]);
+    bytes.push_back(static_cast<uint8_t>(val));
+  }
+  return bytes;
 }
 
 }  // namespace
@@ -588,3 +601,134 @@ TEST(FXCRYPT, Sha512Pad112) {
                   0xb1, 0x52, 0xf5, 0x8f, 0x13, 0x0a, 0x40, 0x7c, 0x88, 0x30,
                   0x60, 0x4b, 0x70, 0xca));
 }
+
+// The tuple contains: Key, IV, Plaintext, Expected Ciphertext
+using AESTestParams =
+    std::tuple<const char*, const char*, const char*, const char*>;
+
+class AESTest : public ::testing::TestWithParam<AESTestParams> {
+ protected:
+  void SetUp() override {
+    auto [key_hex, iv_hex, plaintext_hex, ciphertext_hex] = GetParam();
+    key_ = HexToBytes(key_hex);
+    iv_ = HexToBytes(iv_hex);
+    plaintext_ = HexToBytes(plaintext_hex);
+    expected_ciphertext_ = HexToBytes(ciphertext_hex);
+  }
+
+  std::vector<uint8_t> key_;
+  std::vector<uint8_t> iv_;
+  std::vector<uint8_t> plaintext_;
+  std::vector<uint8_t> expected_ciphertext_;
+  CRYPT_aes_context encrypt_ctx_ = {};
+  CRYPT_aes_context decrypt_ctx_ = {};
+};
+
+TEST_P(AESTest, EncryptDecryptRoundtrip) {
+  std::vector<uint8_t> actual_ciphertext(plaintext_.size());
+  std::vector<uint8_t> decrypted_plaintext(expected_ciphertext_.size());
+
+  CRYPT_AESSetKey(&encrypt_ctx_, key_.data(), key_.size());
+  CRYPT_AESSetIV(&encrypt_ctx_, iv_.data());
+  CRYPT_AESEncrypt(&encrypt_ctx_, actual_ciphertext, plaintext_);
+  ASSERT_EQ(actual_ciphertext, expected_ciphertext_);
+
+  CRYPT_AESSetKey(&decrypt_ctx_, key_.data(), key_.size());
+  CRYPT_AESSetIV(&decrypt_ctx_, iv_.data());
+  CRYPT_AESDecrypt(&decrypt_ctx_, decrypted_plaintext.data(),
+                   expected_ciphertext_.data(), expected_ciphertext_.size());
+  EXPECT_EQ(decrypted_plaintext, plaintext_);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    AES128,
+    AESTest,
+    ::testing::Values(
+        // See third_party/boringssl/src/crypto/cipher/test/cipher_tests.txt
+        AESTestParams{
+            "2b7e151628aed2a6abf7158809cf4f3c",
+            "000102030405060708090a0b0c0d0e0f",
+            "6bc1bee22e409f96e93d7e117393172a",
+            "7649abac8119b246cee98e9b12e9197d",
+        },
+        AESTestParams{
+            "2b7e151628aed2a6abf7158809cf4f3c",
+            "7649abac8119b246cee98e9b12e9197d",
+            "ae2d8a571e03ac9c9eb76fac45af8e51",
+            "5086cb9b507219ee95db113a917678b2",
+        },
+        AESTestParams{
+            "2b7e151628aed2a6abf7158809cf4f3c",
+            "5086cb9b507219ee95db113a917678b2",
+            "30c81c46a35ce411e5fbc1191a0a52ef",
+            "73bed6b8e3c1743b7116e69e22229516",
+        },
+        AESTestParams{
+            "2b7e151628aed2a6abf7158809cf4f3c",
+            "73bed6b8e3c1743b7116e69e22229516",
+            "f69f2445df4f9b17ad2b417be66c3710",
+            "3ff1caa1681fac09120eca307586e1a7",
+        }));
+
+INSTANTIATE_TEST_SUITE_P(
+    AES192,
+    AESTest,
+    ::testing::Values(
+        // See third_party/boringssl/src/crypto/cipher/test/cipher_tests.txt
+        AESTestParams{
+            "8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b",
+            "000102030405060708090a0b0c0d0e0f",
+            "6bc1bee22e409f96e93d7e117393172a",
+            "4f021db243bc633d7178183a9fa071e8",
+
+        },
+        AESTestParams{
+            "8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b",
+            "4f021db243bc633d7178183a9fa071e8",
+            "ae2d8a571e03ac9c9eb76fac45af8e51",
+            "b4d9ada9ad7dedf4e5e738763f69145a",
+
+        },
+        AESTestParams{
+            "8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b",
+            "b4d9ada9ad7dedf4e5e738763f69145a",
+            "30c81c46a35ce411e5fbc1191a0a52ef",
+            "571b242012fb7ae07fa9baac3df102e0",
+
+        },
+        AESTestParams{
+            "8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b",
+            "571b242012fb7ae07fa9baac3df102e0",
+            "f69f2445df4f9b17ad2b417be66c3710",
+            "08b0e27988598881d920a9e64f5615cd",
+        }));
+
+INSTANTIATE_TEST_SUITE_P(
+    AES256,
+    AESTest,
+    ::testing::Values(
+        // See third_party/boringssl/src/crypto/cipher/test/cipher_tests.txt
+        AESTestParams{
+            "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4",
+            "000102030405060708090a0b0c0d0e0f",
+            "6bc1bee22e409f96e93d7e117393172a",
+            "f58c4c04d6e5f1ba779eabfb5f7bfbd6",
+        },
+        AESTestParams{
+            "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4",
+            "f58c4c04d6e5f1ba779eabfb5f7bfbd6",
+            "ae2d8a571e03ac9c9eb76fac45af8e51",
+            "9cfc4e967edb808d679f777bc6702c7d",
+        },
+        AESTestParams{
+            "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4",
+            "9cfc4e967edb808d679f777bc6702c7d",
+            "30c81c46a35ce411e5fbc1191a0a52ef",
+            "39f23369a9d9bacfa530e26304231461",
+        },
+        AESTestParams{
+            "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4",
+            "39f23369a9d9bacfa530e26304231461",
+            "f69f2445df4f9b17ad2b417be66c3710",
+            "b2eb05e2c39be9fcda6c19078c6a9d1b",
+        }));
