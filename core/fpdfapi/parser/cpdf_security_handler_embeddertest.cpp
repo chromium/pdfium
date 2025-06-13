@@ -677,3 +677,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
 TEST_F(CPDFSecurityHandlerEmbedderTest, Bug1124998) {
   OpenAndVerifyHelloWorldDocumentWithPassword("bug_1124998.pdf", "test");
 }
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, Bug424613308) {
+  // Test passes if CHECK() does not fail.
+  ASSERT_FALSE(OpenDocument("bug_424613308.pdf"));
+}

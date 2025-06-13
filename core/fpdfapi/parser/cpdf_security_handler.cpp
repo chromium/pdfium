@@ -389,7 +389,7 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   CRYPT_AESSetKey(&aes, digest);
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
-  CRYPT_AESDecrypt(&aes, encrypt_key_, ekey.unsigned_span());
+  CRYPT_AESDecrypt(&aes, encrypt_key_, ekey.unsigned_span().first<32u>());
   CRYPT_AESSetKey(&aes, encrypt_key_);
   CRYPT_AESSetIV(&aes, iv);
   ByteString perms = encrypt_dict_->GetByteStringFor("Perms");
