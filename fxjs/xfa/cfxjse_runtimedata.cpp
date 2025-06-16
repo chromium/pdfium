@@ -39,9 +39,6 @@ std::unique_ptr<CFXJSE_RuntimeData> CFXJSE_RuntimeData::Create(
       v8::Context::New(pIsolate, nullptr, hGlobalTemplate);
 
   DCHECK_EQ(hContext->Global()->InternalFieldCount(), 0);
-  DCHECK_EQ(
-      hContext->Global()->GetPrototype().As<v8::Object>()->InternalFieldCount(),
-      0);
 
   hContext->SetSecurityToken(v8::External::New(pIsolate, pIsolate));
   pRuntimeData->root_context_global_template_.Reset(pIsolate, hFuncTemplate);

@@ -76,8 +76,7 @@ class CFXJS_PerObjectData {
     virtual ~Binding() = default;
   };
 
-  static void SetNewDataInObject(FXJSOBJTYPE eObjType,
-                                 uint32_t nObjDefnID,
+  static void SetNewDataInObject(uint32_t nObjDefnID,
                                  v8::Local<v8::Object> pObj);
   static CFXJS_PerObjectData* GetFromObject(v8::Local<v8::Object> pObj);
 
@@ -88,12 +87,11 @@ class CFXJS_PerObjectData {
   void SetBinding(std::unique_ptr<Binding> p) { binding_ = std::move(p); }
 
  private:
-  CFXJS_PerObjectData(FXJSOBJTYPE eObjType, uint32_t nObjDefnID);
+  explicit CFXJS_PerObjectData(uint32_t nObjDefnID);
 
   static bool HasInternalFields(v8::Local<v8::Object> pObj);
   static CFXJS_PerObjectData* ExtractFromObject(v8::Local<v8::Object> pObj);
 
-  const FXJSOBJTYPE obj_type_;
   const uint32_t obj_defn_id_;
   std::unique_ptr<Binding> binding_;
 };
@@ -114,9 +112,8 @@ class CFXJS_Engine : public CFX_V8 {
   explicit CFXJS_Engine(v8::Isolate* pIsolate);
   ~CFXJS_Engine() override;
 
-  using Constructor = std::function<void(CFXJS_Engine* pEngine,
-                                         v8::Local<v8::Object> obj,
-                                         v8::Local<v8::Object> proxy)>;
+  using Constructor =
+      std::function<void(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj)>;
   using Destructor = std::function<void(v8::Local<v8::Object> obj)>;
 
   static uint32_t GetObjDefnID(v8::Local<v8::Object> pObj);

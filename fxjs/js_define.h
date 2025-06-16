@@ -43,11 +43,9 @@ bool IsExpandedParamKnown(v8::Local<v8::Value> value);
 // to construct native object state.
 
 template <class T>
-static void JSConstructor(CFXJS_Engine* pEngine,
-                          v8::Local<v8::Object> obj,
-                          v8::Local<v8::Object> proxy) {
+static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
   pEngine->SetBinding(
-      obj, std::make_unique<T>(proxy, static_cast<CJS_Runtime*>(pEngine)));
+      obj, std::make_unique<T>(obj, static_cast<CJS_Runtime*>(pEngine)));
 }
 
 // CJS_Object has virtual dtor, template not required.
@@ -74,7 +72,7 @@ void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::Name> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<C>(info.GetIsolate(), info.Holder());
+  auto pObj = JSGetObject<C>(info.GetIsolate(), info.HolderV2());
   if (!pObj) {
     return;
   }
@@ -102,7 +100,7 @@ void JSPropSetter(const char* prop_name_string,
                   v8::Local<v8::Name> property,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
-  auto pObj = JSGetObject<C>(info.GetIsolate(), info.Holder());
+  auto pObj = JSGetObject<C>(info.GetIsolate(), info.HolderV2());
   if (!pObj) {
     return;
   }

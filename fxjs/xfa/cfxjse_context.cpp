@@ -66,7 +66,6 @@ const char szConsoleScript[] =
 // aligning them on a byte boundary to save space, which would make them
 // incompatible for use as V8 aligned pointers.
 const wchar_t kFXJSEHostObjectTag[] = L"FXJSE Host Object";
-const wchar_t kFXJSEProxyObjectTag[] = L"FXJSE Proxy Object";
 
 v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
                                         v8::TryCatch* trycatch) {
@@ -120,14 +119,6 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
   return hReturnValue;
 }
 
-void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
-  DCHECK(!hObject.IsEmpty());
-  DCHECK_EQ(hObject->InternalFieldCount(), 2);
-  hObject->SetAlignedPointerInInternalField(
-      0, const_cast<wchar_t*>(kFXJSEProxyObjectTag));
-  hObject->SetAlignedPointerInInternalField(1, nullptr);
-}
-
 }  // namespace
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
@@ -153,18 +144,7 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Value> hValue) {
 
   v8::Local<v8::Object> hObject = hValue.As<v8::Object>();
   if (hObject->InternalFieldCount() != 2 ||
-      hObject->GetAlignedPointerFromInternalField(0) == kFXJSEProxyObjectTag) {
-    v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
-    if (!fxv8::IsObject(hProtoObject)) {
-      return nullptr;
-    }
-
-    hObject = hProtoObject.As<v8::Object>();
-    if (hObject->InternalFieldCount() != 2) {
-      return nullptr;
-    }
-  }
-  if (hObject->GetAlignedPointerFromInternalField(0) != kFXJSEHostObjectTag) {
+      hObject->GetAlignedPointerFromInternalField(0) != kFXJSEHostObjectTag) {
     return nullptr;
   }
 
@@ -197,10 +177,7 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
 
   v8::Local<v8::Context> hNewContext =
       v8::Context::New(pIsolate, nullptr, hObjectTemplate);
-  v8::Local<v8::Object> pThisProxy = hNewContext->Global();
-  FXJSE_UpdateProxyBinding(pThisProxy);
-
-  v8::Local<v8::Object> pThis = pThisProxy->GetPrototype().As<v8::Object>();
+  v8::Local<v8::Object> pThis = hNewContext->Global();
   FXJSE_UpdateObjectBinding(pThis, pGlobalObject);
 
   v8::Local<v8::Context> hRootContext =
@@ -220,8 +197,7 @@ v8::Local<v8::Object> CFXJSE_Context::GetGlobalObject() {
   v8::EscapableHandleScope handle_scope(GetIsolate());
   v8::Local<v8::Context> hContext =
       v8::Local<v8::Context>::New(GetIsolate(), context_);
-  v8::Local<v8::Object> result =
-      hContext->Global()->GetPrototype().As<v8::Object>();
+  v8::Local<v8::Object> result = hContext->Global();
   return handle_scope.Escape(result);
 }
 

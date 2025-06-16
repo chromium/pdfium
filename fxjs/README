@@ -20,8 +20,7 @@ To distinguish these cases, we use two internal slots for all bound
 objects, regardless of the FXJS/FXJSE distinction.  Slot 0 is the
 tag and contains either:
   kPerObjectDataTag for FXJS objects, or
-  kFXJSEHostObjectTag for FXJSE Host objects, or
-  kFXJSEProxyObjectTag for a global proxy object under FXJSE, or
+  kFXJSEHostObjectTag for FXJSE global objects, or
   One of 4 specific FXJSE_CLASS_DESCRIPTOR globals for FXJSE classes:
     kGlobalClassDescriptor
     kNormalClassDescriptor
@@ -31,7 +30,6 @@ tag and contains either:
 Slot 1's contents are determined by these tags:
   kPerObjectDataTag means an aligned pointer to CFXJS_PerObjectData.
   kFXJSEHostObjectTag means an aligned pointer to CFXJSE_HostObject.
-  kFXJSEProxyObjectTag means nullptr, and to check the prototype instead.
   A FXJSE_CLASS_DESCRIPTOR pointer means to expect an actual v8 function
   object (or a string naming that function), and not an aligned pointer.
 

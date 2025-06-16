@@ -214,7 +214,7 @@ v8::Intercepted NamedPropertyQueryCallback(
   // SAFETY: required from V8.
   auto szFxPropName =
       UNSAFE_BUFFERS(ByteStringView(*szPropName, szPropName.length()));
-  if (DynPropQueryAdapter(info.GetIsolate(), pClass, info.Holder(),
+  if (DynPropQueryAdapter(info.GetIsolate(), pClass, info.HolderV2(),
                           szFxPropName)) {
     info.GetReturnValue().Set(v8::DontDelete);
     return v8::Intercepted::kYes;
@@ -237,7 +237,7 @@ v8::Intercepted NamedPropertyGetterCallback(
   auto szFxPropName =
       UNSAFE_BUFFERS(ByteStringView(*szPropName, szPropName.length()));
   std::unique_ptr<CFXJSE_Value> pNewValue = DynPropGetterAdapter(
-      info.GetIsolate(), pClass, info.Holder(), szFxPropName);
+      info.GetIsolate(), pClass, info.HolderV2(), szFxPropName);
   info.GetReturnValue().Set(pNewValue->DirectGetValue());
   return v8::Intercepted::kYes;
 }
@@ -257,7 +257,7 @@ v8::Intercepted NamedPropertySetterCallback(
   auto szFxPropName =
       UNSAFE_BUFFERS(ByteStringView(*szPropName, szPropName.length()));
   auto pNewValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), value);
-  DynPropSetterAdapter(info.GetIsolate(), pClass, info.Holder(), szFxPropName,
+  DynPropSetterAdapter(info.GetIsolate(), pClass, info.HolderV2(), szFxPropName,
                        pNewValue.get());
   return v8::Intercepted::kYes;
 }
