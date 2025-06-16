@@ -5,7 +5,6 @@
 #include "core/fxcodec/flate/flatemodule.h"
 
 #include "core/fxcodec/data_and_bytes_consumed.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
@@ -38,8 +37,7 @@ TEST(FlateModule, Decode) {
   size_t i = 0;
   for (const pdfium::DecodeTestData& data : flate_decode_cases) {
     DataAndBytesConsumed result = FlateModule::FlateOrLZWDecode(
-        false, UNSAFE_TODO(pdfium::span(data.input, data.input_size)), false, 0,
-        0, 0, 0, 0);
+        false, data.input_span(), false, 0, 0, 0, 0, 0);
     EXPECT_EQ(data.processed_size, result.bytes_consumed) << " for case " << i;
     EXPECT_THAT(result.data, ElementsAreArray(data.expected_span()))
         << " for case " << i;

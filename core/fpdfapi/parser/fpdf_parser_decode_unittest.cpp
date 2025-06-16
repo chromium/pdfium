@@ -313,8 +313,7 @@ TEST(ParserDecodeTest, HexDecode) {
       STR_IN_OUT_CASE("12AcED3c3456", "\x12\xac\xed\x3c\x34\x56", 12),
   };
   for (const auto& test_case : kTestData) {
-    DataAndBytesConsumed result = HexDecode(
-        UNSAFE_TODO(pdfium::span(test_case.input, test_case.input_size)));
+    DataAndBytesConsumed result = HexDecode(test_case.input_span());
     EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;
     EXPECT_THAT(result.data, ElementsAreArray(test_case.expected_span()))
