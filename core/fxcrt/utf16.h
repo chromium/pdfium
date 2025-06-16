@@ -5,6 +5,8 @@
 #ifndef CORE_FXCRT_UTF16_H_
 #define CORE_FXCRT_UTF16_H_
 
+#include <stdint.h>
+
 #include "core/fxcrt/check.h"
 
 namespace pdfium {
@@ -13,51 +15,51 @@ namespace pdfium {
 inline constexpr int kSurrogateBits = 10;
 
 // A bitmask for the suffix of a UTF-16 surrogate.
-inline constexpr char16_t kSurrogateMask = (1 << kSurrogateBits) - 1;
+inline constexpr uint16_t kSurrogateMask = (1 << kSurrogateBits) - 1;
 static_assert(kSurrogateMask == 0x3ff);
 
 // The first supplementary code point.
-inline constexpr char32_t kMinimumSupplementaryCodePoint = 0x10000;
+inline constexpr uint32_t kMinimumSupplementaryCodePoint = 0x10000;
 
 // The last supplementary code point.
-inline constexpr char32_t kMaximumSupplementaryCodePoint =
+inline constexpr uint32_t kMaximumSupplementaryCodePoint =
     kMinimumSupplementaryCodePoint +
     (kSurrogateMask << kSurrogateBits | kSurrogateMask);
 static_assert(kMaximumSupplementaryCodePoint == 0x10ffff);
 
 // The first UTF-16 high surrogate code unit.
-inline constexpr char16_t kMinimumHighSurrogateCodeUnit = 0xd800;
+inline constexpr uint16_t kMinimumHighSurrogateCodeUnit = 0xd800;
 
 // The last UTF-16 high surrogate code unit.
-inline constexpr char16_t kMaximumHighSurrogateCodeUnit =
+inline constexpr uint16_t kMaximumHighSurrogateCodeUnit =
     kMinimumHighSurrogateCodeUnit | kSurrogateMask;
 static_assert(kMaximumHighSurrogateCodeUnit == 0xdbff);
 
 // The first UTF-16 low surrogate code unit.
-inline constexpr char16_t kMinimumLowSurrogateCodeUnit =
+inline constexpr uint16_t kMinimumLowSurrogateCodeUnit =
     kMaximumHighSurrogateCodeUnit + 1;
 static_assert(kMinimumLowSurrogateCodeUnit == 0xdc00);
 
 // The last UTF-16 low surrogate code unit.
-inline constexpr char16_t kMaximumLowSurrogateCodeUnit =
+inline constexpr uint16_t kMaximumLowSurrogateCodeUnit =
     kMinimumLowSurrogateCodeUnit | kSurrogateMask;
 static_assert(kMaximumLowSurrogateCodeUnit == 0xdfff);
 
 // Returns `true` if `code_point` is in a supplementary plane, and therefore
 // requires encoding as a UTF-16 surrogate pair.
-constexpr bool IsSupplementary(char32_t code_point) {
+constexpr bool IsSupplementary(uint32_t code_point) {
   return code_point >= kMinimumSupplementaryCodePoint &&
          code_point <= kMaximumSupplementaryCodePoint;
 }
 
 // Returns `true` if `code_point` is a UTF-16 high surrogate.
-constexpr bool IsHighSurrogate(char32_t code_point) {
+constexpr bool IsHighSurrogate(uint32_t code_point) {
   return code_point >= kMinimumHighSurrogateCodeUnit &&
          code_point <= kMaximumHighSurrogateCodeUnit;
 }
 
 // Returns `true` if `code_point` is a UTF-16 low surrogate.
-constexpr bool IsLowSurrogate(char32_t code_point) {
+constexpr bool IsLowSurrogate(uint32_t code_point) {
   return code_point >= kMinimumLowSurrogateCodeUnit &&
          code_point <= kMaximumLowSurrogateCodeUnit;
 }
