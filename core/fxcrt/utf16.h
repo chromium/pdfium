@@ -14,29 +14,34 @@ inline constexpr int kSurrogateBits = 10;
 
 // A bitmask for the suffix of a UTF-16 surrogate.
 inline constexpr char16_t kSurrogateMask = (1 << kSurrogateBits) - 1;
+static_assert(kSurrogateMask == 0x3ff);
 
-// The first supplementary code point, `U+10000`.
+// The first supplementary code point.
 inline constexpr char32_t kMinimumSupplementaryCodePoint = 0x10000;
 
-// The last supplementary code point, `U+10FFFF`.
+// The last supplementary code point.
 inline constexpr char32_t kMaximumSupplementaryCodePoint =
     kMinimumSupplementaryCodePoint +
     (kSurrogateMask << kSurrogateBits | kSurrogateMask);
+static_assert(kMaximumSupplementaryCodePoint == 0x10ffff);
 
-// The first UTF-16 high surrogate code unit, `U+D800`.
+// The first UTF-16 high surrogate code unit.
 inline constexpr char16_t kMinimumHighSurrogateCodeUnit = 0xd800;
 
-// The last UTF-16 high surrogate code unit, `U+DBFF`.
+// The last UTF-16 high surrogate code unit.
 inline constexpr char16_t kMaximumHighSurrogateCodeUnit =
     kMinimumHighSurrogateCodeUnit | kSurrogateMask;
+static_assert(kMaximumHighSurrogateCodeUnit == 0xdbff);
 
-// The first UTF-16 low surrogate code unit, `U+DC00`.
+// The first UTF-16 low surrogate code unit.
 inline constexpr char16_t kMinimumLowSurrogateCodeUnit =
     kMaximumHighSurrogateCodeUnit + 1;
+static_assert(kMinimumLowSurrogateCodeUnit == 0xdc00);
 
-// The last UTF-16 low surrogate code unit, `U+DFFF`.
+// The last UTF-16 low surrogate code unit.
 inline constexpr char16_t kMaximumLowSurrogateCodeUnit =
     kMinimumLowSurrogateCodeUnit | kSurrogateMask;
+static_assert(kMaximumLowSurrogateCodeUnit == 0xdfff);
 
 // Returns `true` if `code_point` is in a supplementary plane, and therefore
 // requires encoding as a UTF-16 surrogate pair.
