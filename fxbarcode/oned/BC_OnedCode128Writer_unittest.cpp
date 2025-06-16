@@ -6,7 +6,6 @@
 
 #include <iterator>
 
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/span.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -17,7 +16,7 @@ namespace {
 
 struct TestCase {
   pdfium::span<const int32_t> pattern_span() const {
-    return UNSAFE_TODO(pdfium::span(patterns, num_patterns));
+    return pdfium::span(patterns).first(num_patterns);
   }
 
   const char* input;
