@@ -61,6 +61,7 @@ pdfium_unittest_source_set("unittests") {
     "cpdf_cmapparser_unittest.cpp",
     "cpdf_simplefont_unittest.cpp",
     "cpdf_tounicodemap_unittest.cpp",
+    "cpdf_truetypefont_unittest.cpp",
   ]
   deps = [
     ":font",
