@@ -186,7 +186,7 @@ bool CPDF_TrueTypeFont::HasAnyGlyphIndex() const {
 }
 
 CPDF_TrueTypeFont::CharmapType CPDF_TrueTypeFont::DetermineCharmapType() const {
-  if (UseTTCharmapMSUnicode(font_.GetFace())) {
+  if (UseTTCharmapUnicode(font_.GetFace())) {
     return CharmapType::kMSUnicode;
   }
 

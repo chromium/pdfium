@@ -428,6 +428,16 @@ CFX_Font* CPDF_Font::GetFontFallback(int position) {
   return font_fallbacks_[position].get();
 }
 
+bool CPDF_Font::UseTTCharmapUnicode(const RetainPtr<CFX_Face>& face) {
+  for (size_t i = 0; i < face->GetCharMapCount(); i++) {
+    if (face->GetCharMapEncodingByIndex(i) == fxge::FontEncoding::kUnicode) {
+      face->SetCharMapByIndex(i);
+      return true;
+    }
+  }
+  return false;
+}
+
 // static
 bool CPDF_Font::UseTTCharmap(const RetainPtr<CFX_Face>& face,
                              int platform_id,

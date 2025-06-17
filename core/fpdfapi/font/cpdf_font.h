@@ -140,10 +140,10 @@ class CPDF_Font : public Retainable, public Observable {
   CPDF_Font(CPDF_Document* document, RetainPtr<CPDF_Dictionary> font_dict);
   ~CPDF_Font() override;
 
+  // Tries to select any Unicode character map.
+  static bool UseTTCharmapUnicode(const RetainPtr<CFX_Face>& face);
+
   // Commonly used wrappers for UseTTCharmap().
-  static bool UseTTCharmapMSUnicode(const RetainPtr<CFX_Face>& face) {
-    return UseTTCharmap(face, 3, 1);
-  }
   static bool UseTTCharmapMSSymbol(const RetainPtr<CFX_Face>& face) {
     return UseTTCharmap(face, 3, 0);
   }
