@@ -107,18 +107,16 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
     return available_ranges_.Contains(RangeSet::Range(start, start + size));
   }
 
-  int GetBlockImpl(unsigned long pos, unsigned char* pBuf, unsigned long size) {
-    if (!IsDataAvailImpl(pos, size)) {
+  int GetBlockImpl(size_t pos, pdfium::span<unsigned char> buf) {
+    if (!IsDataAvailImpl(pos, buf.size())) {
       return 0;
     }
-    const unsigned long end = std::min(
-        pdfium::checked_cast<unsigned long>(file_contents_.size()), pos + size);
+    const size_t end = std::min(file_contents_.size(), buf.size() + pos);
     if (end <= pos) {
       return 0;
     }
-    const unsigned long bytes_to_copy = end - pos;
-    fxcrt::Copy(file_contents().subspan(pos, bytes_to_copy),
-                UNSAFE_TODO(pdfium::span(pBuf, size)));
+    const size_t bytes_to_copy = end - pos;
+    fxcrt::Copy(file_contents().subspan(pos, bytes_to_copy), buf);
     SetDataAvailable(pos, bytes_to_copy);
     return static_cast<int>(bytes_to_copy);
   }
@@ -143,7 +141,9 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
                        unsigned long pos,
                        unsigned char* pBuf,
                        unsigned long size) {
-    return static_cast<TestAsyncLoader*>(param)->GetBlockImpl(pos, pBuf, size);
+    // SAFETY: required from caller across public API.
+    return static_cast<TestAsyncLoader*>(param)->GetBlockImpl(
+        pos, UNSAFE_BUFFERS(pdfium::span(pBuf, size)));
   }
 
   static void SAddSegment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
