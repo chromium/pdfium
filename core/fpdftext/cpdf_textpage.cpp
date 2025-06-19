@@ -284,7 +284,8 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
 
   const CPDF_TextObject* text_object = charinfo.text_object();
   float font_size = GetFontSize(text_object);
-  if (text_object && !FXSYS_IsFloatZero(font_size)) {
+  if (text_object && !FXSYS_IsFloatZero(font_size) &&
+      charinfo.char_code() != CPDF_Font::kInvalidCharCode) {
     RetainPtr<CPDF_Font> font = text_object->GetFont();
     bool is_vert_writing = font->IsVertWriting();
     if (is_vert_writing && font->IsCIDFont()) {
@@ -1038,7 +1039,7 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
     char_box.Translate(k * step, 0);
     temp_text_buf_.AppendChar(wChar);
     temp_char_list_.push_back(
-        CharInfo(CharType::kPiece, font->CharCodeFromUnicode(wChar), wChar,
+        CharInfo(CharType::kPiece, CPDF_Font::kInvalidCharCode, wChar,
                  pTextObj->GetPos(), char_box, matrix, pTextObj));
   }
 }
