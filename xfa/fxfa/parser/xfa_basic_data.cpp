@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
+#include <functional>
 #include <iterator>
 #include <utility>
 
@@ -184,9 +185,8 @@ XFA_PACKETINFO XFA_GetPacketByIndex(XFA_PacketType ePacket) {
 
 std::optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
   uint32_t hash = FX_HashCode_GetW(wsName);
-  auto* elem = std::lower_bound(
-      std::begin(kPacketTable), std::end(kPacketTable), hash,
-      [](const PacketTableRecord& a, uint32_t hash) { return a.hash < hash; });
+  auto* elem = std::ranges::lower_bound(kPacketTable, hash, std::less<>{},
+                                        &PacketTableRecord::hash);
   if (elem != std::end(kPacketTable) && wsName.EqualsASCII(elem->info.name)) {
     return elem->info;
   }
@@ -199,13 +199,11 @@ ByteStringView XFA_ElementToName(XFA_Element elem) {
 
 XFA_Element XFA_GetElementByName(WideStringView name) {
   uint32_t hash = FX_HashCode_GetW(name);
-  auto* elem = std::lower_bound(
-      std::begin(kElementRecords), std::end(kElementRecords), hash,
-      [](const ElementRecord& a, uint32_t hash) { return a.hash < hash; });
+  auto* elem = std::ranges::lower_bound(kElementRecords, hash, std::less<>{},
+                                        &ElementRecord::hash);
   if (elem == std::end(kElementRecords)) {
     return XFA_Element::Unknown;
   }
-
   size_t index = std::distance(std::begin(kElementRecords), elem);
   return name.EqualsASCII(kElementNameSpan[index]) ? elem->element
                                                    : XFA_Element::Unknown;
@@ -240,20 +238,15 @@ ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item) {
 std::optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
     WideStringView name) {
   auto* it =
-      std::lower_bound(std::begin(kAttributeValueRecords),
-                       std::end(kAttributeValueRecords), FX_HashCode_GetW(name),
-                       [](const AttributeValueRecord& arg, uint32_t hash) {
-                         return arg.uHash < hash;
-                       });
+      std::ranges::lower_bound(kAttributeValueRecords, FX_HashCode_GetW(name),
+                               std::less<>{}, &AttributeValueRecord::uHash);
   if (it == std::end(kAttributeValueRecords)) {
     return std::nullopt;
   }
-
   size_t index = std::distance(std::begin(kAttributeValueRecords), it);
   if (!name.EqualsASCII(kAttributeValueNameSpan[index])) {
     return std::nullopt;
   }
-
   return it->eName;
 }
 

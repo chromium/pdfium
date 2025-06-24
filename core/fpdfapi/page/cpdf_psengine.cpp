@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include <algorithm>
+#include <functional>
 #include <limits>
 #include <utility>
 
@@ -186,11 +187,8 @@ void CPDF_PSProc::AddOperatorForTesting(ByteStringView word) {
 }
 
 void CPDF_PSProc::AddOperator(ByteStringView word) {
-  const auto* pFound =
-      std::lower_bound(std::begin(kPsOpNames), std::end(kPsOpNames), word,
-                       [](const PDF_PSOpName& name, ByteStringView word) {
-                         return name.name < word;
-                       });
+  const auto* pFound = std::ranges::lower_bound(kPsOpNames, word, std::less<>{},
+                                                &PDF_PSOpName::name);
   if (pFound != std::end(kPsOpNames) && pFound->name == word) {
     operators_.push_back(std::make_unique<CPDF_PSOP>(pFound->op));
   } else {

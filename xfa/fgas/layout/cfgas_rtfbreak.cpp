@@ -42,8 +42,7 @@ void CFGAS_RTFBreak::SetLineStartPos(float fLinePos) {
 void CFGAS_RTFBreak::AddPositionedTab(float fTabPos) {
   int32_t iTabPos = std::min(
       FXSYS_roundf(fTabPos * kConversionFactor) + line_start_, line_width_);
-  auto it = std::lower_bound(positioned_tabs_.begin(), positioned_tabs_.end(),
-                             iTabPos);
+  auto it = std::ranges::lower_bound(positioned_tabs_, iTabPos);
   if (it != positioned_tabs_.end() && *it == iTabPos) {
     return;
   }
@@ -61,8 +60,7 @@ void CFGAS_RTFBreak::SetUserData(
 }
 
 bool CFGAS_RTFBreak::GetPositionedTab(int32_t* iTabPos) const {
-  auto it = std::upper_bound(positioned_tabs_.begin(), positioned_tabs_.end(),
-                             *iTabPos);
+  auto it = std::ranges::upper_bound(positioned_tabs_, *iTabPos);
   if (it == positioned_tabs_.end()) {
     return false;
   }

@@ -6,6 +6,7 @@
 
 #include "fxjs/xfa/cjx_node.h"
 
+#include <functional>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -79,11 +80,8 @@ const ExecEventParaInfo* GetExecEventParaInfoByName(
   }
 
   uint32_t uHash = FX_HashCode_GetW(wsEventName);
-  auto* result = std::lower_bound(
-      std::begin(kExecEventParaInfoTable), std::end(kExecEventParaInfoTable),
-      uHash, [](const ExecEventParaInfo& iter, const uint32_t& hash) {
-        return iter.hash_ < hash;
-      });
+  auto* result = std::ranges::lower_bound(
+      kExecEventParaInfoTable, uHash, std::less<>{}, &ExecEventParaInfo::hash_);
   if (result != std::end(kExecEventParaInfoTable) && result->hash_ == uHash) {
     return result;
   }

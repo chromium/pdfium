@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <functional>
 #include <iterator>
 #include <stack>
 #include <utility>
@@ -57,9 +58,8 @@ constexpr FX_XMLNAMECHAR kXMLNameChars[] = {
 
 // static
 bool CFX_XMLParser::IsXMLNameChar(wchar_t ch, bool bFirstChar) {
-  auto* it = std::lower_bound(
-      std::begin(kXMLNameChars), std::end(kXMLNameChars), ch,
-      [](const FX_XMLNAMECHAR& arg, wchar_t ch) { return arg.wEnd < ch; });
+  auto* it = std::ranges::lower_bound(kXMLNameChars, ch, std::less<>{},
+                                      &FX_XMLNAMECHAR::wEnd);
   return it != std::end(kXMLNameChars) && ch >= it->wStart &&
          (!bFirstChar || it->bStartChar);
 }

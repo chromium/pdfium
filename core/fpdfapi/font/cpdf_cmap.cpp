@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cpdf_cmap.h"
 
 #include <array>
+#include <functional>
 #include <utility>
 #include <vector>
 
@@ -304,11 +305,9 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
   if (coding_ == CIDCoding::kCID) {
     return static_cast<uint16_t>(charcode);
   }
-
   if (embed_map_) {
     return fxcmap::CIDFromCharCode(embed_map_, charcode);
   }
-
   if (direct_charcode_to_cidtable_.empty()) {
     return static_cast<uint16_t>(charcode);
   }
@@ -319,11 +318,9 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
   }
 
   auto it =
-      std::lower_bound(additional_charcode_to_cidmappings_.begin(),
-                       additional_charcode_to_cidmappings_.end(), charcode,
-                       [](const CPDF_CMap::CIDRange& arg, uint32_t val) {
-                         return arg.end_code_ < val;
-                       });
+      std::ranges::lower_bound(additional_charcode_to_cidmappings_, charcode,
+                               std::less<>{}, &CPDF_CMap::CIDRange::end_code_);
+
   if (it == additional_charcode_to_cidmappings_.end() ||
       it->start_code_ > charcode) {
     return 0;

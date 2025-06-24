@@ -6,6 +6,7 @@
 
 #include "xfa/fgas/font/fgas_fontutils.h"
 
+#include <functional>
 #include <iterator>
 
 #include "build/build_config.h"
@@ -2451,15 +2452,12 @@ const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t unicode) {
 WideString FGAS_FontNameToEnglishName(const WideString& wsLocalName) {
   uint32_t dwLocalNameHash =
       FX_HashCode_GetLoweredW(wsLocalName.AsStringView());
-  const FGAS_FontInfo* pBegin = std::begin(kXFAFontsMap);
-  const FGAS_FontInfo* pEnd = std::end(kXFAFontsMap);
   const FGAS_FontInfo* font_info =
-      std::lower_bound(pBegin, pEnd, dwLocalNameHash,
-                       [](const FGAS_FontInfo& entry, uint32_t hash) {
-                         return entry.dwFontNameHash < hash;
-                       });
+      std::ranges::lower_bound(kXFAFontsMap, dwLocalNameHash, std::less<>{},
+                               &FGAS_FontInfo::dwFontNameHash);
 
-  if (font_info < pEnd && font_info->dwFontNameHash == dwLocalNameHash) {
+  if (font_info < std::end(kXFAFontsMap) &&
+      font_info->dwFontNameHash == dwLocalNameHash) {
     return WideString::FromASCII(ByteStringView(font_info->pPsName));
   }
   return wsLocalName;
@@ -2470,15 +2468,12 @@ const FGAS_FontInfo* FGAS_FontInfoByFontName(WideStringView wsFontName) {
   wsFontNameTemp.Remove(L' ');
   uint32_t dwCurFontNameHash =
       FX_HashCode_GetLoweredW(wsFontNameTemp.AsStringView());
-  const FGAS_FontInfo* pBegin = std::begin(kXFAFontsMap);
-  const FGAS_FontInfo* pEnd = std::end(kXFAFontsMap);
   const FGAS_FontInfo* font_info =
-      std::lower_bound(pBegin, pEnd, dwCurFontNameHash,
-                       [](const FGAS_FontInfo& entry, uint32_t hash) {
-                         return entry.dwFontNameHash < hash;
-                       });
+      std::ranges::lower_bound(kXFAFontsMap, dwCurFontNameHash, std::less<>{},
+                               &FGAS_FontInfo::dwFontNameHash);
 
-  if (font_info < pEnd && font_info->dwFontNameHash == dwCurFontNameHash) {
+  if (font_info < std::end(kXFAFontsMap) &&
+      font_info->dwFontNameHash == dwCurFontNameHash) {
     return font_info;
   }
   return nullptr;

@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <array>
+#include <functional>
 #include <iterator>
 #include <utility>
 
@@ -56,11 +57,9 @@ const SkiaFontMap kSkiaSansFontMap[] = {
 
 uint32_t SkiaGetSubstFont(uint32_t hash,
                           pdfium::span<const SkiaFontMap> font_map) {
-  const SkiaFontMap* it =
-      std::lower_bound(font_map.begin(), font_map.end(), hash,
-                       [](const SkiaFontMap& item, uint32_t hash) {
-                         return item.family < hash;
-                       });
+  const SkiaFontMap* it = std::ranges::lower_bound(
+      font_map, hash, std::less<>{}, &SkiaFontMap::family);
+
   if (it != font_map.end() && it->family == hash) {
     return it->subst;
   }

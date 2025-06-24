@@ -227,9 +227,7 @@ void CPDF_Creator::InitNewObjNumOffsets() {
       continue;
     }
     new_obj_num_array_.insert(
-        std::lower_bound(new_obj_num_array_.begin(), new_obj_num_array_.end(),
-                         objnum),
-        objnum);
+        std::ranges::lower_bound(new_obj_num_array_, objnum), objnum);
   }
 }
 

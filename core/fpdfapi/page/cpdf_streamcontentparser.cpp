@@ -1372,9 +1372,8 @@ float CPDF_StreamContentParser::GetVerticalTextSize(float fKerning) const {
 }
 
 int32_t CPDF_StreamContentParser::GetCurrentStreamIndex() {
-  auto it = std::upper_bound(stream_start_offsets_.begin(),
-                             stream_start_offsets_.end(),
-                             syntax_->GetPos() + start_parse_offset_);
+  auto it = std::ranges::upper_bound(stream_start_offsets_,
+                                     syntax_->GetPos() + start_parse_offset_);
   return (it - stream_start_offsets_.begin()) - 1;
 }
 

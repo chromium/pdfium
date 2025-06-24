@@ -7,6 +7,7 @@
 #include "core/fxcrt/fx_codepage.h"
 
 #include <algorithm>
+#include <functional>
 #include <iterator>
 #include <utility>
 
@@ -224,11 +225,9 @@ FX_CodePage FX_GetACP() {
 }
 
 FX_CodePage FX_GetCodePageFromCharset(FX_Charset charset) {
-  auto* result = std::lower_bound(
-      std::begin(kFXCharset2CodePageTable), std::end(kFXCharset2CodePageTable),
-      charset, [](const FX_CHARSET_MAP& iter, const FX_Charset& charset) {
-        return iter.charset < charset;
-      });
+  auto* result =
+      std::ranges::lower_bound(kFXCharset2CodePageTable, charset, std::less<>{},
+                               &FX_CHARSET_MAP::charset);
   if (result != std::end(kFXCharset2CodePageTable) &&
       result->charset == charset) {
     return result->codepage;

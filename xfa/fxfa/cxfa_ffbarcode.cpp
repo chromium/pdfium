@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffbarcode.h"
 
+#include <functional>
 #include <utility>
 
 #include "core/fxcrt/check.h"
@@ -117,16 +118,13 @@ BC_TYPE CXFA_FFBarcode::GetBarcodeTypeByName(const WideString& wsName) {
   if (wsName.IsEmpty()) {
     return BC_TYPE::kUnknown;
   }
-
-  auto* it = std::lower_bound(
-      std::begin(kBarCodeData), std::end(kBarCodeData),
-      FX_HashCode_GetLoweredW(wsName.AsStringView()),
-      [](const BarCodeInfo& arg, uint32_t hash) { return arg.uHash < hash; });
+  auto* it = std::ranges::lower_bound(
+      kBarCodeData, FX_HashCode_GetLoweredW(wsName.AsStringView()),
+      std::less<>{}, &BarCodeInfo::uHash);
 
   if (it != std::end(kBarCodeData) && wsName.EqualsASCII(it->pName)) {
     return it->eBCType;
   }
-
   return BC_TYPE::kUnknown;
 }
 
