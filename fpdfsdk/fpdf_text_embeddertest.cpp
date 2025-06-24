@@ -2250,9 +2250,8 @@ TEST_F(FPDFTextEmbedderTest, TextObjectSetIsActive) {
 }
 
 TEST_F(FPDFTextEmbedderTest, Bug425244539) {
-  // TODO(crbug.com/425244539): This should contain the characters in "hello".
   static constexpr std::array<unsigned short, 6> kExpectedChars = {
-      0xfffe, 0xfffe, 0xfffe, 0xfffe, 0xfffe, 0};
+      'h', 'e', 'l', 'l', 'o', 0};
 
   ASSERT_TRUE(OpenDocument("bug_425244539.pdf"));
   ScopedPage page = LoadScopedPage(0);
@@ -2270,15 +2269,13 @@ TEST_F(FPDFTextEmbedderTest, Bug425244539) {
 
   ScopedFPDFWideString hello = GetFPDFWideString(L"hello");
 
-  // TODO(crbug.com/425244539): This should be able to find "hello".
   ScopedFPDFTextFind search(
       FPDFText_FindStart(textpage.get(), hello.get(), 0, 0));
   EXPECT_TRUE(search);
   EXPECT_EQ(22, FPDFText_GetSchResultIndex(search.get()));
   EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
 
-  // Advancing finds nothing.
-  EXPECT_FALSE(FPDFText_FindNext(search.get()));
+  EXPECT_TRUE(FPDFText_FindNext(search.get()));
   EXPECT_EQ(22, FPDFText_GetSchResultIndex(search.get()));
-  EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+  EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
 }

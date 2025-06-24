@@ -151,6 +151,11 @@ bool IsHyphenCode(wchar_t c) {
   return c == 0x2D || c == 0xAD;
 }
 
+bool IsNormalCharacter(const CPDF_TextPage::CharInfo& char_info) {
+  return char_info.unicode() != 0 ? !IsControlChar(char_info)
+                                  : char_info.char_code() != 0;
+}
+
 bool IsRectIntersect(const CFX_FloatRect& rect1, const CFX_FloatRect& rect2) {
   CFX_FloatRect rect = rect1;
   rect.Intersect(rect2);
@@ -383,8 +388,7 @@ void CPDF_TextPage::Init() {
   for (int i = 0; i < nCount; ++i) {
     const CharInfo& charinfo = char_list_[i];
     if (charinfo.char_type() == CharType::kGenerated ||
-        (charinfo.unicode() != 0 && !IsControlChar(charinfo)) ||
-        (charinfo.unicode() == 0 && charinfo.char_code() != 0)) {
+        IsNormalCharacter(charinfo)) {
       char_indices_.back().count++;
       skipped = true;
     } else {
@@ -781,7 +785,7 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
 
 void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
                                              const CharInfo& info) {
-  if (IsControlChar(info)) {
+  if (!IsNormalCharacter(info)) {
     char_list_.push_back(info);
     return;
   }
@@ -806,7 +810,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
 
 void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
                                              const CharInfo& info) {
-  if (IsControlChar(info)) {
+  if (!IsNormalCharacter(info)) {
     char_list_.push_back(info);
     return;
   }
