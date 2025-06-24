@@ -781,48 +781,50 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
 
 void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
                                              const CharInfo& info) {
-  CharInfo info2 = info;
-  if (IsControlChar(info2)) {
-    char_list_.push_back(info2);
+  if (IsControlChar(info)) {
+    char_list_.push_back(info);
     return;
   }
+
   DataVector<wchar_t> normalized;
   if (wChar >= 0xFB00 && wChar <= 0xFB06) {
     normalized = GetUnicodeNormalization(wChar);
   }
   if (normalized.empty()) {
     text_buf_.AppendChar(wChar);
-    char_list_.push_back(info2);
+    char_list_.push_back(info);
     return;
   }
-  info2.set_char_type(CharType::kPiece);
+  CharInfo modified_info = info;
+  modified_info.set_char_type(CharType::kPiece);
   for (wchar_t normalized_char : normalized) {
-    info2.set_unicode(normalized_char);
+    modified_info.set_unicode(normalized_char);
     text_buf_.AppendChar(normalized_char);
-    char_list_.push_back(info2);
+    char_list_.push_back(modified_info);
   }
 }
 
 void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
                                              const CharInfo& info) {
-  CharInfo info2 = info;
-  if (IsControlChar(info2)) {
-    char_list_.push_back(info2);
+  if (IsControlChar(info)) {
+    char_list_.push_back(info);
     return;
   }
+
+  CharInfo modified_info = info;
   wChar = pdfium::unicode::GetMirrorChar(wChar);
   DataVector<wchar_t> normalized = GetUnicodeNormalization(wChar);
   if (normalized.empty()) {
-    info2.set_unicode(wChar);
+    modified_info.set_unicode(wChar);
     text_buf_.AppendChar(wChar);
-    char_list_.push_back(info2);
+    char_list_.push_back(modified_info);
     return;
   }
-  info2.set_char_type(CharType::kPiece);
+  modified_info.set_char_type(CharType::kPiece);
   for (wchar_t normalized_char : normalized) {
-    info2.set_unicode(normalized_char);
+    modified_info.set_unicode(normalized_char);
     text_buf_.AppendChar(normalized_char);
-    char_list_.push_back(info2);
+    char_list_.push_back(modified_info);
   }
 }
 
