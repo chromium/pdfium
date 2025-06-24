@@ -9,6 +9,7 @@
 #include <time.h>
 
 #include <algorithm>
+#include <array>
 #include <stack>
 #include <utility>
 
@@ -33,6 +34,13 @@ namespace {
 constexpr char kContentsKey[] = "Contents";
 constexpr char kTypeKey[] = "Type";
 
+struct AESCryptContext {
+  bool iv_;
+  uint32_t block_offset_;
+  CRYPT_aes_context context_;
+  std::array<uint8_t, 16> block_;
+};
+
 }  // namespace
 
 // static
@@ -56,10 +64,10 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
   if (cipher_ == Cipher::kNone) {
     return DataVector<uint8_t>(source.begin(), source.end());
   }
-  uint8_t realkey[16];
-  size_t realkeylen = sizeof(realkey);
+  std::array<uint8_t, 16> realkey;
+  size_t realkeylen = realkey.size();
   if (cipher_ != Cipher::kAES || key_len_ != 32) {
-    uint8_t key1[32];
+    std::array<uint8_t, 32> key1;
     PopulateKey(objnum, gennum, key1);
     if (cipher_ == Cipher::kAES) {
       fxcrt::Copy(ByteStringView("sAlT").unsigned_span(),
@@ -67,14 +75,14 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     }
     size_t len = cipher_ == Cipher::kAES ? key_len_ + 9 : key_len_ + 5;
     CRYPT_MD5Generate(pdfium::span(key1).first(len), realkey);
-    realkeylen = std::min(key_len_ + 5, sizeof(realkey));
+    realkeylen = std::min(key_len_ + 5, realkeylen);
   }
   if (cipher_ == Cipher::kAES) {
     if (key_len_ == 32) {
       CRYPT_AESSetKey(aes_context_.get(), encrypt_key_);
     } else {
       CRYPT_AESSetKey(aes_context_.get(),
-                      UNSAFE_TODO(pdfium::span(realkey, key_len_)));
+                      pdfium::span(realkey).first(key_len_));
     }
 
     static constexpr size_t kIVSize = 16;
@@ -107,44 +115,37 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
   return dest;
 }
 
-struct AESCryptContext {
-  bool iv_;
-  uint32_t block_offset_;
-  CRYPT_aes_context context_;
-  uint8_t block_[16];
-};
-
 void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   if (cipher_ == Cipher::kNone) {
     return this;
   }
 
-  if (cipher_ == Cipher::kAES && key_len_ == 32) {
-    AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
-    pContext->iv_ = true;
-    pContext->block_offset_ = 0;
-    CRYPT_AESSetKey(&pContext->context_, encrypt_key_);
-    return pContext;
-  }
-  uint8_t key1[48];
-  PopulateKey(objnum, gennum, key1);
-
-  if (cipher_ == Cipher::kAES) {
-    UNSAFE_TODO(FXSYS_memcpy(key1 + key_len_ + 5, "sAlT", 4));
-  }
-
-  uint8_t realkey[16];
-  size_t len = cipher_ == Cipher::kAES ? key_len_ + 9 : key_len_ + 5;
-  CRYPT_MD5Generate(pdfium::span(key1).first(len), realkey);
-  size_t realkeylen = std::min(key_len_ + 5, sizeof(realkey));
-
   if (cipher_ == Cipher::kAES) {
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
     pContext->iv_ = true;
     pContext->block_offset_ = 0;
+    if (key_len_ == 32) {
+      CRYPT_AESSetKey(&pContext->context_, encrypt_key_);
+      return pContext;
+    }
+    std::array<uint8_t, 48> key1;
+    PopulateKey(objnum, gennum, key1);
+    fxcrt::Copy(ByteStringView("sAlT").unsigned_span(),
+                pdfium::span(key1).subspan(key_len_ + 5));
+
+    std::array<uint8_t, 16> realkey;
+    CRYPT_MD5Generate(pdfium::span(key1).first(key_len_ + 9), realkey);
     CRYPT_AESSetKey(&pContext->context_, realkey);
     return pContext;
   }
+
+  std::array<uint8_t, 48> key1;
+  PopulateKey(objnum, gennum, key1);
+
+  std::array<uint8_t, 16> realkey;
+  CRYPT_MD5Generate(pdfium::span(key1).first(key_len_ + 5), realkey);
+  size_t realkeylen = std::min(key_len_ + 5, realkey.size());
+
   CRYPT_rc4_context* pContext = FX_Alloc(CRYPT_rc4_context, 1);
   CRYPT_ArcFourSetup(pContext, pdfium::span(realkey).first(realkeylen));
   return pContext;
@@ -177,8 +178,10 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
     if (copy_size > src_left) {
       copy_size = src_left;
     }
-    UNSAFE_TODO(FXSYS_memcpy(pContext->block_ + pContext->block_offset_,
-                             source.data() + src_off, copy_size));
+    fxcrt::Copy(
+        source.subspan(src_off, copy_size),
+        pdfium::span(pContext->block_).subspan(pContext->block_offset_));
+
     src_off += copy_size;
     src_left -= copy_size;
     pContext->block_offset_ += copy_size;
@@ -188,7 +191,7 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
         pContext->iv_ = false;
         pContext->block_offset_ = 0;
       } else if (src_off < source.size()) {
-        uint8_t block_buf[16];
+        std::array<uint8_t, 16> block_buf;
         CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_);
         dest_buf.AppendSpan(block_buf);
         pContext->block_offset_ = 0;
@@ -205,22 +208,20 @@ bool CPDF_CryptoHandler::DecryptFinish(void* context, BinaryBuffer& dest_buf) {
   if (!context) {
     return false;
   }
-
   if (cipher_ == Cipher::kNone) {
     return true;
   }
-
   if (cipher_ == Cipher::kRC4) {
     FX_Free(context);
     return true;
   }
   auto* pContext = static_cast<AESCryptContext*>(context);
   if (pContext->block_offset_ == 16) {
-    uint8_t block_buf[16];
+    std::array<uint8_t, 16> block_buf;
     CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_);
-    if (block_buf[15] < 16) {
+    if (block_buf.back() < 16) {
       dest_buf.AppendSpan(pdfium::span(block_buf).first(
-          static_cast<size_t>(16 - block_buf[15])));
+          static_cast<size_t>(16 - block_buf.back())));
     }
   }
   FX_Free(pContext);
@@ -347,13 +348,11 @@ CPDF_CryptoHandler::~CPDF_CryptoHandler() = default;
 
 void CPDF_CryptoHandler::PopulateKey(uint32_t objnum,
                                      uint32_t gennum,
-                                     uint8_t* key) const {
-  UNSAFE_TODO({
-    FXSYS_memcpy(key, encrypt_key_.data(), key_len_);
-    key[key_len_ + 0] = (uint8_t)objnum;
-    key[key_len_ + 1] = (uint8_t)(objnum >> 8);
-    key[key_len_ + 2] = (uint8_t)(objnum >> 16);
-    key[key_len_ + 3] = (uint8_t)gennum;
-    key[key_len_ + 4] = (uint8_t)(gennum >> 8);
-  });
+                                     pdfium::span<uint8_t> key) const {
+  fxcrt::Copy(pdfium::span(encrypt_key_).first(key_len_), key);
+  key[key_len_ + 0] = (uint8_t)objnum;
+  key[key_len_ + 1] = (uint8_t)(objnum >> 8);
+  key[key_len_ + 2] = (uint8_t)(objnum >> 16);
+  key[key_len_ + 3] = (uint8_t)gennum;
+  key[key_len_ + 4] = (uint8_t)(gennum >> 8);
 }
