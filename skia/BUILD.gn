@@ -300,7 +300,7 @@ component("skia") {
     ]
   }
 
-  if (is_clang && !is_nacl) {
+  if (is_clang) {
     # Skia won't compile with some of the more strict clang warnings.
     # e.g. it does:
     #  SkASSERT(!"sk_out_of_memory");
