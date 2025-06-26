@@ -25,7 +25,7 @@ char32_t CodePointView::Iterator::Decode() {
   if (current_.IsEmpty()) {
     return kSentinel;
   }
-  char32_t code_point = current_.Front();
+  uint32_t code_point = current_.Front();
   next_ = current_.Substr(1);
   if (IsHighSurrogate(code_point)) {
     if (!next_.IsEmpty() && IsLowSurrogate(next_.Front())) {
