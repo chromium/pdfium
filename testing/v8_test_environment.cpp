@@ -15,6 +15,10 @@
 #include "v8/include/v8-platform.h"
 #include "v8/include/v8-snapshot.h"
 
+#ifdef V8_USE_EXTERNAL_STARTUP_DATA
+#include <stdlib.h>
+#endif  // V8_USE_EXTERNAL_STARTUP_DATA
+
 namespace {
 
 V8TestEnvironment* g_environment = nullptr;

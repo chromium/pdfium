@@ -4,6 +4,8 @@
 
 #include "core/fxcrt/fx_memory.h"
 
+#include <stdlib.h>
+
 #include <limits>
 #include <memory>
 

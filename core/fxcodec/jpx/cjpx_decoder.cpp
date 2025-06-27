@@ -22,7 +22,9 @@
 #include "core/fxcrt/span.h"
 #include "core/fxge/calculate_pitch.h"
 
-#if !defined(USE_SYSTEM_LIBOPENJPEG2)
+#if defined(USE_SYSTEM_LIBOPENJPEG2)
+#include <stdlib.h>
+#else
 #include "third_party/libopenjpeg/opj_malloc.h"
 #endif
 
