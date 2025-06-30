@@ -208,7 +208,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling simdutf
   # and whatever else without interference from each other.
-  'simdutf_revision': '9d3e4d7c1afb30ed528443d73afab23f22443434',
+  'simdutf_revision': 'a1046f20f7099b4f7dd72d7127bb4dc05252ec5c',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling siso
   # and whatever else without interference from each other.
