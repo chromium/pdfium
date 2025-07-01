@@ -198,9 +198,9 @@ vars = {
   # and whatever else without interference from each other.
   'pdfium_tests_revision': '24427d10bdb55e43dcc66d2d63f6943459625223',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling resultdb
+  # the commit queue can handle CLs rolling result_adapter_revision
   # and whatever else without interference from each other.
-  'resultdb_version': 'git_revision:5fb3ca203842fd691cab615453f8e5a14302a1d8',
+  'result_adapter_revision': 'git_revision:5fb3ca203842fd691cab615453f8e5a14302a1d8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling rust
   # and whatever else without interference from each other.
@@ -580,7 +580,7 @@ deps = {
     'packages': [
       {
         'package': 'infra/tools/result_adapter/${{platform}}',
-        'version': Var('resultdb_version'),
+        'version': Var('result_adapter_revision'),
       },
     ],
     'dep_type': 'cipd',
