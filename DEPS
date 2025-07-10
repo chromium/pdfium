@@ -94,7 +94,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': 'a8d02857f16c23dc4f8bdc190af911a40d611d82',
+  'clang_revision': 'b17ffb3e80e66f00811e341fb2d1047b560d9770',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -428,45 +428,45 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/clang-llvmorg-21-init-11777-gfd3fecfc-1.tar.xz',
-        'sha256sum': '5f69279b3697166facfc354634157e0a8a32fa6e36864200ad8a8f85add3f3f6',
-        'size_bytes': 55654416,
-        'generation': 1747138963230938,
+        'object_name': 'Linux_x64/clang-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': 'c687c6f079f54643d746ad5872775d1672ae4872b92f56c63e83394f5b5429ca',
+        'size_bytes': 54813092,
+        'generation': 1752058379986510,
         'condition': '(host_os == "linux" or checkout_android) and non_git_source',
       },
       {
-        'object_name': 'Mac/clang-llvmorg-21-init-11777-gfd3fecfc-1.tar.xz',
-        'sha256sum': '3d83bd33ae0a0331ba8e23340023ae05174128503d94116cd8a855913fca88c7',
-        'size_bytes': 52212572,
-        'generation': 1747138966013176,
+        'object_name': 'Mac/clang-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': 'cb266c7bcb58aa49740f97c2d81817c703197262df5d8273162698ba5c763238',
+        'size_bytes': 52409436,
+        'generation': 1752058382807825,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-21-init-11777-gfd3fecfc-1.tar.xz',
-        'sha256sum': '809b6f72718d9bcbf25ad6ab80517f215ed2526435a095ee9bceb5ed40f989a2',
-        'size_bytes': 993800,
-        'generation': 1747138984414942,
+        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': 'a7920b44da881e7765dedfbb35d8bce85d4e1fb30fd11e19fdac81f6e059424d',
+        'size_bytes': 993004,
+        'generation': 1752058402190890,
         'condition': 'checkout_mac and not host_os == "mac"',
       },
       {
-        'object_name': 'Mac_arm64/clang-llvmorg-21-init-11777-gfd3fecfc-1.tar.xz',
-        'sha256sum': '2d5660c50637a7ee6e5501525e7588bb255cdfd48e792b12b86ae7113c31b8ae',
-        'size_bytes': 44214476,
-        'generation': 1747138986010150,
+        'object_name': 'Mac_arm64/clang-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': 'ba593d02e50f3d81a4cd61f1db251e7a6c7a2e1d33abbd7975dd5c5ce3cd65cc',
+        'size_bytes': 44347716,
+        'generation': 1752058404080119,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/clang-llvmorg-21-init-11777-gfd3fecfc-1.tar.xz',
-        'sha256sum': '39e17b8282b9f1e3cbc6b22d3144696728c867f3ae66694b0125c3ed60755401',
-        'size_bytes': 47250032,
-        'generation': 1747139012194774,
+        'object_name': 'Win/clang-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': 'b5ea19713969185ea003744fe07858f36bbc03376647e49afa368eb5ead06000',
+        'size_bytes': 47403024,
+        'generation': 1752058428892825,
         'condition': 'host_os == "win"',
       },
       {
-        'object_name': 'Win/clang-win-runtime-library-llvmorg-21-init-11777-gfd3fecfc-1.tar.xz',
-        'sha256sum': '220abd9ce9a85446a2e7879aab3c1f2f5393665f6b13b067f8cec565ae7d36eb',
-        'size_bytes': 2486856,
-        'generation': 1747139033547001,
+        'object_name': 'Win/clang-win-runtime-library-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': '1c36cd12f3987c2b2588e6a248433d83545e77e14c0c1fff4e15948bd05fedf9',
+        'size_bytes': 2505568,
+        'generation': 1752058445915878,
         'condition': 'checkout_win and not host_os == "win"',
       },
     ]
