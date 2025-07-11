@@ -185,6 +185,7 @@ component("skia") {
 
   # The skia sources values are relative to the skia_dir, so we need to rebase.
   sources += skia_core_public
+  sources += skia_pathops_sources
   sources += skia_sksl_pipeline_sources
   sources += skia_sksl_codegen_sources
   sources += skia_sksl_core_sources
