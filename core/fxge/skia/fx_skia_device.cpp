@@ -554,7 +554,7 @@ void PaintStroke(SkPaint* spaint,
   inverse.set(SkMatrix::kMTransX, 0);
   inverse.set(SkMatrix::kMTransY, 0);
   SkVector deviceUnits[2] = {{0, 1}, {1, 0}};
-  inverse.mapPoints(deviceUnits, std::size(deviceUnits));
+  inverse.mapPoints(deviceUnits);
 
   float width = fill_options.zero_area
                     ? 0.0f
@@ -576,9 +576,8 @@ void PaintStroke(SkPaint* spaint,
       intervals[i * 2] = on;
       intervals[i * 2 + 1] = off;
     }
-    spaint->setPathEffect(SkDashPathEffect::Make(
-        intervals.data(), pdfium::checked_cast<int>(intervals.size()),
-        graph_state->dash_phase()));
+    spaint->setPathEffect(
+        SkDashPathEffect::Make(intervals, graph_state->dash_phase()));
   }
   spaint->setStyle(SkPaint::kStroke_Style);
   spaint->setAntiAlias(!fill_options.aliased_path);
@@ -947,7 +946,7 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
   const DataVector<uint16_t>& glyphs = char_details_.GetGlyphs();
   if (!rsxform_.empty()) {
     sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
-        glyphs.data(), glyphs.size() * sizeof(uint16_t), rsxform_.data(), font,
+        glyphs.data(), glyphs.size() * sizeof(uint16_t), rsxform_, font,
         SkTextEncoding::kGlyphID);
     canvas_->drawTextBlob(blob, 0, 0, skPaint);
     return true;
@@ -965,9 +964,10 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
     } else {
       font.setScaleX(scaleX);
     }
-    auto blob =
-        SkTextBlob::MakeFromPosText(&glyphs[i], sizeof(uint16_t), &positions[i],
-                                    font, SkTextEncoding::kGlyphID);
+    pdfium::span positions_span(positions);
+    auto blob = SkTextBlob::MakeFromPosText(&glyphs[i], sizeof(uint16_t),
+                                            positions_span.subspan(i), font,
+                                            SkTextEncoding::kGlyphID);
     canvas_->drawTextBlob(blob, 0, 0, skPaint);
   }
   return true;
@@ -1241,7 +1241,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
     float end_x = pCoords->GetFloatAt(2);
     float end_y = pCoords->GetFloatAt(3);
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
-    skMatrix.mapPoints(pts, std::size(pts));
+    skMatrix.mapPoints(pts);
     paint.setShader(SkGradientShader::MakeLinear(
         pts, sk_colors.data(), sk_pos.data(),
         fxcrt::CollectionSize<int>(sk_colors), SkTileMode::kClamp));
