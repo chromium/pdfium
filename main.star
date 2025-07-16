@@ -34,7 +34,7 @@ _LINUX_FOCAL_DIMENSIONS = {
 }
 _MACOS_INTEL_DIMENSIONS = {
     "cpu": "x86-64",
-    "os": "Mac-12",
+    "os": "Mac-14",
 }
 _MACOS_ARM_DIMENSIONS = {
     "cpu": "arm64",
