@@ -1477,7 +1477,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 #ifdef ARCH_CPU_ARM64
       return "401858d37db450bfd3f9458ac490eb08";
 #else
-      return "6275396f29951f92f8f5e145f0eff03a";
+      return "7c898d207b5f9bc7843d4ef93349bf71";
 #endif  // ARCH_CPU_ARM64
 #else
       return "3d5a3de53d5866044c2b6bf339742c97";
@@ -1533,12 +1533,14 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 #ifdef ARCH_CPU_ARM64
     return "6a1e31ffe451997946e449250b97d5b2";
 #else
-    return "631be723d5ff1f36e75c971cc940351b";
+    return "727b1ea388b2374270f21d35d1fae70e";
 #endif  // ARCH_CPU_ARM64
 #else
     return "bc8623c052f12376c3d8dd09a6cd27df";
 #endif  // BUILDFLAG(IS_APPLE)
   }();
+  // TODO(thestig): Should `non_primes_checksum` and
+  // `non_primes_after_save_checksum` be merged together?
   const char* non_primes_after_save_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
@@ -1553,7 +1555,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 #ifdef ARCH_CPU_ARM64
     return "d250bee3658c74e5d74729a09cbd80cd";
 #else
-    return "631be723d5ff1f36e75c971cc940351b";
+    return "727b1ea388b2374270f21d35d1fae70e";
 #endif  // ARCH_CPU_ARM64
 #else
     return "bc8623c052f12376c3d8dd09a6cd27df";
