@@ -26,10 +26,15 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeArith(
     HSKIP = std::make_unique<CJBig2_Image>(HGW, HGH);
     for (uint32_t mg = 0; mg < HGH; ++mg) {
       for (uint32_t ng = 0; ng < HGW; ++ng) {
-        int32_t x = (HGX + mg * HRY + ng * HRX) >> 8;
-        int32_t y = (HGY + mg * HRX - ng * HRY) >> 8;
+        // The `>> 8` is an arithmetic shift per spec.  Cast mg, ng to int,
+        // else implicit conversions would evaluate it as unsigned shift.
+        int32_t mg_int = static_cast<int32_t>(mg);
+        int32_t ng_int = static_cast<int32_t>(ng);
+        int32_t x = (HGX + mg_int * HRY + ng_int * HRX) >> 8;
+        int32_t y = (HGY + mg_int * HRX - ng_int * HRY) >> 8;
+
         if ((x + HPW <= 0) | (x >= static_cast<int32_t>(HBW)) | (y + HPH <= 0) |
-            (y >= static_cast<int32_t>(HPH))) {
+            (y >= static_cast<int32_t>(HBH))) {
           HSKIP->SetPixel(ng, mg, 1);
         } else {
           HSKIP->SetPixel(ng, mg, 0);
@@ -133,15 +138,19 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeImage(
   }
 
   HTREG->Fill(HDEFPIXEL);
-  for (uint32_t y = 0; y < HGH; ++y) {
-    for (uint32_t x = 0; x < HGW; ++x) {
+  for (uint32_t mg = 0; mg < HGH; ++mg) {
+    for (uint32_t ng = 0; ng < HGW; ++ng) {
       uint32_t gsval = 0;
       for (uint8_t i = 0; i < GSPLANES.size(); ++i) {
-        gsval |= GSPLANES[i]->GetPixel(x, y) << i;
+        gsval |= GSPLANES[i]->GetPixel(ng, mg) << i;
       }
       uint32_t pat_index = std::min(gsval, HNUMPATS - 1);
-      int32_t out_x = (HGX + y * HRY + x * HRX) >> 8;
-      int32_t out_y = (HGY + y * HRX - x * HRY) >> 8;
+      // The `>> 8` is an arithmetic shift per spec.  Cast mg, ng to int,
+      // else implicit conversions would evaluate it as unsigned shift.
+      int32_t mg_int = static_cast<int32_t>(mg);
+      int32_t ng_int = static_cast<int32_t>(ng);
+      int32_t out_x = (HGX + mg_int * HRY + ng_int * HRX) >> 8;
+      int32_t out_y = (HGY + mg_int * HRX - ng_int * HRY) >> 8;
       (*HPATS)[pat_index]->ComposeTo(HTREG.get(), out_x, out_y, HCOMBOP);
     }
   }

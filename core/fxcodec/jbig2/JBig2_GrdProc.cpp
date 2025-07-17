@@ -60,15 +60,15 @@ CJBig2_GRDProc::~CJBig2_GRDProc() = default;
 bool CJBig2_GRDProc::UseTemplate0Opt3() const {
   return (GBAT[0] == 3) && (GBAT[1] == -1) && (GBAT[2] == -3) &&
          (GBAT[3] == -1) && (GBAT[4] == 2) && (GBAT[5] == -2) &&
-         (GBAT[6] == -2) && (GBAT[7] == -2);
+         (GBAT[6] == -2) && (GBAT[7] == -2) && !USESKIP;
 }
 
 bool CJBig2_GRDProc::UseTemplate1Opt3() const {
-  return (GBAT[0] == 3) && (GBAT[1] == -1);
+  return (GBAT[0] == 3) && (GBAT[1] == -1) && !USESKIP;
 }
 
 bool CJBig2_GRDProc::UseTemplate23Opt3() const {
-  return (GBAT[0] == 2) && (GBAT[1] == -1);
+  return (GBAT[0] == 2) && (GBAT[1] == -1) && !USESKIP;
 }
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArith(
