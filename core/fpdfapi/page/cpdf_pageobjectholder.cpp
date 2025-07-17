@@ -197,6 +197,8 @@ bool CPDF_PageObjectHolder::InsertPageObjectAtIndex(
     return false;
   }
 
+  // Unsafe, but the compiler will not complain, because
+  // std::deque::iterator::operator++() has not been marked as unsafe yet.
   page_object_list_.insert(UNSAFE_TODO(page_object_list_.begin() + index),
                            std::move(page_obj));
   return true;
@@ -226,6 +228,8 @@ bool CPDF_PageObjectHolder::ErasePageObjectAtIndex(size_t index) {
     return false;
   }
 
+  // Unsafe, but the compiler will not complain, because
+  // std::deque::iterator::operator++() has not been marked as unsafe yet.
   page_object_list_.erase(UNSAFE_TODO(page_object_list_.begin() + index));
   return true;
 }
