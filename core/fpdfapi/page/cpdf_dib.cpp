@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -106,7 +107,6 @@ CJPX_Decoder::ColorSpaceOption ColorSpaceOptionFromColorSpace(
 }
 
 enum class JpxDecodeAction {
-  kFail,
   kDoNothing,
   kUseGray,
   kUseIndexed,
@@ -127,14 +127,14 @@ bool IsJPXColorSpaceOrUnspecifiedOrUnknown(COLOR_SPACE actual,
 // Decides which JpxDecodeAction to use based on the colorspace information from
 // the PDF and the JPX image. Called only when the PDF's image object contains a
 // "/ColorSpace" entry.
-JpxDecodeAction GetJpxDecodeActionFromColorSpaces(
+std::optional<JpxDecodeAction> GetJpxDecodeActionFromColorSpaces(
     const CJPX_Decoder::JpxImageInfo& jpx_info,
     const CPDF_ColorSpace* pdf_colorspace) {
   if (pdf_colorspace ==
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray)) {
     if (!IsJPXColorSpaceOrUnspecifiedOrUnknown(/*actual=*/jpx_info.colorspace,
                                                /*expected=*/OPJ_CLRSPC_GRAY)) {
-      return JpxDecodeAction::kFail;
+      return std::nullopt;
     }
     return JpxDecodeAction::kUseGray;
   }
@@ -143,7 +143,7 @@ JpxDecodeAction GetJpxDecodeActionFromColorSpaces(
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB)) {
     if (!IsJPXColorSpaceOrUnspecifiedOrUnknown(/*actual=*/jpx_info.colorspace,
                                                /*expected=*/OPJ_CLRSPC_SRGB)) {
-      return JpxDecodeAction::kFail;
+      return std::nullopt;
     }
 
     // The channel count of a JPX image can be different from the PDF color
@@ -158,7 +158,7 @@ JpxDecodeAction GetJpxDecodeActionFromColorSpaces(
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceCMYK)) {
     if (!IsJPXColorSpaceOrUnspecifiedOrUnknown(/*actual=*/jpx_info.colorspace,
                                                /*expected=*/OPJ_CLRSPC_CMYK)) {
-      return JpxDecodeAction::kFail;
+      return std::nullopt;
     }
     return JpxDecodeAction::kUseCmyk;
   }
@@ -188,11 +188,8 @@ JpxDecodeAction GetJpxDecodeActionFromImageColorSpace(
       return JpxDecodeAction::kDoNothing;
 
     case OPJ_CLRSPC_SRGB:
-      if (jpx_info.channels > 3) {
-        return JpxDecodeAction::kConvertArgbToRgb;
-      }
-
-      return JpxDecodeAction::kUseRgb;
+      return jpx_info.channels > 3 ? JpxDecodeAction::kConvertArgbToRgb
+                                   : JpxDecodeAction::kUseRgb;
 
     case OPJ_CLRSPC_GRAY:
       return JpxDecodeAction::kUseGray;
@@ -202,8 +199,9 @@ JpxDecodeAction GetJpxDecodeActionFromImageColorSpace(
   }
 }
 
-JpxDecodeAction GetJpxDecodeAction(const CJPX_Decoder::JpxImageInfo& jpx_info,
-                                   const CPDF_ColorSpace* pdf_colorspace) {
+std::optional<JpxDecodeAction> GetJpxDecodeAction(
+    const CJPX_Decoder::JpxImageInfo& jpx_info,
+    const CPDF_ColorSpace* pdf_colorspace) {
   if (pdf_colorspace) {
     return GetJpxDecodeActionFromColorSpaces(jpx_info, pdf_colorspace);
   }
@@ -730,11 +728,13 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
   RetainPtr<CPDF_ColorSpace> original_colorspace = color_space_;
   bool swap_rgb = false;
   bool convert_argb_to_rgb = false;
-  auto action = GetJpxDecodeAction(image_info, color_space_.Get());
-  switch (action) {
-    case JpxDecodeAction::kFail:
-      return nullptr;
+  auto maybe_action = GetJpxDecodeAction(image_info, color_space_.Get());
+  if (!maybe_action.has_value()) {
+    return nullptr;
+  }
 
+  const auto& action = maybe_action.value();
+  switch (action) {
     case JpxDecodeAction::kDoNothing:
       break;
 
