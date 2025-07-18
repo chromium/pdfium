@@ -40,7 +40,7 @@ curl -o ./$1.log $2
 
 # Parse log to identify failing tests.
 TESTS=`grep 'cache[/\\]builder[/\\]' ./$1.log | grep -v Failed | \
-            grep -ho '[A-Za-z0-9_]*[.]pdf' | sed 's/\(.*\)[.]pdf/\1/'`
+            grep -ho '[A-Za-z0-9_-]*[.]pdf' | sed 's/\(.*\)[.]pdf/\1/'`
 for TEST in $TESTS ; do
     IDX=0
     while true ; do
