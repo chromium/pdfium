@@ -40,6 +40,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/zip.h"
@@ -181,10 +182,10 @@ std::optional<JpxDecodeAction> GetJpxDecodeActionFromColorSpaces(
 JpxDecodeAction GetJpxDecodeActionFromImageColorSpace(
     const CJPX_Decoder::JpxImageInfo& jpx_info) {
   switch (jpx_info.colorspace) {
-    case OPJ_CLRSPC_SYCC:
-    case OPJ_CLRSPC_EYCC:
     case OPJ_CLRSPC_UNKNOWN:
     case OPJ_CLRSPC_UNSPECIFIED:
+    case OPJ_CLRSPC_SYCC:
+    case OPJ_CLRSPC_EYCC:
       return JpxDecodeAction::kDoNothing;
 
     case OPJ_CLRSPC_SRGB:
@@ -197,6 +198,7 @@ JpxDecodeAction GetJpxDecodeActionFromImageColorSpace(
     case OPJ_CLRSPC_CMYK:
       return JpxDecodeAction::kUseCmyk;
   }
+  NOTREACHED();
 }
 
 std::optional<JpxDecodeAction> GetJpxDecodeAction(
@@ -212,6 +214,10 @@ std::optional<JpxDecodeAction> GetJpxDecodeAction(
 
 int GetComponentCountFromOpjColorSpace(OPJ_COLOR_SPACE colorspace) {
   switch (colorspace) {
+    case OPJ_CLRSPC_UNKNOWN:
+    case OPJ_CLRSPC_UNSPECIFIED:
+      return 0;
+
     case OPJ_CLRSPC_GRAY:
       return 1;
 
@@ -222,10 +228,8 @@ int GetComponentCountFromOpjColorSpace(OPJ_COLOR_SPACE colorspace) {
 
     case OPJ_CLRSPC_CMYK:
       return 4;
-
-    default:
-      return 0;
   }
+  NOTREACHED();
 }
 
 }  // namespace
