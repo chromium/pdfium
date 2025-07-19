@@ -506,7 +506,12 @@ FXCODEC_STATUS CJBig2_GRDProc::StartDecodeMMR(
   for (uint32_t i = 0; i < image->stride() * GBH; ++i) {
     UNSAFE_TODO(image->data()[i] = ~image->data()[i]);
   }
+
   progressive_status_ = FXCODEC_STATUS::kDecodeFinished;
+  replace_rect_.left = 0;
+  replace_rect_.right = image->width();
+  replace_rect_.top = 0;
+  replace_rect_.bottom = image->height();
   *pImage = std::move(image);
   return progressive_status_;
 }

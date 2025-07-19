@@ -314,6 +314,7 @@ void FaxG4GetRow(const uint8_t* src_buf,
                  uint8_t* dest_buf,
                  pdfium::span<const uint8_t> ref_buf,
                  int columns) {
+  // See TABLE 1/T.6 "Code table" in ITU-T T.6.
   int a0 = -1;
   bool a0color = true;
   while (true) {
@@ -340,8 +341,10 @@ void FaxG4GetRow(const uint8_t* src_buf,
 
       bool bit2 = NextBit(src_buf, bitpos);
       if (bit1) {
+        // Mode "Vertical", VR(1), VL(1).
         v_delta = bit2 ? 1 : -1;
       } else if (bit2) {
+        // Mode "Horizontal".
         int run_len1 = 0;
         while (true) {
           int run = FaxGetRun(
@@ -400,6 +403,7 @@ void FaxG4GetRow(const uint8_t* src_buf,
         }
 
         if (NextBit(src_buf, bitpos)) {
+          // Mode "Pass".
           if (!a0color) {
             FaxFillBits(dest_buf, columns, a0, b2);
           }
@@ -423,18 +427,21 @@ void FaxG4GetRow(const uint8_t* src_buf,
 
         bool next_bit2 = NextBit(src_buf, bitpos);
         if (next_bit1) {
+          // Mode "Vertical", VR(2), VL(2).
           v_delta = next_bit2 ? 2 : -2;
         } else if (next_bit2) {
           if (*bitpos >= bitsize) {
             return;
           }
 
+          // Mode "Vertical", VR(3), VL(3).
           v_delta = NextBit(src_buf, bitpos) ? 3 : -3;
         } else {
           if (*bitpos >= bitsize) {
             return;
           }
 
+          // Extension
           if (NextBit(src_buf, bitpos)) {
             *bitpos += 3;
             continue;
@@ -443,6 +450,8 @@ void FaxG4GetRow(const uint8_t* src_buf,
           return;
         }
       }
+    } else {
+      // Mode "Vertical", V(0).
     }
     a1 = b1 + v_delta;
     if (!a0color) {
