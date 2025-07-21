@@ -50,7 +50,8 @@ TEST_F(FXJSEngineUnitTest, GC) {
   engine()->DefineObj(
       "perm", FXJSOBJTYPE_DYNAMIC,
       [](CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-        pEngine->SetBinding(obj, std::make_unique<CJS_Object>(obj, nullptr));
+        pEngine->SetBinding(
+            obj, std::make_unique<CJS_Object>(obj, pEngine->GetIsolate()));
         perm_created = true;
       },
       [](v8::Local<v8::Object> obj) {
@@ -62,7 +63,8 @@ TEST_F(FXJSEngineUnitTest, GC) {
   engine()->DefineObj(
       "temp", FXJSOBJTYPE_DYNAMIC,
       [](CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-        pEngine->SetBinding(obj, std::make_unique<CJS_Object>(obj, nullptr));
+        pEngine->SetBinding(
+            obj, std::make_unique<CJS_Object>(obj, pEngine->GetIsolate()));
         temp_created = true;
       },
       [](v8::Local<v8::Object> obj) {

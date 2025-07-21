@@ -45,6 +45,11 @@ class CJS_Object : public CFXJS_PerObjectData::Binding {
                             pdfium::span<const JSMethodSpec> consts);
 
   CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
+
+  // For simple testing only, where we need not support methods that call back
+  // through an actual CJS_Runtime.
+  CJS_Object(v8::Local<v8::Object> object, v8::Isolate* isolate);
+
   ~CJS_Object() override;
 
   v8::Local<v8::Object> ToV8Object() {

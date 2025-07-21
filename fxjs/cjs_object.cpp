@@ -43,4 +43,7 @@ void CJS_Object::DefineMethods(CFXJS_Engine* pEngine,
 CJS_Object::CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
     : v8_object_(pObject->GetIsolate(), pObject), runtime_(pRuntime) {}
 
+CJS_Object::CJS_Object(v8::Local<v8::Object> object, v8::Isolate* isolate)
+    : v8_object_(isolate, object) {}
+
 CJS_Object::~CJS_Object() = default;
