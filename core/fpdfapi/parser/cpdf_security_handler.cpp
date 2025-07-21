@@ -512,12 +512,10 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
 ByteString CPDF_SecurityHandler::GetUserPassword(
     const ByteString& owner_password) const {
   static constexpr size_t kRequiredOkeyLength = 32;
-  ByteString okey = encrypt_dict_->GetByteStringFor("O");
-  size_t okeylen = std::min<size_t>(okey.GetLength(), kRequiredOkeyLength);
-  if (okeylen < kRequiredOkeyLength) {
+  const ByteString okey = encrypt_dict_->GetByteStringFor("O");
+  if (okey.GetLength() < kRequiredOkeyLength) {
     return ByteString();
   }
-  DCHECK_EQ(kRequiredOkeyLength, okeylen);
 
   std::array<uint8_t, 32> passcode;
   std::array<uint8_t, 16> digest;
@@ -530,11 +528,11 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   }
 
   std::array<uint8_t, 32> enckey = {};
-  std::array<uint8_t, 32> okeybuf = {};
+  std::array<uint8_t, kRequiredOkeyLength> okeybuf = {};
   size_t copy_len = std::min(key_len_, sizeof(digest));
   fxcrt::Copy(pdfium::span(digest).first(copy_len), enckey);
-  fxcrt::Copy(okey.unsigned_span().first(okeylen), okeybuf);
-  pdfium::span<uint8_t> okey_span = pdfium::span(okeybuf).first(okeylen);
+  fxcrt::Copy(okey.unsigned_span(), okeybuf);
+  pdfium::span<uint8_t> okey_span = pdfium::span(okeybuf);
   if (revision_ == 2) {
     CRYPT_ArcFourCryptBlock(okey_span, pdfium::span(enckey).first(key_len_));
   } else {
@@ -550,7 +548,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   while (len && kDefaultPasscode[len - 1] == okey_span[len - 1]) {
     len--;
   }
-  return ByteString(ByteStringView(pdfium::span(okeybuf).first(len)));
+  return ByteString(ByteStringView(okey_span.first(len)));
 }
 
 bool CPDF_SecurityHandler::CheckOwnerPassword(const ByteString& password) {
