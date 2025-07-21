@@ -88,6 +88,10 @@ class CPDF_DIB final : public CFX_DIBBase {
                      const CPDF_Dictionary* pPageResources);
   bool GetDecodeAndMaskArray();
   RetainPtr<CFX_DIBitmap> LoadJpxBitmap(uint8_t resolution_levels_to_skip);
+  RetainPtr<CFX_DIBitmap> ConvertArgbJpxBitmapToRgb(
+      RetainPtr<CFX_DIBitmap> argb_bitmap,
+      uint32_t width,
+      uint32_t height);
   void LoadPalette();
   LoadState CreateDecoder(uint8_t resolution_levels_to_skip);
   bool CreateDCTDecoder(pdfium::span<const uint8_t> src_span,

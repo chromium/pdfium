@@ -854,49 +854,11 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
   }
 
   if (conversion.action() == JpxDecodeAction::kConvertArgbToRgb) {
-    DCHECK_EQ(3u, components_);
-    auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!rgb_bitmap->Create(image_info.width, image_info.height,
-                            FXDIB_Format::kBgr)) {
+    result_bitmap = ConvertArgbJpxBitmapToRgb(result_bitmap, image_info.width,
+                                              image_info.height);
+    if (!result_bitmap) {
       return nullptr;
     }
-    if (dict_->GetIntegerFor("SMaskInData") == 1) {
-      // TODO(thestig): Acrobat does not support "/SMaskInData 1" combined with
-      // filters. Check for that and fail early.
-      DCHECK(jpx_inline_data_.data.empty());
-      jpx_inline_data_.width = image_info.width;
-      jpx_inline_data_.height = image_info.height;
-      jpx_inline_data_.data.reserve(image_info.width * image_info.height);
-      for (uint32_t row = 0; row < image_info.height; ++row) {
-        auto src =
-            result_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
-                image_info.width);
-        auto dest =
-            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row);
-        for (auto [input, output] : fxcrt::Zip(src, dest)) {
-          jpx_inline_data_.data.push_back(input.alpha);
-          const uint8_t na = 255 - input.alpha;
-          output.blue = (input.blue * input.alpha + 255 * na) / 255;
-          output.green = (input.green * input.alpha + 255 * na) / 255;
-          output.red = (input.red * input.alpha + 255 * na) / 255;
-        }
-      }
-    } else {
-      // TODO(thestig): Is there existing code that does this already?
-      for (uint32_t row = 0; row < image_info.height; ++row) {
-        auto src =
-            result_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
-                image_info.width);
-        auto dest =
-            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row);
-        for (auto [input, output] : fxcrt::Zip(src, dest)) {
-          output.green = input.green;
-          output.red = input.red;
-          output.blue = input.blue;
-        }
-      }
-    }
-    result_bitmap = std::move(rgb_bitmap);
   } else if (color_space_ &&
              color_space_->GetFamily() == CPDF_ColorSpace::Family::kIndexed &&
              bpc_ < 8) {
@@ -915,6 +877,52 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
 
   bpc_ = 8;
   return result_bitmap;
+}
+
+RetainPtr<CFX_DIBitmap> CPDF_DIB::ConvertArgbJpxBitmapToRgb(
+    RetainPtr<CFX_DIBitmap> argb_bitmap,
+    uint32_t width,
+    uint32_t height) {
+  DCHECK_EQ(3u, components_);
+  auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!rgb_bitmap->Create(width, height, FXDIB_Format::kBgr)) {
+    return nullptr;
+  }
+  if (dict_->GetIntegerFor("SMaskInData") == 1) {
+    // TODO(thestig): Acrobat does not support "/SMaskInData 1" combined with
+    // filters. Check for that and fail early.
+    DCHECK(jpx_inline_data_.data.empty());
+    jpx_inline_data_.width = width;
+    jpx_inline_data_.height = height;
+    jpx_inline_data_.data.reserve(width * height);
+    for (uint32_t row = 0; row < height; ++row) {
+      auto src =
+          argb_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(width);
+      auto dest =
+          rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row);
+      for (auto [input, output] : fxcrt::Zip(src, dest)) {
+        jpx_inline_data_.data.push_back(input.alpha);
+        const uint8_t na = 255 - input.alpha;
+        output.blue = (input.blue * input.alpha + 255 * na) / 255;
+        output.green = (input.green * input.alpha + 255 * na) / 255;
+        output.red = (input.red * input.alpha + 255 * na) / 255;
+      }
+    }
+    return rgb_bitmap;
+  }
+
+  // TODO(thestig): Is there existing code that does this already?
+  for (uint32_t row = 0; row < height; ++row) {
+    auto src =
+        argb_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(width);
+    auto dest = rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row);
+    for (auto [input, output] : fxcrt::Zip(src, dest)) {
+      output.green = input.green;
+      output.red = input.red;
+      output.blue = input.blue;
+    }
+  }
+  return rgb_bitmap;
 }
 
 bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
