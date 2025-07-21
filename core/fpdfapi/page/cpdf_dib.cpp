@@ -184,6 +184,9 @@ JpxDecodeAction GetJpxDecodeActionFromImageColorSpace(
   switch (jpx_info.colorspace) {
     case OPJ_CLRSPC_UNKNOWN:
     case OPJ_CLRSPC_UNSPECIFIED:
+      return jpx_info.channels == 3 ? JpxDecodeAction::kUseRgb
+                                    : JpxDecodeAction::kDoNothing;
+
     case OPJ_CLRSPC_SYCC:
     case OPJ_CLRSPC_EYCC:
       return JpxDecodeAction::kDoNothing;
@@ -201,11 +204,12 @@ JpxDecodeAction GetJpxDecodeActionFromImageColorSpace(
   NOTREACHED();
 }
 
-int GetComponentCountFromOpjColorSpace(OPJ_COLOR_SPACE colorspace) {
-  switch (colorspace) {
+int GetComponentCountFromJpxImageInfo(
+    const CJPX_Decoder::JpxImageInfo& jpx_info) {
+  switch (jpx_info.colorspace) {
     case OPJ_CLRSPC_UNKNOWN:
     case OPJ_CLRSPC_UNSPECIFIED:
-      return 0;
+      return jpx_info.channels;
 
     case OPJ_CLRSPC_GRAY:
       return 1;
@@ -268,7 +272,7 @@ class JpxDecodeConversion {
     // components count.
     if (!pdf_colorspace) {
       conversion.jpx_components_count_ =
-          GetComponentCountFromOpjColorSpace(jpx_info.colorspace);
+          GetComponentCountFromJpxImageInfo(jpx_info);
     }
     return conversion;
   }
