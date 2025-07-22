@@ -103,7 +103,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   void AddNullTestMsg(const WideString& msg);
 
  private:
-  explicit CXFA_FFDocView(CXFA_FFDoc* pDoc);
+  explicit CXFA_FFDocView(CXFA_FFDoc* doc);
 
   bool RunEventLayoutReady();
   void RunBindItems();

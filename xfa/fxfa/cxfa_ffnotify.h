@@ -80,7 +80,7 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
   void SetFocusWidgetNode(CXFA_Node* pNode);
 
  private:
-  explicit CXFA_FFNotify(CXFA_FFDoc* pDoc);
+  explicit CXFA_FFNotify(CXFA_FFDoc* doc);
 
   cppgc::Member<CXFA_FFDoc> const doc_;
 };

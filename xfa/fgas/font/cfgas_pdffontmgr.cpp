@@ -132,8 +132,8 @@ bool PsNameMatchDRFontName(ByteStringView bsPsName,
 
 }  // namespace
 
-CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(const CPDF_Document* pDoc) : doc_(pDoc) {
-  DCHECK(pDoc);
+CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(const CPDF_Document* doc) : doc_(doc) {
+  DCHECK(doc);
 }
 
 CFGAS_PDFFontMgr::~CFGAS_PDFFontMgr() = default;

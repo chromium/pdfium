@@ -58,7 +58,7 @@ class CPDFSDK_FormFillEnvironment final
     : public CFX_Timer::HandlerIface,
       public CFFL_InteractiveFormFiller::CallbackIface {
  public:
-  CPDFSDK_FormFillEnvironment(CPDF_Document* pDoc, FPDF_FORMFILLINFO* pFFinfo);
+  CPDFSDK_FormFillEnvironment(CPDF_Document* doc, FPDF_FORMFILLINFO* pFFinfo);
 
   ~CPDFSDK_FormFillEnvironment() override;
 

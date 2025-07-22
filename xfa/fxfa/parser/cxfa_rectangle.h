@@ -29,7 +29,7 @@ class CXFA_Rectangle : public CXFA_Box {
 
  protected:
   CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet);
-  CXFA_Rectangle(CXFA_Document* pDoc,
+  CXFA_Rectangle(CXFA_Document* doc,
                  XFA_PacketType ePacket,
                  Mask<XFA_XDPPACKET> validPackets,
                  XFA_ObjectType oType,

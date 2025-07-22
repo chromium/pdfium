@@ -118,8 +118,8 @@ RetainPtr<CPDF_Dictionary> GetMarkParamDict(FPDF_PAGEOBJECTMARK mark) {
 
 RetainPtr<CPDF_Dictionary> GetOrCreateMarkParamsDict(FPDF_DOCUMENT document,
                                                      FPDF_PAGEOBJECTMARK mark) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
 
@@ -131,7 +131,7 @@ RetainPtr<CPDF_Dictionary> GetOrCreateMarkParamsDict(FPDF_DOCUMENT document,
 
   RetainPtr<CPDF_Dictionary> pParams = pMarkItem->GetParam();
   if (!pParams) {
-    pParams = pDoc->New<CPDF_Dictionary>();
+    pParams = doc->New<CPDF_Dictionary>();
     pMarkItem->SetDirectDict(pParams);
   }
   return pParams;
@@ -158,10 +158,10 @@ const CPDF_PageObjectHolder* CPDFPageObjHolderFromFPDFFormObject(
 }  // namespace
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
-  auto pDoc =
+  auto doc =
       std::make_unique<CPDF_Document>(std::make_unique<CPDF_DocRenderData>(),
                                       std::make_unique<CPDF_DocPageData>());
-  pDoc->CreateNewDoc();
+  doc->CreateNewDoc();
 
   time_t currentTime;
   ByteString DateStr;
@@ -176,7 +176,7 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
     }
   }
 
-  RetainPtr<CPDF_Dictionary> pInfoDict = pDoc->GetInfo();
+  RetainPtr<CPDF_Dictionary> pInfoDict = doc->GetInfo();
   if (pInfoDict) {
     if (IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
       pInfoDict->SetNewFor<CPDF_String>("CreationDate", DateStr);
@@ -184,21 +184,21 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
     pInfoDict->SetNewFor<CPDF_String>("Creator", L"PDFium");
   }
 
-  // Caller takes ownership of pDoc.
-  return FPDFDocumentFromCPDFDocument(pDoc.release());
+  // Caller takes ownership of doc.
+  return FPDFDocumentFromCPDFDocument(doc.release());
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
                                                int page_index) {
-  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  auto* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return;
   }
 
-  CPDF_Document::Extension* pExtension = pDoc->GetExtension();
+  CPDF_Document::Extension* pExtension = doc->GetExtension();
   const uint32_t page_obj_num = pExtension ? pExtension->DeletePage(page_index)
-                                           : pDoc->DeletePage(page_index);
-  pDoc->SetPageToNullObject(page_obj_num);
+                                           : doc->DeletePage(page_index);
+  doc->SetPageToNullObject(page_obj_num);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -222,13 +222,13 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
                                                  int page_index,
                                                  double width,
                                                  double height) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
 
-  page_index = std::clamp(page_index, 0, pDoc->GetPageCount());
-  RetainPtr<CPDF_Dictionary> pPageDict(pDoc->CreateNewPage(page_index));
+  page_index = std::clamp(page_index, 0, doc->GetPageCount());
+  RetainPtr<CPDF_Dictionary> pPageDict(doc->CreateNewPage(page_index));
   if (!pPageDict) {
     return nullptr;
   }
@@ -239,14 +239,14 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
   pPageDict->SetNewFor<CPDF_Dictionary>(pdfium::page_object::kResources);
 
 #ifdef PDF_ENABLE_XFA
-  if (pDoc->GetExtension()) {
-    auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(pDoc, page_index);
+  if (doc->GetExtension()) {
+    auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(doc, page_index);
     pXFAPage->LoadPDFPageFromDict(pPageDict);
     return FPDFPageFromIPDFPage(pXFAPage.Leak());  // Caller takes ownership.
   }
 #endif  // PDF_ENABLE_XFA
 
-  auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pPageDict);
+  auto pPage = pdfium::MakeRetain<CPDF_Page>(doc, pPageDict);
   pPage->AddPageImageCache();
   pPage->ParseContent();
 

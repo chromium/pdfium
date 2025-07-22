@@ -602,13 +602,13 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
                        FPDF_BYTESTRING font,
                        float font_size) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
 
   RetainPtr<CPDF_Font> pFont =
-      CPDF_Font::GetStockFont(pDoc, ByteStringView(font));
+      CPDF_Font::GetStockFont(doc, ByteStringView(font));
   if (!pFont) {
     return nullptr;
   }
@@ -667,8 +667,8 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
                                                       uint32_t size,
                                                       int font_type,
                                                       FPDF_BOOL cid) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc || !data || size == 0 ||
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc || !data || size == 0 ||
       (font_type != FPDF_FONT_TYPE1 && font_type != FPDF_FONT_TRUETYPE)) {
     return nullptr;
   }
@@ -685,20 +685,20 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
 
   // Caller takes ownership.
   return FPDFFontFromCPDFFont(
-      cid ? LoadCompositeFont(pDoc, std::move(pFont), span, font_type).Leak()
-          : LoadSimpleFont(pDoc, std::move(pFont), span, font_type).Leak());
+      cid ? LoadCompositeFont(doc, std::move(pFont), span, font_type).Leak()
+          : LoadSimpleFont(doc, std::move(pFont), span, font_type).Leak());
 }
 
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
 FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
 
   // Caller takes ownership.
   return FPDFFontFromCPDFFont(
-      CPDF_Font::GetStockFont(pDoc, ByteStringView(font)).Leak());
+      CPDF_Font::GetStockFont(doc, ByteStringView(font)).Leak());
 }
 
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
@@ -860,15 +860,15 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
                           FPDF_FONT font,
                           float font_size) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
   CPDF_Font* pFont = CPDFFontFromFPDFFont(font);
-  if (!pDoc || !pFont) {
+  if (!doc || !pFont) {
     return nullptr;
   }
 
   auto pTextObj = std::make_unique<CPDF_TextObject>();
   pTextObj->mutable_text_state().SetFont(
-      CPDF_DocPageData::FromDocument(pDoc)->GetFont(
+      CPDF_DocPageData::FromDocument(doc)->GetFont(
           pFont->GetMutableFontDict()));
   pTextObj->mutable_text_state().SetFontSize(font_size);
   pTextObj->SetDefaultStates();

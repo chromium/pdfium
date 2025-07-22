@@ -55,7 +55,7 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
                    doc->GetHeap()->GetAllocationHandle(),
                    this)) {}
 
-CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
+CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc,
                                XFA_PacketType ePacket,
                                Mask<XFA_XDPPACKET> validPackets,
                                XFA_ObjectType oType,
@@ -63,7 +63,7 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
                                pdfium::span<const PropertyData> properties,
                                pdfium::span<const AttributeData> attributes,
                                CJX_Object* js_node)
-    : CXFA_Box(pDoc,
+    : CXFA_Box(doc,
                ePacket,
                validPackets,
                oType,

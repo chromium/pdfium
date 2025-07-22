@@ -36,7 +36,7 @@ class CFGAS_GEFont final : public Retainable {
                                           FX_CodePage wCodePage);
   static RetainPtr<CFGAS_GEFont> LoadFont(RetainPtr<CPDF_Font> font);
   static RetainPtr<CFGAS_GEFont> LoadFont(std::unique_ptr<CFX_Font> font);
-  static RetainPtr<CFGAS_GEFont> LoadStockFont(CPDF_Document* pDoc,
+  static RetainPtr<CFGAS_GEFont> LoadStockFont(CPDF_Document* doc,
                                                const ByteString& font_family);
 
   uint32_t GetFontStyles() const;

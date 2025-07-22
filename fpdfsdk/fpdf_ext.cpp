@@ -83,12 +83,12 @@ FSDK_SetLocaltimeFunction(struct tm* (*func)(const time_t* tp)) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return PAGEMODE_UNKNOWN;
   }
 
-  const CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = doc->GetRoot();
   if (!pRoot) {
     return PAGEMODE_UNKNOWN;
   }

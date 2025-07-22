@@ -64,7 +64,7 @@ CXFA_Rectangle* ToRectangle(CXFA_Box* box) {
 
 }  // namespace
 
-CXFA_Box::CXFA_Box(CXFA_Document* pDoc,
+CXFA_Box::CXFA_Box(CXFA_Document* doc,
                    XFA_PacketType ePacket,
                    Mask<XFA_XDPPACKET> validPackets,
                    XFA_ObjectType oType,
@@ -72,7 +72,7 @@ CXFA_Box::CXFA_Box(CXFA_Document* pDoc,
                    pdfium::span<const PropertyData> properties,
                    pdfium::span<const AttributeData> attributes,
                    CJX_Object* js_node)
-    : CXFA_Node(pDoc,
+    : CXFA_Node(doc,
                 ePacket,
                 validPackets,
                 oType,

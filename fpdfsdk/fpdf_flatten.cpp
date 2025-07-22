@@ -56,10 +56,10 @@ bool IsValidRect(const CFX_FloatRect& rect, const CFX_FloatRect& rcPage) {
          rect.bottom - rcPage.bottom >= -kMinBorderSize;
 }
 
-void GetContentsRect(CPDF_Document* pDoc,
+void GetContentsRect(CPDF_Document* doc,
                      RetainPtr<CPDF_Dictionary> dict,
                      std::vector<CFX_FloatRect>* pRectArray) {
-  auto pPDFPage = pdfium::MakeRetain<CPDF_Page>(pDoc, dict);
+  auto pPDFPage = pdfium::MakeRetain<CPDF_Page>(doc, dict);
   pPDFPage->ParseContent();
 
   for (const auto& pPageObject : *pPDFPage) {

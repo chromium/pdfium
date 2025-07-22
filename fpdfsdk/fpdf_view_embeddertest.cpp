@@ -1217,12 +1217,12 @@ TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndexF) {
   EXPECT_FLOAT_EQ(200.0f, size.width);
   EXPECT_FLOAT_EQ(300.0f, size.height);
 
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document());
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document());
 #ifdef PDF_ENABLE_XFA
   // TODO(tsepez): XFA must obtain this size without parsing.
-  EXPECT_EQ(1u, pDoc->GetParsedPageCountForTesting());
+  EXPECT_EQ(1u, doc->GetParsedPageCountForTesting());
 #else   // PDF_ENABLE_XFA
-  EXPECT_EQ(0u, pDoc->GetParsedPageCountForTesting());
+  EXPECT_EQ(0u, doc->GetParsedPageCountForTesting());
 #endif  // PDF_ENABLE_XFA
 
   // Double-check against values from when page is actually parsed.
@@ -1230,7 +1230,7 @@ TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndexF) {
   ASSERT_TRUE(page);
   EXPECT_FLOAT_EQ(size.width, FPDF_GetPageWidthF(page.get()));
   EXPECT_FLOAT_EQ(size.height, FPDF_GetPageHeightF(page.get()));
-  EXPECT_EQ(1u, pDoc->GetParsedPageCountForTesting());
+  EXPECT_EQ(1u, doc->GetParsedPageCountForTesting());
 }
 
 TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndex) {
@@ -1254,12 +1254,12 @@ TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndex) {
   EXPECT_EQ(200.0, width);
   EXPECT_EQ(300.0, height);
 
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document());
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document());
 #ifdef PDF_ENABLE_XFA
   // TODO(tsepez): XFA must obtain this size without parsing.
-  EXPECT_EQ(1u, pDoc->GetParsedPageCountForTesting());
+  EXPECT_EQ(1u, doc->GetParsedPageCountForTesting());
 #else   // PDF_ENABLE_XFA
-  EXPECT_EQ(0u, pDoc->GetParsedPageCountForTesting());
+  EXPECT_EQ(0u, doc->GetParsedPageCountForTesting());
 #endif  // PDF_ENABLE_XFA
 
   // Double-check against values from when page is actually parsed.
@@ -1267,7 +1267,7 @@ TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndex) {
   ASSERT_TRUE(page);
   EXPECT_EQ(width, FPDF_GetPageWidth(page.get()));
   EXPECT_EQ(height, FPDF_GetPageHeight(page.get()));
-  EXPECT_EQ(1u, pDoc->GetParsedPageCountForTesting());
+  EXPECT_EQ(1u, doc->GetParsedPageCountForTesting());
 }
 
 TEST_F(FPDFViewEmbedderTest, GetXFAArrayData) {

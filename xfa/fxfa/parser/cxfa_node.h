@@ -424,7 +424,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   bool IsProperty() const;
 
  protected:
-  CXFA_Node(CXFA_Document* pDoc,
+  CXFA_Node(CXFA_Document* doc,
             XFA_PacketType ePacket,
             Mask<XFA_XDPPACKET> validPackets,
             XFA_ObjectType oType,

@@ -191,8 +191,8 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(doc);
-  return pDoc ? pDoc->GetParser()->GetFirstPageNo() : 0;
+  CPDF_Document* document = CPDFDocumentFromFPDFDocument(doc);
+  return document ? document->GetParser()->GetFirstPageNo() : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsPageAvail(FPDF_AVAIL avail,

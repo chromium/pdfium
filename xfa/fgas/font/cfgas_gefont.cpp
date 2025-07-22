@@ -59,10 +59,10 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
 
 // static
 RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadStockFont(
-    CPDF_Document* pDoc,
+    CPDF_Document* doc,
     const ByteString& font_family) {
   RetainPtr<CPDF_Font> stock_font =
-      CPDF_Font::GetStockFont(pDoc, font_family.AsStringView());
+      CPDF_Font::GetStockFont(doc, font_family.AsStringView());
   return stock_font ? CFGAS_GEFont::LoadFont(std::move(stock_font)) : nullptr;
 }
 

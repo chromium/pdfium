@@ -415,8 +415,8 @@ void SetPDFUnsupportInfo(UNSUPPORT_INFO* unsp_info) {
   g_unsupport_info = unsp_info;
 }
 
-void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
-  const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
+void ReportUnsupportedFeatures(const CPDF_Document* doc) {
+  const CPDF_Dictionary* pRootDict = doc->GetRoot();
   if (!pRootDict) {
     return;
   }
@@ -458,8 +458,8 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
   }
 }
 
-void ReportUnsupportedXFA(const CPDF_Document* pDoc) {
-  if (!pDoc->GetExtension() && DocHasXFA(pDoc)) {
+void ReportUnsupportedXFA(const CPDF_Document* doc) {
+  if (!doc->GetExtension() && DocHasXFA(doc)) {
     RaiseUnsupportedError(FPDF_UNSP_DOC_XFAFORM);
   }
 }

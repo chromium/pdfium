@@ -317,12 +317,12 @@ FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {
-  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  const CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return FORMTYPE_NONE;
   }
 
-  const CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = doc->GetRoot();
   if (!pRoot) {
     return FORMTYPE_NONE;
   }
@@ -343,12 +343,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
 #ifdef PDF_ENABLE_XFA
-  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  auto* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return false;
   }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(doc->GetExtension());
   if (pContext) {
     return pContext->LoadXFADoc();
   }
@@ -396,19 +396,19 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
   }
 
   *fileVersion = 0;
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(doc);
-  if (!pDoc) {
+  CPDF_Document* document = CPDFDocumentFromFPDFDocument(doc);
+  if (!document) {
     return false;
   }
 
-  const CPDF_Parser* pParser = pDoc->GetParser();
+  const CPDF_Parser* pParser = document->GetParser();
   if (!pParser) {
     return false;
   }
 
   *fileVersion = pParser->GetFileVersion();
 
-  const CPDF_Dictionary* root_dict = pDoc->GetRoot();
+  const CPDF_Dictionary* root_dict = document->GetRoot();
   if (root_dict) {
     ByteString version = root_dict->GetNameFor("Version");
     if (!version.IsEmpty()) {
@@ -430,47 +430,47 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDF_DocumentHasValidCrossReferenceTable(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  return pDoc && pDoc->has_valid_cross_reference_table();
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  return doc && doc->has_valid_cross_reference_table();
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  return pDoc ? pDoc->GetUserPermissions(/*get_owner_perms=*/true) : 0;
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  return doc ? doc->GetUserPermissions(/*get_owner_perms=*/true) : 0;
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_GetDocUserPermissions(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  return pDoc ? pDoc->GetUserPermissions(/*get_owner_perms=*/false) : 0;
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  return doc ? doc->GetUserPermissions(/*get_owner_perms=*/false) : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc || !pDoc->GetParser()) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc || !doc->GetParser()) {
     return -1;
   }
 
-  RetainPtr<const CPDF_Dictionary> dict = pDoc->GetParser()->GetEncryptDict();
+  RetainPtr<const CPDF_Dictionary> dict = doc->GetParser()->GetEncryptDict();
   return dict ? dict->GetIntegerFor("R") : -1;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document) {
-  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  auto* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return 0;
   }
 
-  auto* pExtension = pDoc->GetExtension();
-  return pExtension ? pExtension->GetPageCount() : pDoc->GetPageCount();
+  auto* pExtension = doc->GetExtension();
+  return pExtension ? pExtension->GetPageCount() : doc->GetPageCount();
 }
 
 FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
                                                   int page_index) {
-  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  auto* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
 
@@ -479,19 +479,19 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
   }
 
 #ifdef PDF_ENABLE_XFA
-  auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(doc->GetExtension());
   if (pContext) {
     return FPDFPageFromIPDFPage(
         pContext->GetOrCreateXFAPage(page_index).Leak());
   }
 #endif  // PDF_ENABLE_XFA
 
-  RetainPtr<CPDF_Dictionary> dict = pDoc->GetMutablePageDictionary(page_index);
+  RetainPtr<CPDF_Dictionary> dict = doc->GetMutablePageDictionary(page_index);
   if (!dict) {
     return nullptr;
   }
 
-  auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(dict));
+  auto pPage = pdfium::MakeRetain<CPDF_Page>(doc, std::move(dict));
   pPage->AddPageImageCache();
   pPage->ParseContent();
 
@@ -1112,8 +1112,8 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
     return false;
   }
 
-  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  auto* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return false;
   }
 
@@ -1122,7 +1122,7 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
     return false;
   }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(doc->GetExtension());
   if (pContext) {
     RetainPtr<CPDFXFA_Page> pPage = pContext->GetOrCreateXFAPage(page_index);
     if (!pPage) {
@@ -1135,12 +1135,12 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
   }
 #endif  // PDF_ENABLE_XFA
 
-  RetainPtr<CPDF_Dictionary> dict = pDoc->GetMutablePageDictionary(page_index);
+  RetainPtr<CPDF_Dictionary> dict = doc->GetMutablePageDictionary(page_index);
   if (!dict) {
     return false;
   }
 
-  auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(dict));
+  auto page = pdfium::MakeRetain<CPDF_Page>(doc, std::move(dict));
   page->AddPageImageCache();
   size->width = page->GetPageWidth();
   size->height = page->GetPageHeight();
@@ -1167,31 +1167,31 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintScaling(FPDF_DOCUMENT document) {
-  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  const CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return true;
   }
-  CPDF_ViewerPreferences viewRef(pDoc);
+  CPDF_ViewerPreferences viewRef(doc);
   return viewRef.PrintScaling();
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_VIEWERREF_GetNumCopies(FPDF_DOCUMENT document) {
-  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  const CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return 1;
   }
-  CPDF_ViewerPreferences viewRef(pDoc);
+  CPDF_ViewerPreferences viewRef(doc);
   return viewRef.NumCopies();
 }
 
 FPDF_EXPORT FPDF_PAGERANGE FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
-  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  const CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
-  CPDF_ViewerPreferences viewRef(pDoc);
+  CPDF_ViewerPreferences viewRef(doc);
 
   // Unretained reference in public API. NOLINTNEXTLINE
   return FPDFPageRangeFromCPDFArray(viewRef.PrintPageRange());
@@ -1215,11 +1215,11 @@ FPDF_VIEWERREF_GetPrintPageRangeElement(FPDF_PAGERANGE pagerange,
 
 FPDF_EXPORT FPDF_DUPLEXTYPE FPDF_CALLCONV
 FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
-  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  const CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return DuplexUndefined;
   }
-  CPDF_ViewerPreferences viewRef(pDoc);
+  CPDF_ViewerPreferences viewRef(doc);
   ByteString duplex = viewRef.Duplex();
   if ("Simplex" == duplex) {
     return Simplex;
@@ -1238,12 +1238,12 @@ FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
                        FPDF_BYTESTRING key,
                        char* buffer,
                        unsigned long length) {
-  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  const CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return 0;
   }
 
-  CPDF_ViewerPreferences viewRef(pDoc);
+  CPDF_ViewerPreferences viewRef(doc);
   std::optional<ByteString> bsVal = viewRef.GenericName(key);
   if (!bsVal.has_value()) {
     return 0;
@@ -1255,17 +1255,17 @@ FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
 
 FPDF_EXPORT FPDF_DWORD FPDF_CALLCONV
 FPDF_CountNamedDests(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return 0;
   }
 
-  const CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = doc->GetRoot();
   if (!pRoot) {
     return 0;
   }
 
-  auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
+  auto name_tree = CPDF_NameTree::Create(doc, "Dests");
   FX_SAFE_UINT32 count = name_tree ? name_tree->GetCount() : 0;
   RetainPtr<const CPDF_Dictionary> pOldStyleDests = pRoot->GetDictFor("Dests");
   if (pOldStyleDests) {
@@ -1280,8 +1280,8 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
     return nullptr;
   }
 
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
 
@@ -1289,7 +1289,7 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
 
   // TODO(tsepez): murky ownership, should caller get a reference?
   // Unretained reference in public API. NOLINTNEXTLINE
-  return FPDFDestFromCPDFArray(CPDF_NameTree::LookupNamedDest(pDoc, dest_name));
+  return FPDFDestFromCPDFArray(CPDF_NameTree::LookupNamedDest(doc, dest_name));
 }
 
 #ifdef PDF_ENABLE_V8
@@ -1377,17 +1377,17 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     return nullptr;
   }
 
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
 
-  const CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  const CPDF_Dictionary* pRoot = doc->GetRoot();
   if (!pRoot) {
     return nullptr;
   }
 
-  auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
+  auto name_tree = CPDF_NameTree::Create(doc, "Dests");
   size_t name_tree_count = name_tree ? name_tree->GetCount() : 0;
   RetainPtr<const CPDF_Object> pDestObj;
   WideString wsName;

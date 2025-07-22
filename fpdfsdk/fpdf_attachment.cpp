@@ -38,19 +38,19 @@ constexpr char kChecksumKey[] = "CheckSum";
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFDoc_GetAttachmentCount(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return 0;
   }
 
-  auto name_tree = CPDF_NameTree::Create(pDoc, "EmbeddedFiles");
+  auto name_tree = CPDF_NameTree::Create(doc, "EmbeddedFiles");
   return name_tree ? pdfium::checked_cast<int>(name_tree->GetCount()) : 0;
 }
 
 FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
 FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
 
@@ -60,20 +60,19 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
     return nullptr;
   }
 
-  auto name_tree =
-      CPDF_NameTree::CreateWithRootNameArray(pDoc, "EmbeddedFiles");
+  auto name_tree = CPDF_NameTree::CreateWithRootNameArray(doc, "EmbeddedFiles");
   if (!name_tree) {
     return nullptr;
   }
 
   // Set up the basic entries in the filespec dictionary.
-  auto pFile = pDoc->NewIndirect<CPDF_Dictionary>();
+  auto pFile = doc->NewIndirect<CPDF_Dictionary>();
   pFile->SetNewFor<CPDF_Name>("Type", "Filespec");
   pFile->SetNewFor<CPDF_String>("UF", wsName.AsStringView());
   pFile->SetNewFor<CPDF_String>(pdfium::stream::kF, wsName.AsStringView());
 
   // Add the new attachment name and filespec into the document's EmbeddedFiles.
-  if (!name_tree->AddValueAndName(pFile->MakeReference(pDoc), wsName)) {
+  if (!name_tree->AddValueAndName(pFile->MakeReference(doc), wsName)) {
     return nullptr;
   }
 
@@ -83,12 +82,12 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
 
 FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
 FPDFDoc_GetAttachment(FPDF_DOCUMENT document, int index) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc || index < 0) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc || index < 0) {
     return nullptr;
   }
 
-  auto name_tree = CPDF_NameTree::Create(pDoc, "EmbeddedFiles");
+  auto name_tree = CPDF_NameTree::Create(doc, "EmbeddedFiles");
   if (!name_tree || static_cast<size_t>(index) >= name_tree->GetCount()) {
     return nullptr;
   }
@@ -102,12 +101,12 @@ FPDFDoc_GetAttachment(FPDF_DOCUMENT document, int index) {
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFDoc_DeleteAttachment(FPDF_DOCUMENT document, int index) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc || index < 0) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc || index < 0) {
     return false;
   }
 
-  auto name_tree = CPDF_NameTree::Create(pDoc, "EmbeddedFiles");
+  auto name_tree = CPDF_NameTree::Create(doc, "EmbeddedFiles");
   if (!name_tree || static_cast<size_t>(index) >= name_tree->GetCount()) {
     return false;
   }
@@ -233,8 +232,8 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   }
 
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pFile || !pFile->IsDictionary() || !pDoc || len > INT_MAX) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!pFile || !pFile->IsDictionary() || !doc || len > INT_MAX) {
     return false;
   }
 
@@ -268,12 +267,12 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
                                       CPDF_String::DataType::kIsHex);
 
   // Create the file stream and have the filespec dictionary link to it.
-  auto pFileStream = pDoc->NewIndirect<CPDF_Stream>(
+  auto pFileStream = doc->NewIndirect<CPDF_Stream>(
       DataVector<uint8_t>(contents_span.begin(), contents_span.end()),
       std::move(pFileStreamDict));
 
   auto pEFDict = pFile->AsMutableDictionary()->SetNewFor<CPDF_Dictionary>("EF");
-  pEFDict->SetNewFor<CPDF_Reference>("F", pDoc, pFileStream->GetObjNum());
+  pEFDict->SetNewFor<CPDF_Reference>("F", doc, pFileStream->GetObjNum());
   return true;
 }
 

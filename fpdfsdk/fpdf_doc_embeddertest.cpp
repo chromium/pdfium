@@ -77,7 +77,7 @@ class FPDFDocEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFDocEmbedderTest, MultipleSamePage) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document());
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document());
 
   std::set<FPDF_PAGE> unique_pages;
   std::vector<ScopedFPDFPage> owned_pages(4);
@@ -87,10 +87,10 @@ TEST_F(FPDFDocEmbedderTest, MultipleSamePage) {
   }
 #ifdef PDF_ENABLE_XFA
   EXPECT_EQ(1u, unique_pages.size());
-  EXPECT_EQ(1u, pDoc->GetParsedPageCountForTesting());
+  EXPECT_EQ(1u, doc->GetParsedPageCountForTesting());
 #else   // PDF_ENABLE_XFA
   EXPECT_EQ(4u, unique_pages.size());
-  EXPECT_EQ(4u, pDoc->GetParsedPageCountForTesting());
+  EXPECT_EQ(4u, doc->GetParsedPageCountForTesting());
 #endif  // PDF_ENABLE_XFA
 }
 

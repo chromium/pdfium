@@ -52,7 +52,7 @@ class CXFA_Stroke : public CXFA_Node {
               const CFX_Matrix& matrix);
 
  protected:
-  CXFA_Stroke(CXFA_Document* pDoc,
+  CXFA_Stroke(CXFA_Document* doc,
               XFA_PacketType ePacket,
               Mask<XFA_XDPPACKET> validPackets,
               XFA_ObjectType oType,

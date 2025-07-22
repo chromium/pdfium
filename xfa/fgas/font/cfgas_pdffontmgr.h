@@ -20,7 +20,7 @@ class CPDF_Document;
 
 class CFGAS_PDFFontMgr final {
  public:
-  explicit CFGAS_PDFFontMgr(const CPDF_Document* pDoc);
+  explicit CFGAS_PDFFontMgr(const CPDF_Document* doc);
   ~CFGAS_PDFFontMgr();
 
   RetainPtr<CFGAS_GEFont> GetFont(const WideString& wsFontFamily,

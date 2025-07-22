@@ -39,7 +39,7 @@ class CXFA_Box : public CXFA_Node {
             bool forceRound);
 
  protected:
-  CXFA_Box(CXFA_Document* pDoc,
+  CXFA_Box(CXFA_Document* doc,
            XFA_PacketType ePacket,
            Mask<XFA_XDPPACKET> validPackets,
            XFA_ObjectType oType,

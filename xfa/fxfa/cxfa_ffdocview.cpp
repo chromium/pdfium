@@ -89,7 +89,7 @@ CXFA_FFDocView::UpdateScope::~UpdateScope() {
   doc_view_->UpdateDocView();
 }
 
-CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc) : doc_(pDoc) {}
+CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* doc) : doc_(doc) {}
 
 CXFA_FFDocView::~CXFA_FFDocView() = default;
 

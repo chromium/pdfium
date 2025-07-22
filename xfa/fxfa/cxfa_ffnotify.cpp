@@ -43,7 +43,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_passwordedit.h"
 
-CXFA_FFNotify::CXFA_FFNotify(CXFA_FFDoc* pDoc) : doc_(pDoc) {}
+CXFA_FFNotify::CXFA_FFNotify(CXFA_FFDoc* doc) : doc_(doc) {}
 
 CXFA_FFNotify::~CXFA_FFNotify() = default;
 

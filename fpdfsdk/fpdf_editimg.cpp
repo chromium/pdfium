@@ -121,13 +121,13 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFPageObj_NewImageObj(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
     return nullptr;
   }
 
   auto pImageObj = std::make_unique<CPDF_ImageObject>();
-  pImageObj->SetImage(pdfium::MakeRetain<CPDF_Image>(pDoc));
+  pImageObj->SetImage(pdfium::MakeRetain<CPDF_Image>(doc));
 
   // Caller takes ownership.
   return FPDFPageObjectFromCPDFPageObject(pImageObj.release());

@@ -63,10 +63,10 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
 }
 
 CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
-    CPDF_Document* pDoc,
+    CPDF_Document* doc,
     FPDF_FORMFILLINFO* pFFinfo)
     : info_(pFFinfo),
-      cpdfdoc_(pDoc),
+      cpdfdoc_(doc),
       interactive_form_filler_(
           std::make_unique<CFFL_InteractiveFormFiller>(this)) {
   DCHECK(cpdfdoc_);

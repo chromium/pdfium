@@ -343,8 +343,8 @@ void SetPDFSandboxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL IsPDFSandboxPolicyEnabled(FPDF_DWORD policy);
 
 void SetPDFUnsupportInfo(UNSUPPORT_INFO* unsp_info);
-void ReportUnsupportedFeatures(const CPDF_Document* pDoc);
-void ReportUnsupportedXFA(const CPDF_Document* pDoc);
+void ReportUnsupportedFeatures(const CPDF_Document* doc);
+void ReportUnsupportedXFA(const CPDF_Document* doc);
 void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot);
 void ProcessParseError(CPDF_Parser::Error err);
 void SetColorFromScheme(const FPDF_COLORSCHEME* pColorScheme,
