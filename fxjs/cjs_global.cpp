@@ -515,7 +515,7 @@ CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
         pTemp->sData = sData;
         break;
       case CFX_Value::DataType::kObject:
-        pTemp->pData.Reset(pData->GetIsolate(), pData);
+        pTemp->pData.Reset(GetRuntime()->GetIsolate(), pData);
         break;
       case CFX_Value::DataType::kNull:
         break;
@@ -542,7 +542,7 @@ CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
       break;
     case CFX_Value::DataType::kObject:
       pNewData->nType = CFX_Value::DataType::kObject;
-      pNewData->pData.Reset(pData->GetIsolate(), pData);
+      pNewData->pData.Reset(GetRuntime()->GetIsolate(), pData);
       pNewData->bPersistent = bDefaultPersistent;
       break;
     case CFX_Value::DataType::kNull:
