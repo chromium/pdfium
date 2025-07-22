@@ -48,10 +48,10 @@ CJS_Result CJX_Form::formNodes(CFXJSE_Engine* runtime,
     return CJS_Result::Failure(JSMessage::kValueError);
   }
 
-  CXFA_Document* pDoc = GetDocument();
+  CXFA_Document* doc = GetDocument();
   auto* pFormNodes = cppgc::MakeGarbageCollected<CXFA_ArrayNodeList>(
-      pDoc->GetHeap()->GetAllocationHandle(), pDoc);
-  pDoc->GetNodeOwner()->PersistList(pFormNodes);
+      doc->GetHeap()->GetAllocationHandle(), doc);
+  doc->GetNodeOwner()->PersistList(pFormNodes);
 
   v8::Local<v8::Value> value = runtime->GetOrCreateJSBindingFromMap(pFormNodes);
   return CJS_Result::Success(value);

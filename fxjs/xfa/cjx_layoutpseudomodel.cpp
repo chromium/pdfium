@@ -400,11 +400,11 @@ CJS_Result CJX_LayoutPseudoModel::pageContent(
     return CJS_Result::Success();
   }
 
-  CXFA_Document* pDoc = GetDocument();
-  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(pDoc);
+  CXFA_Document* doc = GetDocument();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(doc);
   auto* pArrayNodeList = cppgc::MakeGarbageCollected<CXFA_ArrayNodeList>(
-      pDoc->GetHeap()->GetAllocationHandle(), pDoc);
-  pDoc->GetNodeOwner()->PersistList(pArrayNodeList);
+      doc->GetHeap()->GetAllocationHandle(), doc);
+  doc->GetNodeOwner()->PersistList(pArrayNodeList);
   pArrayNodeList->SetArrayNodeList(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
   return CJS_Result::Success(runtime->NewNormalXFAObject(pArrayNodeList));

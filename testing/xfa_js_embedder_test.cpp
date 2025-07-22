@@ -35,12 +35,12 @@ void XFAJSEmbedderTest::TearDown() {
 }
 
 CXFA_Document* XFAJSEmbedderTest::GetXFADocument() const {
-  auto* pDoc = CPDFDocumentFromFPDFDocument(document());
-  if (!pDoc) {
+  auto* doc = CPDFDocumentFromFPDFDocument(document());
+  if (!doc) {
     return nullptr;
   }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(doc->GetExtension());
   if (!pContext) {
     return nullptr;
   }
@@ -68,12 +68,12 @@ bool XFAJSEmbedderTest::OpenDocumentWithOptions(
           filename, password, linearize_option, javascript_option)) {
     return false;
   }
-  CXFA_Document* pDoc = GetXFADocument();
-  if (!pDoc) {
+  CXFA_Document* doc = GetXFADocument();
+  if (!doc) {
     return false;
   }
 
-  script_context_ = pDoc->GetScriptContext();
+  script_context_ = doc->GetScriptContext();
   return true;
 }
 

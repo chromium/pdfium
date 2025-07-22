@@ -135,12 +135,12 @@ void CJX_Tree::nodes(v8::Isolate* pIsolate,
     return;
   }
 
-  CXFA_Document* pDoc = GetDocument();
+  CXFA_Document* doc = GetDocument();
   auto* pNodeList = cppgc::MakeGarbageCollected<CXFA_AttachNodeList>(
-      pDoc->GetHeap()->GetAllocationHandle(), pDoc, GetXFANode());
-  pDoc->GetNodeOwner()->PersistList(pNodeList);
+      doc->GetHeap()->GetAllocationHandle(), doc, GetXFANode());
+  doc->GetNodeOwner()->PersistList(pNodeList);
 
-  CFXJSE_Engine* pEngine = pDoc->GetScriptContext();
+  CFXJSE_Engine* pEngine = doc->GetScriptContext();
   *pValue = pNodeList->JSObject()->NewBoundV8Object(
       pIsolate, pEngine->GetJseNormalClass()->GetTemplate(pIsolate));
 }
@@ -213,12 +213,12 @@ v8::Local<v8::Value> CJX_Tree::ResolveNodeList(v8::Isolate* pIsolate,
     refNode = GetXFANode();
   }
 
-  CXFA_Document* pDoc = GetDocument();
+  CXFA_Document* doc = GetDocument();
   auto* pNodeList = cppgc::MakeGarbageCollected<CXFA_ArrayNodeList>(
-      pDoc->GetHeap()->GetAllocationHandle(), pDoc);
-  pDoc->GetNodeOwner()->PersistList(pNodeList);
+      doc->GetHeap()->GetAllocationHandle(), doc);
+  doc->GetNodeOwner()->PersistList(pNodeList);
 
-  CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
+  CFXJSE_Engine* pScriptContext = doc->GetScriptContext();
   std::optional<CFXJSE_Engine::ResolveResult> maybeResult =
       pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
                                      dwFlag);

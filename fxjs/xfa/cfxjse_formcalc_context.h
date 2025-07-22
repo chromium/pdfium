@@ -31,7 +31,7 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
  public:
   CFXJSE_FormCalcContext(v8::Isolate* pIsolate,
                          CFXJSE_Context* pScriptContext,
-                         CXFA_Document* pDoc);
+                         CXFA_Document* doc);
   ~CFXJSE_FormCalcContext() override;
 
   // CFXJSE_HostObject:

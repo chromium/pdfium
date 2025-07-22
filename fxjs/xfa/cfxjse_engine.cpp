@@ -260,8 +260,8 @@ void CFXJSE_Engine::GlobalPropertySetter(v8::Isolate* pIsolate,
                                          ByteStringView szPropName,
                                          v8::Local<v8::Value> pValue) {
   CXFA_Object* pOriginalNode = ToObject(pIsolate, pObject);
-  CXFA_Document* pDoc = pOriginalNode->GetDocument();
-  CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
+  CXFA_Document* doc = pOriginalNode->GetDocument();
+  CFXJSE_Engine* pScriptContext = doc->GetScriptContext();
   CXFA_Node* pRefNode = ToNode(pScriptContext->GetThisObject());
   if (pOriginalNode->IsThisProxy()) {
     pRefNode = ToNode(pScriptContext->GetVariablesThis(pOriginalNode));
@@ -281,7 +281,7 @@ void CFXJSE_Engine::GlobalPropertySetter(v8::Isolate* pIsolate,
                                               pObject, szPropName);
     return;
   }
-  CXFA_FFNotify* pNotify = pDoc->GetNotify();
+  CXFA_FFNotify* pNotify = doc->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -302,8 +302,8 @@ v8::Local<v8::Value> CFXJSE_Engine::GlobalPropertyGetter(
     v8::Local<v8::Object> pObject,
     ByteStringView szPropName) {
   CXFA_Object* pOriginalObject = ToObject(pIsolate, pObject);
-  CXFA_Document* pDoc = pOriginalObject->GetDocument();
-  CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
+  CXFA_Document* doc = pOriginalObject->GetDocument();
+  CFXJSE_Engine* pScriptContext = doc->GetScriptContext();
   WideString wsPropName = WideString::FromUTF8(szPropName);
 
   // Assume failure.
@@ -352,7 +352,7 @@ v8::Local<v8::Value> CFXJSE_Engine::GlobalPropertyGetter(
     return pValue;
   }
 
-  CXFA_FFNotify* pNotify = pDoc->GetNotify();
+  CXFA_FFNotify* pNotify = doc->GetNotify();
   if (!pNotify) {
     return pValue;
   }
