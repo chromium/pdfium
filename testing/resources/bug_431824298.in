@@ -1,0 +1,118 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 200 300]
+  /Resources <<
+    /Font <<
+      /F1 5 0 R
+      /F2 6 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+/F1 12 Tf
+20 80 Td
+[(-hello-)] TJ
+ET
+BT
+/F1 12 Tf
+20 50 Td
+[(-world-)] TJ
+ET
+BT
+/F2 12 Tf
+20 30 Td
+[<064F216E>] TJ
+ET
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Font
+  /Subtype /Type0
+  /BaseFont /BCDEEE+SimSun
+  /DescendantFonts [7 0 R]
+  /Encoding /Identity-H
+  /ToUnicode 9 0 R
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Font
+  /Subtype /CIDFontType2
+  /BaseFont /BCDEEE+SimSun
+  /CIDToGIDMap /Identity
+  /DW 1000
+  /FontDescriptor 8 0 R
+>>
+endobj
+{{object 8 0}} <<
+  /Type /FontDescriptor
+  /Ascent 859
+  /AvgWidth 500
+  /CapHeight 859
+  /Descent -141
+  /Flags 32
+  /FontBBox [-8 -141 1000 859]
+  /FontName /BCDEEE+SimSun
+  /FontWeight 400
+  /ItalicAngle 0
+  /Leading 141
+  /MaxWidth 1008
+  /StemV 50
+  /XHeight 250
+>>
+endobj
+{{object 9 0}} <<
+  {{streamlen}}
+>>
+stream
+/CIDInit /ProcSet findresource begin
+28 dict begin
+begincmap
+/CIDSystemInfo <<
+/Registry (Adobe)
+/Ordering (UCS)
+/Supplement 0
+>> def
+/CMapName /Adobe-Identity-UCS def
+/CMapType 2 def
+1 begincodespacerange
+<0000> <FFFF>
+endcodespacerange
+2 beginbfchar
+<064F> <501F>
+<216E> <6B3E>
+endbfchar
+endcmap
+CMapName currentdict /CMap defineresource pop
+end
+end
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

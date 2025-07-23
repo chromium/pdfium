@@ -2279,3 +2279,38 @@ TEST_F(FPDFTextEmbedderTest, Bug425244539) {
   EXPECT_EQ(22, FPDFText_GetSchResultIndex(search.get()));
   EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
 }
+
+TEST_F(FPDFTextEmbedderTest, Bug431824298) {
+  // TODO(crbug.com/431824298): 0xfffe should be a dash.
+  static constexpr std::array<unsigned short, 19> kExpectedChars = {
+      '-', 'h', 'e', 'l', 'l', 'o',    '-',    '\r',   '\n', '-',
+      'w', 'o', 'r', 'l', 'd', 0xfffe, 0x501f, 0x6b3e, 0};
+
+  ASSERT_TRUE(OpenDocument("bug_431824298.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  std::array<unsigned short, 128> buffer = {};
+  int num_chars =
+      FPDFText_GetText(textpage.get(), 0, buffer.size(), buffer.data());
+  ASSERT_EQ(static_cast<int>(kExpectedChars.size()), num_chars);
+  EXPECT_THAT(pdfium::span(buffer).first<kExpectedChars.size()>(),
+              ElementsAreArray(kExpectedChars));
+
+  ScopedFPDFWideString world = GetFPDFWideString(L"-world-");
+
+  ScopedFPDFTextFind search(
+      FPDFText_FindStart(textpage.get(), world.get(), 0, 0));
+  EXPECT_TRUE(search);
+  EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+  EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+
+  // TODO(crbug.com/431824298): Once 0xfffe in `kExpectedChars` is a dash, this
+  // search should succeed.
+  EXPECT_FALSE(FPDFText_FindNext(search.get()));
+  EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+  EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+}
