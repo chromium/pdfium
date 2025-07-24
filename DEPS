@@ -70,7 +70,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling abseil
   # and whatever else without interference from each other.
-  'abseil_revision': '0c63301c7ef3012c448edf67dba246465c9b2443',
+  'abseil_revision': 'cae4b6a3990e1431caa09c7b2ed1c76d0dfeab17',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_toolchain
   # and whatever else without interference from each other.
@@ -78,11 +78,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': '328089ed5e079ebaf53676c3d8cfc0c37f1a86d6',
+  'build_revision': '777cde7d7982be74ca3271ff30d343990e3bf4cb',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': 'c618f33e12ddc6f53c21271e7b44ddef3ec44de3',
+  'buildtools_revision': '5f058f2af10c027719309e0fbb0c91b0d5bc7066',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
@@ -160,7 +160,7 @@ vars = {
   # and whatever else without interference from each other.
   # If you change this, also update the libc++ revision in
   # //buildtools/deps_revisions.gni.
-  'libcxx_revision': 'a01c02c9d4acbdae3b7e8a2f3ee58579a9c29f96',
+  'libcxx_revision': '7a36df3acb8356667cf11331638fc31e0fd533c4',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
@@ -232,7 +232,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tools_rust
   # and whatever else without interference from each other.
-  'tools_rust_revision': '11d67ba3289de6ca73bc441794138a9d8cd9db6b',
+  'tools_rust_revision': 'c52b68f9dc6986af8573e3151a99b009311dd75f',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
@@ -435,10 +435,24 @@ deps = {
         'condition': '(host_os == "linux" or checkout_android) and non_git_source',
       },
       {
+        'object_name': 'Linux_x64/llvmobjdump-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': 'a79639dcd13ecaf7aaac37d51528644c370e2442cf41d6b4fca44ec2301225b7',
+        'size_bytes': 5678304,
+        'generation': 1752058380719492,
+        'condition': '(host_os == "linux" or checkout_android) and non_git_source',
+      },
+      {
         'object_name': 'Mac/clang-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
         'sha256sum': 'cb266c7bcb58aa49740f97c2d81817c703197262df5d8273162698ba5c763238',
         'size_bytes': 52409436,
         'generation': 1752058382807825,
+        'condition': 'host_os == "mac" and host_cpu == "x64"',
+      },
+      {
+        'object_name': 'Mac/llvmobjdump-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': '84f2c5717601941298d351d18c200b0c26bf22486237317c307f4021c369b522',
+        'size_bytes': 5492956,
+        'generation': 1752058383405834,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
@@ -456,6 +470,13 @@ deps = {
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
+        'object_name': 'Mac_arm64/llvmobjdump-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': 'b72d3ac4e4b7ce2164c45a2b8bc323fa377e7a216866ce6c76d4701e6aa8b283',
+        'size_bytes': 5315824,
+        'generation': 1752058404747337,
+        'condition': 'host_os == "mac" and host_cpu == "arm64"',
+      },
+      {
         'object_name': 'Win/clang-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
         'sha256sum': 'b5ea19713969185ea003744fe07858f36bbc03376647e49afa368eb5ead06000',
         'size_bytes': 47403024,
@@ -468,6 +489,13 @@ deps = {
         'size_bytes': 2505568,
         'generation': 1752058445915878,
         'condition': 'checkout_win and not host_os == "win"',
+      },
+      {
+        'object_name': 'Win/llvmobjdump-llvmorg-21-init-16348-gbd809ffb-12.tar.xz',
+        'sha256sum': '4644b6f62289b94086aaa9ea7bbb2cea85279709162eef9e494240ee1a54b520',
+        'size_bytes': 5649812,
+        'generation': 1752058429493093,
+        'condition': 'host_os == "win"',
       },
     ]
   },
@@ -506,31 +534,31 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/rust-toolchain-4a0969e06dbeaaa43914d2d00b2e843d49aa3886-1-llvmorg-21-init-11777-gfd3fecfc.tar.xz',
-        'sha256sum': 'df1573701599cb7d00c1050b71636a436320b8ad47bb09cb46d6e96b3f8ac585',
-        'size_bytes': 118529212,
-        'generation': 1747160498430964,
+        'object_name': 'Linux_x64/rust-toolchain-22be76b7e259f27bf3e55eb931f354cd8b69d55f-3-llvmorg-21-init-16348-gbd809ffb.tar.xz',
+        'sha256sum': '5f8e9ad847e5bf586e0de1bb563c9a49e05ad36edfad5037900d7510004fc577',
+        'size_bytes': 138573136,
+        'generation': 1750840933611077,
         'condition': 'host_os == "linux" and non_git_source',
       },
       {
-        'object_name': 'Mac/rust-toolchain-4a0969e06dbeaaa43914d2d00b2e843d49aa3886-1-llvmorg-21-init-11777-gfd3fecfc.tar.xz',
-        'sha256sum': '83836493c8a81b212c20e16666c6b918bff28748f4d6685c5107eb7e9d16f6fe',
-        'size_bytes': 111691772,
-        'generation': 1747160500088595,
+        'object_name': 'Mac/rust-toolchain-22be76b7e259f27bf3e55eb931f354cd8b69d55f-3-llvmorg-21-init-16348-gbd809ffb.tar.xz',
+        'sha256sum': '357db812ca0a518ef0fc4394ddc859d68f23384931294412b7424bb3aabb3c09',
+        'size_bytes': 132392604,
+        'generation': 1750840935469331,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac_arm64/rust-toolchain-4a0969e06dbeaaa43914d2d00b2e843d49aa3886-1-llvmorg-21-init-11777-gfd3fecfc.tar.xz',
-        'sha256sum': 'd975e322a2e5c680b54f27a6545c63c0de2c5367ca6ffefda04de491d6b76553',
-        'size_bytes': 102206348,
-        'generation': 1747160501743827,
+        'object_name': 'Mac_arm64/rust-toolchain-22be76b7e259f27bf3e55eb931f354cd8b69d55f-3-llvmorg-21-init-16348-gbd809ffb.tar.xz',
+        'sha256sum': 'd3cb60c6388e86d3d1a0c46c539f1ea0ed1ff48cf907dc21b2cb5ff441b23c03',
+        'size_bytes': 120354192,
+        'generation': 1750840937280735,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/rust-toolchain-4a0969e06dbeaaa43914d2d00b2e843d49aa3886-1-llvmorg-21-init-11777-gfd3fecfc.tar.xz',
-        'sha256sum': '25c51b4c2e0e8b4e974973f0357b12ecb645a0a7a136f9e0a6604e87c21acc7a',
-        'size_bytes': 193582440,
-        'generation': 1747160503376785,
+        'object_name': 'Win/rust-toolchain-22be76b7e259f27bf3e55eb931f354cd8b69d55f-3-llvmorg-21-init-16348-gbd809ffb.tar.xz',
+        'sha256sum': '7e804f3a8bef4c8ca32d3368ca7564e5c12b684899453d9a522bdd05b1f1df7b',
+        'size_bytes': 195000356,
+        'generation': 1750840939064273,
         'condition': 'host_os == "win"',
       },
     ],

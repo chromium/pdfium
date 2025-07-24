@@ -40,6 +40,9 @@ default_args = {
   # Needed only for std::atomic_ref<T> for large Ts.
   # See https://crbug.com/402171653 for details.
   use_llvm_libatomic = false
+
+  # PDFium bots only have 14.x. Override Chromium's 15.x requirement.
+  mac_sdk_min = "14"
 }
 
 no_check_targets = [
