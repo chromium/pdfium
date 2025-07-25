@@ -1,15 +1,15 @@
 Name: OpenJPEG
-URL: http://www.openjpeg.org/
+URL: https://github.com/uclouvain/openjpeg
 Version: 2.5.3 (also update in opj_config*)
 Revision: 210a8a5690d0da66f02d49420d7176a21ef409dc
 Security Critical: yes
 Shipped: yes
-License: 2-clause BSD
+License: BSD-2-Clause
 License File: LICENSE
 CPEPrefix: cpe:/a:uclouvain:openjpeg:2.5.3
 
 Description:
-JPEG 2000 library.
+JPEG 2000 library. See http://www.openjpeg.org/
 
 Local Modifications:
 
