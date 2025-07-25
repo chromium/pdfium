@@ -26,15 +26,15 @@ namespace {
 const int kNumTestPages = 7;
 
 RetainPtr<CPDF_Dictionary> CreatePageTreeNode(RetainPtr<CPDF_Array> kids,
-                                              CPDF_Document* pDoc,
+                                              CPDF_Document* doc,
                                               int count) {
-  uint32_t new_objnum = pDoc->AddIndirectObject(kids);
-  auto pageNode = pDoc->NewIndirect<CPDF_Dictionary>();
+  uint32_t new_objnum = doc->AddIndirectObject(kids);
+  auto pageNode = doc->NewIndirect<CPDF_Dictionary>();
   pageNode->SetNewFor<CPDF_Name>("Type", "Pages");
-  pageNode->SetNewFor<CPDF_Reference>("Kids", pDoc, new_objnum);
+  pageNode->SetNewFor<CPDF_Reference>("Kids", doc, new_objnum);
   pageNode->SetNewFor<CPDF_Number>("Count", count);
   for (size_t i = 0; i < kids->size(); i++) {
-    kids->GetMutableDictAt(i)->SetNewFor<CPDF_Reference>("Parent", pDoc,
+    kids->GetMutableDictAt(i)->SetNewFor<CPDF_Reference>("Parent", doc,
                                                          pageNode->GetObjNum());
   }
   return pageNode;
@@ -298,12 +298,12 @@ TEST_F(DocumentTest, CountGreaterThanPageTree) {
 
 TEST_F(DocumentTest, PagesWithoutKids) {
   // Set up a document with Pages dict without kids, and Count = 3
-  auto pDoc = std::make_unique<CPDF_TestDocPagesWithoutKids>();
-  EXPECT_TRUE(pDoc->GetPageDictionary(0));
+  auto doc = std::make_unique<CPDF_TestDocPagesWithoutKids>();
+  EXPECT_TRUE(doc->GetPageDictionary(0));
   // Test GetPage does not fetch pages out of range
   for (int i = 1; i < 5; i++) {
-    EXPECT_FALSE(pDoc->GetPageDictionary(i));
+    EXPECT_FALSE(doc->GetPageDictionary(i));
   }
 
-  EXPECT_TRUE(pDoc->GetPageDictionary(0));
+  EXPECT_TRUE(doc->GetPageDictionary(0));
 }

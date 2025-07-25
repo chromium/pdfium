@@ -21,7 +21,7 @@ class CPDF_Document;
 
 class CPDF_ViewerPreferences {
  public:
-  explicit CPDF_ViewerPreferences(const CPDF_Document* pDoc);
+  explicit CPDF_ViewerPreferences(const CPDF_Document* doc);
   ~CPDF_ViewerPreferences();
 
   bool IsDirectionR2L() const;

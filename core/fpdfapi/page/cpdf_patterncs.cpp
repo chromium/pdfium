@@ -21,7 +21,7 @@ void CPDF_PatternCS::InitializeStockPattern() {
   SetComponentsForStockCS(1);
 }
 
-uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
+uint32_t CPDF_PatternCS::v_Load(CPDF_Document* doc,
                                 const CPDF_Array* pArray,
                                 std::set<const CPDF_Object*>* pVisited) {
   RetainPtr<const CPDF_Object> pBaseCS = pArray->GetDirectObjectAt(1);
@@ -29,7 +29,7 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
     return 0;
   }
 
-  auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
+  auto* pDocPageData = CPDF_DocPageData::FromDocument(doc);
   base_cs_ =
       pDocPageData->GetColorSpaceGuarded(pBaseCS.Get(), nullptr, pVisited);
   if (!base_cs_) {

@@ -25,10 +25,10 @@
 #include "core/fxge/dib/fx_dib.h"
 
 CPDF_RenderContext::CPDF_RenderContext(
-    CPDF_Document* pDoc,
+    CPDF_Document* doc,
     RetainPtr<CPDF_Dictionary> pPageResources,
     CPDF_PageImageCache* pPageCache)
-    : document_(pDoc),
+    : document_(doc),
       page_resources_(std::move(pPageResources)),
       page_cache_(pPageCache) {}
 

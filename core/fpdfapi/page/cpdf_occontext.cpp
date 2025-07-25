@@ -36,11 +36,11 @@ bool HasIntent(const CPDF_Dictionary* dict,
   return bsIntent == "All" || bsIntent == csElement;
 }
 
-RetainPtr<const CPDF_Dictionary> GetConfig(CPDF_Document* pDoc,
+RetainPtr<const CPDF_Dictionary> GetConfig(CPDF_Document* doc,
                                            const CPDF_Dictionary* pOCGDict) {
   DCHECK(pOCGDict);
   RetainPtr<const CPDF_Dictionary> pOCProperties =
-      pDoc->GetRoot()->GetDictFor("OCProperties");
+      doc->GetRoot()->GetDictFor("OCProperties");
   if (!pOCProperties) {
     return nullptr;
   }
@@ -85,9 +85,9 @@ ByteStringView GetUsageTypeString(CPDF_OCContext::UsageType eType) {
 
 }  // namespace
 
-CPDF_OCContext::CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType)
-    : document_(pDoc), usage_type_(eUsageType) {
-  DCHECK(pDoc);
+CPDF_OCContext::CPDF_OCContext(CPDF_Document* doc, UsageType eUsageType)
+    : document_(doc), usage_type_(eUsageType) {
+  DCHECK(doc);
 }
 
 CPDF_OCContext::~CPDF_OCContext() = default;

@@ -45,7 +45,7 @@ class CPDF_StreamContentParser {
   static void InitializeGlobals();
   static void DestroyGlobals();
 
-  CPDF_StreamContentParser(CPDF_Document* pDoc,
+  CPDF_StreamContentParser(CPDF_Document* doc,
                            RetainPtr<CPDF_Dictionary> pPageResources,
                            RetainPtr<CPDF_Dictionary> pParentResources,
                            const CFX_Matrix* pmtContentToUser,

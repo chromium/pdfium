@@ -138,7 +138,7 @@ CPDF_StreamParser::CPDF_StreamParser(pdfium::span<const uint8_t> span,
 CPDF_StreamParser::~CPDF_StreamParser() = default;
 
 RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
-    CPDF_Document* pDoc,
+    CPDF_Document* doc,
     RetainPtr<CPDF_Dictionary> dict,
     const CPDF_Object* pCSObj) {
   auto stream_span = buf_.subspan(pos_);
@@ -177,7 +177,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
   uint32_t nComponents = 1;
   if (pCSObj) {
     RetainPtr<CPDF_ColorSpace> pCS =
-        CPDF_DocPageData::FromDocument(pDoc)->GetColorSpace(pCSObj, nullptr);
+        CPDF_DocPageData::FromDocument(doc)->GetColorSpace(pCSObj, nullptr);
     nComponents = pCS ? pCS->ComponentCount() : 3;
     bpc = dict->GetIntegerFor("BitsPerComponent");
   }

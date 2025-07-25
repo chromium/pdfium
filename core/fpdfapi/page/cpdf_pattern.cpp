@@ -11,10 +11,10 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/check.h"
 
-CPDF_Pattern::CPDF_Pattern(CPDF_Document* pDoc,
+CPDF_Pattern::CPDF_Pattern(CPDF_Document* doc,
                            RetainPtr<CPDF_Object> pObj,
                            const CFX_Matrix& parentMatrix)
-    : document_(pDoc),
+    : document_(doc),
       pattern_obj_(std::move(pObj)),
       parent_matrix_(parentMatrix) {
   DCHECK(document_);

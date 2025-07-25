@@ -1048,15 +1048,15 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     const WideString& pdf_path,
     const std::vector<CPDF_FormField*>& fields,
     bool bIncludeOrExclude) const {
-  std::unique_ptr<CFDF_Document> pDoc = CFDF_Document::CreateNewDoc();
-  if (!pDoc) {
+  std::unique_ptr<CFDF_Document> doc = CFDF_Document::CreateNewDoc();
+  if (!doc) {
     return nullptr;
   }
 
   RetainPtr<CPDF_Dictionary> pMainDict =
-      pDoc->GetMutableRoot()->GetMutableDictFor("FDF");
+      doc->GetMutableRoot()->GetMutableDictFor("FDF");
   if (!pdf_path.IsEmpty()) {
-    auto new_dict = pDoc->New<CPDF_Dictionary>();
+    auto new_dict = doc->New<CPDF_Dictionary>();
     new_dict->SetNewFor<CPDF_Name>("Type", "Filespec");
     WideString wsStr = CPDF_FileSpec::EncodeFileName(pdf_path);
     new_dict->SetNewFor<CPDF_String>(pdfium::stream::kF, wsStr.ToDefANSI());
@@ -1091,7 +1091,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
 
     WideString fullname =
         CPDF_FormField::GetFullNameForDict(field->GetFieldDict());
-    auto field_dict = pDoc->New<CPDF_Dictionary>();
+    auto field_dict = doc->New<CPDF_Dictionary>();
     field_dict->SetNewFor<CPDF_String>(pdfium::form_fields::kT,
                                        fullname.AsStringView());
     if (field->GetType() == CPDF_FormField::kCheckBox ||
@@ -1114,7 +1114,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     }
     fields_array->Append(field_dict);
   }
-  return pDoc;
+  return doc;
 }
 
 void CPDF_InteractiveForm::SetNotifierIface(NotifierIface* notify) {

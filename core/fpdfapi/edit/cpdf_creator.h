@@ -28,7 +28,7 @@ class CPDF_Parser;
 
 class CPDF_Creator {
  public:
-  CPDF_Creator(CPDF_Document* pDoc,
+  CPDF_Creator(CPDF_Document* doc,
                RetainPtr<IFX_RetainableWriteStream> archive);
   ~CPDF_Creator();
 

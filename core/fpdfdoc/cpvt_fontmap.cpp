@@ -18,11 +18,11 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/notreached.h"
 
-CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
+CPVT_FontMap::CPVT_FontMap(CPDF_Document* doc,
                            RetainPtr<CPDF_Dictionary> pResDict,
                            RetainPtr<CPDF_Font> pDefFont,
                            const ByteString& sDefFontAlias)
-    : document_(pDoc),
+    : document_(doc),
       res_dict_(std::move(pResDict)),
       def_font_(std::move(pDefFont)),
       def_font_alias_(sDefFontAlias) {}

@@ -22,7 +22,7 @@ class CPDF_Link {
 
   RetainPtr<CPDF_Dictionary> GetMutableDict() const { return dict_; }
   CFX_FloatRect GetRect();
-  CPDF_Dest GetDest(CPDF_Document* pDoc);
+  CPDF_Dest GetDest(CPDF_Document* doc);
   CPDF_Action GetAction();
 
  private:

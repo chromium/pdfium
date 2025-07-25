@@ -63,9 +63,9 @@ void CPDF_FontGlobals::LoadEmbeddedMaps() {
 }
 
 RetainPtr<CPDF_Font> CPDF_FontGlobals::Find(
-    CPDF_Document* pDoc,
+    CPDF_Document* doc,
     CFX_FontMapper::StandardFont index) {
-  auto it = stock_map_.find(pDoc);
+  auto it = stock_map_.find(doc);
   if (it == stock_map_.end() || !it->second) {
     return nullptr;
   }
@@ -73,20 +73,20 @@ RetainPtr<CPDF_Font> CPDF_FontGlobals::Find(
   return it->second->GetFont(index);
 }
 
-void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
+void CPDF_FontGlobals::Set(CPDF_Document* doc,
                            CFX_FontMapper::StandardFont index,
                            RetainPtr<CPDF_Font> font) {
-  UnownedPtr<CPDF_Document> pKey(pDoc);
+  UnownedPtr<CPDF_Document> pKey(doc);
   if (!pdfium::Contains(stock_map_, pKey)) {
     stock_map_[pKey] = std::make_unique<CFX_StockFontArray>();
   }
   stock_map_[pKey]->SetFont(index, std::move(font));
 }
 
-void CPDF_FontGlobals::Clear(CPDF_Document* pDoc) {
+void CPDF_FontGlobals::Clear(CPDF_Document* doc) {
   // Avoid constructing smart-pointer key as erase() doesn't invoke
   // transparent lookup in the same way find() does.
-  auto it = stock_map_.find(pDoc);
+  auto it = stock_map_.find(doc);
   if (it != stock_map_.end()) {
     stock_map_.erase(it);
   }

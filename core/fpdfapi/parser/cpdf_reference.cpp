@@ -12,8 +12,8 @@
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_stream.h"
 
-CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum)
-    : obj_list_(pDoc), ref_obj_num_(objnum) {}
+CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* doc, uint32_t objnum)
+    : obj_list_(doc), ref_obj_num_(objnum) {}
 
 CPDF_Reference::~CPDF_Reference() = default;
 
@@ -71,8 +71,8 @@ const CPDF_Object* CPDF_Reference::FastGetDirect() const {
   return (obj && !obj->IsReference()) ? obj : nullptr;
 }
 
-void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum) {
-  obj_list_ = pDoc;
+void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* doc, uint32_t objnum) {
+  obj_list_ = doc;
   ref_obj_num_ = objnum;
 }
 

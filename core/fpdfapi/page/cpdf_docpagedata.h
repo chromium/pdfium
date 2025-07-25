@@ -33,7 +33,7 @@ class CPDF_StreamAcc;
 class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
                                public CPDF_Font::FormFactoryIface {
  public:
-  static CPDF_DocPageData* FromDocument(const CPDF_Document* pDoc);
+  static CPDF_DocPageData* FromDocument(const CPDF_Document* doc);
 
   CPDF_DocPageData();
   ~CPDF_DocPageData() override;

@@ -70,7 +70,7 @@ class CPDF_PageObjectHolder {
   using const_iterator =
       std::deque<std::unique_ptr<CPDF_PageObject>>::const_iterator;
 
-  CPDF_PageObjectHolder(CPDF_Document* pDoc,
+  CPDF_PageObjectHolder(CPDF_Document* doc,
                         RetainPtr<CPDF_Dictionary> dict,
                         RetainPtr<CPDF_Dictionary> pPageResources,
                         RetainPtr<CPDF_Dictionary> pResources);

@@ -75,9 +75,9 @@ class CPDF_Image final : public Retainable {
   RetainPtr<CFX_DIBBase> DetachMask();
 
  private:
-  explicit CPDF_Image(CPDF_Document* pDoc);
-  CPDF_Image(CPDF_Document* pDoc, RetainPtr<CPDF_Stream> pStream);
-  CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum);
+  explicit CPDF_Image(CPDF_Document* doc);
+  CPDF_Image(CPDF_Document* doc, RetainPtr<CPDF_Stream> pStream);
+  CPDF_Image(CPDF_Document* doc, uint32_t dwStreamObjNum);
   ~CPDF_Image() override;
 
   void FinishInitialization();

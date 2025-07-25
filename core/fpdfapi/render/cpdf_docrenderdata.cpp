@@ -34,9 +34,8 @@ const int kMaxOutputs = 16;
 }  // namespace
 
 // static
-CPDF_DocRenderData* CPDF_DocRenderData::FromDocument(
-    const CPDF_Document* pDoc) {
-  return static_cast<CPDF_DocRenderData*>(pDoc->GetRenderData());
+CPDF_DocRenderData* CPDF_DocRenderData::FromDocument(const CPDF_Document* doc) {
+  return static_cast<CPDF_DocRenderData*>(doc->GetRenderData());
 }
 
 CPDF_DocRenderData::CPDF_DocRenderData() = default;

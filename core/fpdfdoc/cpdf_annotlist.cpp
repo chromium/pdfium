@@ -125,7 +125,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* document,
   return pPopupAnnot;
 }
 
-void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
+void GenerateAP(CPDF_Document* doc, CPDF_Dictionary* pAnnotDict) {
   if (!pAnnotDict ||
       pAnnotDict->GetByteStringFor(pdfium::annotation::kSubtype) != "Widget") {
     return;
@@ -139,7 +139,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   ByteString field_type = pFieldTypeObj->GetString();
   if (field_type == pdfium::form_fields::kTx) {
-    CPDF_GenerateAP::GenerateFormAP(pDoc, pAnnotDict,
+    CPDF_GenerateAP::GenerateFormAP(doc, pAnnotDict,
                                     CPDF_GenerateAP::kTextField);
     return;
   }
@@ -151,7 +151,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     auto type = (flags & pdfium::form_flags::kChoiceCombo)
                     ? CPDF_GenerateAP::kComboBox
                     : CPDF_GenerateAP::kListBox;
-    CPDF_GenerateAP::GenerateFormAP(pDoc, pAnnotDict, type);
+    CPDF_GenerateAP::GenerateFormAP(doc, pAnnotDict, type);
     return;
   }
 

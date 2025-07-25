@@ -40,7 +40,7 @@ class CPDF_RenderContext {
     const CFX_Matrix matrix_;
   };
 
-  CPDF_RenderContext(CPDF_Document* pDoc,
+  CPDF_RenderContext(CPDF_Document* doc,
                      RetainPtr<CPDF_Dictionary> pPageResources,
                      CPDF_PageImageCache* pPageCache);
   ~CPDF_RenderContext();

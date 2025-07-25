@@ -98,9 +98,9 @@ void CPDF_ImageObject::MaybePurgeCache() {
     return;
   }
 
-  auto* pDoc = image_->GetDocument();
-  CHECK(pDoc);
+  auto* doc = image_->GetDocument();
+  CHECK(doc);
 
   image_.Reset();  // Clear my reference before asking the cache.
-  pDoc->MaybePurgeImage(objnum);
+  doc->MaybePurgeImage(objnum);
 }

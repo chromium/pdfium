@@ -11,8 +11,8 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 
-CPDF_ViewerPreferences::CPDF_ViewerPreferences(const CPDF_Document* pDoc)
-    : doc_(pDoc) {}
+CPDF_ViewerPreferences::CPDF_ViewerPreferences(const CPDF_Document* doc)
+    : doc_(doc) {}
 
 CPDF_ViewerPreferences::~CPDF_ViewerPreferences() = default;
 

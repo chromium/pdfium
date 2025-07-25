@@ -149,7 +149,7 @@ void ProcessNonbCJK(RetainPtr<CPDF_Dictionary> pBaseDict,
   pBaseDict->SetFor("Widths", pWidths);
 }
 
-RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
+RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* doc,
                                              ByteString basefont,
                                              int flags,
                                              int italicangle,
@@ -157,7 +157,7 @@ RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
                                              int descend,
                                              RetainPtr<CPDF_Array> bbox,
                                              int32_t stemV) {
-  auto font_desc = pDoc->New<CPDF_Dictionary>();
+  auto font_desc = doc->New<CPDF_Dictionary>();
   font_desc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   font_desc->SetNewFor<CPDF_Name>("FontName", basefont);
   font_desc->SetNewFor<CPDF_Number>("Flags", flags);
@@ -172,8 +172,8 @@ RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
 }  // namespace
 
 // static
-CPDF_DocPageData* CPDF_DocPageData::FromDocument(const CPDF_Document* pDoc) {
-  return static_cast<CPDF_DocPageData*>(pDoc->GetPageData());
+CPDF_DocPageData* CPDF_DocPageData::FromDocument(const CPDF_Document* doc) {
+  return static_cast<CPDF_DocPageData*>(doc->GetPageData());
 }
 
 CPDF_DocPageData::CPDF_DocPageData() = default;

@@ -18,9 +18,9 @@
 
 namespace {
 
-bool IsTagged(const CPDF_Document* pDoc) {
+bool IsTagged(const CPDF_Document* doc) {
   RetainPtr<const CPDF_Dictionary> pMarkInfo =
-      pDoc->GetRoot()->GetDictFor("MarkInfo");
+      doc->GetRoot()->GetDictFor("MarkInfo");
   return pMarkInfo && pMarkInfo->GetIntegerFor("Marked");
 }
 
@@ -28,19 +28,19 @@ bool IsTagged(const CPDF_Document* pDoc) {
 
 // static
 std::unique_ptr<CPDF_StructTree> CPDF_StructTree::LoadPage(
-    const CPDF_Document* pDoc,
+    const CPDF_Document* doc,
     RetainPtr<const CPDF_Dictionary> pPageDict) {
-  if (!IsTagged(pDoc)) {
+  if (!IsTagged(doc)) {
     return nullptr;
   }
 
-  auto pTree = std::make_unique<CPDF_StructTree>(pDoc);
+  auto pTree = std::make_unique<CPDF_StructTree>(doc);
   pTree->LoadPageTree(std::move(pPageDict));
   return pTree;
 }
 
-CPDF_StructTree::CPDF_StructTree(const CPDF_Document* pDoc)
-    : tree_root_(pDoc->GetRoot()->GetDictFor("StructTreeRoot")),
+CPDF_StructTree::CPDF_StructTree(const CPDF_Document* doc)
+    : tree_root_(doc->GetRoot()->GetDictFor("StructTreeRoot")),
       role_map_(tree_root_ ? tree_root_->GetDictFor("RoleMap") : nullptr) {}
 
 CPDF_StructTree::~CPDF_StructTree() = default;

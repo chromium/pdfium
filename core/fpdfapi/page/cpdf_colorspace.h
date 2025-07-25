@@ -79,7 +79,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   static RetainPtr<CPDF_ColorSpace> GetStockCS(Family family);
   static RetainPtr<CPDF_ColorSpace> GetStockCSForName(const ByteString& name);
   static RetainPtr<CPDF_ColorSpace> Load(
-      CPDF_Document* pDoc,
+      CPDF_Document* doc,
       const CPDF_Object* pObj,
       std::set<const CPDF_Object*>* pVisited);
 
@@ -138,7 +138,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   ~CPDF_ColorSpace() override;
 
   // Returns the number of components, or 0 on failure.
-  virtual uint32_t v_Load(CPDF_Document* pDoc,
+  virtual uint32_t v_Load(CPDF_Document* doc,
                           const CPDF_Array* pArray,
                           std::set<const CPDF_Object*>* pVisited) = 0;
 

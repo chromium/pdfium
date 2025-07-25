@@ -20,7 +20,7 @@ class CPDF_Font;
 
 class CPVT_FontMap final : public IPVT_FontMap {
  public:
-  CPVT_FontMap(CPDF_Document* pDoc,
+  CPVT_FontMap(CPDF_Document* doc,
                RetainPtr<CPDF_Dictionary> pResDict,
                RetainPtr<CPDF_Font> pDefFont,
                const ByteString& sDefFontAlias);

@@ -31,7 +31,7 @@ class CFX_PSFontTracker;
 
 class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
  public:
-  static CPDF_DocRenderData* FromDocument(const CPDF_Document* pDoc);
+  static CPDF_DocRenderData* FromDocument(const CPDF_Document* doc);
 
   CPDF_DocRenderData();
   ~CPDF_DocRenderData() override;

@@ -28,7 +28,7 @@ const CPDF_IndexedCS* CPDF_IndexedCS::AsIndexedCS() const {
   return this;
 }
 
-uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
+uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* doc,
                                 const CPDF_Array* pArray,
                                 std::set<const CPDF_Object*>* pVisited) {
   if (pArray->size() < 4) {
@@ -40,7 +40,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     return 0;
   }
 
-  auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
+  auto* pDocPageData = CPDF_DocPageData::FromDocument(doc);
   base_cs_ =
       pDocPageData->GetColorSpaceGuarded(pBaseObj.Get(), nullptr, pVisited);
   if (!base_cs_) {

@@ -22,10 +22,10 @@ class CPDF_StructElement;
 class CPDF_StructTree {
  public:
   static std::unique_ptr<CPDF_StructTree> LoadPage(
-      const CPDF_Document* pDoc,
+      const CPDF_Document* doc,
       RetainPtr<const CPDF_Dictionary> pPageDict);
 
-  explicit CPDF_StructTree(const CPDF_Document* pDoc);
+  explicit CPDF_StructTree(const CPDF_Document* doc);
   ~CPDF_StructTree();
 
   size_t CountTopElements() const { return kids_.size(); }

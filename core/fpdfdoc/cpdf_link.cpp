@@ -23,8 +23,8 @@ CFX_FloatRect CPDF_Link::GetRect() {
   return dict_->GetRectFor("Rect");
 }
 
-CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
-  return CPDF_Dest::Create(pDoc, dict_->GetDirectObjectFor("Dest"));
+CPDF_Dest CPDF_Link::GetDest(CPDF_Document* doc) {
+  return CPDF_Dest::Create(doc, dict_->GetDirectObjectFor("Dest"));
 }
 
 CPDF_Action CPDF_Link::GetAction() {

@@ -48,19 +48,19 @@ bool CPDF_Image::IsValidJpegBitsPerComponent(int32_t bpc) {
   return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
 }
 
-CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : document_(pDoc) {
+CPDF_Image::CPDF_Image(CPDF_Document* doc) : document_(doc) {
   DCHECK(document_);
 }
 
-CPDF_Image::CPDF_Image(CPDF_Document* pDoc, RetainPtr<CPDF_Stream> pStream)
-    : is_inline_(true), document_(pDoc), stream_(std::move(pStream)) {
+CPDF_Image::CPDF_Image(CPDF_Document* doc, RetainPtr<CPDF_Stream> pStream)
+    : is_inline_(true), document_(doc), stream_(std::move(pStream)) {
   DCHECK(document_);
   FinishInitialization();
 }
 
-CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
-    : document_(pDoc),
-      stream_(ToStream(pDoc->GetMutableIndirectObject(dwStreamObjNum))) {
+CPDF_Image::CPDF_Image(CPDF_Document* doc, uint32_t dwStreamObjNum)
+    : document_(doc),
+      stream_(ToStream(doc->GetMutableIndirectObject(dwStreamObjNum))) {
   DCHECK(document_);
   FinishInitialization();
 }

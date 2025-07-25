@@ -28,7 +28,7 @@ class CPDF_Pattern : public Retainable, public Observable {
   const CFX_Matrix& pattern_to_form() const { return pattern_to_form_; }
 
  protected:
-  CPDF_Pattern(CPDF_Document* pDoc,
+  CPDF_Pattern(CPDF_Document* doc,
                RetainPtr<CPDF_Object> pObj,
                const CFX_Matrix& parentMatrix);
   ~CPDF_Pattern() override;

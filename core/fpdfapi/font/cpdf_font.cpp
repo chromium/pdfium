@@ -279,7 +279,7 @@ int CPDF_Font::GetStringWidth(ByteStringView pString) {
 }
 
 // static
-RetainPtr<CPDF_Font> CPDF_Font::GetStockFont(CPDF_Document* pDoc,
+RetainPtr<CPDF_Font> CPDF_Font::GetStockFont(CPDF_Document* doc,
                                              ByteStringView name) {
   ByteString fontname(name);
   std::optional<CFX_FontMapper::StandardFont> font_id =
@@ -289,24 +289,24 @@ RetainPtr<CPDF_Font> CPDF_Font::GetStockFont(CPDF_Document* pDoc,
   }
 
   auto* font_globals = CPDF_FontGlobals::GetInstance();
-  RetainPtr<CPDF_Font> font = font_globals->Find(pDoc, font_id.value());
+  RetainPtr<CPDF_Font> font = font_globals->Find(doc, font_id.value());
   if (font) {
     return font;
   }
 
-  auto dict = pDoc->New<CPDF_Dictionary>();
+  auto dict = doc->New<CPDF_Dictionary>();
   dict->SetNewFor<CPDF_Name>("Type", "Font");
   dict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   dict->SetNewFor<CPDF_Name>("BaseFont", fontname);
   dict->SetNewFor<CPDF_Name>("Encoding",
                              pdfium::font_encodings::kWinAnsiEncoding);
   font = CPDF_Font::Create(nullptr, std::move(dict), nullptr);
-  font_globals->Set(pDoc, font_id.value(), font);
+  font_globals->Set(doc, font_id.value(), font);
   return font;
 }
 
 // static
-RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
+RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* doc,
                                        RetainPtr<CPDF_Dictionary> font_dict,
                                        FormFactoryIface* pFactory) {
   ByteString type = font_dict->GetByteStringFor("Subtype");
@@ -318,21 +318,21 @@ RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
         RetainPtr<const CPDF_Dictionary> font_desc =
             font_dict->GetDictFor("FontDescriptor");
         if (!font_desc || !font_desc->KeyExist("FontFile2")) {
-          font = pdfium::MakeRetain<CPDF_CIDFont>(pDoc, std::move(font_dict));
+          font = pdfium::MakeRetain<CPDF_CIDFont>(doc, std::move(font_dict));
         }
         break;
       }
     }
     if (!font) {
-      font = pdfium::MakeRetain<CPDF_TrueTypeFont>(pDoc, std::move(font_dict));
+      font = pdfium::MakeRetain<CPDF_TrueTypeFont>(doc, std::move(font_dict));
     }
   } else if (type == "Type3") {
-    font = pdfium::MakeRetain<CPDF_Type3Font>(pDoc, std::move(font_dict),
-                                              pFactory);
+    font =
+        pdfium::MakeRetain<CPDF_Type3Font>(doc, std::move(font_dict), pFactory);
   } else if (type == "Type0") {
-    font = pdfium::MakeRetain<CPDF_CIDFont>(pDoc, std::move(font_dict));
+    font = pdfium::MakeRetain<CPDF_CIDFont>(doc, std::move(font_dict));
   } else {
-    font = pdfium::MakeRetain<CPDF_Type1Font>(pDoc, std::move(font_dict));
+    font = pdfium::MakeRetain<CPDF_Type1Font>(doc, std::move(font_dict));
   }
   if (!font->Load()) {
     return nullptr;

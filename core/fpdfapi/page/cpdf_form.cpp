@@ -33,19 +33,19 @@ CPDF_Dictionary* CPDF_Form::ChooseResourcesDict(
   return pParentResources ? pParentResources : pPageResources;
 }
 
-CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
+CPDF_Form::CPDF_Form(CPDF_Document* doc,
                      RetainPtr<CPDF_Dictionary> pPageResources,
                      RetainPtr<CPDF_Stream> pFormStream)
-    : CPDF_Form(pDoc,
+    : CPDF_Form(doc,
                 std::move(pPageResources),
                 std::move(pFormStream),
                 nullptr) {}
 
-CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
+CPDF_Form::CPDF_Form(CPDF_Document* doc,
                      RetainPtr<CPDF_Dictionary> pPageResources,
                      RetainPtr<CPDF_Stream> pFormStream,
                      CPDF_Dictionary* pParentResources)
-    : CPDF_PageObjectHolder(pDoc,
+    : CPDF_PageObjectHolder(doc,
                             pFormStream->GetMutableDict(),
                             pPageResources,
                             pdfium::WrapRetain(ChooseResourcesDict(

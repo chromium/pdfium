@@ -29,7 +29,7 @@ class CPDF_OCContext final : public Retainable {
   bool CheckPageObjectVisible(const CPDF_PageObject* pObj) const;
 
  private:
-  CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType);
+  CPDF_OCContext(CPDF_Document* doc, UsageType eUsageType);
   ~CPDF_OCContext() override;
 
   bool LoadOCGStateFromConfig(ByteStringView config,

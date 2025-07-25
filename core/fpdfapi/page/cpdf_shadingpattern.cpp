@@ -30,11 +30,11 @@ ShadingType ToShadingType(int type) {
 
 }  // namespace
 
-CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
+CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* doc,
                                          RetainPtr<CPDF_Object> pPatternObj,
                                          bool bShading,
                                          const CFX_Matrix& parentMatrix)
-    : CPDF_Pattern(pDoc, std::move(pPatternObj), parentMatrix),
+    : CPDF_Pattern(doc, std::move(pPatternObj), parentMatrix),
       shading_(bShading) {
   DCHECK(document());
   if (!bShading) {

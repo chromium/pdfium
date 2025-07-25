@@ -204,11 +204,11 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessGraphics) {
   pPathObj->mutable_general_state().SetFillAlpha(0.5f);
   pPathObj->mutable_general_state().SetStrokeAlpha(0.8f);
 
-  auto pDoc = std::make_unique<CPDF_TestDocument>();
-  pDoc->CreateNewDoc();
+  auto doc = std::make_unique<CPDF_TestDocument>();
+  doc->CreateNewDoc();
 
-  RetainPtr<CPDF_Dictionary> pPageDict(pDoc->CreateNewPage(0));
-  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
+  RetainPtr<CPDF_Dictionary> pPageDict(doc->CreateNewPage(0));
+  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(doc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   fxcrt::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
@@ -261,15 +261,15 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessGraphics) {
 
 TEST_F(CPDFPageContentGeneratorTest, ProcessStandardText) {
   // Checking font whose font dictionary is not yet indirect object.
-  auto pDoc = std::make_unique<CPDF_TestDocument>();
-  pDoc->CreateNewDoc();
+  auto doc = std::make_unique<CPDF_TestDocument>();
+  doc->CreateNewDoc();
 
-  RetainPtr<CPDF_Dictionary> pPageDict(pDoc->CreateNewPage(0));
-  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
+  RetainPtr<CPDF_Dictionary> pPageDict(doc->CreateNewPage(0));
+  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(doc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   auto pTextObj = std::make_unique<CPDF_TextObject>();
   pTextObj->mutable_text_state().SetFont(
-      CPDF_Font::GetStockFont(pDoc.get(), "Times-Roman"));
+      CPDF_Font::GetStockFont(doc.get(), "Times-Roman"));
   pTextObj->mutable_text_state().SetFontSize(10.0f);
 
   static const std::vector<float> rgb = {0.5f, 0.7f, 0.35f};
@@ -330,32 +330,32 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessStandardText) {
 
 TEST_F(CPDFPageContentGeneratorTest, ProcessText) {
   // Checking font whose font dictionary is already an indirect object.
-  auto pDoc = std::make_unique<CPDF_TestDocument>();
-  pDoc->CreateNewDoc();
+  auto doc = std::make_unique<CPDF_TestDocument>();
+  doc->CreateNewDoc();
 
-  RetainPtr<CPDF_Dictionary> pPageDict(pDoc->CreateNewPage(0));
-  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
+  RetainPtr<CPDF_Dictionary> pPageDict(doc->CreateNewPage(0));
+  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(doc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
 
   fxcrt::ostringstream buf;
   {
     // Set the text object font and text
     auto pTextObj = std::make_unique<CPDF_TextObject>();
-    auto dict = pDoc->NewIndirect<CPDF_Dictionary>();
+    auto dict = doc->NewIndirect<CPDF_Dictionary>();
     dict->SetNewFor<CPDF_Name>("Type", "Font");
     dict->SetNewFor<CPDF_Name>("Subtype", "TrueType");
 
-    RetainPtr<CPDF_Font> font = CPDF_Font::GetStockFont(pDoc.get(), "Arial");
+    RetainPtr<CPDF_Font> font = CPDF_Font::GetStockFont(doc.get(), "Arial");
     dict->SetNewFor<CPDF_Name>("BaseFont", font->GetBaseFontName());
 
-    auto pDesc = pDoc->NewIndirect<CPDF_Dictionary>();
+    auto pDesc = doc->NewIndirect<CPDF_Dictionary>();
     pDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
     pDesc->SetNewFor<CPDF_Name>("FontName", font->GetBaseFontName());
-    dict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc.get(),
+    dict->SetNewFor<CPDF_Reference>("FontDescriptor", doc.get(),
                                     pDesc->GetObjNum());
 
     pTextObj->mutable_text_state().SetFont(
-        CPDF_DocPageData::FromDocument(pDoc.get())->GetFont(dict));
+        CPDF_DocPageData::FromDocument(doc.get())->GetFont(dict));
     pTextObj->mutable_text_state().SetFontSize(15.5f);
     pTextObj->SetText("I am indirect");
     pTextObj->SetTextRenderMode(TextRenderingMode::MODE_FILL_CLIP);
@@ -408,13 +408,13 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessText) {
 }
 
 TEST_F(CPDFPageContentGeneratorTest, ProcessEmptyForm) {
-  auto pDoc = std::make_unique<CPDF_TestDocument>();
-  pDoc->CreateNewDoc();
+  auto doc = std::make_unique<CPDF_TestDocument>();
+  doc->CreateNewDoc();
   auto pStream =
       pdfium::MakeRetain<CPDF_Stream>(pdfium::MakeRetain<CPDF_Dictionary>());
 
   // Create an empty form.
-  auto pTestForm = std::make_unique<CPDF_Form>(pDoc.get(), nullptr, pStream);
+  auto pTestForm = std::make_unique<CPDF_Form>(doc.get(), nullptr, pStream);
   pTestForm->ParseContent();
   ASSERT_EQ(CPDF_PageObjectHolder::ParseState::kParsed,
             pTestForm->GetParseState());
@@ -427,8 +427,8 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessEmptyForm) {
 }
 
 TEST_F(CPDFPageContentGeneratorTest, ProcessFormWithPath) {
-  auto pDoc = std::make_unique<CPDF_TestDocument>();
-  pDoc->CreateNewDoc();
+  auto doc = std::make_unique<CPDF_TestDocument>();
+  doc->CreateNewDoc();
   static constexpr uint8_t kContents[] =
       "q 3.102 4.6700001 m 5.4500012 .28999999 "
       "l 4.2399998 3.1499999 4.65 2.98 3.456 0.24 c 3.102 4.6700001 l h f Q\n";
@@ -437,7 +437,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessFormWithPath) {
       pdfium::MakeRetain<CPDF_Dictionary>());
 
   // Create a form with a non-empty stream.
-  auto pTestForm = std::make_unique<CPDF_Form>(pDoc.get(), nullptr, pStream);
+  auto pTestForm = std::make_unique<CPDF_Form>(doc.get(), nullptr, pStream);
   pTestForm->ParseContent();
   ASSERT_EQ(CPDF_PageObjectHolder::ParseState::kParsed,
             pTestForm->GetParseState());

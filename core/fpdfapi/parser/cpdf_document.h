@@ -57,7 +57,7 @@ class CPDF_Document : public Observable,
         RetainPtr<CPDF_StreamAcc>&& pStreamAcc) = 0;
     virtual void MaybePurgeImage(uint32_t objnum) = 0;
 
-    void SetDocument(CPDF_Document* pDoc) { doc_ = pDoc; }
+    void SetDocument(CPDF_Document* doc) { doc_ = doc; }
 
    protected:
     CPDF_Document* GetDocument() const { return doc_; }
@@ -71,7 +71,7 @@ class CPDF_Document : public Observable,
     RenderDataIface();
     virtual ~RenderDataIface();
 
-    void SetDocument(CPDF_Document* pDoc) { doc_ = pDoc; }
+    void SetDocument(CPDF_Document* doc) { doc_ = doc; }
 
    protected:
     CPDF_Document* GetDocument() const { return doc_; }

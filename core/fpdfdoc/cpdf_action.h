@@ -51,9 +51,9 @@ class CPDF_Action {
   const CPDF_Dictionary* GetDict() const { return dict_.Get(); }
 
   Type GetType() const;
-  CPDF_Dest GetDest(CPDF_Document* pDoc) const;
+  CPDF_Dest GetDest(CPDF_Document* doc) const;
   WideString GetFilePath() const;
-  ByteString GetURI(const CPDF_Document* pDoc) const;
+  ByteString GetURI(const CPDF_Document* doc) const;
   bool GetHideStatus() const;
   ByteString GetNamedAction() const;
   uint32_t GetFlags() const;

@@ -34,7 +34,7 @@ class CPDF_TilingPattern final : public CPDF_Pattern {
   float y_step() const { return ystep_; }
 
  private:
-  CPDF_TilingPattern(CPDF_Document* pDoc,
+  CPDF_TilingPattern(CPDF_Document* doc,
                      RetainPtr<CPDF_Object> pPatternObj,
                      const CFX_Matrix& parentMatrix);
   CPDF_TilingPattern(const CPDF_TilingPattern&) = delete;

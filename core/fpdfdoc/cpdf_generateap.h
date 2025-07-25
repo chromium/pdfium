@@ -17,13 +17,13 @@ class CPDF_GenerateAP {
  public:
   enum FormType { kTextField, kComboBox, kListBox };
 
-  static void GenerateFormAP(CPDF_Document* pDoc,
+  static void GenerateFormAP(CPDF_Document* doc,
                              CPDF_Dictionary* pAnnotDict,
                              FormType type);
 
-  static void GenerateEmptyAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
+  static void GenerateEmptyAP(CPDF_Document* doc, CPDF_Dictionary* pAnnotDict);
 
-  static bool GenerateAnnotAP(CPDF_Document* pDoc,
+  static bool GenerateAnnotAP(CPDF_Document* doc,
                               CPDF_Dictionary* pAnnotDict,
                               CPDF_Annot::Subtype subtype);
 

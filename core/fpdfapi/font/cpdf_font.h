@@ -62,10 +62,10 @@ class CPDF_Font : public Retainable, public Observable {
   static constexpr uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
 
   // |pFactory| only required for Type3 fonts.
-  static RetainPtr<CPDF_Font> Create(CPDF_Document* pDoc,
+  static RetainPtr<CPDF_Font> Create(CPDF_Document* doc,
                                      RetainPtr<CPDF_Dictionary> font_dict,
                                      FormFactoryIface* pFactory);
-  static RetainPtr<CPDF_Font> GetStockFont(CPDF_Document* pDoc,
+  static RetainPtr<CPDF_Font> GetStockFont(CPDF_Document* doc,
                                            ByteStringView fontname);
 
   virtual bool IsType1Font() const;

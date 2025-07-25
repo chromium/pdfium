@@ -22,12 +22,12 @@ class CPDF_Dest {
   ~CPDF_Dest();
 
   // Use when |pDest| is an object of an unknown type. Can pass in nullptr.
-  static CPDF_Dest Create(CPDF_Document* pDoc,
+  static CPDF_Dest Create(CPDF_Document* doc,
                           RetainPtr<const CPDF_Object> pDest);
 
   const CPDF_Array* GetArray() const { return array_.Get(); }
 
-  int GetDestPageIndex(CPDF_Document* pDoc) const;
+  int GetDestPageIndex(CPDF_Document* doc) const;
   std::vector<float> GetScrollPositionArray() const;
 
   // Returns the zoom mode, as one of the PDFDEST_VIEW_* values in fpdf_doc.h.

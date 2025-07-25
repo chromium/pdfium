@@ -39,10 +39,10 @@ bool FindNativeTrueTypeFont(ByteStringView sFontFaceName) {
          font_mapper->HasLocalizedFont(sFontFaceName);
 }
 
-RetainPtr<CPDF_Font> AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
+RetainPtr<CPDF_Font> AddNativeTrueTypeFontToPDF(CPDF_Document* doc,
                                                 ByteString sFontFaceName,
                                                 FX_Charset nCharset) {
-  if (!pDoc) {
+  if (!doc) {
     return nullptr;
   }
 
@@ -50,7 +50,7 @@ RetainPtr<CPDF_Font> AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
   pFXFont->LoadSubst(sFontFaceName, true, 0, 0, 0,
                      FX_GetCodePageFromCharset(nCharset), false);
 
-  auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
+  auto* pDocPageData = CPDF_DocPageData::FromDocument(doc);
   return pDocPageData->AddFont(std::move(pFXFont), nCharset);
 }
 

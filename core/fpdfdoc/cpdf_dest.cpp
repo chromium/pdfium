@@ -38,20 +38,20 @@ CPDF_Dest::CPDF_Dest(const CPDF_Dest& that) = default;
 CPDF_Dest::~CPDF_Dest() = default;
 
 // static
-CPDF_Dest CPDF_Dest::Create(CPDF_Document* pDoc,
+CPDF_Dest CPDF_Dest::Create(CPDF_Document* doc,
                             RetainPtr<const CPDF_Object> pDest) {
   if (!pDest) {
     return CPDF_Dest(nullptr);
   }
 
   if (pDest->IsString() || pDest->IsName()) {
-    return CPDF_Dest(CPDF_NameTree::LookupNamedDest(pDoc, pDest->GetString()));
+    return CPDF_Dest(CPDF_NameTree::LookupNamedDest(doc, pDest->GetString()));
   }
 
   return CPDF_Dest(ToArray(pDest));
 }
 
-int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
+int CPDF_Dest::GetDestPageIndex(CPDF_Document* doc) const {
   if (!array_) {
     return -1;
   }
@@ -69,7 +69,7 @@ int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
     return -1;
   }
 
-  return pDoc->GetPageIndex(pPage->GetObjNum());
+  return doc->GetPageIndex(pPage->GetObjNum());
 }
 
 std::vector<float> CPDF_Dest::GetScrollPositionArray() const {

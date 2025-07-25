@@ -18,10 +18,10 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/check.h"
 
-CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
+CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* doc,
                                        RetainPtr<CPDF_Object> pPatternObj,
                                        const CFX_Matrix& parentMatrix)
-    : CPDF_Pattern(pDoc, std::move(pPatternObj), parentMatrix) {
+    : CPDF_Pattern(doc, std::move(pPatternObj), parentMatrix) {
   DCHECK(document());
   colored_ = pattern_obj()->GetDict()->GetIntegerFor("PaintType") == 1;
   SetPatternToFormMatrix();

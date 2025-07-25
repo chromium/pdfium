@@ -120,10 +120,10 @@ bool OutputIndex(IFX_ArchiveStream* archive, FX_FILESIZE offset) {
 
 }  // namespace
 
-CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
+CPDF_Creator::CPDF_Creator(CPDF_Document* doc,
                            RetainPtr<IFX_RetainableWriteStream> archive)
-    : document_(pDoc),
-      parser_(pDoc->GetParser()),
+    : document_(doc),
+      parser_(doc->GetParser()),
       encrypt_dict_(parser_ ? parser_->GetEncryptDict() : nullptr),
       security_handler_(parser_ ? parser_->GetSecurityHandler() : nullptr),
       last_obj_num_(document_->GetLastObjNum()),
