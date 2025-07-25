@@ -30,7 +30,7 @@ _SWARMING_TEST_EXECUTION_TIMEOUT = 20 * time.minute
 _LINUX_FOCAL_DIMENSIONS = {
     "cores": "8",
     "cpu": "x86-64",
-    "os": "Ubuntu-20.04",
+    "os": "Ubuntu-22.04",
 }
 _MACOS_INTEL_DIMENSIONS = {
     "cpu": "x86-64",
@@ -438,7 +438,7 @@ luci.builder(
     dimensions = {
         "cores": "8",
         "cpu": "x86-64",
-        "os": "Ubuntu-20.04",
+        "os": "Ubuntu-22.04",
         "pool": "luci.flex.ci",
     },
     properties = {
@@ -459,7 +459,7 @@ luci.builder(
     dimensions = {
         "cores": "8",
         "cpu": "x86-64",
-        "os": "Ubuntu-20.04",
+        "os": "Ubuntu-22.04",
         "pool": "luci.flex.try",
     },
     # Give this the highest priority, so CLs that are waiting to land can get
