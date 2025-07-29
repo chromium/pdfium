@@ -431,33 +431,32 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
     return 0;
   }
 
-  uint8_t* pos =
-      UNSAFE_TODO(buffer_.Get() + y * GetPitch() + offset.ValueOrDie());
+  auto pos = GetScanline(y).subspan(offset.ValueOrDie());
   switch (GetFormat()) {
     case FXDIB_Format::kInvalid:
       return 0;
     case FXDIB_Format::k1bppMask: {
-      if ((*pos) & (1 << (7 - x % 8))) {
+      if ((pos[0]) & (1 << (7 - x % 8))) {
         return 0xff000000;
       }
       return 0;
     }
     case FXDIB_Format::k1bppRgb: {
-      if ((*pos) & (1 << (7 - x % 8))) {
+      if ((pos[0]) & (1 << (7 - x % 8))) {
         return HasPalette() ? GetPaletteSpan()[1] : 0xffffffff;
       }
       return HasPalette() ? GetPaletteSpan()[0] : 0xff000000;
     }
     case FXDIB_Format::k8bppMask:
-      return (*pos) << 24;
+      return (pos[0]) << 24;
     case FXDIB_Format::k8bppRgb:
-      return HasPalette() ? GetPaletteSpan()[*pos]
-                          : ArgbEncode(0xff, *pos, *pos, *pos);
+      return HasPalette() ? GetPaletteSpan()[pos[0]]
+                          : ArgbEncode(0xff, pos[0], pos[0], pos[0]);
     case FXDIB_Format::kBgr:
     case FXDIB_Format::kBgrx:
-      return UNSAFE_TODO(FXARGB_GetDIB(pos) | 0xff000000);
+      return FXARGB_GetDIB(pos.first<4u>()) | 0xff000000;
     case FXDIB_Format::kBgra:
-      return UNSAFE_TODO(FXARGB_GetDIB(pos));
+      return FXARGB_GetDIB(pos.first<4u>());
     case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider testing with
       // `FXDIB_Format::kBgraPremul`
