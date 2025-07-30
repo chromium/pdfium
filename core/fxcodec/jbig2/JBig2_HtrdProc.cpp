@@ -28,10 +28,12 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeArith(
       for (uint32_t ng = 0; ng < HGW; ++ng) {
         // The `>> 8` is an arithmetic shift per spec.  Cast mg, ng to int,
         // else implicit conversions would evaluate it as unsigned shift.
-        int32_t mg_int = static_cast<int32_t>(mg);
-        int32_t ng_int = static_cast<int32_t>(ng);
-        int32_t x = (HGX + mg_int * HRY + ng_int * HRX) >> 8;
-        int32_t y = (HGY + mg_int * HRX - ng_int * HRY) >> 8;
+        // HGX / HGY are 32 bit, HRX / HRY 16, mg / ng 32.
+        // The result after >> 8 fits in about 42 bit; int64_t suffices.
+        auto mg_int = static_cast<int64_t>(mg);
+        auto ng_int = static_cast<int64_t>(ng);
+        int64_t x = (HGX + mg_int * HRY + ng_int * HRX) >> 8;
+        int64_t y = (HGY + mg_int * HRX - ng_int * HRY) >> 8;
 
         if ((x + HPW <= 0) | (x >= static_cast<int32_t>(HBW)) | (y + HPH <= 0) |
             (y >= static_cast<int32_t>(HBH))) {
@@ -147,11 +149,13 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeImage(
       uint32_t pat_index = std::min(gsval, HNUMPATS - 1);
       // The `>> 8` is an arithmetic shift per spec.  Cast mg, ng to int,
       // else implicit conversions would evaluate it as unsigned shift.
-      int32_t mg_int = static_cast<int32_t>(mg);
-      int32_t ng_int = static_cast<int32_t>(ng);
-      int32_t out_x = (HGX + mg_int * HRY + ng_int * HRX) >> 8;
-      int32_t out_y = (HGY + mg_int * HRX - ng_int * HRY) >> 8;
-      (*HPATS)[pat_index]->ComposeTo(HTREG.get(), out_x, out_y, HCOMBOP);
+      // HGX / HGY are 32 bit, HRX / HRY 16, mg / ng 32.
+      // The result after >> 8 fits in about 42 bit; int64_t suffices.
+      auto mg_int = static_cast<int64_t>(mg);
+      auto ng_int = static_cast<int64_t>(ng);
+      int64_t x = (HGX + mg_int * HRY + ng_int * HRX) >> 8;
+      int64_t y = (HGY + mg_int * HRX - ng_int * HRY) >> 8;
+      (*HPATS)[pat_index]->ComposeTo(HTREG.get(), x, y, HCOMBOP);
     }
   }
   return HTREG;

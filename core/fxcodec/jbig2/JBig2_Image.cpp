@@ -176,30 +176,30 @@ void CJBig2_Image::Fill(bool v) {
 }
 
 bool CJBig2_Image::ComposeTo(CJBig2_Image* pDst,
-                             int32_t x,
-                             int32_t y,
+                             int64_t x,
+                             int64_t y,
                              JBig2ComposeOp op) {
   return data_ &&
          ComposeToInternal(pDst, x, y, op, FX_RECT(0, 0, width_, height_));
 }
 
 bool CJBig2_Image::ComposeToWithRect(CJBig2_Image* pDst,
-                                     int32_t x,
-                                     int32_t y,
+                                     int64_t x,
+                                     int64_t y,
                                      const FX_RECT& rtSrc,
                                      JBig2ComposeOp op) {
   return data_ && ComposeToInternal(pDst, x, y, op, rtSrc);
 }
 
-bool CJBig2_Image::ComposeFrom(int32_t x,
-                               int32_t y,
+bool CJBig2_Image::ComposeFrom(int64_t x,
+                               int64_t y,
                                CJBig2_Image* pSrc,
                                JBig2ComposeOp op) {
   return data_ && pSrc->ComposeTo(this, x, y, op);
 }
 
-bool CJBig2_Image::ComposeFromWithRect(int32_t x,
-                                       int32_t y,
+bool CJBig2_Image::ComposeFromWithRect(int64_t x,
+                                       int64_t y,
                                        CJBig2_Image* pSrc,
                                        const FX_RECT& rtSrc,
                                        JBig2ComposeOp op) {
@@ -294,16 +294,18 @@ void CJBig2_Image::Expand(int32_t h, bool v) {
 }
 
 bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
-                                     int32_t x,
-                                     int32_t y,
+                                     int64_t x_in,
+                                     int64_t y_in,
                                      JBig2ComposeOp op,
                                      const FX_RECT& rtSrc) {
   DCHECK(data_);
 
   // TODO(weili): Check whether the range check is correct. Should x>=1048576?
-  if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576) {
+  if (x_in < -1048576 || x_in > 1048576 || y_in < -1048576 || y_in > 1048576) {
     return false;
   }
+  int32_t x = static_cast<int32_t>(x_in);
+  int32_t y = static_cast<int32_t>(y_in);
 
   int32_t sw = rtSrc.Width();
   int32_t sh = rtSrc.Height();
