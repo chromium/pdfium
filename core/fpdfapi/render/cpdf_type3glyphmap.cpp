@@ -56,6 +56,6 @@ const CFX_GlyphBitmap* CPDF_Type3GlyphMap::GetBitmap(uint32_t charcode) const {
 }
 
 void CPDF_Type3GlyphMap::SetBitmap(uint32_t charcode,
-                                   std::unique_ptr<CFX_GlyphBitmap> pMap) {
-  glyph_map_[charcode] = std::move(pMap);
+                                   std::unique_ptr<CFX_GlyphBitmap> bitmap) {
+  glyph_map_[charcode] = std::move(bitmap);
 }

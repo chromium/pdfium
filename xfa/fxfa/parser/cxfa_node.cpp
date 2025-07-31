@@ -584,14 +584,14 @@ NodeVector NodesSortedByDocumentIdx(const NodeSet& rgNodeSet) {
   return rgNodeArray;
 }
 
-NodeSetPair* NodeSetPairForNode(CXFA_Node* pNode, NodeSetPairMapMap* pMap) {
+NodeSetPair* NodeSetPairForNode(CXFA_Node* pNode, NodeSetPairMapMap* map) {
   CXFA_Node* pParentNode = pNode->GetParent();
   uint32_t dwNameHash = pNode->GetNameHash();
   if (!pParentNode || !dwNameHash) {
     return nullptr;
   }
 
-  return &((*pMap)[pParentNode][dwNameHash]);
+  return &((*map)[pParentNode][dwNameHash]);
 }
 
 void ReorderDataNodes(const NodeSet& sSet1,

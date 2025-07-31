@@ -25,7 +25,7 @@ class CPDF_Type3GlyphMap {
   std::pair<int, int> AdjustBlue(float top, float bottom);
 
   const CFX_GlyphBitmap* GetBitmap(uint32_t charcode) const;
-  void SetBitmap(uint32_t charcode, std::unique_ptr<CFX_GlyphBitmap> pMap);
+  void SetBitmap(uint32_t charcode, std::unique_ptr<CFX_GlyphBitmap> bitmap);
 
  private:
   std::vector<int> top_blue_;

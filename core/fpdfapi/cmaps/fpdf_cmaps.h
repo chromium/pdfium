@@ -32,8 +32,8 @@ struct CMap {
   int8_t use_offset_;
 };
 
-uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode);
-uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid);
+uint16_t CIDFromCharCode(const CMap* cmap, uint32_t charcode);
+uint32_t CharCodeFromCID(const CMap* cmap, uint16_t cid);
 
 }  // namespace fxcmap
 

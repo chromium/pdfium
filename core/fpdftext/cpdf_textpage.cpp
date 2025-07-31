@@ -110,13 +110,13 @@ DataVector<wchar_t> GetUnicodeNormalization(wchar_t wch) {
   }
   wch = wFind & 0x0FFF;
   wFind >>= 12;
-  auto pMap = kUnicodeDataNormalizationMaps[wFind - 2].subspan(
+  auto maps = kUnicodeDataNormalizationMaps[wFind - 2].subspan(
       static_cast<size_t>(wch));
   if (wFind == 4) {
-    wFind = pMap.front();
-    pMap = pMap.subspan<1u>();
+    wFind = maps.front();
+    maps = maps.subspan<1u>();
   }
-  const auto range = pMap.first(static_cast<size_t>(wFind));
+  const auto range = maps.first(static_cast<size_t>(wFind));
   return DataVector<wchar_t>(range.begin(), range.end());
 }
 
