@@ -30,36 +30,42 @@ const CMap* FindNextCMap(const CMap* cmap) {
   return cmap->use_offset_ ? UNSAFE_TODO(cmap + cmap->use_offset_) : nullptr;
 }
 
+uint16_t CIDFromCharCodeForDword(const CMap* cmap, uint32_t charcode) {
+  const uint16_t loword = static_cast<uint16_t>(charcode);
+  while (cmap) {
+    if (cmap->dword_map_) {
+      const DWordCIDMap* begin = cmap->dword_map_;
+      const auto* end = UNSAFE_TODO(begin + cmap->dword_count_);
+      const auto* found = std::lower_bound(
+          begin, end, charcode,
+          [](const DWordCIDMap& element, uint32_t charcode) {
+            uint16_t hiword = static_cast<uint16_t>(charcode >> 16);
+            if (element.hi_word_ != hiword) {
+              return element.hi_word_ < hiword;
+            }
+            return element.lo_word_high_ < static_cast<uint16_t>(charcode);
+          });
+      if (found != end && loword >= found->lo_word_low_ &&
+          loword <= found->lo_word_high_) {
+        return found->cid_ + loword - found->lo_word_low_;
+      }
+    }
+    cmap = FindNextCMap(cmap);
+  }
+  return 0;
+}
+
 }  // namespace
 
 uint16_t CIDFromCharCode(const CMap* cmap, uint32_t charcode) {
-  DCHECK(cmap);
-  const uint16_t loword = static_cast<uint16_t>(charcode);
+  CHECK(cmap);
   if (charcode >> 16) {
-    while (cmap) {
-      if (cmap->dword_map_) {
-        const DWordCIDMap* begin = cmap->dword_map_;
-        const auto* end = UNSAFE_TODO(begin + cmap->dword_count_);
-        const auto* found = std::lower_bound(
-            begin, end, charcode,
-            [](const DWordCIDMap& element, uint32_t charcode) {
-              uint16_t hiword = static_cast<uint16_t>(charcode >> 16);
-              if (element.hi_word_ != hiword) {
-                return element.hi_word_ < hiword;
-              }
-              return element.lo_word_high_ < static_cast<uint16_t>(charcode);
-            });
-        if (found != end && loword >= found->lo_word_low_ &&
-            loword <= found->lo_word_high_) {
-          return found->cid_ + loword - found->lo_word_low_;
-        }
-      }
-      cmap = FindNextCMap(cmap);
-    }
-    return 0;
+    return CIDFromCharCodeForDword(cmap, charcode);
   }
 
-  while (cmap && cmap->word_map_) {
+  const uint16_t loword = static_cast<uint16_t>(charcode);
+  while (cmap) {
+    CHECK(cmap->word_map_);
     switch (cmap->word_map_type_) {
       case CMap::Type::kSingle: {
         const auto* begin =
@@ -99,7 +105,8 @@ uint32_t CharCodeFromCID(const CMap* cmap, uint16_t cid) {
   // the first always returns. Investigate and determine how this should
   // really be working. (https://codereview.chromium.org/2235743003 removed the
   // second while loop.)
-  DCHECK(cmap);
+  CHECK(cmap);
+  CHECK(cmap->word_map_);
   while (cmap) {
     switch (cmap->word_map_type_) {
       case CMap::Type::kSingle: {
