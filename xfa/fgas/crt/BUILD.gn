@@ -37,7 +37,7 @@ pdfium_unittest_source_set("unittests") {
     ":crt",
     "../../../core/fpdfapi/page",
     "../../../fxjs:gc",
-    "../../fxfa/parser:parser",
+    "../../fxfa/parser",
   ]
   pdfium_root_dir = "../../../"
 }

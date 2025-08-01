@@ -12,7 +12,7 @@ config("llvm-libc-config") {
 
 group("llvm-libc-shared") {
   # llvm-libc is only used as a dependency of libc++.
-  visibility = [ "//buildtools/third_party/libc++:libc++" ]
+  visibility = [ "//buildtools/third_party/libc++" ]
 
   public_configs = [ ":llvm-libc-config" ]
 }
