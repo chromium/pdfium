@@ -26,6 +26,23 @@ struct RangeCmap {
   uint16_t cid;
 };
 
+pdfium::span<const SingleCmap> GetSingleCmapSpan(const CMap* cmap) {
+  // SAFETY: `CMap` uses manually audited constexpr data.
+  return UNSAFE_BUFFERS(pdfium::span(
+      reinterpret_cast<const SingleCmap*>(cmap->word_map_), cmap->word_count_));
+}
+
+pdfium::span<const RangeCmap> GetRangeCmapSpan(const CMap* cmap) {
+  // SAFETY: `CMap` uses manually audited constexpr data.
+  return UNSAFE_BUFFERS(pdfium::span(
+      reinterpret_cast<const RangeCmap*>(cmap->word_map_), cmap->word_count_));
+}
+
+pdfium::span<const DWordCIDMap> GetDWordCIDMapCmapSpan(const CMap* cmap) {
+  // SAFETY: `CMap` uses manually audited constexpr data.
+  return UNSAFE_BUFFERS(pdfium::span(cmap->dword_map_, cmap->dword_count_));
+}
+
 const CMap* FindNextCMap(const CMap* cmap) {
   if (cmap->use_offset_ == 0) {
     return nullptr;
@@ -39,11 +56,9 @@ uint16_t CIDFromCharCodeForDword(const CMap* cmap, uint32_t charcode) {
   const uint16_t loword = static_cast<uint16_t>(charcode);
   while (cmap) {
     if (cmap->dword_map_) {
-      const DWordCIDMap* begin = cmap->dword_map_;
-      // SAFETY: `CMap` uses manually audited constexpr data.
-      const auto* end = UNSAFE_BUFFERS(begin + cmap->dword_count_);
+      auto dword_span = GetDWordCIDMapCmapSpan(cmap);
       const auto* found = std::lower_bound(
-          begin, end, charcode,
+          dword_span.begin(), dword_span.end(), charcode,
           [](const DWordCIDMap& element, uint32_t charcode) {
             uint16_t hiword = static_cast<uint16_t>(charcode >> 16);
             if (element.hi_word_ != hiword) {
@@ -51,7 +66,7 @@ uint16_t CIDFromCharCodeForDword(const CMap* cmap, uint32_t charcode) {
             }
             return element.lo_word_high_ < static_cast<uint16_t>(charcode);
           });
-      if (found != end && loword >= found->lo_word_low_ &&
+      if (found != dword_span.end() && loword >= found->lo_word_low_ &&
           loword <= found->lo_word_high_) {
         return found->cid_ + loword - found->lo_word_low_;
       }
@@ -74,28 +89,26 @@ uint16_t CIDFromCharCode(const CMap* cmap, uint32_t charcode) {
     CHECK(cmap->word_map_);
     switch (cmap->word_map_type_) {
       case CMap::Type::kSingle: {
-        const auto* begin =
-            reinterpret_cast<const SingleCmap*>(cmap->word_map_);
-        // SAFETY: `CMap` uses manually audited constexpr data.
-        const auto* end = UNSAFE_BUFFERS(begin + cmap->word_count_);
-        const auto* found = std::lower_bound(
-            begin, end, loword, [](const SingleCmap& element, uint16_t code) {
-              return element.code < code;
-            });
-        if (found != end && found->code == loword) {
+        auto single_span = GetSingleCmapSpan(cmap);
+        const auto* found =
+            std::lower_bound(single_span.begin(), single_span.end(), loword,
+                             [](const SingleCmap& element, uint16_t code) {
+                               return element.code < code;
+                             });
+        if (found != single_span.end() && found->code == loword) {
           return found->cid;
         }
         break;
       }
       case CMap::Type::kRange: {
-        const auto* begin = reinterpret_cast<const RangeCmap*>(cmap->word_map_);
-        // SAFETY: `CMap` uses manually audited constexpr data.
-        const auto* end = UNSAFE_BUFFERS(begin + cmap->word_count_);
-        const auto* found = std::lower_bound(
-            begin, end, loword, [](const RangeCmap& element, uint16_t code) {
-              return element.high < code;
-            });
-        if (found != end && loword >= found->low && loword <= found->high) {
+        auto range_span = GetRangeCmapSpan(cmap);
+        const auto* found =
+            std::lower_bound(range_span.begin(), range_span.end(), loword,
+                             [](const RangeCmap& element, uint16_t code) {
+                               return element.high < code;
+                             });
+        if (found != range_span.end() && loword >= found->low &&
+            loword <= found->high) {
           return found->cid + loword - found->low;
         }
         break;
@@ -118,11 +131,7 @@ uint32_t CharCodeFromCID(const CMap* cmap, uint16_t cid) {
   while (cmap) {
     switch (cmap->word_map_type_) {
       case CMap::Type::kSingle: {
-        // SAFETY: `CMap` uses manually audited constexpr data.
-        auto single_span = UNSAFE_BUFFERS(
-            pdfium::span(reinterpret_cast<const SingleCmap*>(cmap->word_map_),
-                         cmap->word_count_));
-        for (const auto& single : single_span) {
+        for (const auto& single : GetSingleCmapSpan(cmap)) {
           if (single.cid == cid) {
             return single.code;
           }
@@ -130,11 +139,7 @@ uint32_t CharCodeFromCID(const CMap* cmap, uint16_t cid) {
         break;
       }
       case CMap::Type::kRange: {
-        // SAFETY: `CMap` uses manually audited constexpr data.
-        auto range_span = UNSAFE_BUFFERS(
-            pdfium::span(reinterpret_cast<const RangeCmap*>(cmap->word_map_),
-                         cmap->word_count_));
-        for (const auto& range : range_span) {
+        for (const auto& range : GetRangeCmapSpan(cmap)) {
           if (cid >= range.cid && cid <= range.cid + range.high - range.low) {
             return range.low + cid - range.cid;
           }
