@@ -120,4 +120,8 @@ pdfium_unittest_source_set("unittests") {
     "../fpdfapi/render",
   ]
   pdfium_root_dir = "../../"
+
+  # TODO(crbug.com/40031409): Fix code that adds exit-time destructors and
+  # enable the diagnostic by removing this line.
+  configs = [ "//build/config/compiler:no_exit_time_destructors" ]
 }
