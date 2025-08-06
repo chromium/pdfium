@@ -1707,7 +1707,7 @@ FPDFAnnot_GetFormFieldExportValue(FPDF_FORMHANDLE hHandle,
   // SAFETY: required from caller.
   return Utf16EncodeMaybeCopyAndReturnLength(
       pWidget->GetExportValue(),
-      UNSAFE_TODO(SpanFromFPDFApiArgs(buffer, buflen)));
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetURI(FPDF_ANNOTATION annot,
