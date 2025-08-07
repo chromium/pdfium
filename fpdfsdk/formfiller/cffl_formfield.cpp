@@ -28,11 +28,9 @@ CFFL_FormField::~CFFL_FormField() {
 
 void CFFL_FormField::DestroyWindows() {
   while (!maps_.empty()) {
-    auto it = maps_.begin();
-    std::unique_ptr<CPWL_Wnd> pWnd = std::move(it->second);
-    maps_.erase(it);
-    pWnd->InvalidateProvider(this);
-    pWnd->Destroy();
+    auto node = maps_.extract(maps_.begin());
+    node.mapped()->InvalidateProvider(this);
+    node.mapped()->Destroy();
   }
 }
 
@@ -412,14 +410,11 @@ CPWL_Wnd* CFFL_FormField::CreateOrUpdatePWLWindow(
 }
 
 void CFFL_FormField::DestroyPWLWindow(const CPDFSDK_PageView* pPageView) {
-  auto it = maps_.find(pPageView);
-  if (it == maps_.end()) {
+  auto node = maps_.extract(pPageView);
+  if (node.empty()) {
     return;
   }
-
-  std::unique_ptr<CPWL_Wnd> pWnd = std::move(it->second);
-  maps_.erase(it);
-  pWnd->Destroy();
+  node.mapped()->Destroy();
 }
 
 CFX_Matrix CFFL_FormField::GetWindowMatrix(

@@ -303,13 +303,12 @@ void CPDF_Dictionary::ConvertToIndirectObjectFor(
 
 RetainPtr<CPDF_Object> CPDF_Dictionary::RemoveFor(ByteStringView key) {
   CHECK(!IsLocked());
-  RetainPtr<CPDF_Object> result;
   auto it = map_.find(key);
-  if (it != map_.end()) {
-    result = std::move(it->second);
-    map_.erase(it);
+  if (it == map_.end()) {
+    return RetainPtr<CPDF_Object>();
   }
-  return result;
+  auto node = map_.extract(it);
+  return std::move(node.mapped());
 }
 
 void CPDF_Dictionary::ReplaceKey(const ByteString& oldkey,
