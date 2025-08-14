@@ -28,6 +28,11 @@ pdf_use_partition_alloc_override = is_clang
 # The default is to use AGG when `pdf_use_skia_override` is false.
 pdf_use_skia_override = false
 
+# When building PDFium with Skia enabled, optionally define a custom font
+# manager target that is used to override the pre-chosen font manager.
+# Default: No override. Use the pre-chosen font manager.
+pdf_skia_font_manager_target_override = ""
+
 # Build PDFium with experimental Fontations library support.
 # If enabled, coexists in build with FreeType library and the default font
 # library is selectable at runtime.

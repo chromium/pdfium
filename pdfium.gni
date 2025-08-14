@@ -49,6 +49,13 @@ declare_args() {
   # renderer is selectable at runtime.
   pdf_use_skia = pdf_use_skia_override
 
+  # When building PDFium with Skia enabled, use a custom font manager if there
+  # is one. The target that PDFium will depend on must implement the following
+  # C++ function signature:
+  #
+  # sk_sp<SkFontMgr> pdfium_skia_custom_font_manager();
+  pdf_skia_font_manager_target = pdf_skia_font_manager_target_override
+
   # Build PDFium with experimental Fontations library support.
   # If enabled, coexists in build with FreeType library and the default font
   # library is selectable at runtime.

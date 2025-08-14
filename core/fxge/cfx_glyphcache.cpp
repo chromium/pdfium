@@ -239,10 +239,25 @@ int CFX_GlyphCache::GetGlyphWidth(const CFX_Font* font,
 
 #if defined(PDF_USE_SKIA)
 
+#if defined(PDF_USE_SKIA_CUSTOM_FONT_MANAGER)
+extern sk_sp<SkFontMgr> pdfium_skia_custom_font_manager();
+#endif
+
 namespace {
+
 // A singleton SkFontMgr which can be used to decode raw font data or
 // otherwise get access to system fonts.
 SkFontMgr* g_fontmgr = nullptr;
+
+sk_sp<SkFontMgr> CreateSkiaFontManager() {
+#if defined(PDF_USE_SKIA_CUSTOM_FONT_MANAGER)
+  return pdfium_skia_custom_font_manager();
+#else
+  // This is a SkFontMgr which will use FreeType to decode font data.
+  return SkFontMgr_New_Custom_Empty();
+#endif
+}
+
 }  // namespace
 
 // static
@@ -254,7 +269,7 @@ void CFX_GlyphCache::InitializeGlobals() {
   g_fontmgr = SkFontMgr_New_CoreText(nullptr).release();
 #else
   // This is a SkFontMgr which will use FreeType to decode font data.
-  g_fontmgr = SkFontMgr_New_Custom_Empty().release();
+  g_fontmgr = CreateSkiaFontManager().release();
 #endif
 }
 
@@ -272,9 +287,9 @@ CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* font) {
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
   }
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
-  // If DirectWrite or CoreText didn't work, try FreeType.
+  // If DirectWrite or CoreText didn't work, try a fallback font manager.
   if (!typeface_) {
-    sk_sp<SkFontMgr> freetype_mgr = SkFontMgr_New_Custom_Empty();
+    sk_sp<SkFontMgr> freetype_mgr = CreateSkiaFontManager();
     pdfium::span<const uint8_t> span = font->GetFontSpan();
     typeface_ = freetype_mgr->makeFromStream(
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
