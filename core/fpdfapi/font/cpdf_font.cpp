@@ -34,6 +34,7 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
+#include "core/fxge/fx_fontencoding.h"
 
 namespace {
 
@@ -429,11 +430,29 @@ CFX_Font* CPDF_Font::GetFontFallback(int position) {
 }
 
 bool CPDF_Font::UseTTCharmapUnicode(const RetainPtr<CFX_Face>& face) {
+  size_t charmap_unicode_index = 0;
+  bool charmap_unicode_found = false;
+  bool charmap_mssymbol_found = false;
   for (size_t i = 0; i < face->GetCharMapCount(); i++) {
-    if (face->GetCharMapEncodingByIndex(i) == fxge::FontEncoding::kUnicode) {
+    const int platform_id = face->GetCharMapPlatformIdByIndex(i);
+    const int encoding_id = face->GetCharMapEncodingIdByIndex(i);
+    const fxge::FontEncoding encoding = face->GetCharMapEncodingByIndex(i);
+    if (platform_id == 3 && encoding_id == 1) {
       face->SetCharMapByIndex(i);
       return true;
     }
+    if (platform_id == 3 && encoding_id == 0) {
+      charmap_mssymbol_found = true;
+      continue;
+    }
+    if (!charmap_unicode_found && encoding == fxge::FontEncoding::kUnicode) {
+      charmap_unicode_found = true;
+      charmap_unicode_index = i;
+    }
+  }
+  if (charmap_unicode_found && !charmap_mssymbol_found) {
+    face->SetCharMapByIndex(charmap_unicode_index);
+    return true;
   }
   return false;
 }
