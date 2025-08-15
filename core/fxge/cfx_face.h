@@ -48,6 +48,7 @@ class CFX_Face final : public Retainable, public Observable {
   };
 
   // Aliases for some commonly used cmaps.
+  static constexpr CharMapId kMacRomanCmapId{1, 0};
   static constexpr CharMapId kWindowsSymbolCmapId{3, 0};
   static constexpr CharMapId kWindowsUnicodeCmapId{3, 1};
 

@@ -143,16 +143,8 @@ class CPDF_Font : public Retainable, public Observable {
   // Tries to select any Unicode character map.
   static bool UseTTCharmapUnicode(const RetainPtr<CFX_Face>& face);
 
-  // Commonly used wrappers for UseTTCharmap().
-  static bool UseTTCharmapMSSymbol(const RetainPtr<CFX_Face>& face) {
-    return UseTTCharmap(face, 3, 0);
-  }
-  static bool UseTTCharmapMacRoman(const RetainPtr<CFX_Face>& face) {
-    return UseTTCharmap(face, 1, 0);
-  }
   static bool UseTTCharmap(const RetainPtr<CFX_Face>& face,
-                           int platform_id,
-                           int encoding_id);
+                           const CFX_Face::CharMapId& cmap_id);
 
   static const char* GetAdobeCharName(FontEncoding base_encoding,
                                       const std::vector<ByteString>& charnames,

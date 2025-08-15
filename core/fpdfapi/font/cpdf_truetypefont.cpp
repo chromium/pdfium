@@ -118,7 +118,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     }
     return;
   }
-  if (UseTTCharmapMSSymbol(face)) {
+  if (UseTTCharmap(face, CFX_Face::kWindowsSymbolCmapId)) {
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
       glyph_index_[charcode] = GetGlyphIndexForMSSymbol(face, charcode);
     }
@@ -131,7 +131,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
             encoding_.SetUnicode(charcode, UnicodeFromAdobeName(name));
           }
         }
-      } else if (UseTTCharmapMacRoman(face)) {
+      } else if (UseTTCharmap(face, CFX_Face::kMacRomanCmapId)) {
         for (uint32_t charcode = 0; charcode < 256; charcode++) {
           encoding_.SetUnicode(charcode,
                                UnicodeFromAppleRomanCharCode(charcode));
@@ -140,7 +140,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       return;
     }
   }
-  if (UseTTCharmapMacRoman(face)) {
+  if (UseTTCharmap(face, CFX_Face::kMacRomanCmapId)) {
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
       glyph_index_[charcode] = face->GetCharIndex(charcode);
       encoding_.SetUnicode(charcode, UnicodeFromAppleRomanCharCode(charcode));
@@ -191,17 +191,17 @@ CPDF_TrueTypeFont::CharmapType CPDF_TrueTypeFont::DetermineCharmapType() const {
   }
 
   if (FontStyleIsNonSymbolic(flags_)) {
-    if (UseTTCharmapMacRoman(font_.GetFace())) {
+    if (UseTTCharmap(font_.GetFace(), CFX_Face::kMacRomanCmapId)) {
       return CharmapType::kMacRoman;
     }
-    if (UseTTCharmapMSSymbol(font_.GetFace())) {
+    if (UseTTCharmap(font_.GetFace(), CFX_Face::kWindowsSymbolCmapId)) {
       return CharmapType::kMSSymbol;
     }
   } else {
-    if (UseTTCharmapMSSymbol(font_.GetFace())) {
+    if (UseTTCharmap(font_.GetFace(), CFX_Face::kWindowsSymbolCmapId)) {
       return CharmapType::kMSSymbol;
     }
-    if (UseTTCharmapMacRoman(font_.GetFace())) {
+    if (UseTTCharmap(font_.GetFace(), CFX_Face::kMacRomanCmapId)) {
       return CharmapType::kMacRoman;
     }
   }
