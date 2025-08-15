@@ -748,6 +748,11 @@ std::optional<fxge::FontEncoding> CFX_Face::GetCurrentCharMapEncoding() const {
   return ToFontEncoding(GetRec()->charmap->encoding);
 }
 
+CFX_Face::CharMapId CFX_Face::GetCharMapIdByIndex(size_t index) const {
+  return {.platform_id = GetCharMapPlatformIdByIndex(index),
+          .encoding_id = GetCharMapEncodingIdByIndex(index)};
+}
+
 int CFX_Face::GetCharMapPlatformIdByIndex(size_t index) const {
   CHECK_LT(index, GetCharMapCount());
   // SAFETY: required from library as enforced by check above.

@@ -38,6 +38,19 @@ class CFX_Face final : public Retainable, public Observable {
     uint32_t glyph_index;
   };
 
+  // Note that this corresponds to the cmap header in fonts, and not the cmap
+  // data in PDFs.
+  struct CharMapId {
+    bool operator==(const CharMapId&) const = default;
+
+    int platform_id;
+    int encoding_id;
+  };
+
+  // Aliases for some commonly used cmaps.
+  static constexpr CharMapId kWindowsSymbolCmapId{3, 0};
+  static constexpr CharMapId kWindowsUnicodeCmapId{3, 1};
+
   static RetainPtr<CFX_Face> New(FT_Library library,
                                  RetainPtr<Retainable> pDesc,
                                  pdfium::span<const FT_Byte> data,
@@ -106,6 +119,7 @@ class CFX_Face final : public Retainable, public Observable {
 
   CharMap GetCurrentCharMap() const;
   std::optional<fxge::FontEncoding> GetCurrentCharMapEncoding() const;
+  CharMapId GetCharMapIdByIndex(size_t index) const;
   int GetCharMapPlatformIdByIndex(size_t index) const;
   int GetCharMapEncodingIdByIndex(size_t index) const;
   fxge::FontEncoding GetCharMapEncodingByIndex(size_t index) const;

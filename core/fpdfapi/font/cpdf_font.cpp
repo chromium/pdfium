@@ -434,17 +434,16 @@ bool CPDF_Font::UseTTCharmapUnicode(const RetainPtr<CFX_Face>& face) {
   bool charmap_unicode_found = false;
   bool charmap_mssymbol_found = false;
   for (size_t i = 0; i < face->GetCharMapCount(); i++) {
-    const int platform_id = face->GetCharMapPlatformIdByIndex(i);
-    const int encoding_id = face->GetCharMapEncodingIdByIndex(i);
-    const fxge::FontEncoding encoding = face->GetCharMapEncodingByIndex(i);
-    if (platform_id == 3 && encoding_id == 1) {
+    const CFX_Face::CharMapId charmap_id = face->GetCharMapIdByIndex(i);
+    if (charmap_id == CFX_Face::kWindowsUnicodeCmapId) {
       face->SetCharMapByIndex(i);
       return true;
     }
-    if (platform_id == 3 && encoding_id == 0) {
+    if (charmap_id == CFX_Face::kWindowsSymbolCmapId) {
       charmap_mssymbol_found = true;
       continue;
     }
+    const fxge::FontEncoding encoding = face->GetCharMapEncodingByIndex(i);
     if (!charmap_unicode_found && encoding == fxge::FontEncoding::kUnicode) {
       charmap_unicode_found = true;
       charmap_unicode_index = i;
