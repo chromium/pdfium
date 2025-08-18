@@ -1270,6 +1270,34 @@ TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndex) {
   EXPECT_EQ(1u, doc->GetParsedPageCountForTesting());
 }
 
+TEST_F(FPDFViewEmbedderTest, CroppedTextPageSize) {
+  ASSERT_TRUE(OpenDocument("cropped_text.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_FLOAT_EQ(100.0f, FPDF_GetPageWidthF(page.get()));
+  EXPECT_FLOAT_EQ(100.0f, FPDF_GetPageHeightF(page.get()));
+
+  double width = 1.0;
+  double height = 1.0;
+  ASSERT_TRUE(FPDF_GetPageSizeByIndex(document(), 0, &width, &height));
+  EXPECT_DOUBLE_EQ(100.0, width);
+  EXPECT_DOUBLE_EQ(100.0, height);
+}
+
+TEST_F(FPDFViewEmbedderTest, CroppedNoOverlapPageSize) {
+  ASSERT_TRUE(OpenDocument("cropped_no_overlap.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_FLOAT_EQ(0.0f, FPDF_GetPageWidthF(page.get()));
+  EXPECT_FLOAT_EQ(0.0f, FPDF_GetPageHeightF(page.get()));
+
+  double width = 1.0;
+  double height = 1.0;
+  ASSERT_TRUE(FPDF_GetPageSizeByIndex(document(), 0, &width, &height));
+  EXPECT_DOUBLE_EQ(0.0, width);
+  EXPECT_DOUBLE_EQ(0.0, height);
+}
+
 TEST_F(FPDFViewEmbedderTest, GetXFAArrayData) {
   static constexpr struct {
     int index;
