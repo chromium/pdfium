@@ -99,10 +99,3 @@ int32_t CFX_DateTime::GetDayOfWeek() const {
   }
   return v;
 }
-
-bool operator==(const CFX_DateTime& lhs, const CFX_DateTime& rhs) {
-  return lhs.year_ == rhs.year_ && lhs.month_ == rhs.month_ &&
-         lhs.day_ == rhs.day_ && lhs.hour_ == rhs.hour_ &&
-         lhs.minute_ == rhs.minute_ && lhs.second_ == rhs.second_ &&
-         lhs.millisecond_ == rhs.millisecond_;
-}

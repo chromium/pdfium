@@ -20,10 +20,8 @@ class CFX_PTemplate {
   CFX_PTemplate(const CFX_PTemplate& other) = default;
   CFX_PTemplate& operator=(const CFX_PTemplate& other) = default;
 
-  friend inline bool operator==(const CFX_PTemplate& lhs,
-                                const CFX_PTemplate& rhs) {
-    return lhs.x == rhs.x && lhs.y == rhs.y;
-  }
+  friend constexpr bool operator==(const CFX_PTemplate&,
+                                   const CFX_PTemplate&) = default;
   CFX_PTemplate& operator+=(const CFX_PTemplate<BaseType>& obj) {
     x += obj.x;
     y += obj.y;
@@ -71,10 +69,8 @@ class CFX_STemplate {
     width = 0;
     height = 0;
   }
-  friend inline bool operator==(const CFX_STemplate& lhs,
-                                const CFX_STemplate& rhs) {
-    return lhs.width == rhs.width && lhs.height == rhs.height;
-  }
+  friend constexpr bool operator==(const CFX_STemplate&,
+                                   const CFX_STemplate&) = default;
   CFX_STemplate& operator+=(const CFX_STemplate<BaseType>& obj) {
     width += obj.width;
     height += obj.height;
@@ -166,10 +162,7 @@ struct FX_RECT {
     bottom += dy;
   }
 
-  friend inline bool operator==(const FX_RECT& lhs, const FX_RECT& rhs) {
-    return lhs.left == rhs.left && lhs.right == rhs.right &&
-           lhs.top == rhs.top && lhs.bottom == rhs.bottom;
-  }
+  friend constexpr bool operator==(const FX_RECT&, const FX_RECT&) = default;
 
   bool Contains(int x, int y) const {
     return x >= left && x < right && y >= top && y < bottom;
@@ -261,11 +254,8 @@ class CFX_FloatRect {
   // Rounds LBRT values.
   FX_RECT ToRoundedFxRect() const;
 
-  friend inline bool operator==(const CFX_FloatRect& lhs,
-                                const CFX_FloatRect& rhs) {
-    return lhs.left == rhs.left && lhs.right == rhs.right &&
-           lhs.top == rhs.top && rhs.bottom == rhs.bottom;
-  }
+  friend constexpr bool operator==(const CFX_FloatRect&,
+                                   const CFX_FloatRect&) = default;
 
   float left = 0.0f;
   float bottom = 0.0f;
@@ -408,10 +398,8 @@ class CFX_RectF {
     rect.Intersect(*this);
     return !rect.IsEmpty(fEpsilon);
   }
-  friend inline bool operator==(const CFX_RectF& rc1, const CFX_RectF& rc2) {
-    return rc1.left == rc2.left && rc1.top == rc2.top &&
-           rc1.width == rc2.width && rc1.height == rc2.height;
-  }
+  friend constexpr bool operator==(const CFX_RectF&,
+                                   const CFX_RectF&) = default;
 
   CFX_FloatRect ToFloatRect() const {
     // Note, we flip top/bottom here because the CFX_FloatRect has the
@@ -451,10 +439,8 @@ class CFX_Matrix {
 
   CFX_Matrix& operator=(const CFX_Matrix& other) = default;
 
-  friend inline bool operator==(const CFX_Matrix& lhs, const CFX_Matrix& rhs) {
-    return lhs.a == rhs.a && lhs.b == rhs.b && lhs.c == rhs.c &&
-           lhs.d == rhs.d && lhs.e == rhs.e && lhs.f == rhs.f;
-  }
+  friend constexpr bool operator==(const CFX_Matrix&,
+                                   const CFX_Matrix&) = default;
 
   CFX_Matrix operator*(const CFX_Matrix& right) const {
     return CFX_Matrix(a * right.a + b * right.c, a * right.b + b * right.d,
