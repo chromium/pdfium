@@ -41,7 +41,8 @@ class CFX_Face final : public Retainable, public Observable {
   // Note that this corresponds to the cmap header in fonts, and not the cmap
   // data in PDFs.
   struct CharMapId {
-    bool operator==(const CharMapId&) const = default;
+    friend constexpr bool operator==(const CharMapId&,
+                                     const CharMapId&) = default;
 
     int platform_id;
     int encoding_id;

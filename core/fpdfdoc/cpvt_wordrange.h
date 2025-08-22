@@ -20,10 +20,8 @@ struct CPVT_WordRange {
     Normalize();
   }
 
-  friend inline bool operator==(const CPVT_WordRange& lhs,
-                                const CPVT_WordRange& rhs) {
-    return lhs.BeginPos == rhs.BeginPos && lhs.EndPos == rhs.EndPos;
-  }
+  friend constexpr bool operator==(const CPVT_WordRange&,
+                                   const CPVT_WordRange&) = default;
 
   inline bool IsEmpty() const { return BeginPos == EndPos; }
 

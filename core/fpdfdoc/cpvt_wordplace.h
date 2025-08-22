@@ -31,11 +31,8 @@ struct CPVT_WordPlace {
     nWordIndex = -1;
   }
 
-  friend inline bool operator==(const CPVT_WordPlace& lhs,
-                                const CPVT_WordPlace& rhs) {
-    return lhs.nSecIndex == rhs.nSecIndex && lhs.nLineIndex == rhs.nLineIndex &&
-           lhs.nWordIndex == rhs.nWordIndex;
-  }
+  friend constexpr bool operator==(const CPVT_WordPlace&,
+                                   const CPVT_WordPlace&) = default;
   inline bool operator<(const CPVT_WordPlace& wp) const {
     if (nSecIndex != wp.nSecIndex) {
       return nSecIndex < wp.nSecIndex;

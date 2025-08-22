@@ -27,6 +27,9 @@ struct CFX_TextRenderOptions {
   CFX_TextRenderOptions& operator=(const CFX_TextRenderOptions& other) =
       default;
 
+  friend constexpr bool operator==(const CFX_TextRenderOptions&,
+                                   const CFX_TextRenderOptions&) = default;
+
   // Indicates whether anti-aliasing is enabled.
   bool IsSmooth() const {
     return aliasing_type == kAntiAliasing || aliasing_type == kLcd;
@@ -41,12 +44,5 @@ struct CFX_TextRenderOptions {
   // Using the native text output available on some platforms.
   bool native_text = true;
 };
-
-inline bool operator==(const CFX_TextRenderOptions& lhs,
-                       const CFX_TextRenderOptions& rhs) {
-  return lhs.aliasing_type == rhs.aliasing_type &&
-         lhs.font_is_cid == rhs.font_is_cid &&
-         lhs.native_text == rhs.native_text;
-}
 
 #endif  // CORE_FXGE_CFX_TEXTRENDEROPTIONS_H_

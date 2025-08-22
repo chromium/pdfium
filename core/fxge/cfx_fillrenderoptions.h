@@ -36,16 +36,8 @@ struct CFX_FillRenderOptions {
   constexpr explicit CFX_FillRenderOptions(FillType fill_type)
       : fill_type(fill_type) {}
 
-  friend inline bool operator==(const CFX_FillRenderOptions& lhs,
-                                const CFX_FillRenderOptions& rhs) {
-    return lhs.fill_type == rhs.fill_type &&
-           lhs.adjust_stroke == rhs.adjust_stroke &&
-           lhs.aliased_path == rhs.aliased_path &&
-           lhs.full_cover == rhs.full_cover && lhs.rect_aa == rhs.rect_aa &&
-           lhs.stroke == rhs.stroke &&
-           lhs.stroke_text_mode == rhs.stroke_text_mode &&
-           lhs.text_mode == rhs.text_mode && lhs.zero_area == rhs.zero_area;
-  }
+  friend constexpr bool operator==(const CFX_FillRenderOptions&,
+                                   const CFX_FillRenderOptions&) = default;
 
   // Fill type.
   FillType fill_type;

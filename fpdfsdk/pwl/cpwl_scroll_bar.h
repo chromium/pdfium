@@ -23,8 +23,8 @@ struct PWL_SCROLL_INFO {
         fBigStep(0.0f),
         fSmallStep(0.0f) {}
 
-  friend inline bool operator==(const PWL_SCROLL_INFO& lhs,
-                                const PWL_SCROLL_INFO& rhs) = default;
+  friend constexpr bool operator==(const PWL_SCROLL_INFO&,
+                                   const PWL_SCROLL_INFO&) = default;
 
   float fContentMin;
   float fContentMax;
@@ -37,8 +37,8 @@ struct PWL_FLOATRANGE {
  public:
   PWL_FLOATRANGE() = default;
 
-  friend inline bool operator==(const PWL_FLOATRANGE& lhs,
-                                const PWL_FLOATRANGE& rhs) = default;
+  friend constexpr bool operator==(const PWL_FLOATRANGE&,
+                                   const PWL_FLOATRANGE&) = default;
 
   void Reset();
   void Set(float min, float max);
@@ -53,8 +53,8 @@ struct PWL_SCROLL_PRIVATEDATA {
  public:
   PWL_SCROLL_PRIVATEDATA();
 
-  friend inline bool operator==(const PWL_SCROLL_PRIVATEDATA& lhs,
-                                const PWL_SCROLL_PRIVATEDATA& rhs) = default;
+  friend constexpr bool operator==(const PWL_SCROLL_PRIVATEDATA&,
+                                   const PWL_SCROLL_PRIVATEDATA&) = default;
 
   void Default();
   void SetScrollRange(float min, float max);
