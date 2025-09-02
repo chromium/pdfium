@@ -106,6 +106,8 @@ source_set("page") {
     "cpdf_transparency.cpp",
     "cpdf_transparency.h",
     "ipdf_page.h",
+    "jpx_decode_conversion.cpp",
+    "jpx_decode_conversion.h",
   ]
   configs += [ "../../../:pdfium_strict_config" ]
   public_deps = [
