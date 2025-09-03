@@ -63,7 +63,7 @@ int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
 }
 
 void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
-  if (!font_.GetFaceRec()) {
+  if (!font_.HasFaceRec()) {
     return;
   }
 

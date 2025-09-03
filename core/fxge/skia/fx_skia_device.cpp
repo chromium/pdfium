@@ -929,7 +929,7 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
   skPaint.setColor(color);
 
   SkFont font;
-  if (pFont->GetFaceRec()) {  // exclude placeholder test fonts
+  if (pFont->HasFaceRec()) {  // exclude placeholder test fonts
     font.setTypeface(sk_ref_sp(pFont->GetDeviceCache()));
   }
   font.setEmbolden(pFont->IsSubstFontBold());
