@@ -626,26 +626,11 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
     DCHECK_NE(0u, components_);
   }
 
-  FXDIB_Format format;
-  if (conversion.action() == JpxDecodeAction::kUseGray ||
-      conversion.action() == JpxDecodeAction::kUseIndexed) {
-    format = FXDIB_Format::k8bppRgb;
-  } else if (conversion.action() == JpxDecodeAction::kUseRgb &&
-             image_info.channels == 3) {
-    format = FXDIB_Format::kBgr;
-  } else if (conversion.action() == JpxDecodeAction::kUseRgb &&
-             image_info.channels == 4) {
-    format = FXDIB_Format::kBgrx;
-  } else if (conversion.action() == JpxDecodeAction::kConvertArgbToRgb) {
-    CHECK_GE(image_info.channels, 4);
-    format = FXDIB_Format::kBgrx;
-  } else {
-    image_info.width = (image_info.width * image_info.channels + 2) / 3;
-    format = FXDIB_Format::kBgr;
-  }
+  image_info.width = conversion.width();
 
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!result_bitmap->Create(image_info.width, image_info.height, format)) {
+  if (!result_bitmap->Create(image_info.width, image_info.height,
+                             conversion.format())) {
     return nullptr;
   }
 
@@ -656,7 +641,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
     return nullptr;
   }
 
-  if (conversion.action() == JpxDecodeAction::kConvertArgbToRgb) {
+  if (conversion.convert_argb_to_rgb()) {
     result_bitmap = ConvertArgbJpxBitmapToRgb(result_bitmap, image_info.width,
                                               image_info.height);
     if (!result_bitmap) {

@@ -9,17 +9,9 @@
 
 #include "core/fxcodec/jpx/cjpx_decoder.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/dib/fx_dib.h"
 
 class CPDF_ColorSpace;
-
-enum class JpxDecodeAction {
-  kDoNothing,
-  kUseGray,
-  kUseIndexed,
-  kUseRgb,
-  kUseCmyk,
-  kConvertArgbToRgb,
-};
 
 class JpxDecodeConversion {
  public:
@@ -33,8 +25,6 @@ class JpxDecodeConversion {
   JpxDecodeConversion& operator=(JpxDecodeConversion&&) noexcept;
   ~JpxDecodeConversion();
 
-  JpxDecodeAction action() const { return action_; }
-
   const std::optional<RetainPtr<CPDF_ColorSpace>>& override_colorspace() const {
     return override_colorspace_;
   }
@@ -43,15 +33,18 @@ class JpxDecodeConversion {
     return jpx_components_count_;
   }
 
-  bool swap_rgb() const {
-    return action_ == JpxDecodeAction::kUseRgb ||
-           action_ == JpxDecodeAction::kConvertArgbToRgb;
-  }
+  bool swap_rgb() const { return swap_rgb_; }
+  bool convert_argb_to_rgb() const { return convert_argb_to_rgb_; }
+  FXDIB_Format format() const { return format_; }
+  uint32_t width() const { return width_; }
 
  private:
   JpxDecodeConversion();
 
-  JpxDecodeAction action_;
+  bool swap_rgb_ = false;
+  bool convert_argb_to_rgb_ = false;
+  FXDIB_Format format_ = FXDIB_Format::kInvalid;
+  uint32_t width_ = 0;
 
   // The colorspace to override the existing colorspace.
   //

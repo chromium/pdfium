@@ -11,8 +11,18 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/dib/fx_dib.h"
 
 namespace {
+
+enum class JpxDecodeAction {
+  kDoNothing,
+  kUseGray,
+  kUseIndexed,
+  kUseRgb,
+  kUseCmyk,
+  kConvertArgbToRgb,
+};
 
 // ISO 32000-1:2008 section 7.4.9 says the PDF and JPX colorspaces should have
 // the same number of color channels. This helper function checks the
@@ -123,6 +133,26 @@ int GetComponentCountFromJpxImageInfo(
   NOTREACHED();
 }
 
+std::optional<FXDIB_Format> GetFormatFromJpxDecodeActionAndImageInfo(
+    JpxDecodeAction action,
+    uint32_t channels) {
+  if (action == JpxDecodeAction::kUseGray ||
+      action == JpxDecodeAction::kUseIndexed) {
+    return FXDIB_Format::k8bppRgb;
+  }
+  if (action == JpxDecodeAction::kUseRgb && channels == 3) {
+    return FXDIB_Format::kBgr;
+  }
+  if (action == JpxDecodeAction::kUseRgb && channels == 4) {
+    return FXDIB_Format::kBgrx;
+  }
+  if (action == JpxDecodeAction::kConvertArgbToRgb) {
+    CHECK_GE(channels, 4);
+    return FXDIB_Format::kBgrx;
+  }
+  return std::nullopt;
+}
+
 }  // namespace
 
 // static
@@ -139,8 +169,7 @@ std::optional<JpxDecodeConversion> JpxDecodeConversion::Create(
   }
 
   JpxDecodeConversion conversion;
-  conversion.action_ = maybe_action.value();
-  switch (conversion.action_) {
+  switch (maybe_action.value()) {
     case JpxDecodeAction::kDoNothing:
       break;
 
@@ -154,6 +183,7 @@ std::optional<JpxDecodeConversion> JpxDecodeConversion::Create(
 
     case JpxDecodeAction::kUseRgb:
       DCHECK_GE(jpx_info.channels, 3);
+      conversion.swap_rgb_ = true;
       conversion.override_colorspace_ = nullptr;
       break;
 
@@ -163,6 +193,8 @@ std::optional<JpxDecodeConversion> JpxDecodeConversion::Create(
       break;
 
     case JpxDecodeAction::kConvertArgbToRgb:
+      conversion.swap_rgb_ = true;
+      conversion.convert_argb_to_rgb_ = true;
       conversion.override_colorspace_ = nullptr;
       break;
   }
@@ -173,6 +205,18 @@ std::optional<JpxDecodeConversion> JpxDecodeConversion::Create(
     conversion.jpx_components_count_ =
         GetComponentCountFromJpxImageInfo(jpx_info);
   }
+
+  std::optional<FXDIB_Format> maybe_format =
+      GetFormatFromJpxDecodeActionAndImageInfo(maybe_action.value(),
+                                               jpx_info.channels);
+  if (maybe_format.has_value()) {
+    conversion.format_ = maybe_format.value();
+    conversion.width_ = jpx_info.width;
+  } else {
+    conversion.format_ = FXDIB_Format::kBgr;
+    conversion.width_ = (jpx_info.width * jpx_info.channels + 2) / 3;
+  }
+
   return conversion;
 }
 
