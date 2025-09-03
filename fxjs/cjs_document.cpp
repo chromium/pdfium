@@ -1127,6 +1127,11 @@ CJS_Result CJS_Document::getAnnots(CJS_Runtime* pRuntime,
         return CJS_Result::Failure(JSMessage::kBadObjectError);
       }
 
+      if (pSDKAnnotCur->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP ||
+          pSDKAnnotCur->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET) {
+        continue;
+      }
+
       v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
           CJS_Annot::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
       if (pObj.IsEmpty()) {
@@ -1137,7 +1142,7 @@ CJS_Result CJS_Document::getAnnots(CJS_Runtime* pRuntime,
           CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
       pJS_Annot->SetSDKAnnot(pSDKAnnotCur->AsBAAnnot());
       pRuntime->PutArrayElement(
-          annots, i,
+          annots, annots->Length(),
           pJS_Annot ? v8::Local<v8::Value>(pJS_Annot->ToV8Object())
                     : v8::Local<v8::Value>());
     }
