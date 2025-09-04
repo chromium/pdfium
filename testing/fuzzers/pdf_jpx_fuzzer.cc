@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
+#include "core/fpdfapi/page/jpx_decode_conversion.h"
 #include "core/fxcodec/jpx/cjpx_decoder.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -62,19 +63,25 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     return 0;
   }
 
-  FXDIB_Format format;
-  if (image_info.channels == 1) {
-    format = FXDIB_Format::k8bppRgb;
-  } else if (image_info.channels <= 3) {
-    format = FXDIB_Format::kBgr;
-  } else if (image_info.channels == 4) {
-    format = FXDIB_Format::kBgrx;
-  } else {
-    image_info.width = (image_info.width * image_info.channels + 2) / 3;
-    format = FXDIB_Format::kBgr;
+  // TODO(thestig): Add colorspace support.
+  RetainPtr<CPDF_ColorSpace> color_space;
+  auto maybe_conversion =
+      JpxDecodeConversion::Create(image_info, color_space.Get());
+  if (!maybe_conversion.has_value()) {
+    return 0;
   }
+
+  const auto& conversion = maybe_conversion.value();
+  int components = conversion.jpx_components_count().value_or(0);
+  if (components <= 0) {
+    return 0;
+  }
+
+  image_info.width = conversion.width();
+
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!bitmap->Create(image_info.width, image_info.height, format)) {
+  if (!bitmap->Create(image_info.width, image_info.height,
+                      conversion.format())) {
     return 0;
   }
 
@@ -85,7 +92,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   }
 
   decoder->Decode(bitmap->GetWritableBuffer(), bitmap->GetPitch(),
-                  /*swap_rgb=*/false, GetCompsFromFormat(format));
+                  conversion.swap_rgb(), components);
 
   return 0;
 }
