@@ -46,7 +46,7 @@ namespace {
 
 // A limit on the size of the xref table. Theoretical limits are higher, but
 // this may be large enough in practice. The max size should always be 1 more
-// than the max object number.
+// than the max object number. Thus the valid range is [1, kMaxXRefSize).
 constexpr int32_t kMaxXRefSize = CPDF_Parser::kMaxObjectNumber + 1;
 
 // "%PDF-1.7\n"

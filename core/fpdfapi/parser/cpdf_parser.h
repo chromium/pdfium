@@ -49,8 +49,11 @@ class CPDF_Parser {
     HANDLER_ERROR
   };
 
-  // A limit on the maximum object number in the xref table. Theoretical limits
-  // are higher, but this may be large enough in practice.
+  // A limit on the maximum object number in the xref table, so objects need to
+  // be in the range [0, kMaxObjectNumber).
+  //
+  // Theoretical limits are higher, but this may be large enough in practice.
+  //
   // Note: This was 1M, but https://crbug.com/910009 encountered a PDF with
   // object numbers in the 1.7M range. The PDF only has 10K objects, but they
   // are non-consecutive.
