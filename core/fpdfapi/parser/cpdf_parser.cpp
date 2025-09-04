@@ -844,13 +844,19 @@ bool CPDF_Parser::LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref) {
   }
 
   RetainPtr<const CPDF_Dictionary> dict = pStream->GetDict();
-  int32_t prev = dict->GetIntegerFor("Prev");
+  const int32_t prev = dict->GetIntegerFor("Prev");
   if (prev < 0) {
     return false;
   }
 
-  int32_t size = dict->GetIntegerFor("Size");
-  if (size < 0) {
+  // If /Size is negative or way too big, then it is obvious wrong.
+  // Immediately reject these cases, so `cross_ref_table_` does not get into a
+  // bad state.
+  //
+  // For a /Size of 0 or other issues, just ignore them. See comments in the
+  // for-loop below.
+  const int32_t size = dict->GetIntegerFor("Size");
+  if (size < 0 || size >= kMaxXRefSize) {
     return false;
   }
 

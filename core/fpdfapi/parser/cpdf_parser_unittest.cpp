@@ -481,25 +481,7 @@ TEST_F(ParserXRefTest, XrefObjectIndicesTooBig1) {
       "14\n"
       "%%EOF\n";
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
-  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
-  EXPECT_FALSE(parser().xref_table_rebuilt());
-  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
-  const auto& objects_info =
-      parser().GetCrossRefTableForTesting()->objects_info();
-
-  // This should be the only object from table. Subsequent objects have object
-  // numbers that are too big.
-  const CPDF_CrossRefTable::ObjectInfo only_valid_object = {
-      .type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0};
-
-  // TODO(thestig): Should the xref table contain object 4194304?
-  // Consider reworking CPDF_Parser's object representation to avoid having to
-  // store this placeholder object.
-  const CPDF_CrossRefTable::ObjectInfo placeholder_object = {
-      .type = CPDF_CrossRefTable::ObjectType::kFree, .pos = 0};
-
-  EXPECT_THAT(objects_info, ElementsAre(Pair(4194303, only_valid_object),
-                                        Pair(4194304, placeholder_object)));
+  EXPECT_EQ(CPDF_Parser::FORMAT_ERROR, parser().StartParseInternal());
 }
 
 TEST_F(ParserXRefTest, XrefObjectIndicesTooBig2) {
@@ -526,25 +508,7 @@ TEST_F(ParserXRefTest, XrefObjectIndicesTooBig2) {
       "14\n"
       "%%EOF\n";
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
-  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
-  EXPECT_FALSE(parser().xref_table_rebuilt());
-  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
-  const auto& objects_info =
-      parser().GetCrossRefTableForTesting()->objects_info();
-
-  // This should be the only object from table. Subsequent objects have object
-  // numbers that are too big.
-  const CPDF_CrossRefTable::ObjectInfo only_valid_object = {
-      .type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0};
-
-  // TODO(thestig): Should the xref table contain object 4194305?
-  // Consider reworking CPDF_Parser's object representation to avoid having to
-  // store this placeholder object.
-  const CPDF_CrossRefTable::ObjectInfo placeholder_object = {
-      .type = CPDF_CrossRefTable::ObjectType::kFree, .pos = 0};
-
-  EXPECT_THAT(objects_info, ElementsAre(Pair(4194303, only_valid_object),
-                                        Pair(4194305, placeholder_object)));
+  EXPECT_EQ(CPDF_Parser::FORMAT_ERROR, parser().StartParseInternal());
 }
 
 TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
