@@ -488,15 +488,21 @@ TEST(RetainPtr, SetContains) {
   EXPECT_EQ(2, obj2.retain_count());
   EXPECT_EQ(0, obj2.release_count());
 
-  // These involve const-removing conversions which seem to churn.
+  // These involve const-removing conversions which seem to churn when sets
+  // contain the pointer.
   EXPECT_NE(the_set.end(), the_set.find(ptr1));
   EXPECT_EQ(the_set.end(), the_set.find(ptr2));
   EXPECT_TRUE(pdfium::Contains(the_set, ptr1));
   EXPECT_FALSE(pdfium::Contains(the_set, ptr2));
-  EXPECT_EQ(5, obj1.retain_count());
-  EXPECT_EQ(2, obj1.release_count());
-  EXPECT_EQ(4, obj2.retain_count());
-  EXPECT_EQ(2, obj2.release_count());
+#if defined(ADDRESS_SANITIZER) || defined(MEMORY_SANITIZER)
+  constexpr int kExpectedObj2RetainCount = 4;
+  constexpr int kExpectedObj2ReleaseCount = 2;
+#else
+  constexpr int kExpectedObj2RetainCount = 2;
+  constexpr int kExpectedObj2ReleaseCount = 0;
+#endif  // defined(ADDRESS_SANITIZER) || defined(MEMORY_SANITIZER)
+  EXPECT_EQ(kExpectedObj2RetainCount, obj2.retain_count());
+  EXPECT_EQ(kExpectedObj2ReleaseCount, obj2.release_count());
 }
 
 TEST(RetainPtr, VectorContains) {

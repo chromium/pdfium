@@ -70,7 +70,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling abseil
   # and whatever else without interference from each other.
-  'abseil_revision': '1e18dc54a045a632de52d420e9636072662841b4',
+  'abseil_revision': '04fe3ac35a94bbeeb04f859f84254df6a43590c5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_toolchain
   # and whatever else without interference from each other.
@@ -78,11 +78,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': 'ac578f1d43317d83f78eff4d568da3942269842f',
+  'build_revision': '4d26bd65009cd6178f67a15c8888b24f6f4f1981',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': '460cef8967904d3a5fcfad728eb33db0c3a7da70',
+  'buildtools_revision': '10b037a661ecbc8b2e8c4f85c653d36d1d82cc36',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
@@ -160,7 +160,7 @@ vars = {
   # and whatever else without interference from each other.
   # If you change this, also update the libc++ revision in
   # //buildtools/deps_revisions.gni.
-  'libcxx_revision': 'adbb4a5210ae2a8a4e27fa6199221156c02a9b1a',
+  'libcxx_revision': '954086abf1216d110534fb3e21d8e86d6703cefb',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
@@ -204,7 +204,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling rust
   # and whatever else without interference from each other.
-  'rust_revision': '5f298b3f4b007718375bd45a6ef7ba0681aa4c26',
+  'rust_revision': 'ea2d1926aaa51543b41df196cf7f56f32a49d123',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling simdutf
   # and whatever else without interference from each other.
