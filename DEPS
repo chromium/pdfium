@@ -234,6 +234,10 @@ vars = {
   # and whatever else without interference from each other.
   'tools_rust_revision': 'fa1df48579a1f8af4ddafd9a65705bf0b40e5186',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling tools_win_revision
+  # and whatever else without interference from each other.
+  'tools_win_revision': '89d58ebe78f02706d414154f923f759a05a887b6',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
   'v8_revision': '6ed01c3e37ded6a462a518239981e0f1cdc3ea88',
@@ -661,6 +665,12 @@ deps = {
       }
     ],
     'dep_type': 'cipd',
+    'condition': 'checkout_win',
+  },
+
+  'tools/win': {
+    'url': Var('chromium_git') + '/chromium/src/tools/win.git@' +
+        Var('tools_win_revision'),
     'condition': 'checkout_win',
   },
 
