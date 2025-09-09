@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <vector>
 
 #include "core/fxcrt/raw_span.h"

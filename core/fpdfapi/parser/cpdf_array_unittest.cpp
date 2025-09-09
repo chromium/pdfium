@@ -4,6 +4,7 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 
+#include <array>
 #include <iterator>
 #include <memory>
 #include <utility>
