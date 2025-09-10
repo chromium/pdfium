@@ -55,7 +55,6 @@ config("skia_config") {
   include_dirs = [ "//third_party/skia" ]
 
   defines = [
-    "SK_ENCODE_PNG",
     "SK_USER_CONFIG_HEADER=\"../../skia/config/SkPdfiumUserConfig.h\"",
     "SK_DISABLE_LEGACY_INIT_DECODERS",
     "SK_DISABLE_LEGACY_PNG_WRITEBUFFER",
