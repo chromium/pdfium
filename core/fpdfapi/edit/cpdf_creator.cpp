@@ -218,11 +218,11 @@ bool CPDF_Creator::WriteNewObjs() {
 void CPDF_Creator::InitNewObjNumOffsets() {
   for (const auto& pair : *document_) {
     const uint32_t objnum = pair.first;
-    if (is_incremental_ ||
-        pair.second->GetObjNum() == CPDF_Object::kInvalidObjNum) {
+    if (pair.second->GetObjNum() == CPDF_Object::kInvalidObjNum) {
       continue;
     }
-    if (parser_ && parser_->IsValidObjectNumber(objnum) &&
+
+    if (!is_incremental_ && parser_ && parser_->IsValidObjectNumber(objnum) &&
         !parser_->IsObjectFree(objnum)) {
       continue;
     }
