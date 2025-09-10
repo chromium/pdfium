@@ -494,13 +494,15 @@ TEST(RetainPtr, SetContains) {
   EXPECT_EQ(the_set.end(), the_set.find(ptr2));
   EXPECT_TRUE(pdfium::Contains(the_set, ptr1));
   EXPECT_FALSE(pdfium::Contains(the_set, ptr2));
-#if defined(ADDRESS_SANITIZER) || defined(MEMORY_SANITIZER)
+#if !BUILDFLAG(IS_WIN) && \
+    (defined(ADDRESS_SANITIZER) || defined(MEMORY_SANITIZER))
   constexpr int kExpectedObj2RetainCount = 4;
   constexpr int kExpectedObj2ReleaseCount = 2;
 #else
   constexpr int kExpectedObj2RetainCount = 2;
   constexpr int kExpectedObj2ReleaseCount = 0;
-#endif  // defined(ADDRESS_SANITIZER) || defined(MEMORY_SANITIZER)
+#endif  // !BUILDFLAG(IS_WIN) && (defined(ADDRESS_SANITIZER) ||
+        // defined(MEMORY_SANITIZER))
   EXPECT_EQ(kExpectedObj2RetainCount, obj2.retain_count());
   EXPECT_EQ(kExpectedObj2ReleaseCount, obj2.release_count());
 }
