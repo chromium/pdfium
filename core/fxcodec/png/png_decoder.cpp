@@ -170,7 +170,7 @@ void _png_get_row_func(png_structp png_ptr,
   CHECK(src_buf);
   png_progressive_combine_row(png_ptr, src_buf, new_row);
 
-  pContext->delegate_->PngFillScanlineBufCompleted(pass, row_num);
+  pContext->delegate_->PngFillScanlineBufCompleted(row_num);
 }
 
 int _png_set_read_and_error_fns(png_structrp png_ptr,

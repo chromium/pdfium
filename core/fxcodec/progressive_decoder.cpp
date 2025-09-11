@@ -146,7 +146,7 @@ uint8_t* ProgressiveDecoder::PngAskScanlineBuf(int line) {
   return decode_buf_.data();
 }
 
-void ProgressiveDecoder::PngFillScanlineBufCompleted(int pass, int line) {
+void ProgressiveDecoder::PngFillScanlineBufCompleted(int line) {
   if (line < 0 || line >= src_height_) {
     return;
   }

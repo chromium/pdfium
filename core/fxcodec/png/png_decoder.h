@@ -34,7 +34,7 @@ class PngDecoder {
     // `line` must be within [0, height].
     virtual uint8_t* PngAskScanlineBuf(int line) = 0;
 
-    virtual void PngFillScanlineBufCompleted(int pass, int line) = 0;
+    virtual void PngFillScanlineBufCompleted(int line) = 0;
   };
 
   static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
