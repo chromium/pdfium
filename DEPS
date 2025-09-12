@@ -134,7 +134,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling gtest
   # and whatever else without interference from each other.
-  'gtest_revision': '244cec869d12e53378fa0efb610cd4c32a454ec8',
+  'gtest_revision': '9df216cc9d6fd2f27e00e5ba1e88a502d7f278c7',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling highway
   # and whatever else without interference from each other.
