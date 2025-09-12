@@ -28,13 +28,13 @@ TEST(IndirectObjectHolderTest, RecursiveParseOfSameObject) {
   // ParseIndirectObject should not be called again on recursively same object
   // parse request.
   EXPECT_CALL(mock_holder, ParseIndirectObject(::testing::_))
-      .WillOnce(::testing::WithArg<0>(::testing::Invoke(
+      .WillOnce(::testing::WithArg<0>(
           [&mock_holder](uint32_t objnum) -> RetainPtr<CPDF_Object> {
             RetainPtr<const CPDF_Object> same_parse =
                 mock_holder.GetOrParseIndirectObject(objnum);
             CHECK(!same_parse);
             return pdfium::MakeRetain<CPDF_Null>();
-          })));
+          }));
 
   EXPECT_TRUE(mock_holder.GetOrParseIndirectObject(1000));
 }
@@ -48,10 +48,10 @@ TEST(IndirectObjectHolderTest, GetObjectMethods) {
   ::testing::Mock::VerifyAndClearExpectations(&mock_holder);
 
   EXPECT_CALL(mock_holder, ParseIndirectObject(::testing::_))
-      .WillOnce(::testing::WithArg<0>(
-          ::testing::Invoke([](uint32_t objnum) -> RetainPtr<CPDF_Object> {
+      .WillOnce(
+          ::testing::WithArg<0>([](uint32_t objnum) -> RetainPtr<CPDF_Object> {
             return pdfium::MakeRetain<CPDF_Null>();
-          })));
+          }));
   EXPECT_TRUE(mock_holder.GetOrParseIndirectObject(kObjNum));
   ::testing::Mock::VerifyAndClearExpectations(&mock_holder);
 

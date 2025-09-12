@@ -18,7 +18,6 @@ using testing::_;
 using testing::DoAll;
 using testing::ElementsAre;
 using testing::InSequence;
-using testing::Invoke;
 using testing::Return;
 using testing::WithArg;
 
@@ -145,10 +144,10 @@ TEST_F(CFXFontMapperSystemFontInfoTest, RawBytesForIndex) {
     EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, 0, _))
         .WillOnce(Return(2));
     EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, 0, _))
-        .WillOnce(DoAll(WithArg<2>(Invoke([](pdfium::span<uint8_t> buffer) {
+        .WillOnce(DoAll(WithArg<2>([](pdfium::span<uint8_t> buffer) {
                           buffer[0] = '0';
                           buffer[1] = '1';
-                        })),
+                        }),
                         Return(2)));
     EXPECT_CALL(system_font_info(), DeleteFont(kFontHandle));
   }
@@ -206,10 +205,10 @@ TEST_F(CFXFontMapperSystemFontInfoTest, GetCachedTTCFaceFailToGetData) {
   {
     InSequence s;
     EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, kTableTTCF, _))
-        .WillOnce(DoAll(WithArg<2>(Invoke([&](pdfium::span<uint8_t> buffer) {
+        .WillOnce(DoAll(WithArg<2>([&](pdfium::span<uint8_t> buffer) {
                           EXPECT_EQ(kTtcSize, buffer.size());
                           std::iota(buffer.begin(), buffer.end(), 0);
-                        })),
+                        }),
                         Return(kTtcSize)));
     EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, kTableTTCF, _))
         .WillOnce(Return(0));
