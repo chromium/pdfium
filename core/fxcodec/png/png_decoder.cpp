@@ -13,6 +13,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 #ifdef USE_SYSTEM_LIBPNG
@@ -22,6 +23,8 @@
 #endif
 
 #define PNG_ERROR_SIZE 256
+
+using EncodedColorType = fxcodec::PngDecoder::Delegate::EncodedColorType;
 
 class CPngContext final : public ProgressiveDecoderIface::Context {
  public:
@@ -91,10 +94,9 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
   png_uint_32 width = 0;
   png_uint_32 height = 0;
   int bpc = 0;
-  int color_type = 0;
-  png_get_IHDR(png_ptr, info_ptr, &width, &height, &bpc, &color_type, nullptr,
-               nullptr, nullptr);
-  int color_type1 = color_type;
+  int libpng_color_type = 0;
+  png_get_IHDR(png_ptr, info_ptr, &width, &height, &bpc, &libpng_color_type,
+               nullptr, nullptr, nullptr);
   if (bpc > 8) {
     png_set_strip_16(png_ptr);
   } else if (bpc < 8) {
@@ -102,14 +104,29 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
   }
 
   bpc = 8;
-  if (color_type == PNG_COLOR_TYPE_PALETTE) {
+  if (libpng_color_type == PNG_COLOR_TYPE_PALETTE) {
     png_set_palette_to_rgb(png_ptr);
   }
 
   int pass = png_set_interlace_handling(png_ptr);
+
+  static_assert(static_cast<int>(EncodedColorType::kGrayscale) ==
+                PNG_COLOR_TYPE_GRAY);
+  static_assert(static_cast<int>(EncodedColorType::kGrayscaleWithAlpha) ==
+                PNG_COLOR_TYPE_GRAY_ALPHA);
+  static_assert(static_cast<int>(EncodedColorType::kIndexedColor) ==
+                PNG_COLOR_TYPE_PALETTE);
+  static_assert(static_cast<int>(EncodedColorType::kTruecolor) ==
+                PNG_COLOR_TYPE_RGB);
+  static_assert(static_cast<int>(EncodedColorType::kTruecolorWithAlpha) ==
+                PNG_COLOR_TYPE_RGB_ALPHA);
+  static_assert(sizeof(EncodedColorType) == sizeof(int));
+  auto color_type = static_cast<EncodedColorType>(libpng_color_type);
+
   double gamma = 1.0;
   if (!pContext->delegate_->PngReadHeader(width, height, bpc, pass, &color_type,
                                           &gamma)) {
+    // Note that `png_error` function is marked as `PNG_NORETURN`.
     png_error(pContext->png_, "Read Header Callback Error");
   }
   int intent;
@@ -124,32 +141,34 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     }
   }
   switch (color_type) {
-    case PNG_COLOR_TYPE_GRAY:
-    case PNG_COLOR_TYPE_GRAY_ALPHA: {
-      if (color_type1 & PNG_COLOR_MASK_COLOR) {
-        png_set_rgb_to_gray(png_ptr, 1, 0.299, 0.587);
-      }
-    } break;
-    case PNG_COLOR_TYPE_PALETTE:
-      if (color_type1 != PNG_COLOR_TYPE_PALETTE) {
-        png_error(pContext->png_, "Not Support Output Palette Now");
-      }
-      [[fallthrough]];
-    case PNG_COLOR_TYPE_RGB:
-    case PNG_COLOR_TYPE_RGB_ALPHA:
-      if (!(color_type1 & PNG_COLOR_MASK_COLOR)) {
+    case EncodedColorType::kGrayscale:
+    case EncodedColorType::kGrayscaleWithAlpha:
+    case EncodedColorType::kIndexedColor:
+      // These cases are never reached, because the only delegate impl only
+      // ever asks to decode into either `kTruecolor` or `kTruecolorWithAlpha`.
+      NOTREACHED();
+      break;
+    case EncodedColorType::kTruecolor:
+    case EncodedColorType::kTruecolorWithAlpha:
+      if (!(libpng_color_type & PNG_COLOR_MASK_COLOR)) {
         png_set_gray_to_rgb(png_ptr);
       }
       png_set_bgr(png_ptr);
       break;
   }
-  if (!(color_type & PNG_COLOR_MASK_ALPHA)) {
-    png_set_strip_alpha(png_ptr);
-  }
-
-  if (color_type & PNG_COLOR_MASK_ALPHA &&
-      !(color_type1 & PNG_COLOR_MASK_ALPHA)) {
-    png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+  switch (color_type) {
+    case EncodedColorType::kTruecolor:
+      png_set_strip_alpha(png_ptr);
+      break;
+    case EncodedColorType::kTruecolorWithAlpha:
+      if (!(libpng_color_type & PNG_COLOR_MASK_ALPHA)) {
+        png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+      }
+      break;
+    default:
+      // The only delegate impl never asks to decode into other color types.
+      NOTREACHED();
+      break;
   }
   png_read_update_info(png_ptr, info_ptr);
 }

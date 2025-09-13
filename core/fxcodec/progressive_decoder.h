@@ -90,7 +90,7 @@ class ProgressiveDecoder final :
                      int height,
                      int bpc,
                      int pass,
-                     int* color_type,
+                     PngDecoder::Delegate::EncodedColorType* color_type,
                      double* gamma) override;
   uint8_t* PngAskScanlineBuf(int line) override;
   void PngFillScanlineBufCompleted(int line) override;
@@ -202,8 +202,8 @@ class ProgressiveDecoder final :
   WeightTable weight_horz_;
   int src_width_ = 0;
   int src_height_ = 0;
-  int src_components_ = 0;
-  int src_bpc_ = 0;
+  int src_components_ = 0;  // Number of components (e.g. 4 for RGBA, 3 for RGB)
+  int src_bpc_ = 0;  // Bits per component (e.g. bits per red or bits per alpha)
   TransformMethod trans_method_;
   int src_row_ = 0;
   FXCodec_Format src_format_ = FXCodec_Invalid;
