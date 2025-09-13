@@ -38,25 +38,30 @@ class PngDecoder {
       kTruecolorWithAlpha = 6,
     };
 
+    // Color format to decode into.
+    enum class DecodedColorType {
+      kBgr,
+      kBgra,
+    };
+
     // Called by `PngDecoder` after decoding the image header:
     //
     // * `width` and `height` specify image dimensions in pixels
     // * `bpc` is number of bits per component (e.g. per red, or per alpha)
-    // * `*color_type` is initially set to the color type the image has been
-    //   encoded with
+    // * `src_color_type` is the color type the image has been encoded with
     //
     // Implementation should:
     //
     // * Return `true` upon success (and `false` otherwise)
-    // * Set `*color_type` to the color type to decode into
-    //   (currently only `kTruecolor` and `kTruecolorWithAlpha` are supported)
+    // * Set `*dst_color_type` to the color type to decode into
     // * Set `*gamma` to the target gamma to decode with
     // * TODO(crbug.com/355630556): Add out parameter for desired alpha-premul.
     virtual bool PngReadHeader(int width,
                                int height,
                                int bpc,
                                int pass,
-                               EncodedColorType* color_type,
+                               EncodedColorType src_color_type,
+                               DecodedColorType* dst_color_type,
                                double* gamma) = 0;
 
     // Called by `PngDecoder` to ask where to write decoded pixels.

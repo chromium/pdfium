@@ -90,7 +90,8 @@ class ProgressiveDecoder final :
                      int height,
                      int bpc,
                      int pass,
-                     PngDecoder::Delegate::EncodedColorType* color_type,
+                     PngDecoder::Delegate::EncodedColorType src_color_type,
+                     PngDecoder::Delegate::DecodedColorType* dst_color_type,
                      double* gamma) override;
   uint8_t* PngAskScanlineBuf(int line) override;
   void PngFillScanlineBufCompleted(int line) override;
