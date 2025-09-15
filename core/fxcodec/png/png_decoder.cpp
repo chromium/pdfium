@@ -12,6 +12,7 @@
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
+#include "core/fxcodec/png/png_decoder_delegate.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -24,17 +25,18 @@
 
 #define PNG_ERROR_SIZE 256
 
-using DecodedColorType = fxcodec::PngDecoder::Delegate::DecodedColorType;
-using EncodedColorType = fxcodec::PngDecoder::Delegate::EncodedColorType;
+using PngDecoderDelegate = fxcodec::PngDecoderDelegate;
+using DecodedColorType = PngDecoderDelegate::DecodedColorType;
+using EncodedColorType = PngDecoderDelegate::EncodedColorType;
 
 class CPngContext final : public ProgressiveDecoderIface::Context {
  public:
-  explicit CPngContext(PngDecoder::Delegate* pDelegate);
+  explicit CPngContext(PngDecoderDelegate* pDelegate);
   ~CPngContext() override;
 
   png_structp png_ = nullptr;
   png_infop info_ = nullptr;
-  UnownedPtr<PngDecoder::Delegate> const delegate_;
+  UnownedPtr<PngDecoderDelegate> const delegate_;
   char last_error_[PNG_ERROR_SIZE] = {};
 };
 
@@ -203,7 +205,7 @@ int _png_continue_decode(png_structrp png_ptr,
 
 }  // extern "C"
 
-CPngContext::CPngContext(PngDecoder::Delegate* pDelegate)
+CPngContext::CPngContext(PngDecoderDelegate* pDelegate)
     : delegate_(pDelegate) {}
 
 CPngContext::~CPngContext() {
@@ -215,7 +217,7 @@ namespace fxcodec {
 
 // static
 std::unique_ptr<ProgressiveDecoderIface::Context> PngDecoder::StartDecode(
-    Delegate* pDelegate) {
+    PngDecoderDelegate* pDelegate) {
   auto p = std::make_unique<CPngContext>(pDelegate);
   p->png_ =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);

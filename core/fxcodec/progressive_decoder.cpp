@@ -48,8 +48,8 @@ namespace {
 constexpr size_t kBlockSize = 4096;
 
 #ifdef PDF_ENABLE_XFA_PNG
-using PngDecodedColorType = fxcodec::PngDecoder::Delegate::DecodedColorType;
-using PngEncodedColorType = fxcodec::PngDecoder::Delegate::EncodedColorType;
+using PngDecodedColorType = fxcodec::PngDecoderDelegate::DecodedColorType;
+using PngEncodedColorType = fxcodec::PngDecoderDelegate::EncodedColorType;
 #if BUILDFLAG(IS_APPLE)
 const double kPngGamma = 1.7;
 #else
