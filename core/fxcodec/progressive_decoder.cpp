@@ -37,6 +37,10 @@
 #include "core/fxcodec/gif/gif_progressive_decoder.h"
 #endif  // PDF_ENABLE_XFA_GIF
 
+#ifdef PDF_ENABLE_XFA_PNG
+#include "core/fxcodec/png/png_decoder.h"
+#endif  // PDF_ENABLE_XFA_PNG
+
 #ifdef PDF_ENABLE_XFA_TIFF
 #include "core/fxcodec/tiff/tiff_decoder.h"
 #endif  // PDF_ENABLE_XFA_TIFF
