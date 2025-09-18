@@ -372,7 +372,6 @@ CPWL_EditImpl::UndoReplaceSelection::UndoReplaceSelection(CPWL_EditImpl* pEdit,
 CPWL_EditImpl::UndoReplaceSelection::~UndoReplaceSelection() = default;
 
 int CPWL_EditImpl::UndoReplaceSelection::Redo() {
-  edit_->SelectNone();
   if (IsEnd()) {
     return 0;
   }
@@ -382,7 +381,6 @@ int CPWL_EditImpl::UndoReplaceSelection::Redo() {
 }
 
 int CPWL_EditImpl::UndoReplaceSelection::Undo() {
-  edit_->SelectNone();
   if (!IsEnd()) {
     return 0;
   }

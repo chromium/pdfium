@@ -3210,6 +3210,19 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceAndKeepSelection) {
   EXPECT_EQ(FocusedFieldText(), "AB");
   EXPECT_TRUE(CanUndo());
   EXPECT_TRUE(CanRedo());
+  EXPECT_EQ(Selection(), "A");
+
+  PerformRedo();
+  EXPECT_EQ(FocusedFieldText(), "XYZB");
+  EXPECT_TRUE(CanUndo());
+  EXPECT_FALSE(CanRedo());
+  EXPECT_EQ(Selection(), "");  // The selection is not an undo item.
+
+  PerformUndo();
+  EXPECT_EQ(FocusedFieldText(), "AB");
+  EXPECT_TRUE(CanUndo());
+  EXPECT_TRUE(CanRedo());
+  EXPECT_EQ(Selection(), "A");
 
   SelectTextWithKeyboard(1, FWL_VKEY_Left, RegularFormEnd());
   EXPECT_EQ(Selection(), "B");
@@ -3272,36 +3285,43 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
   EXPECT_EQ(FocusedFieldText(), "XYZB");
   EXPECT_TRUE(CanUndo());
   EXPECT_FALSE(CanRedo());
+  EXPECT_EQ(Selection(), "");
 
   PerformUndo();
   EXPECT_EQ(FocusedFieldText(), "AB");
   EXPECT_TRUE(CanUndo());
   EXPECT_TRUE(CanRedo());
+  EXPECT_EQ(Selection(), "A");
 
   PerformUndo();
   EXPECT_EQ(FocusedFieldText(), "A");
   EXPECT_TRUE(CanUndo());
   EXPECT_TRUE(CanRedo());
+  EXPECT_EQ(Selection(), "");
 
   PerformUndo();
   EXPECT_EQ(FocusedFieldText(), "");
   EXPECT_FALSE(CanUndo());
   EXPECT_TRUE(CanRedo());
+  EXPECT_EQ(Selection(), "");
 
   PerformRedo();
   EXPECT_EQ(FocusedFieldText(), "A");
   EXPECT_TRUE(CanUndo());
   EXPECT_TRUE(CanRedo());
+  EXPECT_EQ(Selection(), "");
 
   PerformRedo();
   EXPECT_EQ(FocusedFieldText(), "AB");
   EXPECT_TRUE(CanUndo());
   EXPECT_TRUE(CanRedo());
+  EXPECT_EQ(Selection(), "");
 
   PerformRedo();
   EXPECT_EQ(FocusedFieldText(), "XYZB");
   EXPECT_TRUE(CanUndo());
   EXPECT_FALSE(CanRedo());
+  EXPECT_EQ(Selection(), "");
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
@@ -3321,6 +3341,7 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
 
   PerformUndo();
   EXPECT_EQ(FocusedFieldText(), "");
+  EXPECT_EQ(Selection(), "");
 
   EXPECT_FALSE(CanUndo());
   EXPECT_TRUE(CanRedo());
