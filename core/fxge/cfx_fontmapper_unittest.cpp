@@ -47,20 +47,8 @@ class TestFontMapper : public CFX_FontMapper {
  public:
   TestFontMapper() : CFX_FontMapper(CFX_GEModule::Get()->GetFontMgr()) {}
 
-  RetainPtr<CFX_Face> GetCachedTTCFace(void* font_handle,
-                                       size_t ttc_size,
-                                       size_t data_size) {
-    return CFX_FontMapper::GetCachedTTCFace(font_handle, ttc_size, data_size);
-  }
-
-  RetainPtr<CFX_Face> GetCachedFace(void* font_handle,
-                                    ByteString subst_name,
-                                    int weight,
-                                    bool is_italic,
-                                    size_t data_size) {
-    return CFX_FontMapper::GetCachedFace(font_handle, subst_name, weight,
-                                         is_italic, data_size);
-  }
+  using CFX_FontMapper::GetCachedFace;
+  using CFX_FontMapper::GetCachedTTCFace;
 };
 
 class CFXFontMapperSystemFontInfoTest : public testing::Test {
