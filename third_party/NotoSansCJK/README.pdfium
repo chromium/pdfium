@@ -4,6 +4,7 @@ Version: Noto Sans CJK V2.001
 Revision: cf29231ab8029678af4bbc1a9480e2b296a5b2d3
 License: OFL-1.1
 License File: LICENSE
+Update Mechanism: Static (https://crbug.com/422921492)
 Security Critical: no
 Shipped: no
 
