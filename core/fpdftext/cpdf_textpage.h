@@ -192,7 +192,7 @@ class CPDF_TextPage {
   const bool rtl_;
   const CFX_Matrix display_matrix_;
   std::vector<CFX_FloatRect> sel_rects_;
-  std::vector<TransformedTextObject> mTextObjects;
+  std::vector<TransformedTextObject> text_objects_;
   TextOrientation textline_dir_ = TextOrientation::kUnknown;
   CFX_FloatRect curline_rect_;
 };

@@ -759,11 +759,11 @@ void CPDF_TextPage::ProcessObject() {
       ProcessFormObject(pObj->AsForm(), CFX_Matrix());
     }
   }
-  for (const auto& obj : mTextObjects) {
+  for (const auto& obj : text_objects_) {
     ProcessTextObject(obj);
   }
 
-  mTextObjects.clear();
+  text_objects_.clear();
   CloseTempLine();
 }
 
@@ -889,19 +889,19 @@ void CPDF_TextPage::ProcessTextObject(
     return;
   }
 
-  size_t count = mTextObjects.size();
+  size_t count = text_objects_.size();
   TransformedTextObject new_obj;
   new_obj.text_obj_ = pTextObj;
   new_obj.form_matrix_ = form_matrix;
   if (count == 0) {
-    mTextObjects.push_back(new_obj);
+    text_objects_.push_back(new_obj);
     return;
   }
   if (IsSameAsPreTextObject(pTextObj, pObjList, ObjPos)) {
     return;
   }
 
-  TransformedTextObject prev_obj = mTextObjects[count - 1];
+  TransformedTextObject prev_obj = text_objects_[count - 1];
   size_t nItem = prev_obj.text_obj_->CountItems();
   if (nItem == 0) {
     return;
@@ -930,24 +930,24 @@ void CPDF_TextPage::ProcessTextObject(
       display_matrix_.Transform(form_matrix.Transform(pTextObj->GetPos()));
   if (fabs(this_pos.y - prev_pos.y) > threshold * 2) {
     for (size_t i = 0; i < count; ++i) {
-      ProcessTextObject(mTextObjects[i]);
+      ProcessTextObject(text_objects_[i]);
     }
-    mTextObjects.clear();
-    mTextObjects.push_back(new_obj);
+    text_objects_.clear();
+    text_objects_.push_back(new_obj);
     return;
   }
 
   for (size_t i = count; i > 0; --i) {
-    TransformedTextObject prev_text_obj = mTextObjects[i - 1];
+    TransformedTextObject prev_text_obj = text_objects_[i - 1];
     CFX_PointF new_prev_pos =
         display_matrix_.Transform(prev_text_obj.form_matrix_.Transform(
             prev_text_obj.text_obj_->GetPos()));
     if (this_pos.x >= new_prev_pos.x) {
-      mTextObjects.insert(mTextObjects.begin() + i, new_obj);
+      text_objects_.insert(text_objects_.begin() + i, new_obj);
       return;
     }
   }
-  mTextObjects.insert(mTextObjects.begin(), new_obj);
+  text_objects_.insert(text_objects_.begin(), new_obj);
 }
 
 CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
