@@ -6,13 +6,17 @@
 
 #include <memory>
 #include <numeric>
+#include <string>
 #include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/cfx_substfont.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/utils/file_util.h"
+#include "testing/utils/path_service.h"
 
 using testing::_;
 using testing::DoAll;
@@ -49,6 +53,7 @@ class TestFontMapper : public CFX_FontMapper {
 
   using CFX_FontMapper::GetCachedFace;
   using CFX_FontMapper::GetCachedTTCFace;
+  using CFX_FontMapper::UseExternalSubst;
 };
 
 class CFXFontMapperSystemFontInfoTest : public testing::Test {
@@ -209,7 +214,7 @@ TEST_F(CFXFontMapperSystemFontInfoTest, GetCachedTTCFaceFailToGetData) {
 // Regression test for crbug.com/1372234 - should not crash.
 TEST_F(CFXFontMapperSystemFontInfoTest, GetCachedFaceFailToGetData) {
   void* const kFontHandle = reinterpret_cast<void*>(12345);
-  static constexpr char kSubstName[] = "dummy_font";
+  static constexpr char kSubstName[] = "placeholder_font";
   static constexpr int kWeight = 400;
   static constexpr bool kItalic = false;
   static constexpr size_t kDataSize = 2;
@@ -219,4 +224,47 @@ TEST_F(CFXFontMapperSystemFontInfoTest, GetCachedFaceFailToGetData) {
 
   EXPECT_FALSE(font_mapper().GetCachedFace(kFontHandle, kSubstName, kWeight,
                                            kItalic, kDataSize));
+}
+
+TEST_F(CFXFontMapperSystemFontInfoTest, SetSubstFontNameWhenGetFaceNameFails) {
+  std::string font_path;
+  ASSERT_TRUE(PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf", &font_path));
+  const std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  static void* const kFontHandle = reinterpret_cast<void*>(12345);
+
+  {
+    InSequence s;
+    EXPECT_CALL(system_font_info(), GetFaceName(kFontHandle, _))
+        .WillOnce(Return(false));
+    EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, kTableTTCF, _))
+        .WillOnce(Return(0));
+    EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, 0, _))
+        .WillOnce(DoAll(WithArg<2>([&](pdfium::span<uint8_t> buffer) {
+                          EXPECT_EQ(0u, buffer.size());
+                        }),
+                        Return(font_data.size())));
+    EXPECT_CALL(system_font_info(), GetFontData(kFontHandle, 0, _))
+        .WillOnce(DoAll(WithArg<2>([&](pdfium::span<uint8_t> buffer) {
+                          ASSERT_EQ(font_data.size(), buffer.size());
+                          fxcrt::spancpy(buffer, pdfium::span(font_data));
+                        }),
+                        Return(font_data.size())));
+    EXPECT_CALL(system_font_info(), DeleteFont(kFontHandle));
+  }
+
+  static constexpr char kSubstName[] = "placeholder_font";
+  static constexpr int kWeight = 400;
+  static constexpr bool kItalic = false;
+  static constexpr int kItalicAngle = 0;
+  static constexpr auto kCharset = FX_Charset::kANSI;
+
+  CFX_SubstFont subst_font;
+  EXPECT_TRUE(font_mapper().UseExternalSubst(kFontHandle, kSubstName, kWeight,
+                                             kItalic, kItalicAngle, kCharset,
+                                             &subst_font));
+  // TODO(crbug.com/445171006): Should be the actual font's name.
+  EXPECT_EQ(kSubstName, subst_font.family_);
 }
