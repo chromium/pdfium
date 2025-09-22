@@ -58,18 +58,11 @@ void _png_load_bmp_attribute(png_structp png_ptr,
                              CFX_DIBAttribute* pAttribute) {
   if (pAttribute) {
 #if defined(PNG_pHYs_SUPPORTED)
-    pAttribute->x_dpi_ = png_get_x_pixels_per_meter(png_ptr, info_ptr);
-    pAttribute->y_dpi_ = png_get_y_pixels_per_meter(png_ptr, info_ptr);
-    png_uint_32 res_x, res_y;
-    int unit_type;
-    png_get_pHYs(png_ptr, info_ptr, &res_x, &res_y, &unit_type);
-    switch (unit_type) {
-      case PNG_RESOLUTION_METER:
-        pAttribute->dpi_unit_ = CFX_DIBAttribute::kResUnitMeter;
-        break;
-      default:
-        pAttribute->dpi_unit_ = CFX_DIBAttribute::kResUnitNone;
-    }
+// TODO(https://crbug.com/444045690): If the `#error` below sticks for a few
+// days without causing build errors in the current PDFium clients, then we
+// should be able to go ahead and remove the `pAttribute` parameter here and
+// from `PngDecoder::ContinueDecode`.
+#error PNG_pHYs_SUPPORTED seemed undefined in all known Pdfium clients.
 #endif
 #if defined(PNG_iCCP_SUPPORTED)
     png_charp icc_name;
