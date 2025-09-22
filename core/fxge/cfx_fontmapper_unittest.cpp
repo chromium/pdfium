@@ -265,6 +265,5 @@ TEST_F(CFXFontMapperSystemFontInfoTest, SetSubstFontNameWhenGetFaceNameFails) {
   EXPECT_TRUE(font_mapper().UseExternalSubst(kFontHandle, kSubstName, kWeight,
                                              kItalic, kItalicAngle, kCharset,
                                              &subst_font));
-  // TODO(crbug.com/445171006): Should be the actual font's name.
-  EXPECT_EQ(kSubstName, subst_font.family_);
+  EXPECT_EQ("Noto Sans SC Regular", subst_font.family_);
 }

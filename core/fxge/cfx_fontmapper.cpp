@@ -392,6 +392,20 @@ ByteString GetSubstName(const ByteString& name, bool is_truetype) {
   return subst_name;
 }
 
+ByteString GetFontNameFromFace(const CFX_Face& face) {
+  ByteString family_name = face.GetFamilyName();
+  if (family_name.IsEmpty()) {
+    return ByteString();
+  }
+
+  ByteString style_name = face.GetStyleName();
+  if (!style_name.IsEmpty() && style_name != "Regular") {
+    family_name += ' ';
+    family_name += style_name;
+  }
+  return family_name;
+}
+
 bool IsNarrowFontName(const ByteString& name) {
   static const char kNarrowFonts[][10] = {"Narrow", "Condensed"};
   for (const char* font : kNarrowFonts) {
@@ -564,7 +578,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseExternalSubst(
   DCHECK(font_handle);
 
   ScopedFontDeleter scoped_font(font_info_.get(), font_handle);
-  font_info_->GetFaceName(font_handle, &face_name);
+  const bool got_external_face_name =
+      font_info_->GetFaceName(font_handle, &face_name);
   if (charset == FX_Charset::kDefault) {
     font_info_->GetFontCharset(font_handle, &charset);
   }
@@ -582,6 +597,12 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseExternalSubst(
     return nullptr;
   }
 
+  if (!got_external_face_name) {
+    ByteString maybe_face_name = GetFontNameFromFace(*face);
+    if (!maybe_face_name.IsEmpty()) {
+      face_name = maybe_face_name;
+    }
+  }
   subst_font->family_ = face_name;
   subst_font->charset_ = charset;
   int face_weight =
