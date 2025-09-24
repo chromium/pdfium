@@ -18,7 +18,6 @@
 
 namespace fxcodec {
 
-class CFX_DIBAttribute;
 class PngDecoderDelegate;
 
 class PngDecoder {
@@ -27,8 +26,7 @@ class PngDecoder {
       PngDecoderDelegate* pDelegate);
 
   static bool ContinueDecode(ProgressiveDecoderIface::Context* pContext,
-                             RetainPtr<CFX_CodecMemory> codec_memory,
-                             CFX_DIBAttribute* pAttribute);
+                             RetainPtr<CFX_CodecMemory> codec_memory);
 
   PngDecoder() = delete;
   PngDecoder(const PngDecoder&) = delete;

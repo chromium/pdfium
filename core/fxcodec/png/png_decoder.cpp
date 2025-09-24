@@ -53,33 +53,6 @@ void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
 
 void _png_warning_data(png_structp png_ptr, png_const_charp error_msg) {}
 
-void _png_load_bmp_attribute(png_structp png_ptr,
-                             png_infop info_ptr,
-                             CFX_DIBAttribute* pAttribute) {
-  if (pAttribute) {
-#if defined(PNG_pHYs_SUPPORTED)
-// TODO(https://crbug.com/444045690): If the `#error` below sticks for a few
-// days without causing build errors in the current PDFium clients, then we
-// should be able to go ahead and remove the `pAttribute` parameter here and
-// from `PngDecoder::ContinueDecode`.
-#error PNG_pHYs_SUPPORTED seemed undefined in all known Pdfium clients.
-#endif
-#if defined(PNG_iCCP_SUPPORTED)
-    png_charp icc_name;
-    png_bytep icc_profile;
-    png_uint_32 icc_proflen;
-    int compress_type;
-    png_get_iCCP(png_ptr, info_ptr, &icc_name, &compress_type, &icc_profile,
-                 &icc_proflen);
-#endif
-#if defined(PNG_TEXT_SUPPORTED)
-    int num_text;
-    png_textp text = nullptr;
-    png_get_text(png_ptr, info_ptr, &text, &num_text);
-#endif
-  }
-}
-
 void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
   auto* pContext =
       reinterpret_cast<CPngContext*>(png_get_progressive_ptr(png_ptr));
@@ -229,19 +202,11 @@ std::unique_ptr<ProgressiveDecoderIface::Context> PngDecoder::StartDecode(
 
 // static
 bool PngDecoder::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
-                                RetainPtr<CFX_CodecMemory> codec_memory,
-                                CFX_DIBAttribute* pAttribute) {
+                                RetainPtr<CFX_CodecMemory> codec_memory) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
-  if (!_png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),
-                            src_buf.size())) {
-    if (pAttribute && UNSAFE_TODO(strcmp(ctx->last_error_,
-                                         "Read Header Callback Error")) == 0) {
-      _png_load_bmp_attribute(ctx->png_, ctx->info_, pAttribute);
-    }
-    return false;
-  }
-  return true;
+  return _png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),
+                              src_buf.size());
 }
 
 }  // namespace fxcodec

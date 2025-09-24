@@ -606,15 +606,13 @@ FXCODEC_STATUS ProgressiveDecoder::JpegContinueDecode() {
 }
 
 #ifdef PDF_ENABLE_XFA_PNG
-bool ProgressiveDecoder::PngDetectImageTypeInBuffer(
-    CFX_DIBAttribute* pAttribute) {
+bool ProgressiveDecoder::PngDetectImageTypeInBuffer() {
   png_context_ = PngDecoder::StartDecode(this);
   if (!png_context_) {
     status_ = FXCODEC_STATUS::kError;
     return false;
   }
-  while (PngDecoder::ContinueDecode(png_context_.get(), codec_memory_,
-                                    pAttribute)) {
+  while (PngDecoder::ContinueDecode(png_context_.get(), codec_memory_)) {
     uint32_t remain_size = static_cast<uint32_t>(file_->GetSize()) - offset_;
     uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
     if (input_size == 0) {
@@ -684,8 +682,7 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
       return status_;
     }
     offset_ += input_size;
-    bResult =
-        PngDecoder::ContinueDecode(png_context_.get(), codec_memory_, nullptr);
+    bResult = PngDecoder::ContinueDecode(png_context_.get(), codec_memory_);
     if (!bResult) {
       device_bitmap_ = nullptr;
       file_ = nullptr;
@@ -766,7 +763,7 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
 
 #ifdef PDF_ENABLE_XFA_PNG
   if (imageType == FXCODEC_IMAGE_PNG) {
-    return PngDetectImageTypeInBuffer(pAttribute);
+    return PngDetectImageTypeInBuffer();
   }
 #endif  // PDF_ENABLE_XFA_PNG
 
