@@ -57,7 +57,11 @@ class CPDF_Parser {
   // Note: This was 1M, but https://crbug.com/910009 encountered a PDF with
   // object numbers in the 1.7M range. The PDF only has 10K objects, but they
   // are non-consecutive.
-  static constexpr uint32_t kMaxObjectNumber = 4 * 1024 * 1024;
+  //
+  // This increased to 4M, but some PDFs found in the wild have larger object
+  // numbers than that. e.g. One PDF had a 38 MB object stream with 6 bytes
+  // per entry. Another sample had a 41 MB object stream with 7 bytes per entry.
+  static constexpr uint32_t kMaxObjectNumber = 24 * 1024 * 1024;
 
   static constexpr size_t kInvalidPos = std::numeric_limits<size_t>::max();
 

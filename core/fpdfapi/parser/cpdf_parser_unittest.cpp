@@ -428,15 +428,15 @@ class ParserXRefTest : public testing::Test {
 
 TEST_F(ParserXRefTest, XrefObjectHighestIndex) {
   // The object number will reach `kMaxObjectNumber`.
-  static_assert(CPDF_Parser::kMaxObjectNumber == 4194304,
+  static_assert(CPDF_Parser::kMaxObjectNumber == 25165824,
                 "Unexpected kMaxObjectNumber");
   const unsigned char kData[] =
       "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
       "7 0 obj <<\n"
       "  /Filter /ASCIIHexDecode\n"
-      "  /Index [4194304 1]\n"
+      "  /Index [25165824 1]\n"
       "  /Root 1 0 R\n"
-      "  /Size 4194305\n"
+      "  /Size 25165825\n"
       "  /W [1 1 1]\n"
       ">>\n"
       "stream\n"
@@ -455,21 +455,21 @@ TEST_F(ParserXRefTest, XrefObjectHighestIndex) {
 
   const CPDF_CrossRefTable::ObjectInfo only_valid_object = {
       .type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0};
-  EXPECT_THAT(objects_info, ElementsAre(Pair(4194304, only_valid_object)));
+  EXPECT_THAT(objects_info, ElementsAre(Pair(25165824, only_valid_object)));
 }
 
 TEST_F(ParserXRefTest, XrefObjectIndicesTooBig) {
-  // Since /Index starts at 4194304, the object number will go past
+  // Since /Index starts at 25165824, the object number will go past
   // `kMaxObjectNumber`.
-  static_assert(CPDF_Parser::kMaxObjectNumber == 4194304,
+  static_assert(CPDF_Parser::kMaxObjectNumber == 25165824,
                 "Unexpected kMaxObjectNumber");
   const unsigned char kData[] =
       "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
       "7 0 obj <<\n"
       "  /Filter /ASCIIHexDecode\n"
-      "  /Index [4194304 2]\n"
+      "  /Index [25165824 2]\n"
       "  /Root 1 0 R\n"
-      "  /Size 4194306\n"
+      "  /Size 25165826\n"
       "  /W [1 1 1]\n"
       ">>\n"
       "stream\n"
