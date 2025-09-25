@@ -2,6 +2,7 @@ Name: OpenJPEG
 URL: https://github.com/uclouvain/openjpeg
 Version: 2.5.4
 Revision: 6c4a29b00211eb0430fa0e5e890f1ce5c80f409f
+Update Mechanism: Manual
 Security Critical: yes
 Shipped: yes
 License: BSD-2-Clause

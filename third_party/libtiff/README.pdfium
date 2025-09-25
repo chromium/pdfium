@@ -2,6 +2,7 @@ Name: LibTIFF
 URL: https://gitlab.com/libtiff/libtiff
 Version: 4.7.0
 Revision: 9dff73bebc5661f2dace6f16e14cf9e857172f4e
+Update Mechanism: Manual
 CPEPrefix: cpe:/a:libtiff:libtiff:4.7.0
 Security Critical: yes
 Shipped: yes
