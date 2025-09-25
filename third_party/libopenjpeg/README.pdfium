@@ -7,7 +7,7 @@ Security Critical: yes
 Shipped: yes
 License: BSD-2-Clause
 License File: LICENSE
-CPEPrefix: cpe:/a:uclouvain:openjpeg:2.5.3
+CPEPrefix: cpe:/a:uclouvain:openjpeg:2.5.4
 
 Description:
 JPEG 2000 library. See http://www.openjpeg.org/
