@@ -107,7 +107,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
 
   // Item 1: The least number of objects in a page.
   const uint32_t dwObjLeastNum = hStream->GetBits(32);
-  if (!dwObjLeastNum || dwObjLeastNum >= CPDF_Parser::kMaxObjectNumber) {
+  if (!dwObjLeastNum || dwObjLeastNum > CPDF_Parser::kMaxObjectNumber) {
     return false;
   }
 
@@ -193,7 +193,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     page_infos_[i].set_start_obj_num(dwStartObjNum.ValueOrDie());
     dwStartObjNum += page_infos_[i].objects_count();
     if (!dwStartObjNum.IsValid() ||
-        dwStartObjNum.ValueOrDie() >= CPDF_Parser::kMaxObjectNumber) {
+        dwStartObjNum.ValueOrDie() > CPDF_Parser::kMaxObjectNumber) {
       return false;
     }
   }
@@ -336,9 +336,9 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
     return false;
   }
 
-  if (dwFirstSharedObjNum >= CPDF_Parser::kMaxObjectNumber ||
-      first_page_shared_objs_ >= CPDF_Parser::kMaxObjectNumber ||
-      dwSharedObjTotal >= CPDF_Parser::kMaxObjectNumber) {
+  if (dwFirstSharedObjNum > CPDF_Parser::kMaxObjectNumber ||
+      first_page_shared_objs_ > CPDF_Parser::kMaxObjectNumber ||
+      dwSharedObjTotal > CPDF_Parser::kMaxObjectNumber) {
     return false;
   }
 

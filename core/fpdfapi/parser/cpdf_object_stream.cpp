@@ -36,7 +36,7 @@ bool IsObjectStream(const CPDF_Stream* stream) {
       stream_dict->GetNumberFor("N");
   if (!number_of_objects || !number_of_objects->IsInteger() ||
       number_of_objects->GetInteger() < 0 ||
-      number_of_objects->GetInteger() >=
+      number_of_objects->GetInteger() >
           static_cast<int>(CPDF_Parser::kMaxObjectNumber)) {
     return false;
   }

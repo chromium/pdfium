@@ -50,7 +50,7 @@ class CPDF_Parser {
   };
 
   // A limit on the maximum object number in the xref table, so objects need to
-  // be in the range [0, kMaxObjectNumber).
+  // be in the range [0, kMaxObjectNumber].
   //
   // Theoretical limits are higher, but this may be large enough in practice.
   //

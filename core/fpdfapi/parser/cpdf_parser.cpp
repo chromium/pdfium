@@ -46,7 +46,7 @@ namespace {
 
 // A limit on the size of the xref table. Theoretical limits are higher, but
 // this may be large enough in practice. The max size should always be 1 more
-// than the max object number. Thus the valid range is [1, kMaxXRefSize).
+// than the max object number. Thus the valid range is [1, kMaxXRefSize].
 constexpr int32_t kMaxXRefSize = CPDF_Parser::kMaxObjectNumber + 1;
 
 // "%PDF-1.7\n"
@@ -415,7 +415,7 @@ bool CPDF_Parser::LoadAllCrossRefTablesAndStreams(FX_FILESIZE xref_offset) {
     cross_ref_table_->SetTrailer(std::move(trailer), kNoTrailerObjectNumber);
 
     const int32_t xrefsize = GetTrailer()->GetDirectIntegerFor("Size");
-    if (xrefsize > 0 && xrefsize < kMaxXRefSize) {
+    if (xrefsize > 0 && xrefsize <= kMaxXRefSize) {
       cross_ref_table_->SetObjectMapSize(xrefsize);
     }
   }
@@ -559,7 +559,7 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
     return false;
   }
 
-  if (new_size.ValueOrDie() >= kMaxXRefSize) {
+  if (new_size.ValueOrDie() > kMaxXRefSize) {
     return false;
   }
 
@@ -648,7 +648,7 @@ bool CPDF_Parser::ParseCrossRefTable(
     }
 
     uint32_t start_objnum = FXSYS_atoui(word.c_str());
-    if (start_objnum >= kMaxObjectNumber) {
+    if (start_objnum > kMaxObjectNumber) {
       return false;
     }
 
@@ -809,7 +809,7 @@ bool CPDF_Parser::RebuildCrossRef() {
                 pStream->GetObjNum()));
       }
 
-      if (obj_num < kMaxObjectNumber) {
+      if (obj_num <= kMaxObjectNumber) {
         cross_ref_table->AddNormal(obj_num, gen_num, /*is_object_stream=*/false,
                                    obj_pos);
         const auto object_stream =
@@ -818,7 +818,7 @@ bool CPDF_Parser::RebuildCrossRef() {
           const auto& object_info = object_stream->object_info();
           for (size_t i = 0; i < object_info.size(); ++i) {
             const auto& info = object_info[i];
-            if (info.obj_num < kMaxObjectNumber) {
+            if (info.obj_num <= kMaxObjectNumber) {
               cross_ref_table->AddCompressed(info.obj_num, obj_num, i);
             }
           }
@@ -856,7 +856,7 @@ bool CPDF_Parser::LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref) {
   // For a /Size of 0 or other issues, just ignore them. See comments in the
   // for-loop below.
   const int32_t size = dict->GetIntegerFor("Size");
-  if (size < 0 || size >= kMaxXRefSize) {
+  if (size < 0 || size > kMaxXRefSize) {
     return false;
   }
 
@@ -919,18 +919,18 @@ bool CPDF_Parser::LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref) {
     // also ignores incorrect size in trailers for cross reference tables.
     const uint32_t current_size =
         cross_ref_table_->objects_info().empty() ? 0 : GetLastObjNum() + 1;
-    // So allow `new_size` to be greater than `current_size`, but avoid reaching
-    // `kMaxXRefSize`. This works just fine because the loop below checks
+    // So allow `new_size` to be greater than `current_size`, but avoid going
+    // over `kMaxXRefSize`. This works just fine because the loop below checks
     // against `kMaxObjectNumber`, and the two "max" constants are in sync.
     const uint32_t new_size =
-        std::min<uint32_t>(safe_new_size.ValueOrDie(), kMaxXRefSize - 1);
+        std::min<uint32_t>(safe_new_size.ValueOrDie(), kMaxXRefSize);
     if (new_size > current_size) {
       cross_ref_table_->SetObjectMapSize(new_size);
     }
 
     for (uint32_t i = 0; i < index.obj_count; ++i) {
       const uint32_t obj_num = index.start_obj_num + i;
-      if (obj_num >= kMaxObjectNumber) {
+      if (obj_num > kMaxObjectNumber) {
         break;
       }
 

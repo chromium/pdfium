@@ -32,7 +32,7 @@ class CPDF_LinearizedHeader {
   uint32_t GetPageCount() const { return page_count_; }
   // Will only return values > 0.
   FX_FILESIZE GetFirstPageEndOffset() const { return first_page_end_offset_; }
-  // Will only return values in the range [1, `CPDF_Parser::kMaxObjectNumber`).
+  // Will only return values in the range [1, `CPDF_Parser::kMaxObjectNumber`].
   uint32_t GetFirstPageObjNum() const { return first_page_obj_num_; }
   // Will only return values > 0.
   FX_FILESIZE GetLastXRefOffset() const { return last_xref_offset_; }

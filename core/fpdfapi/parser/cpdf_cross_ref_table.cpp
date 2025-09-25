@@ -39,8 +39,8 @@ CPDF_CrossRefTable::~CPDF_CrossRefTable() = default;
 void CPDF_CrossRefTable::AddCompressed(uint32_t obj_num,
                                        uint32_t archive_obj_num,
                                        uint32_t archive_obj_index) {
-  CHECK_LT(obj_num, CPDF_Parser::kMaxObjectNumber);
-  CHECK_LT(archive_obj_num, CPDF_Parser::kMaxObjectNumber);
+  CHECK_LE(obj_num, CPDF_Parser::kMaxObjectNumber);
+  CHECK_LE(archive_obj_num, CPDF_Parser::kMaxObjectNumber);
 
   auto& info = objects_info_[obj_num];
   if (info.gennum > 0) {
@@ -64,7 +64,7 @@ void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
                                    uint16_t gen_num,
                                    bool is_object_stream,
                                    FX_FILESIZE pos) {
-  CHECK_LT(obj_num, CPDF_Parser::kMaxObjectNumber);
+  CHECK_LE(obj_num, CPDF_Parser::kMaxObjectNumber);
 
   auto& info = objects_info_[obj_num];
   if (info.gennum > gen_num) {
@@ -78,7 +78,7 @@ void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
 }
 
 void CPDF_CrossRefTable::SetFree(uint32_t obj_num, uint16_t gen_num) {
-  CHECK_LT(obj_num, CPDF_Parser::kMaxObjectNumber);
+  CHECK_LE(obj_num, CPDF_Parser::kMaxObjectNumber);
 
   auto& info = objects_info_[obj_num];
   info.type = ObjectType::kFree;

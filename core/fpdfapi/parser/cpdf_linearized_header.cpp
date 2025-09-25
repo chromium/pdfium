@@ -51,7 +51,7 @@ bool IsLinearizedHeaderValid(const CPDF_LinearizedHeader* header,
          header->GetFirstPageNo() < header->GetPageCount() &&
          header->GetMainXRefTableFirstEntryOffset() < document_size &&
          header->GetFirstPageEndOffset() < document_size &&
-         header->GetFirstPageObjNum() < CPDF_Parser::kMaxObjectNumber &&
+         header->GetFirstPageObjNum() <= CPDF_Parser::kMaxObjectNumber &&
          header->GetLastXRefOffset() < document_size &&
          header->GetHintStart() < document_size;
 }
