@@ -39,6 +39,7 @@
 
 #ifdef PDF_ENABLE_XFA_PNG
 #include "core/fxcodec/png/png_decoder.h"
+#include "core/fxcodec/png/png_decoder_delegate.h"
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
@@ -76,23 +77,6 @@ void RGB2BGR(uint8_t* buffer, int width = 1) {
   }
 }
 
-#ifdef PDF_ENABLE_XFA_PNG
-int GetNumberOfSrcComponents(PngEncodedColorType color_type) {
-  switch (color_type) {
-    case PngEncodedColorType::kGrayscale:
-      return 1;
-    case PngEncodedColorType::kGrayscaleWithAlpha:
-      return 2;
-    case PngEncodedColorType::kTruecolor:
-      return 3;
-    case PngEncodedColorType::kIndexedColor:
-    case PngEncodedColorType::kTruecolorWithAlpha:
-      return 4;
-  }
-  NOTREACHED();
-}
-#endif
-
 }  // namespace
 
 ProgressiveDecoder::ProgressiveDecoder() = default;
@@ -112,7 +96,7 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     src_height_ = height;
     src_bpc_ = bpc;
     src_pass_number_ = pass;
-    src_components_ = GetNumberOfSrcComponents(src_color_type);
+    src_components_ = PngDecoderDelegate::GetNumberOfComponents(src_color_type);
     return false;
   }
   switch (device_bitmap_->GetFormat()) {

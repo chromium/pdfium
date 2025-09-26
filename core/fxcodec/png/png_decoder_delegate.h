@@ -68,6 +68,11 @@ class PngDecoderDelegate {
   // Called by `PngDecoder` Communicates that `line`th row has been decoded
   // enough to be displayed.
   virtual void PngFillScanlineBufCompleted(int line) = 0;
+
+  // Helper to get the number of components in the given `color_type`.  For
+  // example, when called with `EncodedColorType::kTruecolor` (RGB) the helper
+  // will return `3`.
+  static int GetNumberOfComponents(EncodedColorType color_type);
 };
 
 }  // namespace fxcodec
