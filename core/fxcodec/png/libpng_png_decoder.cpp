@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/png/png_decoder.h"
+#include "core/fxcodec/png/libpng_png_decoder.h"
 
 #include <setjmp.h>
 #include <string.h>
@@ -182,7 +182,7 @@ CPngContext::~CPngContext() {
 namespace fxcodec {
 
 // static
-std::unique_ptr<ProgressiveDecoderIface::Context> PngDecoder::StartDecode(
+std::unique_ptr<ProgressiveDecoderIface::Context> LibpngPngDecoder::StartDecode(
     PngDecoderDelegate* pDelegate) {
   auto p = std::make_unique<CPngContext>(pDelegate);
   p->png_ =
@@ -201,8 +201,9 @@ std::unique_ptr<ProgressiveDecoderIface::Context> PngDecoder::StartDecode(
 }
 
 // static
-bool PngDecoder::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
-                                RetainPtr<CFX_CodecMemory> codec_memory) {
+bool LibpngPngDecoder::ContinueDecode(
+    ProgressiveDecoderIface::Context* pContext,
+    RetainPtr<CFX_CodecMemory> codec_memory) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
   return _png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),

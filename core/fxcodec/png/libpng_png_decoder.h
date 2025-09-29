@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_PNG_PNG_DECODER_H_
-#define CORE_FXCODEC_PNG_PNG_DECODER_H_
+#ifndef CORE_FXCODEC_PNG_LIBPNG_PNG_DECODER_H_
+#define CORE_FXCODEC_PNG_LIBPNG_PNG_DECODER_H_
 
 #include <memory>
 
@@ -20,7 +20,8 @@ namespace fxcodec {
 
 class PngDecoderDelegate;
 
-class PngDecoder {
+// PNG decoder that uses the `libpng` library to decode pixels.
+class LibpngPngDecoder {
  public:
   static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
       PngDecoderDelegate* pDelegate);
@@ -28,13 +29,13 @@ class PngDecoder {
   static bool ContinueDecode(ProgressiveDecoderIface::Context* pContext,
                              RetainPtr<CFX_CodecMemory> codec_memory);
 
-  PngDecoder() = delete;
-  PngDecoder(const PngDecoder&) = delete;
-  PngDecoder& operator=(const PngDecoder&) = delete;
+  LibpngPngDecoder() = delete;
+  LibpngPngDecoder(const LibpngPngDecoder&) = delete;
+  LibpngPngDecoder& operator=(const LibpngPngDecoder&) = delete;
 };
 
 }  // namespace fxcodec
 
-using PngDecoder = fxcodec::PngDecoder;
+using PngDecoder = fxcodec::LibpngPngDecoder;
 
-#endif  // CORE_FXCODEC_PNG_PNG_DECODER_H_
+#endif  // CORE_FXCODEC_PNG_LIBPNG_PNG_DECODER_H_

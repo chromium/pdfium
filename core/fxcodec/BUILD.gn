@@ -120,8 +120,8 @@ source_set("fxcodec") {
     }
     if (pdf_enable_xfa_png) {
       sources += [
-        "png/png_decoder.cpp",
-        "png/png_decoder.h",
+        "png/libpng_png_decoder.cpp",
+        "png/libpng_png_decoder.h",
         "png/png_decoder_delegate.cpp",
         "png/png_decoder_delegate.h",
       ]

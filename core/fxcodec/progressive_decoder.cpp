@@ -38,7 +38,7 @@
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
-#include "core/fxcodec/png/png_decoder.h"
+#include "core/fxcodec/png/libpng_png_decoder.h"
 #include "core/fxcodec/png/png_decoder_delegate.h"
 #endif  // PDF_ENABLE_XFA_PNG
 
