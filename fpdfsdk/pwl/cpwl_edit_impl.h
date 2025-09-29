@@ -103,6 +103,7 @@ class CPWL_EditImpl {
   void ReplaceSelection(const WideString& text);
   bool Redo();
   bool Undo();
+  void SetMaxUndoItemsForTest(size_t items);
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
   CPVT_WordPlace SearchWordPlace(const CFX_PointF& point) const;
   int32_t GetCaret() const;
@@ -203,14 +204,26 @@ class CPWL_EditImpl {
     void Redo();
     bool CanUndo() const;
     bool CanRedo() const;
+    // items must be at least `kMinEditUndoMaxItems` since
+    // CPWL_EditImpl::ReplaceSelection() inserts that many items into the queue
+    // and they need to all fit.
+    void SetMaxUndoItemsForTest(size_t items);
 
    private:
     void RemoveHeads();
     void RemoveTails();
 
+    static constexpr int kEditUndoMaxItems = 10000;
+    static constexpr int kMinEditUndoMaxItems = 4;
+    static_assert(
+        kEditUndoMaxItems >= kMinEditUndoMaxItems,
+        "CPWL_EditImpl::ReplaceSelection() inserts a group of several "
+        "undo items, which must fit in the queue.");
+
     std::deque<std::unique_ptr<UndoItemIface>> undo_item_stack_;
     size_t cur_undo_pos_ = 0;
     bool working_ = false;
+    size_t max_undo_items_ = kEditUndoMaxItems;
   };
 
   class Provider;

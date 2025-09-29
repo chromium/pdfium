@@ -878,6 +878,10 @@ bool CPWL_Edit::Redo() {
   return CanRedo() && edit_impl_->Redo();
 }
 
+void CPWL_Edit::SetMaxUndoItemsForTest(size_t items) {
+  edit_impl_->SetMaxUndoItemsForTest(items);
+}
+
 void CPWL_Edit::SetReadyToInput() {
   if (mouse_down_) {
     ReleaseCapture();

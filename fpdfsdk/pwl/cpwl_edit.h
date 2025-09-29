@@ -91,6 +91,7 @@ class CPWL_Edit final : public CPWL_Wnd {
   void CutText();
   void SetText(const WideString& csText);
   bool IsTextFull() const;
+  void SetMaxUndoItemsForTest(size_t items);
 
   static float GetCharArrayAutoFontSize(const CPDF_Font* font,
                                         const CFX_FloatRect& rcPlate,

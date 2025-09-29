@@ -518,3 +518,94 @@ TEST_F(CPWLEditEmbedderTest, ReplaceAndKeepSelection) {
   EXPECT_EQ(L"12", GetCPWLEdit()->GetSelectedText());
   EXPECT_EQ(GetCPWLEdit()->GetSelection(), std::make_pair(1, 3));
 }
+
+TEST_F(CPWLEditEmbedderTest, ReplaceSelectionUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+
+  TypeTextIntoTextField(13);
+
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABCDEFGHIJKLM", GetCPWLEdit()->GetSelectedText());
+
+  GetCPWLEdit()->ReplaceSelection(L"123");
+  EXPECT_EQ(L"123", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABCDEFGHIJKLM", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"123", GetCPWLEdit()->GetText());
+}
+
+TEST_F(CPWLEditEmbedderTest, ReplaceSelectionUndoQueueLimit) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetMaxUndoItemsForTest(4);
+
+  TypeTextIntoTextField(13);
+
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABCDEFGHIJKLM", GetCPWLEdit()->GetSelectedText());
+
+  GetCPWLEdit()->ReplaceSelection(L"123");
+  EXPECT_EQ(L"123", GetCPWLEdit()->GetText());
+
+  TypeTextIntoTextField(2);
+  EXPECT_EQ(L"123AB", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"123A", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"123", GetCPWLEdit()->GetText());
+
+  // The entire group of 4 ReplaceSelection undo items should have been dropped
+  // off the end of the queue.
+  EXPECT_FALSE(GetCPWLEdit()->CanUndo());
+}
+
+TEST_F(CPWLEditEmbedderTest, ReplaceSelectionRedoQueueLimit) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  GetCPWLEdit()->SetMaxUndoItemsForTest(4);
+
+  TypeTextIntoTextField(13);
+
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABCDEFGHIJKLM", GetCPWLEdit()->GetSelectedText());
+
+  GetCPWLEdit()->ReplaceSelection(L"123");
+  EXPECT_EQ(L"123", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABCDEFGHIJKLM", GetCPWLEdit()->GetSelectedText());
+  // Select none with no undo item added to the stack (selection is not normally
+  // an undo item).
+  //
+  // This is necessary so that TypeTextIntoTextField(1), which adds a single
+  // undo item, does the standard typing behavior and not the ReplaceSelection
+  // behavior (which would add several undo items).
+  GetCPWLEdit()->SetSelection(-1, 0);
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  TypeTextIntoTextField(1);  // Adds undo item #5, over the limit
+  EXPECT_EQ(L"ABCDEFGHIJKLMA", GetCPWLEdit()->GetText());
+  // The 4 undo items for the ReplaceSelection() call should all be dropped off
+  // of the stack now. Covers UndoStack::RemoveTails().
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABCDEFGHIJKLM", GetCPWLEdit()->GetText());
+  // Typing "A" was the only item left on the undo stack
+  EXPECT_FALSE(GetCPWLEdit()->Undo());
+}
