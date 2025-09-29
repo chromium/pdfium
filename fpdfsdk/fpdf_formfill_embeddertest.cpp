@@ -3361,6 +3361,47 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
   EXPECT_EQ(Selection(), "");
 }
 
+TEST_F(FPDFFormFillTextFormEmbedderTest, RedoCutSelection) {
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+  EXPECT_FALSE(CanUndo());
+  EXPECT_FALSE(CanRedo());
+
+  TypeTextIntoTextField(2, RegularFormBegin());
+  EXPECT_EQ(FocusedFieldText(), "AB");
+  EXPECT_EQ(Selection(), "");
+  EXPECT_TRUE(CanUndo());
+  EXPECT_FALSE(CanRedo());
+
+  // ctrl+a
+  EXPECT_TRUE(FORM_SelectAllText(form_handle(), page()));
+  EXPECT_TRUE(CanUndo());
+  EXPECT_FALSE(CanRedo());
+  EXPECT_EQ(FocusedFieldText(), "AB");
+  EXPECT_EQ(Selection(), "AB");
+
+  // ctrl+x
+  ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"");
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
+  EXPECT_TRUE(CanUndo());
+  EXPECT_FALSE(CanRedo());
+  EXPECT_EQ(FocusedFieldText(), "");
+  EXPECT_EQ(Selection(), "");
+
+  // ctrl+z
+  PerformUndo();
+  EXPECT_TRUE(CanUndo());
+  EXPECT_TRUE(CanRedo());
+  EXPECT_EQ(FocusedFieldText(), "AB");
+  EXPECT_EQ(Selection(), "AB");
+
+  // ctrl+shift+z
+  PerformRedo();
+  EXPECT_TRUE(CanUndo());
+  EXPECT_FALSE(CanRedo());
+  EXPECT_EQ(FocusedFieldText(), "");
+  EXPECT_EQ(Selection(), "");
+}
+
 TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {
   // Start with a couple of letters in the text form.
   TypeTextIntoTextField(2, RegularFormBegin());

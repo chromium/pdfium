@@ -176,6 +176,10 @@ void CPWL_EditImpl::RefreshState::Add(const CFX_FloatRect& new_rect) {
   refresh_rects_.push_back(new_rect);
 }
 
+bool CPWL_EditImpl::UndoItemIface::IsSentinel() {
+  return false;
+}
+
 CPWL_EditImpl::UndoStack::UndoStack() = default;
 
 CPWL_EditImpl::UndoStack::~UndoStack() = default;
@@ -187,13 +191,23 @@ bool CPWL_EditImpl::UndoStack::CanUndo() const {
 void CPWL_EditImpl::UndoStack::Undo() {
   DCHECK(!working_);
   working_ = true;
-  int undo_remaining = 1;
-  while (CanUndo() && undo_remaining > 0) {
-    undo_remaining += undo_item_stack_[cur_undo_pos_ - 1]->Undo();
-    cur_undo_pos_--;
-    undo_remaining--;
+  bool first_undo = true;
+  while (CanUndo()) {
+    --cur_undo_pos_;
+    std::unique_ptr<UndoItemIface>& item = undo_item_stack_[cur_undo_pos_];
+    item->Undo();
+
+    if (first_undo) {
+      first_undo = false;
+      if (!item->IsSentinel()) {
+        break;
+      }
+    } else {
+      if (item->IsSentinel()) {
+        break;
+      }
+    }
   }
-  DCHECK_EQ(undo_remaining, 0);
   DCHECK(working_);
   working_ = false;
 }
@@ -202,21 +216,26 @@ bool CPWL_EditImpl::UndoStack::CanRedo() const {
   return cur_undo_pos_ < undo_item_stack_.size();
 }
 
-CPWL_EditImpl::UndoItemIface* CPWL_EditImpl::UndoStack::GetLastAddItem() {
-  CHECK(!undo_item_stack_.empty());
-  return undo_item_stack_.back().get();
-}
-
 void CPWL_EditImpl::UndoStack::Redo() {
   DCHECK(!working_);
   working_ = true;
-  int nRedoRemain = 1;
-  while (CanRedo() && nRedoRemain > 0) {
-    nRedoRemain += undo_item_stack_[cur_undo_pos_]->Redo();
-    cur_undo_pos_++;
-    nRedoRemain--;
+
+  bool first_undo = true;
+  while (CanRedo()) {
+    std::unique_ptr<UndoItemIface>& item = undo_item_stack_[cur_undo_pos_];
+    ++cur_undo_pos_;
+    item->Redo();
+    if (first_undo) {
+      first_undo = false;
+      if (!item->IsSentinel()) {
+        break;
+      }
+    } else {
+      if (item->IsSentinel()) {
+        break;
+      }
+    }
   }
-  DCHECK_EQ(nRedoRemain, 0);
   DCHECK(working_);
   working_ = false;
 }
@@ -258,8 +277,8 @@ class CPWL_EditImpl::UndoInsertWord final
   ~UndoInsertWord() override;
 
   // UndoItemIface:
-  int Redo() override;
-  int Undo() override;
+  void Redo() override;
+  void Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> edit_;
@@ -285,18 +304,16 @@ CPWL_EditImpl::UndoInsertWord::UndoInsertWord(CPWL_EditImpl* pEdit,
 
 CPWL_EditImpl::UndoInsertWord::~UndoInsertWord() = default;
 
-int CPWL_EditImpl::UndoInsertWord::Redo() {
+void CPWL_EditImpl::UndoInsertWord::Redo() {
   edit_->SelectNone();
   edit_->SetCaret(wp_old_);
   edit_->InsertWord(word_, charset_, false);
-  return 0;
 }
 
-int CPWL_EditImpl::UndoInsertWord::Undo() {
+void CPWL_EditImpl::UndoInsertWord::Undo() {
   edit_->SelectNone();
   edit_->SetCaret(wp_new_);
   edit_->Backspace(false);
-  return 0;
 }
 
 class CPWL_EditImpl::UndoInsertReturn final
@@ -308,8 +325,8 @@ class CPWL_EditImpl::UndoInsertReturn final
   ~UndoInsertReturn() override;
 
   // UndoItemIface:
-  int Redo() override;
-  int Undo() override;
+  void Redo() override;
+  void Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> edit_;
@@ -328,66 +345,32 @@ CPWL_EditImpl::UndoInsertReturn::UndoInsertReturn(
 
 CPWL_EditImpl::UndoInsertReturn::~UndoInsertReturn() = default;
 
-int CPWL_EditImpl::UndoInsertReturn::Redo() {
+void CPWL_EditImpl::UndoInsertReturn::Redo() {
   edit_->SelectNone();
   edit_->SetCaret(wp_old_);
   edit_->InsertReturn(false);
-  return 0;
 }
 
-int CPWL_EditImpl::UndoInsertReturn::Undo() {
+void CPWL_EditImpl::UndoInsertReturn::Undo() {
   edit_->SelectNone();
   edit_->SetCaret(wp_new_);
   edit_->Backspace(false);
-  return 0;
 }
 
 class CPWL_EditImpl::UndoReplaceSelection final
     : public CPWL_EditImpl::UndoItemIface {
  public:
-  UndoReplaceSelection(CPWL_EditImpl* pEdit, bool bIsEnd);
-  ~UndoReplaceSelection() override;
+  UndoReplaceSelection() = default;
+  ~UndoReplaceSelection() override = default;
 
   // UndoItemIface:
-  int Redo() override;
-  int Undo() override;
+  void Redo() override {}
+  void Undo() override {}
+  bool IsSentinel() override { return true; }
 
  private:
-  bool IsEnd() const { return end_; }
-
   UnownedPtr<CPWL_EditImpl> edit_;
-  const bool end_;  // indicate whether this is the end of replace action
 };
-
-CPWL_EditImpl::UndoReplaceSelection::UndoReplaceSelection(CPWL_EditImpl* pEdit,
-                                                          bool bIsEnd)
-    : edit_(pEdit), end_(bIsEnd) {
-  DCHECK(edit_);
-  // Redo ClearSelection, InsertText and ReplaceSelection's end marker
-  // Undo InsertText, ClearSelection and ReplaceSelection's beginning
-  // marker
-  set_undo_remaining(3);
-}
-
-CPWL_EditImpl::UndoReplaceSelection::~UndoReplaceSelection() = default;
-
-int CPWL_EditImpl::UndoReplaceSelection::Redo() {
-  if (IsEnd()) {
-    return 0;
-  }
-  // Redo ClearSelection, InsertText and ReplaceSelection's end
-  // marker. (ClearSelection may not exist)
-  return undo_remaining();
-}
-
-int CPWL_EditImpl::UndoReplaceSelection::Undo() {
-  if (!IsEnd()) {
-    return 0;
-  }
-  // Undo InsertText, ClearSelection and ReplaceSelection's beginning
-  // marker. (ClearSelection may not exist)
-  return undo_remaining();
-}
 
 class CPWL_EditImpl::UndoBackspace final : public CPWL_EditImpl::UndoItemIface {
  public:
@@ -399,8 +382,8 @@ class CPWL_EditImpl::UndoBackspace final : public CPWL_EditImpl::UndoItemIface {
   ~UndoBackspace() override;
 
   // UndoItemIface:
-  int Redo() override;
-  int Undo() override;
+  void Redo() override;
+  void Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> edit_;
@@ -426,14 +409,13 @@ CPWL_EditImpl::UndoBackspace::UndoBackspace(CPWL_EditImpl* pEdit,
 
 CPWL_EditImpl::UndoBackspace::~UndoBackspace() = default;
 
-int CPWL_EditImpl::UndoBackspace::Redo() {
+void CPWL_EditImpl::UndoBackspace::Redo() {
   edit_->SelectNone();
   edit_->SetCaret(wp_old_);
   edit_->Backspace(false);
-  return 0;
 }
 
-int CPWL_EditImpl::UndoBackspace::Undo() {
+void CPWL_EditImpl::UndoBackspace::Undo() {
   edit_->SelectNone();
   edit_->SetCaret(wp_new_);
   if (wp_new_.nSecIndex != wp_old_.nSecIndex) {
@@ -441,7 +423,6 @@ int CPWL_EditImpl::UndoBackspace::Undo() {
   } else {
     edit_->InsertWord(word_, charset_, false);
   }
-  return 0;
 }
 
 class CPWL_EditImpl::UndoDelete final : public CPWL_EditImpl::UndoItemIface {
@@ -455,8 +436,8 @@ class CPWL_EditImpl::UndoDelete final : public CPWL_EditImpl::UndoItemIface {
   ~UndoDelete() override;
 
   // UndoItemIface:
-  int Redo() override;
-  int Undo() override;
+  void Redo() override;
+  void Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> edit_;
@@ -485,14 +466,13 @@ CPWL_EditImpl::UndoDelete::UndoDelete(CPWL_EditImpl* pEdit,
 
 CPWL_EditImpl::UndoDelete::~UndoDelete() = default;
 
-int CPWL_EditImpl::UndoDelete::Redo() {
+void CPWL_EditImpl::UndoDelete::Redo() {
   edit_->SelectNone();
   edit_->SetCaret(wp_old_);
   edit_->Delete(false);
-  return 0;
 }
 
-int CPWL_EditImpl::UndoDelete::Undo() {
+void CPWL_EditImpl::UndoDelete::Undo() {
   edit_->SelectNone();
   edit_->SetCaret(wp_new_);
   if (sec_end_) {
@@ -500,7 +480,6 @@ int CPWL_EditImpl::UndoDelete::Undo() {
   } else {
     edit_->InsertWord(word_, charset_, false);
   }
-  return 0;
 }
 
 class CPWL_EditImpl::UndoClear final : public CPWL_EditImpl::UndoItemIface {
@@ -511,8 +490,8 @@ class CPWL_EditImpl::UndoClear final : public CPWL_EditImpl::UndoItemIface {
   ~UndoClear() override;
 
   // UndoItemIface:
-  int Redo() override;
-  int Undo() override;
+  void Redo() override;
+  void Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> edit_;
@@ -530,19 +509,17 @@ CPWL_EditImpl::UndoClear::UndoClear(CPWL_EditImpl* pEdit,
 
 CPWL_EditImpl::UndoClear::~UndoClear() = default;
 
-int CPWL_EditImpl::UndoClear::Redo() {
+void CPWL_EditImpl::UndoClear::Redo() {
   edit_->SelectNone();
   edit_->SetSelection(wr_sel_.BeginPos, wr_sel_.EndPos);
   edit_->Clear(false);
-  return 0;
 }
 
-int CPWL_EditImpl::UndoClear::Undo() {
+void CPWL_EditImpl::UndoClear::Undo() {
   edit_->SelectNone();
   edit_->SetCaret(wr_sel_.BeginPos);
   edit_->InsertText(sw_text_, FX_Charset::kDefault, false);
   edit_->SetSelection(wr_sel_.BeginPos, wr_sel_.EndPos);
-  return 0;
 }
 
 class CPWL_EditImpl::UndoInsertText final
@@ -556,8 +533,8 @@ class CPWL_EditImpl::UndoInsertText final
   ~UndoInsertText() override;
 
   // UndoItemIface:
-  int Redo() override;
-  int Undo() override;
+  void Redo() override;
+  void Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> edit_;
@@ -583,18 +560,16 @@ CPWL_EditImpl::UndoInsertText::UndoInsertText(CPWL_EditImpl* pEdit,
 
 CPWL_EditImpl::UndoInsertText::~UndoInsertText() = default;
 
-int CPWL_EditImpl::UndoInsertText::Redo() {
+void CPWL_EditImpl::UndoInsertText::Redo() {
   edit_->SelectNone();
   edit_->SetCaret(wp_old_);
   edit_->InsertText(sw_text_, charset_, false);
-  return 0;
 }
 
-int CPWL_EditImpl::UndoInsertText::Undo() {
+void CPWL_EditImpl::UndoInsertText::Undo() {
   edit_->SelectNone();
   edit_->SetSelection(wp_old_, wp_new_);
   edit_->Clear(false);
-  return 0;
 }
 
 void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
@@ -1849,42 +1824,27 @@ void CPWL_EditImpl::PaintInsertText(const CPVT_WordPlace& wpOld,
 }
 
 void CPWL_EditImpl::ReplaceAndKeepSelection(const WideString& text) {
-  AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, false));
-  bool is_insert_undo_clear = ClearSelection();
-  // It is necessary to determine whether the value of `undo_remaining_` is 2 or
-  // 3 based on ClearSelection().
-  // Special case: when cutting (clearing selection and inserting empty text),
-  // we need to ensure proper undo counting to restore all characters.
-  if (!is_insert_undo_clear || text.IsEmpty()) {
-    undo_.GetLastAddItem()->set_undo_remaining(2);
-  }
-  // Select the inserted text.
+  AddEditUndoItem(std::make_unique<UndoReplaceSelection>());
+  ClearSelection();
+
+  // Insert the text and then select it
   CPVT_WordPlace caret_before_insert = wp_caret_;
   InsertText(text, FX_Charset::kDefault);
   CPVT_WordPlace caret_after_insert = wp_caret_;
   sel_state_.Set(caret_before_insert, caret_after_insert);
 
-  AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, true));
-  if (!is_insert_undo_clear || text.IsEmpty()) {
-    undo_.GetLastAddItem()->set_undo_remaining(2);
-  }
+  AddEditUndoItem(std::make_unique<UndoReplaceSelection>());
 }
 
 void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
-  AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, false));
-  bool is_insert_undo_clear = ClearSelection();
-  // It is necessary to determine whether the value of `undo_remaining_` is 2 or
-  // 3 based on ClearSelection().
-  // Special case: when cutting (clearing selection and inserting empty text),
-  // we need to ensure proper undo counting to restore all characters.
-  if (!is_insert_undo_clear || text.IsEmpty()) {
-    undo_.GetLastAddItem()->set_undo_remaining(2);
-  }
+  // UndoReplaceSelection acts as a sentinel object in the undo queue. Since
+  // ClearSelection and InsertText only optionally add undo items there are a
+  // variable number of items in the queue for this action. These sentinel
+  // objects mark the start and the end of the series of related undo items.
+  AddEditUndoItem(std::make_unique<UndoReplaceSelection>());
+  ClearSelection();
   InsertText(text, FX_Charset::kDefault);
-  AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, true));
-  if (!is_insert_undo_clear || text.IsEmpty()) {
-    undo_.GetLastAddItem()->set_undo_remaining(2);
-  }
+  AddEditUndoItem(std::make_unique<UndoReplaceSelection>());
 }
 
 bool CPWL_EditImpl::Redo() {

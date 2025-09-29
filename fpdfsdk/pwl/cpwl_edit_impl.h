@@ -183,26 +183,14 @@ class CPWL_EditImpl {
    public:
     virtual ~UndoItemIface() = default;
 
-    // Undo/Redo the current undo item and returns the number of additional
-    // items to be processed in |undo_item_stack_| to fully undo/redo the
-    // action. (An example is UndoReplaceSelection::Undo(), if
-    // UndoReplaceSelection marks the end of a replace action,
-    // UndoReplaceSelection::Undo() returns |undo_remaining_|. The default value
-    // of |undo_remaining_| in UndoReplaceSelection is 3. because 3 more undo
-    // items need to be processed to revert the replace action: insert text,
-    // clear selection and the UndoReplaceSelection which marks the beginning of
-    // replace action. If CPWL_EditImpl::ClearSelection() returns false, the
-    // value of |undo_remaining_| in UndoReplaceSelection needs to be set to 2)
-    // Implementations should return 0 by default.
-    virtual int Undo() = 0;
-    virtual int Redo() = 0;
-    void set_undo_remaining(int undo_remaining) {
-      undo_remaining_ = undo_remaining;
-    }
-    int undo_remaining() const { return undo_remaining_; }
+    virtual void Undo() = 0;
+    virtual void Redo() = 0;
 
-   private:
-    int undo_remaining_ = 0;
+    // Return true if this is a sentinel undo item, the undo stack will continue
+    // performing undo/redo operations until the next sentinel undo item.
+    //
+    // Returns false by default. This is used by UndoReplaceSelection.
+    virtual bool IsSentinel();
   };
 
   class UndoStack {
@@ -215,9 +203,6 @@ class CPWL_EditImpl {
     void Redo();
     bool CanUndo() const;
     bool CanRedo() const;
-    // GetLastAddItem() will never return null, so it can only be called after
-    // calling AddItem().
-    UndoItemIface* GetLastAddItem();
 
    private:
     void RemoveHeads();
