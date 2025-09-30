@@ -12,8 +12,7 @@
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
-
-class CJBig2_Image;
+#include "core/fxcodec/jbig2/JBig2_Image.h"
 
 class CJBig2_SymbolDict {
  public:
