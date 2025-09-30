@@ -33,6 +33,11 @@ size_t g_isolate_ref_count = 0;
 CFX_V8ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
 v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 
+// TODO(pdfium): Define and use type-specific type tags for aligned pointers
+// stored in V8 objects. The type tags should not overlap with the ones used by
+// Blink, as defined in gin/public/gin_embedders.h.
+constexpr v8::EmbedderDataTypeTag kDefaultPDFiumTag = 0;
+
 // Only the address matters, values are for humans debugging. ASLR should
 // ensure that these values are unlikely to arise otherwise. Keep these
 // wchar_t to prevent the compiler from doing something clever, like
@@ -61,9 +66,10 @@ void CFXJS_PerObjectData::SetNewDataInObject(uint32_t nObjDefnID,
                                              v8::Local<v8::Object> pObj) {
   if (pObj->InternalFieldCount() == 2) {
     pObj->SetAlignedPointerInInternalField(
-        0, GetAlignedPointerForPerObjectDataTag());
-    pObj->SetAlignedPointerInInternalField(1,
-                                           new CFXJS_PerObjectData(nObjDefnID));
+        0, GetAlignedPointerForPerObjectDataTag(),
+        kDefaultPDFiumTag);
+    pObj->SetAlignedPointerInInternalField(
+        1, new CFXJS_PerObjectData(nObjDefnID), kDefaultPDFiumTag);
   }
 }
 
@@ -82,7 +88,8 @@ CFXJS_PerObjectData* CFXJS_PerObjectData::GetFromObject(
 //  static
 bool CFXJS_PerObjectData::HasInternalFields(v8::Local<v8::Object> pObj) {
   return pObj->InternalFieldCount() == 2 &&
-         pObj->GetAlignedPointerFromInternalField(0) ==
+         pObj->GetAlignedPointerFromInternalField(
+             0, kDefaultPDFiumTag) ==
              GetAlignedPointerForPerObjectDataTag();
 }
 
@@ -90,7 +97,8 @@ bool CFXJS_PerObjectData::HasInternalFields(v8::Local<v8::Object> pObj) {
 CFXJS_PerObjectData* CFXJS_PerObjectData::ExtractFromObject(
     v8::Local<v8::Object> pObj) {
   return static_cast<CFXJS_PerObjectData*>(
-      pObj->GetAlignedPointerFromInternalField(1));
+      pObj->GetAlignedPointerFromInternalField(1,
+                                               kDefaultPDFiumTag));
 }
 
 CFXJS_PerObjectData::CFXJS_PerObjectData(uint32_t nObjDefnID)
@@ -194,8 +202,10 @@ class CFXJS_ObjDefinition {
     }
     v8::Local<v8::Object> holder = info.This();
     DCHECK_EQ(holder->InternalFieldCount(), 2);
-    holder->SetAlignedPointerInInternalField(0, nullptr);
-    holder->SetAlignedPointerInInternalField(1, nullptr);
+    holder->SetAlignedPointerInInternalField(0, nullptr,
+                                             kDefaultPDFiumTag);
+    holder->SetAlignedPointerInInternalField(1, nullptr,
+                                             kDefaultPDFiumTag);
   }
 
   FXJSOBJTYPE GetObjType() const { return obj_type_; }
@@ -419,8 +429,10 @@ void CFXJS_Engine::SetBinding(v8::Local<v8::Object> pObj,
 // static
 void CFXJS_Engine::FreePerObjectData(v8::Local<v8::Object> pObj) {
   CFXJS_PerObjectData* pData = CFXJS_PerObjectData::GetFromObject(pObj);
-  pObj->SetAlignedPointerInInternalField(0, nullptr);
-  pObj->SetAlignedPointerInInternalField(1, nullptr);
+  pObj->SetAlignedPointerInInternalField(0, nullptr,
+                                         kDefaultPDFiumTag);
+  pObj->SetAlignedPointerInInternalField(1, nullptr,
+                                         kDefaultPDFiumTag);
   delete pData;
 }
 
@@ -524,8 +536,10 @@ void CFXJS_Engine::InitializeEngine() {
   // in case we don't process a FXJSOBJTYPE_GLOBAL below.
   v8::Local<v8::Object> pThis = v8Context->Global();
   if (pThis->InternalFieldCount() == 2) {
-    pThis->SetAlignedPointerInInternalField(0, nullptr);
-    pThis->SetAlignedPointerInInternalField(1, nullptr);
+    pThis->SetAlignedPointerInInternalField(0, nullptr,
+                                            kDefaultPDFiumTag);
+    pThis->SetAlignedPointerInInternalField(1, nullptr,
+                                            kDefaultPDFiumTag);
   }
 
   v8::Context::Scope context_scope(v8Context);

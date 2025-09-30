@@ -32,6 +32,11 @@ using pdfium::fxjse::kFuncTag;
 
 namespace {
 
+// TODO(pdfium): Define and use type-specific type tags for aligned pointers
+// stored in V8 objects. The type tags should not overlap with the ones used by
+// Blink, as defined in gin/public/gin_embedders.h.
+constexpr v8::EmbedderDataTypeTag kDefaultPDFiumTag = 0;
+
 FXJSE_FUNCTION_DESCRIPTOR* AsFunctionDescriptor(void* ptr) {
   auto* result = static_cast<FXJSE_FUNCTION_DESCRIPTOR*>(ptr);
   return result && result->tag == kFuncTag ? result : nullptr;
@@ -66,8 +71,9 @@ void V8ConstructorCallback_Wrapper(
   }
 
   DCHECK_EQ(info.This()->InternalFieldCount(), 2);
-  info.This()->SetAlignedPointerInInternalField(0, nullptr);
-  info.This()->SetAlignedPointerInInternalField(1, nullptr);
+  info.This()->SetAlignedPointerInInternalField(
+      0, nullptr, kDefaultPDFiumTag);
+  info.This()->SetInternalField(1, v8::Undefined(info.GetIsolate()));
 }
 
 void Context_GlobalObjToString(
@@ -100,7 +106,8 @@ void DynPropGetterAdapter_MethodCallback(
   }
 
   auto* pClassDescriptor = static_cast<const FXJSE_CLASS_DESCRIPTOR*>(
-      hCallBackInfo->GetAlignedPointerFromInternalField(0));
+      hCallBackInfo->GetAlignedPointerFromInternalField(
+          0, kDefaultPDFiumTag));
   if (pClassDescriptor != &kGlobalClassDescriptor &&
       pClassDescriptor != &kNormalClassDescriptor &&
       pClassDescriptor != &kVariablesClassDescriptor &&
@@ -156,7 +163,8 @@ std::unique_ptr<CFXJSE_Value> DynPropGetterAdapter(
           hCallBackInfoTemplate->NewInstance(pIsolate->GetCurrentContext())
               .ToLocalChecked();
       hCallBackInfo->SetAlignedPointerInInternalField(
-          0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor));
+          0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor),
+          kDefaultPDFiumTag);
       hCallBackInfo->SetInternalField(
           1, fxv8::NewStringHelper(pIsolate, szPropName));
       return std::make_unique<CFXJSE_Value>(
