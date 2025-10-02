@@ -7,7 +7,7 @@ import("../../pdfium.gni")
 source_set("image_diff") {
   testonly = true
   sources = [
-    "image_diff_png.cpp",
+    "image_diff_png_libpng.cpp",
     "image_diff_png.h",
   ]
   configs += [
