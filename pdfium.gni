@@ -62,6 +62,14 @@ declare_args() {
   # Note that Fontations requires Skia and Rust support.
   pdf_enable_fontations = pdf_enable_fontations_override
 
+  # Build PDFium with Rust-based PNG decoder and encoder.
+  # If enabled, it ensures that PDFium doesn't depend on `libpng`.
+  # Note that `pdf_enable_rust_png` requires Skia and Rust support.
+  #
+  # TODO(https://crbug.com/444045690): Actually use Rust PNG when this GN arg
+  # is enabled.
+  pdf_enable_rust_png = pdf_enable_rust_png_override
+
   # Build PDFium standalone. Now only controls whether the test binaries
   # are built. Most logic is conditioned by build_with_chromium.
   pdf_is_standalone = false
@@ -94,3 +102,7 @@ assert(!pdf_is_complete_lib || !is_component_build,
 assert(
     !pdf_enable_fontations || (enable_rust && enable_rust_cxx && pdf_use_skia),
     "pdf_enable_fontations=true requires enable_rust=true, enable_rust_cxx=true, and pdf_use_skia=true")
+
+assert(
+    !pdf_enable_rust_png || (enable_rust && enable_rust_cxx && pdf_use_skia),
+    "pdf_enable_rust_png=true requires enable_rust=true, enable_rust_cxx=true, and pdf_use_skia=true")
