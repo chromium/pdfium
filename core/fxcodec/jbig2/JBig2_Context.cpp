@@ -38,6 +38,10 @@ size_t GetRefAggContextSize(bool val) {
   return val ? 1024 : 8192;
 }
 
+JBig2ComposeOp GetRegionInfoComposeOp(const JBig2RegionInfo& ri) {
+  return static_cast<JBig2ComposeOp>(ri.flags & 0x03);
+}
+
 }  // namespace
 
 // Implement a very small least recently used (LRU) cache. It is very
@@ -856,7 +860,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       }
     }
     page_->ComposeFrom(ri.x, ri.y, pSegment->image_.get(),
-                       (JBig2ComposeOp)(ri.flags & 0x03));
+                       GetRegionInfoComposeOp(ri));
     pSegment->image_.reset();
   }
   return JBig2_Result::kSuccess;
@@ -979,7 +983,7 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
       }
     }
     page_->ComposeFrom(ri.x, ri.y, pSegment->image_.get(),
-                       (JBig2ComposeOp)(ri.flags & 0x03));
+                       GetRegionInfoComposeOp(ri));
     pSegment->image_.reset();
   }
   return JBig2_Result::kSuccess;
@@ -1059,7 +1063,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
           const FX_RECT& rect = grd_->GetReplaceRect();
           page_->ComposeFromWithRect(ri_.x + rect.left, ri_.y + rect.top,
                                      pSegment->image_.get(), rect,
-                                     (JBig2ComposeOp)(ri_.flags & 0x03));
+                                     GetRegionInfoComposeOp(ri_));
         }
         return JBig2_Result::kSuccess;
       }
@@ -1084,7 +1088,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
     const FX_RECT& rect = grd_->GetReplaceRect();
     page_->ComposeFromWithRect(ri_.x + rect.left, ri_.y + rect.top,
                                pSegment->image_.get(), rect,
-                               (JBig2ComposeOp)(ri_.flags & 0x03));
+                               GetRegionInfoComposeOp(ri_));
     pSegment->image_.reset();
   }
   grd_.reset();
@@ -1158,7 +1162,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
       }
     }
     page_->ComposeFrom(ri.x, ri.y, pSegment->image_.get(),
-                       (JBig2ComposeOp)(ri.flags & 0x03));
+                       GetRegionInfoComposeOp(ri));
     pSegment->image_.reset();
   }
   return JBig2_Result::kSuccess;
