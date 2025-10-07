@@ -39,6 +39,9 @@ size_t GetRefAggContextSize(bool val) {
 }
 
 JBig2ComposeOp GetRegionInfoComposeOp(const JBig2RegionInfo& ri) {
+  if ((ri.flags & 0x07) == 4) {
+    return JBig2ComposeOp::JBIG2_COMPOSE_REPLACE;
+  }
   return static_cast<JBig2ComposeOp>(ri.flags & 0x03);
 }
 

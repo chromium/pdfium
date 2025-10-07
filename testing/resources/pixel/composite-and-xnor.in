@@ -1,0 +1,74 @@
+{{header}}
+
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+
+{{object 2 0}} <<
+  /Type /Pages
+  /Kids [ 3 0 R ]
+  /Count 1
+>>
+endobj
+
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [ 0 0 399 400 ]
+  /Contents 4 0 R
+  /Resources <<
+    /XObject <<
+      /Im 5 0 R
+    >>
+  >>
+>>
+endobj
+
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+399 0 0 400 0 0 cm
+/Im Do
+endstream
+endobj
+
+{{object 5 0}} <<
+  {{streamlen}}
+  /Type /XObject
+  /Subtype /Image
+  /Width 399
+  /Height 400
+  /ColorSpace /DeviceGray
+  /Filter [ /ASCIIHexDecode /JBIG2Decode ]
+  /BitsPerComponent 1
+>>
+stream
+00000000300001000000130000018f0000019000000000000000004400000000
+0001270001000000510000008d000001900000000000000000010003fffdff02
+fefefeabf290cfbda9a22f7ab088c63a9b7349ada851452ff0eed1c1a9d63317
+cb2256ba279d3b3b28470637b60736ad2ad377362ae8fda2ffac000000022700
+01000000510000008d000001900000000000000000010003fffdff02fefefeab
+f290cfbda9a22f7ab088c63a9b7349ada851452ff0eed1c1a9d63317cb2256ba
+279d3b3b28470637b60736ad2ad377362ae8fda2ffac00000003270001000000
+dd00000102000001900000008d00000000030003fffdff02fefefeabf3a2ff5e
+dcfdf41111c08b5446d5c9367ed6aea49cb6c9085e20cd578b494daded9b8ea7
+342e2c1e951d9fff71a08df509d1ff63a981cf929942152f446aac9dceaa0494
+d12f61fba0ff793da430f5ef7df01ff67fe5ae7f4d1ae5055012366efdc5f67b
+de90415cd5ee6d78a4a7df938e942ec0b84e65c856f8ab977cd05fd24063ff3e
+2efc3b3da531fe1d28966aff2a07747b8bb55e684cfdbef4a745e99401fe1de9
+7dccfade1432560c349bb667bf4243ba3fb1a6a95a8d87503d03c67fffac0000
+00042700010000003600000017000000170000003c000000be030003fffdff02
+fefefe72c6a76eee7dd16e761e8628c6b3c03cf86fbe632ff8e2bef77fffac00
+0000052700010000003600000017000000170000003c000000be030003fffdff
+02fefefe72c6a76eee7dd16e761e8628c6b3c03cf86fbe632ff8e2bef77fffac
+>
+endstream
+endobj
+
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
