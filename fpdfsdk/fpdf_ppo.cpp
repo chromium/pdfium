@@ -88,26 +88,41 @@ FPDF_ImportPagesByIndex(FPDF_DOCUMENT dest_doc,
     return false;
   }
 
+  size_t length_size_t = pdfium::checked_cast<size_t>(length);
+  CPDF_Document::Extension* extension = cdest_doc->GetExtension();
+
   CPDF_PageExporter exporter(cdest_doc, csrc_doc);
 
   if (!page_indices) {
     std::vector<uint32_t> page_indices_vec(csrc_doc->GetPageCount());
     std::iota(page_indices_vec.begin(), page_indices_vec.end(), 0);
-    return exporter.ExportPages(page_indices_vec, index);
+    if (!exporter.ExportPages(page_indices_vec, index)) {
+      return false;
+    }
+    if (extension) {
+      extension->PagesInserted(index, length_size_t);
+    }
+    return true;
   }
-  if (length == 0) {
+  if (length_size_t == 0) {
     return false;
   }
 
   // SAFETY: required from caller.
-  auto page_span = UNSAFE_BUFFERS(pdfium::span(page_indices, length));
+  auto page_span = UNSAFE_BUFFERS(pdfium::span(page_indices, length_size_t));
   for (int page_index : page_span) {
     if (page_index < 0) {
       return false;
     }
   }
-  return exporter.ExportPages(
-      fxcrt::reinterpret_span<const uint32_t>(page_span), index);
+  if (!exporter.ExportPages(fxcrt::reinterpret_span<const uint32_t>(page_span),
+                            index)) {
+    return false;
+  }
+  if (extension) {
+    extension->PagesInserted(index, length_size_t);
+  }
+  return true;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
@@ -130,7 +145,16 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
   }
 
   CPDF_PageExporter exporter(cdest_doc, csrc_doc);
-  return exporter.ExportPages(page_indices, index);
+  if (!exporter.ExportPages(page_indices, index)) {
+    return false;
+  }
+
+  CPDF_Document::Extension* extension = cdest_doc->GetExtension();
+  if (extension) {
+    extension->PagesInserted(index, page_indices.size());
+  }
+
+  return true;
 }
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV

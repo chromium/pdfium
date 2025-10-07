@@ -37,6 +37,7 @@ class CPDF_Document : public Observable,
     virtual bool ContainsExtensionForm() const = 0;
     virtual bool ContainsExtensionFullForm() const = 0;
     virtual bool ContainsExtensionForegroundForm() const = 0;
+    virtual void PagesInserted(int page_index, size_t num_pages) = 0;
   };
 
   class LinkListIface {

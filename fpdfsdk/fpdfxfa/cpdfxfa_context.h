@@ -73,6 +73,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   bool ContainsExtensionForm() const override;
   bool ContainsExtensionFullForm() const override;
   bool ContainsExtensionForegroundForm() const override;
+  void PagesInserted(int page_index, size_t num_pages) override;
 
   // CXFA_FFApp::CallbackIface:
   WideString GetLanguage() override;

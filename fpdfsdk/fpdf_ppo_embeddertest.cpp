@@ -32,7 +32,14 @@
 
 namespace {
 
-class FPDFPPOEmbedderTest : public EmbedderTest {};
+class FPDFPPOEmbedderTest : public EmbedderTest {
+ public:
+  std::string GetPageChecksum(FPDF_DOCUMENT doc, int index) {
+    ScopedFPDFPage page(FPDF_LoadPage(doc, index));
+    auto bitmap = RenderPage(page.get());
+    return HashBitmap(bitmap.get());
+  }
+};
 
 int FakeBlockWriter(FPDF_FILEWRITE* pThis,
                     const void* pData,
@@ -698,4 +705,71 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
     CompareBitmap(bitmap.get(), 200, 100, new_page_2_checksum);
     CloseSavedPage(page);
   }
+}
+
+TEST_F(FPDFPPOEmbedderTest, XFAImportTest) {
+  // Load dest_doc with OpenDocument for XFA extension
+  ASSERT_TRUE(OpenDocument("rectangles_multi_page_xfa.pdf"));
+  FPDF_DOCUMENT dest_doc = document();
+  ASSERT_TRUE(dest_doc);
+  EXPECT_EQ(FPDF_GetFormType(dest_doc), FORMTYPE_XFA_FOREGROUND);
+  EXPECT_EQ(FPDF_GetPageCount(dest_doc), 5);
+
+  // Capture initial checksums of dest_doc (all original pages)
+  std::vector<std::string> dest_doc_checksums;
+  for (int i = 0; i < 5; i++) {
+    dest_doc_checksums.push_back(GetPageChecksum(dest_doc, i));
+  }
+
+  ScopedFPDFDocument source_doc(FPDF_LoadDocument(
+      PathService::GetTestFilePath("rectangles_multi_pages.pdf").c_str(),
+      nullptr));
+  ASSERT_TRUE(source_doc);
+  EXPECT_EQ(FPDF_GetFormType(source_doc.get()), FORMTYPE_NONE);
+  EXPECT_EQ(FPDF_GetPageCount(source_doc.get()), 5);
+
+  // Capture checksums of source_doc (all pages)
+  std::vector<std::string> source_doc_checksums;
+  for (int i = 0; i < 5; i++) {
+    source_doc_checksums.push_back(GetPageChecksum(source_doc.get(), i));
+  }
+
+  // Insert 3 pages into `dest_doc`
+  ASSERT_TRUE(FPDF_ImportPages(dest_doc, source_doc.get(), "1, 4, 2", 4));
+  EXPECT_EQ(FPDF_GetPageCount(dest_doc), 8);
+
+  for (int i = 0; i < 4; i++) {
+    EXPECT_EQ(GetPageChecksum(dest_doc, i), dest_doc_checksums[i]);
+  }
+
+  EXPECT_EQ(GetPageChecksum(dest_doc, 4), source_doc_checksums[0]);
+  EXPECT_EQ(GetPageChecksum(dest_doc, 5), source_doc_checksums[3]);
+  EXPECT_EQ(GetPageChecksum(dest_doc, 6), source_doc_checksums[1]);
+
+  EXPECT_EQ(GetPageChecksum(dest_doc, 7), dest_doc_checksums[4]);
+}
+
+TEST_F(FPDFPPOEmbedderTest, XFAMoveTest) {
+  // Load the document with OpenDocument for XFA extension
+  ASSERT_TRUE(OpenDocument("rectangles_multi_page_xfa.pdf"));
+  ASSERT_TRUE(document());
+  EXPECT_EQ(FPDF_GetFormType(document()), FORMTYPE_XFA_FOREGROUND);
+  EXPECT_EQ(FPDF_GetPageCount(document()), 5);
+
+  // Capture initial checksums of the document (all original pages)
+  std::vector<std::string> target_doc_checksums;
+  for (int i = 0; i < 5; i++) {
+    target_doc_checksums.push_back(GetPageChecksum(document(), i));
+  }
+
+  // Move 3 pages to the start of the PDF
+  constexpr int kPages[] = {1, 2, 3};
+  ASSERT_TRUE(FPDF_MovePages(document(), kPages, std::size(kPages), 0));
+  EXPECT_EQ(FPDF_GetPageCount(document()), 5);
+
+  EXPECT_EQ(GetPageChecksum(document(), 0), target_doc_checksums[1]);
+  EXPECT_EQ(GetPageChecksum(document(), 1), target_doc_checksums[2]);
+  EXPECT_EQ(GetPageChecksum(document(), 2), target_doc_checksums[3]);
+  EXPECT_EQ(GetPageChecksum(document(), 3), target_doc_checksums[0]);
+  EXPECT_EQ(GetPageChecksum(document(), 4), target_doc_checksums[4]);
 }

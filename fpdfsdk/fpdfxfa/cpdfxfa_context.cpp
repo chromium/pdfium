@@ -301,8 +301,12 @@ uint32_t CPDFXFA_Context::DeletePage(int page_index) {
   // if it's a valid page in the document.
   uint32_t page_obj_num = pdfdoc_->DeletePage(page_index);
 
+  if (page_obj_num != 0) {
+    --page_count_;
+  }
+
   if (fxcrt::IndexInBounds(xfa_page_list_, page_index)) {
-    xfa_page_list_.erase(xfa_page_list_.begin() + page_index);
+    xfa_page_list_.erase(std::next(xfa_page_list_.begin(), page_index));
     for (int i = page_index; i < fxcrt::CollectionSize<int>(xfa_page_list_);
          i++) {
       if (xfa_page_list_[i]) {
@@ -312,6 +316,14 @@ uint32_t CPDFXFA_Context::DeletePage(int page_index) {
   }
 
   return page_obj_num;
+}
+
+void CPDFXFA_Context::PagesInserted(int page_index, size_t num_pages) {
+  if (fxcrt::IndexInBounds(xfa_page_list_, page_index)) {
+    xfa_page_list_.insert(std::next(xfa_page_list_.begin(), page_index),
+                          num_pages, nullptr);
+    page_count_ += num_pages;
+  }
 }
 
 bool CPDFXFA_Context::ContainsExtensionForm() const {
