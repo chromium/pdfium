@@ -4,14 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/xfa/cfxjse_runtimedata.h"
-
 #include <utility>
 
 #include "core/fxcrt/check_op.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
+#include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "v8/include/v8-context.h"
 #include "v8/include/v8-external.h"
 #include "v8/include/v8-isolate.h"
@@ -40,7 +39,8 @@ std::unique_ptr<CFXJSE_RuntimeData> CFXJSE_RuntimeData::Create(
 
   DCHECK_EQ(hContext->Global()->InternalFieldCount(), 0);
 
-  hContext->SetSecurityToken(v8::External::New(pIsolate, pIsolate));
+  hContext->SetSecurityToken(v8::External::New(
+      pIsolate, pIsolate, v8::kExternalPointerTypeTagDefault));
   pRuntimeData->root_context_global_template_.Reset(pIsolate, hFuncTemplate);
   pRuntimeData->root_context_.Reset(pIsolate, hContext);
   return pRuntimeData;
