@@ -27,13 +27,11 @@ class _PdfStream(metaclass=ABCMeta):
   _filter_classes = {}
 
   @classmethod
-  @property
   @abstractmethod
   def name(cls):
     pass
 
   @classmethod
-  @property
   @abstractmethod
   def aliases(cls):
     pass
@@ -60,27 +58,27 @@ class _PdfStream(metaclass=ABCMeta):
 
   @classmethod
   def RegisterByName(cls):
-    assert cls.name[0] == '/'
-    lower_name = cls.name.lower()
+    assert cls.name()[0] == '/'
+    lower_name = cls.name().lower()
     _PdfStream._filter_classes[lower_name] = cls
     _PdfStream._filter_classes[lower_name[1:]] = cls
 
   @classmethod
   def RegisterByAliases(cls):
-    for alias in cls.aliases:
+    for alias in cls.aliases():
       _PdfStream._filter_classes[alias.lower()] = cls
 
   @staticmethod
   def GetHelp():
     text = 'Available filters:\n'
     for filter_class in _PdfStream._unique_filter_classes:
-      text += '  {} (aliases: {})\n'.format(filter_class.name,
-                                            ', '.join(filter_class.aliases))
+      text += '  {} (aliases: {})\n'.format(filter_class.name(),
+                                            ', '.join(filter_class.aliases()))
     return text
 
   @classmethod
   def AddEntries(cls, entries):
-    _PdfStream.AddListEntry(entries, 'Filter', cls.name)
+    _PdfStream.AddListEntry(entries, 'Filter', cls.name())
 
   @staticmethod
   def AddListEntry(entries, key, value):
@@ -113,7 +111,6 @@ class _SinkPdfStream(_PdfStream):
     super().__init__(io.BytesIO())
 
   @classmethod
-  @property
   def name(cls):
     # Return an invalid name, so as to ensure _SinkPdfStream.Register()
     # cannot be called. This method has to be implemented, because this
@@ -121,7 +118,6 @@ class _SinkPdfStream(_PdfStream):
     return ''
 
   @classmethod
-  @property
   def aliases(cls):
     # Return an invalid aliases, so as to ensure _SinkPdfStream.Register()
     # cannot be called. This method has to be implemented, because this
@@ -144,13 +140,11 @@ class _AsciiPdfStream(_PdfStream):
     self.column = 0
 
   @classmethod
-  @property
   @abstractmethod
   def name(cls):
     pass
 
   @classmethod
-  @property
   @abstractmethod
   def aliases(cls):
     pass
@@ -179,12 +173,10 @@ class _Ascii85DecodePdfStream(_AsciiPdfStream):
   _aliases = ('ascii85', 'base85')
 
   @classmethod
-  @property
   def name(cls):
     return cls._name
 
   @classmethod
-  @property
   def aliases(cls):
     return cls._aliases
 
@@ -213,12 +205,10 @@ class _AsciiHexDecodePdfStream(_AsciiPdfStream):
   _aliases = ('base16', 'hex', 'hexadecimal')
 
   @classmethod
-  @property
   def name(cls):
     return cls._name
 
   @classmethod
-  @property
   def aliases(cls):
     return cls._aliases
 
@@ -238,12 +228,10 @@ class _FlateDecodePdfStream(_PdfStream):
     self.deflate = zlib.compressobj(level=9, memLevel=9)
 
   @classmethod
-  @property
   def name(cls):
     return cls._name
 
   @classmethod
-  @property
   def aliases(cls):
     return cls._aliases
 
@@ -261,13 +249,11 @@ class _FlateDecodePdfStream(_PdfStream):
 class _VirtualPdfStream(_PdfStream):
 
   @classmethod
-  @property
   @abstractmethod
   def name(cls):
     pass
 
   @classmethod
-  @property
   @abstractmethod
   def aliases(cls):
     pass
@@ -286,12 +272,10 @@ class _PassthroughPdfStream(_VirtualPdfStream):
   _aliases = ('noop', 'passthrough')
 
   @classmethod
-  @property
   def name(cls):
     return cls._name
 
   @classmethod
-  @property
   def aliases(cls):
     return cls._aliases
 
@@ -309,12 +293,10 @@ class _PngIdatPdfStream(_VirtualPdfStream):
   _PNG_CHUNK_IDAT = 0x49444154
 
   @classmethod
-  @property
   def name(cls):
     return cls._name
 
   @classmethod
-  @property
   def aliases(cls):
     return cls._aliases
 
@@ -409,8 +391,8 @@ def _ParseCommandLine(argv):
       '--filter',
       action='append',
       type=_PdfStream.GetFilterByName,
-      help=('one or more filters, in decoding order; defaults to ' + ' '.join(
-          [f.name for f in _DEFAULT_FILTERS])),
+      help=('one or more filters, in decoding order; defaults to ' +
+            ' '.join([f.name() for f in _DEFAULT_FILTERS])),
       metavar='NAME')
   arg_parser.add_argument(
       'infile',
