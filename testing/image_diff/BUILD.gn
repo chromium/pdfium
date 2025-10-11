@@ -6,17 +6,23 @@ import("../../pdfium.gni")
 
 source_set("image_diff") {
   testonly = true
-  sources = [
-    "image_diff_png_libpng.cpp",
-    "image_diff_png.h",
-  ]
+  sources = [ "image_diff_png.h" ]
+  deps = []
+
+  if (pdf_use_skia) {
+    sources += [ "image_diff_png_skia.cpp" ]
+    deps += [ "//skia" ]
+  } else {
+    sources += [ "image_diff_png_libpng.cpp" ]
+    deps += [
+      "../../third_party:png",
+      "../../third_party:zlib",
+    ]
+  }
+
   configs += [
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]
   public_deps = [ "../../core/fxcrt" ]
-  deps = [
-    "../../third_party:png",
-    "../../third_party:zlib",
-  ]
 }
