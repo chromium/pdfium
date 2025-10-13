@@ -43,6 +43,5 @@ pdf_enable_fontations_override = false
 # If enabled, it ensures that PDFium doesn't depend on `libpng`.
 # Note that `pdf_enable_rust_png` requires Skia and Rust support.
 #
-# TODO(https://crbug.com/444045690): Actually use Rust PNG when this GN arg is
-# enabled.
+# TODO(https://crbug.com/444045690): Cover decoding path in production code.
 pdf_enable_rust_png_override = false

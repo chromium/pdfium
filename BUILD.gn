@@ -43,6 +43,10 @@ config("pdfium_common_config") {
     defines += [ "PDF_ENABLE_FONTATIONS" ]
   }
 
+  if (pdf_use_skia && pdf_enable_rust_png) {
+    defines += [ "PDF_ENABLE_RUST_PNG" ]
+  }
+
   if (pdf_use_partition_alloc) {
     defines += [ "PDF_USE_PARTITION_ALLOC" ]
   }

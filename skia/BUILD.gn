@@ -19,7 +19,7 @@ if (current_cpu == "mipsel" || current_cpu == "mips64el") {
   import("//build/config/mips.gni")
 }
 
-if (pdf_enable_fontations) {
+if (pdf_enable_fontations || pdf_enable_rust_png) {
   import("//build/rust/rust_static_library.gni")
 }
 
@@ -42,6 +42,39 @@ if (pdf_enable_fontations) {
       "//third_party/rust/read_fonts/v0_34:lib",
       "//third_party/rust/skrifa/v0_36:lib",
     ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      ":skia_config",
+      "//build/config/compiler:no_chromium_code",
+    ]
+  }
+}
+
+if (pdf_enable_rust_png) {
+  # TODO(https://crbug.com/448663461): Deduplicate `rust_png_ffi` and
+  # `rust_png_ffi_cpp` target definitions (the exact same target definitions
+  # are present in Chromium's //skia/BUILD.gn` and here in PDFium's
+  # `//skia/BUILD.gn`).
+
+  rust_static_library("rust_png_ffi") {
+    visibility = [ ":*" ]
+    allow_unsafe = true  # For FFI
+    crate_root = skia_codec_rust_png_ffi_crate_root
+    sources = skia_codec_rust_png_ffi_rs_srcs
+    cxx_bindings = skia_codec_rust_png_ffi_cxx_bridge_srcs
+    public_deps = [ ":rust_png_ffi_cpp" ]
+    deps = [ "//third_party/rust/png/v0_18:lib" ]
+    edition = "2021"
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      ":skia_config",
+      "//build/config/compiler:no_chromium_code",
+    ]
+  }
+
+  source_set("rust_png_ffi_cpp") {
+    visibility = [ ":*" ]
+    public = skia_codec_rust_png_ffi_cpp_hdrs
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       ":skia_config",
@@ -96,6 +129,15 @@ config("skia_config") {
 
   if (pdf_enable_fontations) {
     include_dirs += [ "$root_gen_dir/third_party/skia" ]
+  }
+
+  if (pdf_enable_rust_png) {
+    defines += [
+      "SK_CODEC_DECODES_PNG",
+      "SK_CODEC_DECODES_PNG_WITH_RUST",
+      "SK_CODEC_ENCODES_PNG",
+      "SK_CODEC_ENCODES_PNG_WITH_RUST",
+    ]
   }
 }
 
@@ -192,12 +234,7 @@ component("skia") {
   sources += skia_utils_private
   sources += skia_xps_sources
   sources += skia_codec_decode_bmp
-  sources += skia_codec_libpng_srcs
-  sources += skia_codec_png_base
-  sources += skia_codec_shared
-  sources += skia_encode_libpng_srcs
-  sources += skia_encode_png_base
-  sources += skia_encode_srcs
+
   sources += skia_ports_sources
   sources += [
     "//third_party/skia/src/ports/SkImageGenerator_none.cpp",
@@ -318,7 +355,6 @@ component("skia") {
   deps += [
     ":skcms",
     ":skia_opts",
-    "../third_party:png",
     "../third_party:zlib",
     "//:freetype_common",
   ]
@@ -351,6 +387,25 @@ component("skia") {
     sources += skia_pdf_sources
   } else {
     sources += [ "//third_party/skia/src/pdf/SkDocument_PDF_None.cpp" ]
+  }
+
+  sources += skia_codec_png_base
+  sources += skia_codec_public
+  sources += skia_codec_shared
+  sources += skia_encode_png_base
+  sources += skia_encode_public
+  sources += skia_encode_srcs
+  if (pdf_enable_rust_png) {
+    sources += skia_codec_rust_png
+    sources += skia_codec_rust_png_public
+    sources += skia_encode_rust_png_public
+    sources += skia_encode_rust_png_srcs
+    deps += [ ":rust_png_ffi" ]
+  } else {
+    sources += skia_codec_libpng_srcs
+    sources += skia_encode_libpng_srcs
+    sources += skia_encode_png_public
+    deps += [ "../third_party:png" ]
   }
 }
 

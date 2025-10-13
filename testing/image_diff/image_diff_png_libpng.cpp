@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include <string>
+#include <vector>
 
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -30,6 +31,10 @@
 #include <png.h>
 #else
 #include "third_party/libpng/png.h"
+#endif
+
+#ifdef PDF_ENABLE_RUST_PNG
+#error "If Rust PNG is enabled, then `libpng` should not be used."
 #endif
 
 namespace image_diff_png {

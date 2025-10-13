@@ -22,11 +22,17 @@
 #include "testing/image_diff/image_diff_png.h"
 
 #ifdef PDF_ENABLE_SKIA
-#include "third_party/skia/include/core/SkPicture.h"       // nogncheck
-#include "third_party/skia/include/core/SkSerialProcs.h"   // nogncheck
-#include "third_party/skia/include/core/SkStream.h"        // nogncheck
+#include "third_party/skia/include/core/SkImage.h"        // nogncheck
+#include "third_party/skia/include/core/SkPicture.h"      // nogncheck
+#include "third_party/skia/include/core/SkPixmap.h"       // nogncheck
+#include "third_party/skia/include/core/SkSerialProcs.h"  // nogncheck
+#include "third_party/skia/include/core/SkStream.h"       // nogncheck
+#ifdef PDF_ENABLE_RUST_PNG
+#include "third_party/skia/include/encode/SkPngRustEncoder.h"  // nogncheck
+#else
 #include "third_party/skia/include/encode/SkPngEncoder.h"  // nogncheck
-#endif
+#endif  // PDF_ENABLE_RUST_PNG
+#endif  // PDF_ENABLE_SKIA
 
 namespace {
 
@@ -634,7 +640,11 @@ std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture) {
   }
   SkSerialProcs procs;
   procs.fImageProc = [](SkImage* img, void*) -> sk_sp<SkData> {
-    return SkPngEncoder::Encode(nullptr, img, SkPngEncoder::Options{});
+#ifdef PDF_ENABLE_RUST_PNG
+    return SkPngRustEncoder::Encode(nullptr, img, /*options=*/{});
+#else
+    return SkPngEncoder::Encode(nullptr, img, /*options=*/{});
+#endif
   };
 
   picture.serialize(stream.get(), &procs);
