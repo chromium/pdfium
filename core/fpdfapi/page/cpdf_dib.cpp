@@ -269,11 +269,12 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
       pGlobalSpan = global_acc_->GetSpan();
       nGlobalKey = global_acc_->KeyForCache();
     }
+    const bool reject_large_regions_when_fuzzing = false;
     iDecodeStatus = Jbig2Decoder::StartDecode(
         jbig_2context_.get(), document_->GetOrCreateCodecContext(), GetWidth(),
         GetHeight(), pSrcSpan, nSrcKey, pGlobalSpan, nGlobalKey,
-        cached_bitmap_->GetWritableBuffer(), cached_bitmap_->GetPitch(),
-        pPause);
+        cached_bitmap_->GetWritableBuffer(), cached_bitmap_->GetPitch(), pPause,
+        reject_large_regions_when_fuzzing);
   } else {
     iDecodeStatus = Jbig2Decoder::ContinueDecode(jbig_2context_.get(), pPause);
   }

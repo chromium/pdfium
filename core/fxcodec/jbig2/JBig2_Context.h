@@ -52,6 +52,10 @@ class CJBig2_Context {
   bool Continue(PauseIndicatorIface* pPause);
   FXCODEC_STATUS GetProcessingStatus() const { return processing_status_; }
 
+  void RejectLargeRegionsWhenFuzzing() {
+    reject_large_regions_when_fuzzing_ = true;
+  }
+
  private:
   CJBig2_Context(pdfium::span<const uint8_t> pSrcSpan,
                  uint64_t src_key,
@@ -102,6 +106,7 @@ class CJBig2_Context {
   uint32_t offset_ = 0;
   JBig2RegionInfo ri_ = {};
   UnownedPtr<std::list<CJBig2_CachePair>> const symbol_dict_cache_;
+  bool reject_large_regions_when_fuzzing_ = false;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_CONTEXT_H_

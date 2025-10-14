@@ -53,7 +53,8 @@ FXCODEC_STATUS Jbig2Decoder::StartDecode(
     uint64_t global_key,
     pdfium::span<uint8_t> dest_buf,
     uint32_t dest_pitch,
-    PauseIndicatorIface* pPause) {
+    PauseIndicatorIface* pPause,
+    bool reject_large_regions_when_fuzzing) {
   pJbig2Context->width_ = width;
   pJbig2Context->height_ = height;
   pJbig2Context->src_span_ = src_span;
@@ -66,6 +67,11 @@ FXCODEC_STATUS Jbig2Decoder::StartDecode(
   pJbig2Context->context_ =
       CJBig2_Context::Create(global_span, global_key, src_span, src_key,
                              pJBig2DocumentContext->GetSymbolDictCache());
+
+  if (reject_large_regions_when_fuzzing) {
+    pJbig2Context->context_->RejectLargeRegionsWhenFuzzing();
+  }
+
   bool succeeded = pJbig2Context->context_->GetFirstPage(
       dest_buf, width, height, dest_pitch, pPause);
   return Decode(pJbig2Context, succeeded);

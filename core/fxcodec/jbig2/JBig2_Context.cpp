@@ -1192,6 +1192,12 @@ JBig2_Result CJBig2_Context::ParseRegionInfo(JBig2RegionInfo* pRI) {
       stream_->read1Byte(&pRI->flags) != 0) {
     return JBig2_Result::kFailure;
   }
+
+  if (reject_large_regions_when_fuzzing_ &&
+      (pRI->width > 4096 || pRI->height > 4096)) {
+    return JBig2_Result::kFailure;
+  }
+
   return JBig2_Result::kSuccess;
 }
 

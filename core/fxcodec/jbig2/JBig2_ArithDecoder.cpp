@@ -94,22 +94,6 @@ void CJBig2_ArithDecoder::BYTEIN() {
     unsigned char B1 = stream_->getNextByte_arith();
     if (B1 > 0x8f) {
       ct_ = 8;
-
-      switch (state_) {
-        case StreamState::kDataAvailable:
-          // Finished decoding data (see JBIG2 spec, Section E.3.4).
-          state_ = StreamState::kDecodingFinished;
-          break;
-        case StreamState::kDecodingFinished:
-          // Allow one more call in the finished state. https://crbug.com/947622
-          state_ = StreamState::kLooping;
-          break;
-        case StreamState::kLooping:
-          // Looping state detected. Mark decoding as complete to bail out.
-          // https://crbug.com/767156
-          complete_ = true;
-          break;
-      }
     } else {
       stream_->incByteIdx();
       b_ = B1;

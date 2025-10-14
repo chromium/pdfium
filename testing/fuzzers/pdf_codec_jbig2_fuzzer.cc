@@ -42,9 +42,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   JBig2_DocumentContext document_context;
   Jbig2Context jbig2_context;
+
+  const bool reject_large_regions_when_fuzzing = true;
   FXCODEC_STATUS status = Jbig2Decoder::StartDecode(
       &jbig2_context, &document_context, width, height, span, 1, {}, 0,
-      bitmap->GetWritableBuffer(), bitmap->GetPitch(), nullptr);
+      bitmap->GetWritableBuffer(), bitmap->GetPitch(), nullptr,
+      reject_large_regions_when_fuzzing);
 
   while (status == FXCODEC_STATUS::kDecodeToBeContinued) {
     status = Jbig2Decoder::ContinueDecode(&jbig2_context, nullptr);

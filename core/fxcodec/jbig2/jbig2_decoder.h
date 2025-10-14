@@ -50,7 +50,8 @@ class Jbig2Decoder {
       uint64_t global_key,
       pdfium::span<uint8_t> dest_buf,
       uint32_t dest_pitch,
-      PauseIndicatorIface* pPause);
+      PauseIndicatorIface* pPause,
+      bool reject_large_regions_when_fuzzing);
 
   static FXCODEC_STATUS ContinueDecode(Jbig2Context* pJbig2Context,
                                        PauseIndicatorIface* pPause);
