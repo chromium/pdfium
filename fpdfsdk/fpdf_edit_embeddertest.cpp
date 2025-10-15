@@ -4234,6 +4234,76 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   CloseSavedDocument();
 }
 
+TEST_F(FPDFEditEmbedderTest, AddMarkedTextWithFloat) {
+  // Start with a blank page.
+  ScopedFPDFPage page(FPDFPage_New(CreateNewDocument(), 0, 612, 792));
+
+  RetainPtr<CPDF_Font> stock_font =
+      CPDF_Font::GetStockFont(cpdf_doc(), "Arial");
+  pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                        FPDF_FONT_TRUETYPE, 0));
+  ASSERT_TRUE(font.get());
+
+  // Add some text to the page.
+  FPDF_PAGEOBJECT text_object =
+      FPDFPageObj_CreateTextObj(document(), font.get(), 12.0f);
+
+  EXPECT_TRUE(text_object);
+  ScopedFPDFWideString text1 = GetFPDFWideString(kLoadedFontText);
+  EXPECT_TRUE(FPDFText_SetText(text_object, text1.get()));
+  FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
+  FPDFPage_InsertObject(page.get(), text_object);
+
+  // Add a mark with the tag "TestMark" to that text.
+  EXPECT_EQ(0, FPDFPageObj_CountMarks(text_object));
+  FPDF_PAGEOBJECTMARK mark = FPDFPageObj_AddMark(text_object, "TestMark");
+  EXPECT_TRUE(mark);
+  EXPECT_EQ(1, FPDFPageObj_CountMarks(text_object));
+
+  // Add a float parameter "Pi" with value 3.14159.
+  EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
+  EXPECT_TRUE(FPDFPageObjMark_SetFloatParam(document(), text_object, mark, "Pi",
+                                            3.14159f));
+  EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
+
+  // Check the parameter can be retrieved.
+  EXPECT_EQ(FPDF_OBJECT_NUMBER, FPDFPageObjMark_GetParamValueType(mark, "Pi"));
+  float float_value;
+  EXPECT_TRUE(FPDFPageObjMark_GetParamFloatValue(mark, "Pi", &float_value));
+  EXPECT_FLOAT_EQ(3.14159f, float_value);
+
+  // Render and check the bitmap is the expected one.
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
+    CompareBitmap(page_bitmap.get(), 612, 792, LoadedFontTextChecksum());
+  }
+
+  // Now save the result.
+  EXPECT_EQ(1, FPDFPage_CountObjects(page.get()));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  // Re-open the file and check the changes were kept in the saved .pdf.
+  ASSERT_TRUE(OpenSavedDocument());
+  {
+    ScopedSavedPage saved_page = LoadScopedSavedPage(0);
+    ASSERT_TRUE(saved_page);
+    EXPECT_EQ(1, FPDFPage_CountObjects(saved_page.get()));
+
+    text_object = FPDFPage_GetObject(saved_page.get(), 0);
+    EXPECT_TRUE(text_object);
+    EXPECT_EQ(1, FPDFPageObj_CountMarks(text_object));
+    mark = FPDFPageObj_GetMark(text_object, 0);
+    EXPECT_TRUE(mark);
+
+    EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
+    EXPECT_TRUE(FPDFPageObjMark_GetParamFloatValue(mark, "Pi", &float_value));
+    EXPECT_FLOAT_EQ(3.14159f, float_value);
+  }
+  CloseSavedDocument();
+}
+
 TEST_F(FPDFEditEmbedderTest, MarkGetName) {
   ASSERT_TRUE(OpenDocument("text_in_page_marked.pdf"));
   ScopedPage page = LoadScopedPage(0);
@@ -4333,6 +4403,40 @@ TEST_F(FPDFEditEmbedderTest, MarkGetIntParam) {
   out_value = 999;
   EXPECT_FALSE(FPDFPageObjMark_GetParamIntValue(mark, "Position", &out_value));
   EXPECT_EQ(999, out_value);
+}
+
+TEST_F(FPDFEditEmbedderTest, MarkGetFloatParam) {
+  ASSERT_TRUE(OpenDocument("text_in_page_marked.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 8);
+  FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, 0);
+  ASSERT_TRUE(mark);
+
+  // Show the positive cases of FPDFPageObjMark_GetParamFloatValue.
+  float out_value = 999.0f;
+  EXPECT_TRUE(FPDFPageObjMark_GetParamFloatValue(mark, "Factor", &out_value));
+  EXPECT_FLOAT_EQ(3.0f, out_value);
+
+  // Show the negative cases of FPDFPageObjMark_GetParamFloatValue.
+  out_value = 999.0f;
+  EXPECT_FALSE(
+      FPDFPageObjMark_GetParamFloatValue(nullptr, "Factor", &out_value));
+  EXPECT_FLOAT_EQ(999.0f, out_value);
+
+  out_value = 999.0f;
+  EXPECT_FALSE(FPDFPageObjMark_GetParamFloatValue(mark, "ParamThatDoesNotExist",
+                                                  &out_value));
+  EXPECT_FLOAT_EQ(999.0f, out_value);
+
+  EXPECT_FALSE(FPDFPageObjMark_GetParamFloatValue(mark, "Factor", nullptr));
+
+  page_object = FPDFPage_GetObject(page.get(), 18);
+  mark = FPDFPageObj_GetMark(page_object, 1);
+  out_value = 999.0f;
+  EXPECT_FALSE(
+      FPDFPageObjMark_GetParamFloatValue(mark, "Position", &out_value));
+  EXPECT_FLOAT_EQ(999.0f, out_value);
 }
 
 TEST_F(FPDFEditEmbedderTest, MarkGetStringParam) {

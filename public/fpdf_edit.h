@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-// NOLINTNEXTLINE(build/include)
+// NOLINTNEXTLINE(build/include_directory)
 #include "fpdfview.h"
 
 #define FPDF_ARGB(a, r, g, b)                                      \
@@ -549,6 +549,22 @@ FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
                                  int* out_value);
 
 // Experimental API.
+// Get the value of a number property in a content mark by key as float.
+// FPDFPageObjMark_GetParamValueType() should have returned FPDF_OBJECT_NUMBER
+// for this property.
+//
+//   mark      - handle to a content mark.
+//   key       - string key of the property.
+//   out_value - pointer to variable that will receive the value. Not filled if
+//               false is returned.
+//
+// Returns TRUE if the key maps to a number value, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_GetParamFloatValue(FPDF_PAGEOBJECTMARK mark,
+                                   FPDF_BYTESTRING key,
+                                   float* out_value);
+
+// Experimental API.
 // Get the value of a string property in a content mark by key.
 //
 //   mark       - handle to a content mark.
@@ -610,6 +626,25 @@ FPDFPageObjMark_SetIntParam(FPDF_DOCUMENT document,
                             FPDF_PAGEOBJECTMARK mark,
                             FPDF_BYTESTRING key,
                             int value);
+
+// Experimental API.
+// Set the value of a float property in a content mark by key. If a parameter
+// with key |key| exists, its value is set to |value|. Otherwise, it is added as
+// a new parameter.
+//
+//   document    - handle to the document.
+//   page_object - handle to the page object with the mark.
+//   mark        - handle to a content mark.
+//   key         - string key of the property.
+//   value       - float value to set.
+//
+// Returns TRUE if the operation succeeded, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_SetFloatParam(FPDF_DOCUMENT document,
+                              FPDF_PAGEOBJECT page_object,
+                              FPDF_PAGEOBJECTMARK mark,
+                              FPDF_BYTESTRING key,
+                              float value);
 
 // Experimental API.
 // Set the value of a string property in a content mark by key. If a parameter
