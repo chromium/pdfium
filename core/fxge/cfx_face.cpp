@@ -301,6 +301,7 @@ RetainPtr<CFX_Face> CFX_Face::New(FT_Library library,
   return pdfium::WrapRetain(new CFX_Face(pRec, std::move(pDesc)));
 }
 
+#if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
 // static
 RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
                                    const FT_Open_Args* args,
@@ -313,6 +314,7 @@ RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
   // Private ctor.
   return pdfium::WrapRetain(new CFX_Face(pRec, nullptr));
 }
+#endif
 
 bool CFX_Face::HasGlyphNames() const {
   return !!(GetRec()->face_flags & FT_FACE_FLAG_GLYPH_NAMES);
