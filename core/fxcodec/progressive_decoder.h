@@ -88,7 +88,7 @@ class ProgressiveDecoder final :
   // PngDecoderDelegate
   bool PngReadHeader(int width,
                      int height,
-                     int bpc,
+                     int bits_per_component,
                      int pass,
                      PngDecoderDelegate::EncodedColorType src_color_type,
                      PngDecoderDelegate::DecodedColorType* dst_color_type,
@@ -159,7 +159,9 @@ class ProgressiveDecoder final :
   FXCODEC_STATUS JpegStartDecode();
   FXCODEC_STATUS JpegContinueDecode();
 
-  int32_t GetBitsPerPixel() const { return src_components_ * src_bpc_; }
+  int32_t GetBitsPerPixel() const {
+    return src_components_count_ * src_bits_per_component_;
+  }
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
@@ -203,8 +205,8 @@ class ProgressiveDecoder final :
   WeightTable weight_horz_;
   int src_width_ = 0;
   int src_height_ = 0;
-  int src_components_ = 0;  // Number of components (e.g. 4 for RGBA, 3 for RGB)
-  int src_bpc_ = 0;  // Bits per component (e.g. bits per red or bits per alpha)
+  int src_components_count_ = 0;    // e.g. 4 for RGBA, or 3 for RGB
+  int src_bits_per_component_ = 0;  // how many bits per channel
   TransformMethod trans_method_;
   int src_row_ = 0;
   FXCodec_Format src_format_ = FXCodec_Invalid;

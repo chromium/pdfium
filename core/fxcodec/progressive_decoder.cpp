@@ -86,7 +86,7 @@ ProgressiveDecoder::~ProgressiveDecoder() = default;
 #ifdef PDF_ENABLE_XFA_PNG
 bool ProgressiveDecoder::PngReadHeader(int width,
                                        int height,
-                                       int bpc,
+                                       int bits_per_component,
                                        int pass,
                                        PngEncodedColorType src_color_type,
                                        PngDecodedColorType* dst_color_type,
@@ -94,9 +94,10 @@ bool ProgressiveDecoder::PngReadHeader(int width,
   if (!device_bitmap_) {
     src_width_ = width;
     src_height_ = height;
-    src_bpc_ = bpc;
+    src_bits_per_component_ = bits_per_component;
     src_pass_number_ = pass;
-    src_components_ = PngDecoderDelegate::GetNumberOfComponents(src_color_type);
+    src_components_count_ =
+        PngDecoderDelegate::GetNumberOfComponents(src_color_type);
     return false;
   }
   switch (device_bitmap_->GetFormat()) {
@@ -301,7 +302,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   pdfium::span<const FX_ARGB> palette;
   BmpDecoder::Status read_result = BmpDecoder::ReadHeader(
       pBmpContext.get(), &src_width_, &src_height_, &bmp_is_top_bottom_,
-      &src_components_, &palette, pAttribute);
+      &src_components_count_, &palette, pAttribute);
   while (read_result == BmpDecoder::Status::kContinue) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
     if (!BmpReadMoreData(pBmpContext.get(), &error_status)) {
@@ -310,7 +311,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     }
     read_result = BmpDecoder::ReadHeader(
         pBmpContext.get(), &src_width_, &src_height_, &bmp_is_top_bottom_,
-        &src_components_, &palette, pAttribute);
+        &src_components_count_, &palette, pAttribute);
   }
 
   if (read_result != BmpDecoder::Status::kSuccess) {
@@ -319,7 +320,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   }
 
   FXDIB_Format format = FXDIB_Format::kInvalid;
-  switch (src_components_) {
+  switch (src_components_count_) {
     case 1:
       src_format_ = FXCodec_8bppRgb;
       format = FXDIB_Format::k8bppRgb;
@@ -355,7 +356,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     return false;
   }
 
-  src_bpc_ = 8;
+  src_bits_per_component_ = 8;
   bmp_context_ = std::move(pBmpContext);
   if (!palette.empty()) {
     src_palette_.resize(palette.size());
@@ -375,7 +376,7 @@ bool ProgressiveDecoder::BmpReadMoreData(
 
 FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode() {
   SetTransMethod();
-  scanline_size_ = FxAlignToBoundary<4>(src_width_ * src_components_);
+  scanline_size_ = FxAlignToBoundary<4>(src_width_ * src_components_count_);
   decode_buf_.resize(scanline_size_);
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
@@ -416,7 +417,7 @@ bool ProgressiveDecoder::GifReadMoreData(FXCODEC_STATUS* err_status) {
 bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
   gif_context_ = GifDecoder::StartDecode(this);
   GifDecoder::Input(gif_context_.get(), codec_memory_);
-  src_components_ = 1;
+  src_components_count_ = 1;
   GifDecoder::Status readResult =
       GifDecoder::ReadHeader(gif_context_.get(), &src_width_, &src_height_,
                              &gif_palette_, &gif_bg_index_);
@@ -432,7 +433,7 @@ bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
                                &gif_palette_, &gif_bg_index_);
   }
   if (readResult == GifDecoder::Status::kSuccess) {
-    src_bpc_ = 8;
+    src_bits_per_component_ = 8;
     return true;
   }
   gif_context_ = nullptr;
@@ -499,7 +500,7 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
 
   while (1) {
     int read_result = JpegProgressiveDecoder::ReadHeader(
-        jpeg_context_.get(), &src_width_, &src_height_, &src_components_,
+        jpeg_context_.get(), &src_width_, &src_height_, &src_components_count_,
         pAttribute);
     switch (read_result) {
       case JpegProgressiveDecoder::kFatal:
@@ -507,7 +508,7 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
         status_ = FXCODEC_STATUS::kError;
         return false;
       case JpegProgressiveDecoder::kOk:
-        src_bpc_ = 8;
+        src_bits_per_component_ = 8;
         return true;
       case JpegProgressiveDecoder::kNeedsMoreInput: {
         FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
@@ -534,12 +535,12 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
       return status_;
     }
   }
-  decode_buf_.resize(FxAlignToBoundary<4>(src_width_ * src_components_));
+  decode_buf_.resize(FxAlignToBoundary<4>(src_width_ * src_components_count_));
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
   weight_horz_.CalculateWeights(src_width_, 0, src_width_, src_width_, 0,
                                 src_width_, options);
-  switch (src_components_) {
+  switch (src_components_count_) {
     case 1:
       src_format_ = FXCodec_8bppGray;
       break;
@@ -633,10 +634,10 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
   }
   offset_ = 0;
   CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
-  src_components_ = 4;
+  src_components_count_ = 4;
   src_format_ = FXCodec_Argb;
   SetTransMethod();
-  int scanline_size = FxAlignToBoundary<4>(src_width_ * src_components_);
+  int scanline_size = FxAlignToBoundary<4>(src_width_ * src_components_count_);
   decode_buf_.resize(scanline_size);
   status_ = FXCODEC_STATUS::kDecodeToBeContinued;
   return status_;
@@ -687,9 +688,9 @@ bool ProgressiveDecoder::TiffDetectImageTypeFromFile(
   }
   int32_t dummy_bpc;
   bool ret = TiffDecoder::LoadFrameInfo(tiff_context_.get(), 0, &src_width_,
-                                        &src_height_, &src_components_,
+                                        &src_height_, &src_components_count_,
                                         &dummy_bpc, pAttribute);
-  src_components_ = 4;
+  src_components_count_ = 4;
   if (!ret) {
     tiff_context_.reset();
     status_ = FXCODEC_STATUS::kError;
@@ -834,8 +835,8 @@ FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
   offset_ = 0;
   src_width_ = 0;
   src_height_ = 0;
-  src_components_ = 0;
-  src_bpc_ = 0;
+  src_components_count_ = 0;
+  src_bits_per_component_ = 0;
   src_pass_number_ = 0;
   if (imageType != FXCODEC_IMAGE_UNKNOWN &&
       DetectImageType(imageType, pAttribute)) {

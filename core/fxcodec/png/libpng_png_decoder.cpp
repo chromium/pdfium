@@ -62,17 +62,17 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
 
   png_uint_32 width = 0;
   png_uint_32 height = 0;
-  int bpc = 0;
+  int bits_per_component = 0;
   int libpng_color_type = 0;
-  png_get_IHDR(png_ptr, info_ptr, &width, &height, &bpc, &libpng_color_type,
-               nullptr, nullptr, nullptr);
-  if (bpc > 8) {
+  png_get_IHDR(png_ptr, info_ptr, &width, &height, &bits_per_component,
+               &libpng_color_type, nullptr, nullptr, nullptr);
+  if (bits_per_component > 8) {
     png_set_strip_16(png_ptr);
-  } else if (bpc < 8) {
+  } else if (bits_per_component < 8) {
     png_set_expand_gray_1_2_4_to_8(png_ptr);
   }
 
-  bpc = 8;
+  bits_per_component = 8;
   if (libpng_color_type == PNG_COLOR_TYPE_PALETTE) {
     png_set_palette_to_rgb(png_ptr);
   }
@@ -94,8 +94,9 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
 
   DecodedColorType dst_color_type;
   double gamma = 1.0;
-  if (!pContext->delegate_->PngReadHeader(
-          width, height, bpc, pass, src_color_type, &dst_color_type, &gamma)) {
+  if (!pContext->delegate_->PngReadHeader(width, height, bits_per_component,
+                                          pass, src_color_type, &dst_color_type,
+                                          &gamma)) {
     // Note that `png_error` function is marked as `PNG_NORETURN`.
     png_error(pContext->png_, "Read Header Callback Error");
   }

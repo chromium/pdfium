@@ -40,7 +40,8 @@ class PngDecoderDelegate {
   // Called by `PngDecoder` after decoding the image header:
   //
   // * `width` and `height` specify image dimensions in pixels
-  // * `bpc` is number of bits per component (e.g. per red, or per alpha)
+  // * `bits_per_component` is number of bits per component (e.g. per red,
+  //   or per alpha)
   // * `src_color_type` is the color type the image has been encoded with
   //
   // Implementation should:
@@ -51,7 +52,7 @@ class PngDecoderDelegate {
   // * TODO(crbug.com/355630556): Add out parameter for desired alpha-premul.
   virtual bool PngReadHeader(int width,
                              int height,
-                             int bpc,
+                             int bits_per_component,
                              int pass,
                              EncodedColorType src_color_type,
                              DecodedColorType* dst_color_type,
