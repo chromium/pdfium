@@ -54,7 +54,6 @@ constexpr size_t kBlockSize = 4096;
 
 #ifdef PDF_ENABLE_XFA_PNG
 using PngDecodedColorType = fxcodec::PngDecoderDelegate::DecodedColorType;
-using PngEncodedColorType = fxcodec::PngDecoderDelegate::EncodedColorType;
 #if BUILDFLAG(IS_APPLE)
 const double kPngGamma = 1.7;
 #else
@@ -87,8 +86,8 @@ ProgressiveDecoder::~ProgressiveDecoder() = default;
 bool ProgressiveDecoder::PngReadHeader(int width,
                                        int height,
                                        int bits_per_component,
+                                       int components_count,
                                        int pass,
-                                       PngEncodedColorType src_color_type,
                                        PngDecodedColorType* dst_color_type,
                                        double* gamma) {
   if (!device_bitmap_) {
@@ -96,8 +95,7 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     src_height_ = height;
     src_bits_per_component_ = bits_per_component;
     src_pass_number_ = pass;
-    src_components_count_ =
-        PngDecoderDelegate::GetNumberOfComponents(src_color_type);
+    src_components_count_ = components_count;
     return false;
   }
   switch (device_bitmap_->GetFormat()) {

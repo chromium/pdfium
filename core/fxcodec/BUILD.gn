@@ -122,7 +122,6 @@ source_set("fxcodec") {
       sources += [
         "png/libpng_png_decoder.cpp",
         "png/libpng_png_decoder.h",
-        "png/png_decoder_delegate.cpp",
         "png/png_decoder_delegate.h",
       ]
       deps += [ "../../third_party:png" ]

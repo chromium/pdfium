@@ -27,7 +27,6 @@
 
 using PngDecoderDelegate = fxcodec::PngDecoderDelegate;
 using DecodedColorType = PngDecoderDelegate::DecodedColorType;
-using EncodedColorType = PngDecoderDelegate::EncodedColorType;
 
 class CPngContext final : public ProgressiveDecoderIface::Context {
  public:
@@ -79,24 +78,30 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
 
   int pass = png_set_interlace_handling(png_ptr);
 
-  static_assert(static_cast<int>(EncodedColorType::kGrayscale) ==
-                PNG_COLOR_TYPE_GRAY);
-  static_assert(static_cast<int>(EncodedColorType::kGrayscaleWithAlpha) ==
-                PNG_COLOR_TYPE_GRAY_ALPHA);
-  static_assert(static_cast<int>(EncodedColorType::kIndexedColor) ==
-                PNG_COLOR_TYPE_PALETTE);
-  static_assert(static_cast<int>(EncodedColorType::kTruecolor) ==
-                PNG_COLOR_TYPE_RGB);
-  static_assert(static_cast<int>(EncodedColorType::kTruecolorWithAlpha) ==
-                PNG_COLOR_TYPE_RGB_ALPHA);
-  static_assert(sizeof(EncodedColorType) == sizeof(int));
-  auto src_color_type = static_cast<EncodedColorType>(libpng_color_type);
+  int components_count;
+  switch (libpng_color_type) {
+    case PNG_COLOR_TYPE_GRAY:
+      components_count = 1;
+      break;
+    case PNG_COLOR_TYPE_GRAY_ALPHA:
+      components_count = 2;
+      break;
+    case PNG_COLOR_TYPE_RGB:
+      components_count = 3;
+      break;
+    case PNG_COLOR_TYPE_RGB_ALPHA:
+    case PNG_COLOR_TYPE_PALETTE:
+      components_count = 4;
+      break;
+    default:
+      NOTREACHED();
+  }
 
   DecodedColorType dst_color_type;
   double gamma = 1.0;
   if (!pContext->delegate_->PngReadHeader(width, height, bits_per_component,
-                                          pass, src_color_type, &dst_color_type,
-                                          &gamma)) {
+                                          components_count, pass,
+                                          &dst_color_type, &gamma)) {
     // Note that `png_error` function is marked as `PNG_NORETURN`.
     png_error(pContext->png_, "Read Header Callback Error");
   }
