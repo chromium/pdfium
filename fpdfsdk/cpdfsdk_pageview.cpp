@@ -539,8 +539,9 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
       return false;
     }
 
-    // If ctrl key or alt key is pressed, then no action is needed.
-    if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsALTKeyDown(nFlags)) {
+    // If ctrl key or cmd key or alt key is pressed, then no action is needed.
+    if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsMETAKeyDown(nFlags) ||
+        CPWL_Wnd::IsALTKeyDown(nFlags)) {
       return false;
     }
 
@@ -550,7 +551,8 @@ bool CPDFSDK_PageView::OnKeyDown(FWL_VKEYCODE nKeyCode,
     return end_annot && form_fill_env_->SetFocusAnnot(end_annot);
   }
 
-  if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsALTKeyDown(nFlags)) {
+  if (CPWL_Wnd::IsCTRLKeyDown(nFlags) || CPWL_Wnd::IsMETAKeyDown(nFlags) ||
+      CPWL_Wnd::IsALTKeyDown(nFlags)) {
     return CPDFSDK_Annot::OnKeyDown(pAnnot, nKeyCode, nFlags);
   }
 

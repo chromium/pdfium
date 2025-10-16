@@ -868,15 +868,8 @@ TEST_F(FPDFFormFillEmbedderTest, TabWithModifiers) {
   ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               FWL_EVENTFLAG_AltKey));
 
-  // TODO(413695643): cmd+tab should not be handled
-  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
-                             FWL_EVENTFLAG_MetaKey));
-
-  // TODO(413695643): clear focus to make the test pass because the bad cmd+tab
-  // handling above caused a field to be focused, which results in the next
-  // cmd+shift+tab call correctly returning false for the wrong reason because
-  // of the complicated logic in CPDFSDK_PageView::OnKeyDown()
-  EXPECT_TRUE(FORM_ForceToKillFocus(form_handle()));
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
+                              FWL_EVENTFLAG_MetaKey));
 
   ASSERT_FALSE(
       FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
@@ -885,9 +878,9 @@ TEST_F(FPDFFormFillEmbedderTest, TabWithModifiers) {
   ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               (FWL_EVENTFLAG_AltKey | FWL_EVENTFLAG_ShiftKey)));
 
-  // TODO(413695643): cmd+shift+tab should not be handled
-  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
-                             (FWL_EVENTFLAG_MetaKey | FWL_EVENTFLAG_ShiftKey)));
+  ASSERT_FALSE(
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
+                     (FWL_EVENTFLAG_MetaKey | FWL_EVENTFLAG_ShiftKey)));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, KeyPressWithNoFocusedAnnot) {
