@@ -102,12 +102,6 @@ class CPWL_Edit final : public CPWL_Wnd {
                 const CFX_PointF& ptFoot);
 
  private:
-  // In case of implementation swallow the OnKeyDown event. If the event is
-  // swallowed, implementation may do other unexpected things, which is not the
-  // control means to do.
-  static bool IsProceedtoOnChar(FWL_VKEYCODE nKeyCode,
-                                Mask<FWL_EVENTFLAG> nFlag);
-
   bool OnKeyDownInternal(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag);
   bool OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag);
 
