@@ -75,6 +75,7 @@ source_set("fwl") {
     "cfwl_widget.h",
     "cfwl_widgetmgr.cpp",
     "cfwl_widgetmgr.h",
+    "fwl_widgetdef.cpp",
     "fwl_widgetdef.h",
     "fwl_widgethit.h",
     "ifwl_themeprovider.cpp",

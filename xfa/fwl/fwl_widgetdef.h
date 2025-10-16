@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/mask.h"
+
 namespace pdfium {
 
 // Same as enum FWL_VKEYCODE in public/fpdf_fwlevent.h, but duplicated here
@@ -196,6 +198,10 @@ enum class XFA_FWL_KeyFlag : uint8_t {
   kRButton = 1 << 5,
   kMButton = 1 << 6
 };
+
+// Returns true if Ctrl is down on non-MacOS platforms and if Cmd is down on
+// MacOS. Use this for platform-agnostic shortcut key handling.
+bool IsPlatformShortcutKey(Mask<XFA_FWL_KeyFlag> flags);
 
 }  // namespace pdfium
 

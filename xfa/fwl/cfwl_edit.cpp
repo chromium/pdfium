@@ -41,12 +41,6 @@ namespace {
 
 constexpr int kEditMargin = 3;
 
-#if BUILDFLAG(IS_APPLE)
-constexpr XFA_FWL_KeyFlag kEditingModifier = XFA_FWL_KeyFlag::kCommand;
-#else
-constexpr XFA_FWL_KeyFlag kEditingModifier = XFA_FWL_KeyFlag::kCtrl;
-#endif
-
 }  // namespace
 
 CFWL_Edit::CFWL_Edit(CFWL_App* app,
@@ -1079,7 +1073,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
       }
       break;
     default: {
-      if (pMsg->flags_ & kEditingModifier) {
+      if (pdfium::IsPlatformShortcutKey(pMsg->flags_)) {
         break;
       }
 

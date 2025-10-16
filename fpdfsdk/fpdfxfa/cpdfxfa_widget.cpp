@@ -201,6 +201,9 @@ Mask<XFA_FWL_KeyFlag> GetKeyFlags(Mask<FWL_EVENTFLAG> input) {
   if (input & FWL_EVENTFLAG_ControlKey) {
     results |= XFA_FWL_KeyFlag::kCtrl;
   }
+  if (input & FWL_EVENTFLAG_MetaKey) {
+    results |= XFA_FWL_KeyFlag::kCommand;
+  }
   if (input & FWL_EVENTFLAG_LeftButtonDown) {
     results |= XFA_FWL_KeyFlag::kLButton;
   }

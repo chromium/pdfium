@@ -567,6 +567,30 @@ bool CXFA_FFField::OnKeyDown(XFA_FWL_VKEYCODE dwKeyCode,
     return false;
   }
 
+  // Return false for edit shortcut keys so that PDFium does not consume the
+  // events, embedders may need to handle these. This is to bypass the
+  // hard-coded return true once the event goes into the queue below.
+  //
+  // Note: this also returns false if shift is pressed (since there is no check
+  // for shift or not). It is important to return false for cmd+shift+z for redo
+  // on MacOS.
+  if (pdfium::IsPlatformShortcutKey(dwFlags)) {
+    switch (dwKeyCode) {
+      case pdfium::XFA_FWL_VKEY_A:
+      case pdfium::XFA_FWL_VKEY_C:
+      case pdfium::XFA_FWL_VKEY_V:
+      case pdfium::XFA_FWL_VKEY_X:
+      case pdfium::XFA_FWL_VKEY_Z:
+        return false;
+      default:
+        break;
+    }
+  }
+
+  // This is not ideal: PDFium should return whether or not it actually handled
+  // the event. Because of this message queue design there's no way to return
+  // that status back here so PDFium always returns true. When this is cleaned
+  // up the above bypass for shortcut keys can be deleted.
   CFWL_MessageKey msg(GetNormalWidget(), CFWL_MessageKey::KeyCommand::kKeyDown,
                       dwFlags, dwKeyCode);
   SendMessageToFWLWidget(&msg);
