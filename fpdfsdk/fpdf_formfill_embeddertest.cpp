@@ -31,6 +31,16 @@ using testing::InSequence;
 using testing::NiceMock;
 using testing::StrEq;
 
+namespace {
+
+#if BUILDFLAG(IS_APPLE)
+static constexpr int kModifier = FWL_EVENTFLAG_MetaKey;
+#else
+static constexpr int kModifier = FWL_EVENTFLAG_ControlKey;
+#endif
+
+}  // namespace
+
 using FPDFFormFillEmbedderTest = EmbedderTest;
 
 // A base class for many related tests that involve clicking and typing into
@@ -858,12 +868,26 @@ TEST_F(FPDFFormFillEmbedderTest, TabWithModifiers) {
   ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               FWL_EVENTFLAG_AltKey));
 
+  // TODO(413695643): cmd+tab should not be handled
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
+                             FWL_EVENTFLAG_MetaKey));
+
+  // TODO(413695643): clear focus to make the test pass because the bad cmd+tab
+  // handling above caused a field to be focused, which results in the next
+  // cmd+shift+tab call correctly returning false for the wrong reason because
+  // of the complicated logic in CPDFSDK_PageView::OnKeyDown()
+  EXPECT_TRUE(FORM_ForceToKillFocus(form_handle()));
+
   ASSERT_FALSE(
       FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                      (FWL_EVENTFLAG_ControlKey | FWL_EVENTFLAG_ShiftKey)));
 
   ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               (FWL_EVENTFLAG_AltKey | FWL_EVENTFLAG_ShiftKey)));
+
+  // TODO(413695643): cmd+shift+tab should not be handled
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
+                             (FWL_EVENTFLAG_MetaKey | FWL_EVENTFLAG_ShiftKey)));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, KeyPressWithNoFocusedAnnot) {
@@ -894,7 +918,68 @@ TEST_F(FPDFFormFillEmbedderTest, KeyPressWithNoFocusedAnnot) {
   }
 }
 
+TEST_F(FPDFFormFillEmbedderTest, DoNotHandleShortcutsOnKeyDown) {
+  ASSERT_TRUE(OpenDocument("annotiter.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Select the first form field
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
+  int page_index = -2;
+  FPDF_ANNOTATION annot = nullptr;
+  EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+  EXPECT_EQ(0, page_index);
+  ASSERT_TRUE(annot);
+  EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page.get(), annot));
+  FPDFPage_CloseAnnot(annot);
+
+  // Ensure that FORM_OnKeyDown actually handles some events
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Left, 0));
+  // TODO(448699368): This should work with the meta key on macos
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home,
+                             FWL_EVENTFLAG_ControlKey));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home, 0));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Up, 0));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Right, 0));
+
+  // TODO(413695643): cmd+{a,c,v,x,z} and cmd+shift+z should not be handled
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_A, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_C, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_V, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_X, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z,
+                             kModifier | FWL_EVENTFLAG_ShiftKey));
+}
+
 #ifdef PDF_ENABLE_XFA
+TEST_F(FPDFFormFillEmbedderTest, DoNotHandleShortcutsOnKeyDownXFA) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+  ScopedPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Select the first form field
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
+
+  // Ensure that FORM_OnKeyDown actually handles some events
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Left, 0));
+  // TODO(448699368): This should work with the meta key on macos
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home,
+                             FWL_EVENTFLAG_ControlKey));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Home, 0));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Up, 0));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Right, 0));
+
+  // TODO(413695643): cmd+{a,c,v,x,z} and cmd+shift+z should not be handled
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_A, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_C, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_V, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_X, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z, kModifier));
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Z,
+                             kModifier | FWL_EVENTFLAG_ShiftKey));
+}
+
 TEST_F(FPDFFormFillEmbedderTest, XFAFormFillFirstTab) {
   ASSERT_TRUE(OpenDocument("xfa/email_recommended.pdf"));
   ScopedPage page = LoadScopedPage(0);
