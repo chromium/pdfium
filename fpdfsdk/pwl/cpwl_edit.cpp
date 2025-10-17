@@ -617,26 +617,7 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
     return true;
   }
 
-  if (edit_impl_->IsSelected() && word == pdfium::ascii::kBackspace) {
-    word = pdfium::ascii::kNul;
-  }
-
-  ClearSelection();
-
-  switch (word) {
-    case pdfium::ascii::kBackspace:
-      Backspace();
-      break;
-    case pdfium::ascii::kReturn:
-      InsertReturn();
-      break;
-    case pdfium::ascii::kNul:
-      break;
-    default:
-      InsertWord(word, GetCharSet());
-      break;
-  }
-
+  edit_impl_->TypeChar(word, GetCharSet());
   return true;
 }
 
@@ -780,27 +761,9 @@ void CPWL_Edit::CopyText() {}
 
 void CPWL_Edit::PasteText() {}
 
-void CPWL_Edit::InsertWord(uint16_t word, FX_Charset nCharset) {
-  if (!IsReadOnly()) {
-    edit_impl_->InsertWord(word, nCharset);
-  }
-}
-
-void CPWL_Edit::InsertReturn() {
-  if (!IsReadOnly()) {
-    edit_impl_->InsertReturn();
-  }
-}
-
 void CPWL_Edit::Delete() {
   if (!IsReadOnly()) {
     edit_impl_->Delete();
-  }
-}
-
-void CPWL_Edit::Backspace() {
-  if (!IsReadOnly()) {
-    edit_impl_->Backspace();
   }
 }
 

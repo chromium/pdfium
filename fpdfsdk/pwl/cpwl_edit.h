@@ -107,11 +107,8 @@ class CPWL_Edit final : public CPWL_Wnd {
 
   void CopyText();
   void PasteText();
-  void InsertWord(uint16_t word, FX_Charset nCharset);
-  void InsertReturn();
   bool IsWndHorV() const;
   void Delete();
-  void Backspace();
   void GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const;
   void SetEditCaret(bool bVisible);
 

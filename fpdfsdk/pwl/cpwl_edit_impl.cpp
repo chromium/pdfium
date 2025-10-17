@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "constants/ascii.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_textrenderer.h"
@@ -1863,6 +1864,41 @@ void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
   ClearSelection();
   InsertText(text, FX_Charset::kDefault);
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>());
+}
+
+void CPWL_EditImpl::TypeChar(uint16_t word, FX_Charset charset) {
+  bool was_selected = IsSelected();
+
+  // Backspace is special because it always needs only one undo item.
+  // ClearSelection() deletes the selected text so Backspace() isn't needed in
+  // that case.
+  if (word == pdfium::ascii::kBackspace) {
+    if (was_selected) {
+      ClearSelection();
+    } else {
+      Backspace();
+    }
+    return;
+  }
+
+  // Don't add the UndoReplaceSelection sentinel items if there's no selection
+  // so that in the normal "typing one character" case only one undo item goes
+  // into the queue.
+  if (was_selected) {
+    AddEditUndoItem(std::make_unique<UndoReplaceSelection>());
+    ClearSelection();
+  }
+
+  if (word == pdfium::ascii::kReturn) {
+    InsertReturn();
+  } else {
+    // Not a special character, just typing letters
+    InsertWord(word, charset);
+  }
+
+  if (was_selected) {
+    AddEditUndoItem(std::make_unique<UndoReplaceSelection>());
+  }
 }
 
 bool CPWL_EditImpl::Redo() {

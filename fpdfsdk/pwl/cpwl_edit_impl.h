@@ -101,6 +101,7 @@ class CPWL_EditImpl {
   void InsertText(const WideString& sText, FX_Charset charset);
   void ReplaceAndKeepSelection(const WideString& text);
   void ReplaceSelection(const WideString& text);
+  void TypeChar(uint16_t word, FX_Charset charset);
   bool Redo();
   bool Undo();
   void SetMaxUndoItemsForTest(size_t items);

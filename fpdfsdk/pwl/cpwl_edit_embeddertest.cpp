@@ -735,13 +735,10 @@ TEST_F(CPWLEditEmbedderTest, TypeOverSelectionUndoRedo) {
   EXPECT_EQ(L"", GetCPWLEdit()->GetSelectedText());
 
   EXPECT_TRUE(GetCPWLEdit()->CanUndo());
-  // TODO(crbug.com/446727801): Only one undo/redo should be needed
-  EXPECT_TRUE(GetCPWLEdit()->Undo());
   EXPECT_TRUE(GetCPWLEdit()->Undo());
   EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
 
   EXPECT_TRUE(GetCPWLEdit()->CanRedo());
-  EXPECT_TRUE(GetCPWLEdit()->Redo());
   EXPECT_TRUE(GetCPWLEdit()->Redo());
   EXPECT_EQ(L"Z", GetCPWLEdit()->GetText());
   EXPECT_EQ(L"", GetCPWLEdit()->GetSelectedText());
@@ -784,13 +781,10 @@ TEST_F(CPWLEditMultilineEmbedderTest, ReturnOverSelectionUndoRedo) {
   EXPECT_EQ(L"\r\n", GetCPWLEdit()->GetText());
 
   EXPECT_TRUE(GetCPWLEdit()->CanUndo());
-  // TODO(crbug.com/446727801): Only one undo/redo should be needed
-  EXPECT_TRUE(GetCPWLEdit()->Undo());
   EXPECT_TRUE(GetCPWLEdit()->Undo());
   EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
 
   EXPECT_TRUE(GetCPWLEdit()->CanRedo());
-  EXPECT_TRUE(GetCPWLEdit()->Redo());
   EXPECT_TRUE(GetCPWLEdit()->Redo());
   EXPECT_EQ(L"\r\n", GetCPWLEdit()->GetText());
   EXPECT_FALSE(GetCPWLEdit()->CanRedo());
