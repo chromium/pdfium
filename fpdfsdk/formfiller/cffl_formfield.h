@@ -143,6 +143,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
  protected:
   friend class CPWLComboBoxEmbedderTest;
   friend class CPWLEditEmbedderTest;
+  friend class CPWLEditMultilineEmbedderTest;
   friend class CPWLSpecialButtonEmbedderTest;
 
   virtual CPWL_Wnd* ResetPWLWindow(const CPDFSDK_PageView* pPageView);

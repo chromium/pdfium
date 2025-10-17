@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "constants/ascii.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -41,10 +42,10 @@ class CPWLEditEmbedderTest : public EmbedderTest {
     }
 
     // Read-only text field.
-    CPDFSDK_Annot* pAnnotReadOnly = iter.GetNextAnnot(annot_);
+    CPDFSDK_Annot* annot_read_only = iter.GetNextAnnot(annot_);
 
     // Pre-filled text field with char limit of 10.
-    annot_char_limit_ = ToCPDFSDKWidget(iter.GetNextAnnot(pAnnotReadOnly));
+    annot_char_limit_ = ToCPDFSDKWidget(iter.GetNextAnnot(annot_read_only));
     if (!annot_char_limit_) {
       ADD_FAILURE();
       return ScopedPage();
@@ -61,30 +62,95 @@ class CPWLEditEmbedderTest : public EmbedderTest {
       return ScopedPage();
     }
 
-    CPDFSDK_Annot* pLastAnnot = iter.GetLastAnnot();
-    if (password_annot != pLastAnnot) {
+    CPDFSDK_Annot* last_annot = iter.GetLastAnnot();
+    if (password_annot != last_annot) {
       ADD_FAILURE();
       return ScopedPage();
     }
     return page;
   }
 
-  void FormFillerAndWindowSetup(CPDFSDK_Widget* pAnnotTextField) {
-    CFFL_InteractiveFormFiller* pInteractiveFormFiller =
+  void FormFillerAndWindowSetup(CPDFSDK_Widget* annot_text_field) {
+    CFFL_InteractiveFormFiller* interactive_form_filler =
         form_fill_env_->GetInteractiveFormFiller();
     {
-      ObservedPtr<CPDFSDK_Widget> pObserved(pAnnotTextField);
-      EXPECT_TRUE(pInteractiveFormFiller->OnSetFocus(pObserved, {}));
+      ObservedPtr<CPDFSDK_Widget> observed(annot_text_field);
+      EXPECT_TRUE(interactive_form_filler->OnSetFocus(observed, {}));
     }
 
     form_filler_ =
-        pInteractiveFormFiller->GetFormFieldForTesting(pAnnotTextField);
+        interactive_form_filler->GetFormFieldForTesting(annot_text_field);
     ASSERT_TRUE(form_filler_);
 
-    CPWL_Wnd* pWindow =
+    CPWL_Wnd* window =
         form_filler_->GetPWLWindow(form_fill_env_->GetPageViewAtIndex(0));
-    ASSERT_TRUE(pWindow);
-    edit_ = static_cast<CPWL_Edit*>(pWindow);
+    ASSERT_TRUE(window);
+    edit_ = static_cast<CPWL_Edit*>(window);
+  }
+
+  void TypeTextIntoTextField(int num_chars) {
+    // Type text starting with 'A' to as many chars as specified by |num_chars|.
+    for (int i = 0; i < num_chars; ++i) {
+      EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), i + 'A', {}));
+    }
+  }
+
+  CPWL_Edit* GetCPWLEdit() { return edit_; }
+  CFFL_FormField* GetCFFLFormFiller() { return form_filler_; }
+  CPDFSDK_Widget* GetCPDFSDKAnnot() { return annot_; }
+  CPDFSDK_Widget* GetCPDFSDKAnnotCharLimit() { return annot_char_limit_; }
+
+ private:
+  CPWL_Edit* edit_;
+  CFFL_FormField* form_filler_;
+  CPDFSDK_Widget* annot_;
+  CPDFSDK_Widget* annot_char_limit_;
+  CPDFSDK_FormFillEnvironment* form_fill_env_;
+};
+
+class CPWLEditMultilineEmbedderTest : public EmbedderTest {
+ protected:
+  void SetUp() override {
+    EmbedderTest::SetUp();
+    ASSERT_TRUE(OpenDocument("text_form_multiline.pdf"));
+  }
+
+  ScopedPage CreateAndInitializeFormPDF() {
+    ScopedPage page = LoadScopedPage(0);
+    if (!page) {
+      ADD_FAILURE();
+      return ScopedPage();
+    }
+    form_fill_env_ =
+        CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
+    CPDFSDK_AnnotIterator iter(form_fill_env_->GetPageViewAtIndex(0),
+                               {CPDF_Annot::Subtype::WIDGET});
+    // Normal text field.
+    annot_ = ToCPDFSDKWidget(iter.GetFirstAnnot());
+    if (!annot_) {
+      ADD_FAILURE();
+      return ScopedPage();
+    }
+
+    return page;
+  }
+
+  void FormFillerAndWindowSetup(CPDFSDK_Widget* annot_text_field) {
+    CFFL_InteractiveFormFiller* interactive_form_filler =
+        form_fill_env_->GetInteractiveFormFiller();
+    {
+      ObservedPtr<CPDFSDK_Widget> observed(annot_text_field);
+      EXPECT_TRUE(interactive_form_filler->OnSetFocus(observed, {}));
+    }
+
+    form_filler_ =
+        interactive_form_filler->GetFormFieldForTesting(annot_text_field);
+    ASSERT_TRUE(form_filler_);
+
+    CPWL_Wnd* window =
+        form_filler_->GetPWLWindow(form_fill_env_->GetPageViewAtIndex(0));
+    ASSERT_TRUE(window);
+    edit_ = static_cast<CPWL_Edit*>(window);
   }
 
   void TypeTextIntoTextField(int num_chars) {
@@ -110,7 +176,7 @@ class CPWLEditEmbedderTest : public EmbedderTest {
 TEST_F(CPWLEditEmbedderTest, TypeText) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   EXPECT_TRUE(GetCPWLEdit()->GetText().IsEmpty());
   EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), 'a', {}));
   EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), 'b', {}));
@@ -122,7 +188,7 @@ TEST_F(CPWLEditEmbedderTest, TypeText) {
 TEST_F(CPWLEditEmbedderTest, GetSelectedTextEmptyAndBasic) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   // Attempt to set selection before text has been typed to test that
   // selection is identified as empty.
   //
@@ -141,7 +207,7 @@ TEST_F(CPWLEditEmbedderTest, GetSelectedTextEmptyAndBasic) {
 TEST_F(CPWLEditEmbedderTest, GetSelectedTextFragments) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(50);
 
   GetCPWLEdit()->SetSelection(0, 0);
@@ -173,7 +239,7 @@ TEST_F(CPWLEditEmbedderTest, GetSelectedTextFragments) {
 TEST_F(CPWLEditEmbedderTest, DeleteEntireTextSelection) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(50);
 
   GetCPWLEdit()->SetSelection(0, -1);
@@ -187,7 +253,7 @@ TEST_F(CPWLEditEmbedderTest, DeleteEntireTextSelection) {
 TEST_F(CPWLEditEmbedderTest, DeleteTextSelectionMiddle) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(50);
 
   GetCPWLEdit()->SetSelection(12, 23);
@@ -201,7 +267,7 @@ TEST_F(CPWLEditEmbedderTest, DeleteTextSelectionMiddle) {
 TEST_F(CPWLEditEmbedderTest, DeleteTextSelectionLeft) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(50);
 
   GetCPWLEdit()->SetSelection(0, 5);
@@ -215,7 +281,7 @@ TEST_F(CPWLEditEmbedderTest, DeleteTextSelectionLeft) {
 TEST_F(CPWLEditEmbedderTest, DeleteTextSelectionRight) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(50);
 
   GetCPWLEdit()->SetSelection(45, 50);
@@ -229,7 +295,7 @@ TEST_F(CPWLEditEmbedderTest, DeleteTextSelectionRight) {
 TEST_F(CPWLEditEmbedderTest, DeleteEmptyTextSelection) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(50);
 
   GetCPWLEdit()->ReplaceSelection(L"");
@@ -240,7 +306,7 @@ TEST_F(CPWLEditEmbedderTest, DeleteEmptyTextSelection) {
 TEST_F(CPWLEditEmbedderTest, InsertTextInEmptyTextField) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->ReplaceSelection(L"Hello");
   EXPECT_EQ(L"Hello", GetCPWLEdit()->GetText());
 }
@@ -248,7 +314,7 @@ TEST_F(CPWLEditEmbedderTest, InsertTextInEmptyTextField) {
 TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedTextFieldLeft) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(10);
 
   // Move cursor to beginning of text field.
@@ -261,7 +327,7 @@ TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedTextFieldLeft) {
 TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedTextFieldMiddle) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(10);
 
   // Move cursor to middle of text field.
@@ -276,7 +342,7 @@ TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedTextFieldMiddle) {
 TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedTextFieldRight) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(10);
 
   GetCPWLEdit()->ReplaceSelection(L"Hello");
@@ -287,7 +353,7 @@ TEST_F(CPWLEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldWhole) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(10);
 
   GetCPWLEdit()->SetSelection(0, -1);
@@ -300,7 +366,7 @@ TEST_F(CPWLEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldLeft) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(10);
 
   GetCPWLEdit()->SetSelection(0, 5);
@@ -313,7 +379,7 @@ TEST_F(CPWLEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldMiddle) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(10);
 
   GetCPWLEdit()->SetSelection(2, 7);
@@ -326,7 +392,7 @@ TEST_F(CPWLEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedTextFieldRight) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(10);
 
   GetCPWLEdit()->SetSelection(5, 10);
@@ -338,7 +404,7 @@ TEST_F(CPWLEditEmbedderTest,
 TEST_F(CPWLEditEmbedderTest, InsertTextInEmptyCharLimitTextFieldOverflow) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit()));
   GetCPWLEdit()->SetSelection(0, -1);
   EXPECT_EQ(L"Elephant", GetCPWLEdit()->GetSelectedText());
   GetCPWLEdit()->ReplaceSelection(L"");
@@ -350,7 +416,7 @@ TEST_F(CPWLEditEmbedderTest, InsertTextInEmptyCharLimitTextFieldOverflow) {
 TEST_F(CPWLEditEmbedderTest, InsertTextInEmptyCharLimitTextFieldFit) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit()));
   GetCPWLEdit()->SetSelection(0, -1);
   EXPECT_EQ(L"Elephant", GetCPWLEdit()->GetSelectedText());
   GetCPWLEdit()->ReplaceSelection(L"");
@@ -362,7 +428,7 @@ TEST_F(CPWLEditEmbedderTest, InsertTextInEmptyCharLimitTextFieldFit) {
 TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedCharLimitTextFieldLeft) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit()));
   GetCPWLEdit()->ReplaceSelection(L"Hippopotamus");
   EXPECT_EQ(L"HiElephant", GetCPWLEdit()->GetText());
 }
@@ -370,7 +436,7 @@ TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedCharLimitTextFieldLeft) {
 TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedCharLimitTextFieldMiddle) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit()));
   // Move cursor to middle of text field.
   for (int i = 0; i < 5; ++i) {
     EXPECT_TRUE(GetCFFLFormFiller()->OnKeyDown(FWL_VKEY_Right, {}));
@@ -383,7 +449,7 @@ TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedCharLimitTextFieldMiddle) {
 TEST_F(CPWLEditEmbedderTest, InsertTextInPopulatedCharLimitTextFieldRight) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit()));
   // Move cursor to end of text field.
   EXPECT_TRUE(GetCFFLFormFiller()->OnKeyDown(FWL_VKEY_End, {}));
 
@@ -395,7 +461,7 @@ TEST_F(CPWLEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldWhole) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit()));
   GetCPWLEdit()->SetSelection(0, -1);
   EXPECT_EQ(L"Elephant", GetCPWLEdit()->GetSelectedText());
   GetCPWLEdit()->ReplaceSelection(L"Hippopotamus");
@@ -406,7 +472,7 @@ TEST_F(CPWLEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldLeft) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit()));
   GetCPWLEdit()->SetSelection(0, 4);
   EXPECT_EQ(L"Elep", GetCPWLEdit()->GetSelectedText());
   GetCPWLEdit()->ReplaceSelection(L"Hippopotamus");
@@ -417,7 +483,7 @@ TEST_F(CPWLEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldMiddle) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit()));
   GetCPWLEdit()->SetSelection(2, 6);
   EXPECT_EQ(L"epha", GetCPWLEdit()->GetSelectedText());
   GetCPWLEdit()->ReplaceSelection(L"Hippopotamus");
@@ -428,7 +494,7 @@ TEST_F(CPWLEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedCharLimitTextFieldRight) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnotCharLimit()));
   GetCPWLEdit()->SetSelection(4, 8);
   EXPECT_EQ(L"hant", GetCPWLEdit()->GetSelectedText());
   GetCPWLEdit()->ReplaceSelection(L"Hippopotamus");
@@ -438,7 +504,7 @@ TEST_F(CPWLEditEmbedderTest,
 TEST_F(CPWLEditEmbedderTest, SetTextWithEndCarriageFeed) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetText(L"Foo\r");
   EXPECT_EQ(L"Foo", GetCPWLEdit()->GetText());
 }
@@ -446,7 +512,7 @@ TEST_F(CPWLEditEmbedderTest, SetTextWithEndCarriageFeed) {
 TEST_F(CPWLEditEmbedderTest, SetTextWithEndNewline) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetText(L"Foo\n");
   EXPECT_EQ(L"Foo", GetCPWLEdit()->GetText());
 }
@@ -454,7 +520,7 @@ TEST_F(CPWLEditEmbedderTest, SetTextWithEndNewline) {
 TEST_F(CPWLEditEmbedderTest, SetTextWithEndCarriageFeedAndNewLine) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetText(L"Foo\r\n");
   EXPECT_EQ(L"Foo", GetCPWLEdit()->GetText());
 }
@@ -462,7 +528,7 @@ TEST_F(CPWLEditEmbedderTest, SetTextWithEndCarriageFeedAndNewLine) {
 TEST_F(CPWLEditEmbedderTest, SetTextWithEndNewLineAndCarriageFeed) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetText(L"Foo\n\r");
   EXPECT_EQ(L"Foo", GetCPWLEdit()->GetText());
 }
@@ -470,7 +536,7 @@ TEST_F(CPWLEditEmbedderTest, SetTextWithEndNewLineAndCarriageFeed) {
 TEST_F(CPWLEditEmbedderTest, SetTextWithBodyCarriageFeed) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetText(L"Foo\rBar");
   EXPECT_EQ(L"FooBar", GetCPWLEdit()->GetText());
 }
@@ -478,7 +544,7 @@ TEST_F(CPWLEditEmbedderTest, SetTextWithBodyCarriageFeed) {
 TEST_F(CPWLEditEmbedderTest, SetTextWithBodyNewline) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetText(L"Foo\nBar");
   EXPECT_EQ(L"FooBar", GetCPWLEdit()->GetText());
 }
@@ -486,7 +552,7 @@ TEST_F(CPWLEditEmbedderTest, SetTextWithBodyNewline) {
 TEST_F(CPWLEditEmbedderTest, SetTextWithBodyCarriageFeedAndNewLine) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetText(L"Foo\r\nBar");
   EXPECT_EQ(L"FooBar", GetCPWLEdit()->GetText());
 }
@@ -494,7 +560,7 @@ TEST_F(CPWLEditEmbedderTest, SetTextWithBodyCarriageFeedAndNewLine) {
 TEST_F(CPWLEditEmbedderTest, SetTextWithBodyNewLineAndCarriageFeed) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetText(L"Foo\n\rBar");
   EXPECT_EQ(L"FooBar", GetCPWLEdit()->GetText());
 }
@@ -502,7 +568,7 @@ TEST_F(CPWLEditEmbedderTest, SetTextWithBodyNewLineAndCarriageFeed) {
 TEST_F(CPWLEditEmbedderTest, ReplaceAndKeepSelection) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   TypeTextIntoTextField(10);
 
   GetCPWLEdit()->SetSelection(1, 3);
@@ -522,7 +588,7 @@ TEST_F(CPWLEditEmbedderTest, ReplaceAndKeepSelection) {
 TEST_F(CPWLEditEmbedderTest, ReplaceSelectionUndoRedo) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
 
   TypeTextIntoTextField(13);
 
@@ -544,7 +610,7 @@ TEST_F(CPWLEditEmbedderTest, ReplaceSelectionUndoRedo) {
 TEST_F(CPWLEditEmbedderTest, ReplaceSelectionUndoQueueLimit) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetMaxUndoItemsForTest(4);
 
   TypeTextIntoTextField(13);
@@ -574,7 +640,7 @@ TEST_F(CPWLEditEmbedderTest, ReplaceSelectionUndoQueueLimit) {
 TEST_F(CPWLEditEmbedderTest, ReplaceSelectionRedoQueueLimit) {
   ScopedPage page = CreateAndInitializeFormPDF();
   ASSERT_TRUE(page);
-  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
   GetCPWLEdit()->SetMaxUndoItemsForTest(4);
 
   TypeTextIntoTextField(13);
@@ -608,4 +674,124 @@ TEST_F(CPWLEditEmbedderTest, ReplaceSelectionRedoQueueLimit) {
   EXPECT_EQ(L"ABCDEFGHIJKLM", GetCPWLEdit()->GetText());
   // Typing "A" was the only item left on the undo stack
   EXPECT_FALSE(GetCPWLEdit()->Undo());
+}
+
+TEST_F(CPWLEditEmbedderTest, BackspaceUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
+
+  TypeTextIntoTextField(3);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(),
+                                          pdfium::ascii::kBackspace, {}));
+  EXPECT_EQ(L"AB", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"AB", GetCPWLEdit()->GetText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
+}
+
+TEST_F(CPWLEditEmbedderTest, BackspaceOverSelectionUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
+
+  TypeTextIntoTextField(3);
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(),
+                                          pdfium::ascii::kBackspace, {}));
+  EXPECT_EQ(L"", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"", GetCPWLEdit()->GetText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
+}
+
+TEST_F(CPWLEditEmbedderTest, TypeOverSelectionUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
+
+  TypeTextIntoTextField(3);
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(), 'Z', {}));
+  EXPECT_EQ(L"Z", GetCPWLEdit()->GetText());
+  EXPECT_EQ(L"", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  // TODO(crbug.com/446727801): Only one undo/redo should be needed
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"Z", GetCPWLEdit()->GetText());
+  EXPECT_EQ(L"", GetCPWLEdit()->GetSelectedText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
+}
+
+TEST_F(CPWLEditMultilineEmbedderTest, ReturnUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
+
+  TypeTextIntoTextField(3);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(),
+                                          pdfium::ascii::kReturn, {}));
+  EXPECT_EQ(L"ABC\r\n", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"ABC\r\n", GetCPWLEdit()->GetText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
+}
+
+TEST_F(CPWLEditMultilineEmbedderTest, ReturnOverSelectionUndoRedo) {
+  ScopedPage page = CreateAndInitializeFormPDF();
+  ASSERT_TRUE(page);
+  ASSERT_NO_FATAL_FAILURE(FormFillerAndWindowSetup(GetCPDFSDKAnnot()));
+
+  TypeTextIntoTextField(3);
+  GetCPWLEdit()->SetSelection(0, -1);
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnot(),
+                                          pdfium::ascii::kReturn, {}));
+  EXPECT_EQ(L"\r\n", GetCPWLEdit()->GetText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanUndo());
+  // TODO(crbug.com/446727801): Only one undo/redo should be needed
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_TRUE(GetCPWLEdit()->Undo());
+  EXPECT_EQ(L"ABC", GetCPWLEdit()->GetSelectedText());
+
+  EXPECT_TRUE(GetCPWLEdit()->CanRedo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_TRUE(GetCPWLEdit()->Redo());
+  EXPECT_EQ(L"\r\n", GetCPWLEdit()->GetText());
+  EXPECT_FALSE(GetCPWLEdit()->CanRedo());
 }
