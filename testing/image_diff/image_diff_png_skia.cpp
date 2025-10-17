@@ -31,30 +31,6 @@ namespace image_diff_png {
 
 namespace {
 
-// TODO(https://crbug.com/450978228): Deduplicate this code wrt
-// Chromium's `//ui/gfx/image/buffer_w_stream.h`.
-class BufferWStream final : public SkWStream {
- public:
-  BufferWStream() = default;
-  BufferWStream(const BufferWStream&) = delete;
-  BufferWStream& operator=(const BufferWStream&) = delete;
-  ~BufferWStream() override {}
-
-  std::vector<uint8_t> TakeBuffer() && { return std::move(result_); }
-
- private:
-  bool write(const void* buffer, size_t size) final {
-    pdfium::span<const uint8_t> src(reinterpret_cast<const uint8_t*>(buffer),
-                                    size);
-    result_.insert(result_.end(), src.begin(), src.end());
-    return true;
-  }
-
-  size_t bytesWritten() const final { return result_.size(); }
-
-  std::vector<uint8_t> result_;
-};
-
 std::vector<uint8_t> EncodePNG(pdfium::span<const uint8_t> input,
                                SkColorType color,
                                SkAlphaType alpha,
@@ -69,7 +45,7 @@ std::vector<uint8_t> EncodePNG(pdfium::span<const uint8_t> input,
   CHECK_LE(info.computeMinByteSize(), input.size());
   SkPixmap pixmap(info, input.data(), row_byte_width);
 
-  BufferWStream output;
+  SkDynamicMemoryWStream output;
 #ifdef PDF_ENABLE_RUST_PNG
   bool success = SkPngRustEncoder::Encode(&output, pixmap, {});
 #else
@@ -78,7 +54,7 @@ std::vector<uint8_t> EncodePNG(pdfium::span<const uint8_t> input,
   if (!success) {
     return {};
   }
-  return std::move(output).TakeBuffer();
+  return output.detachAsVector();
 }
 
 }  // namespace
