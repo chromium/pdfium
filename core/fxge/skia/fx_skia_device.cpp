@@ -62,6 +62,7 @@
 #include "third_party/skia/include/core/SkMaskFilter.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "third_party/skia/include/core/SkPath.h"
+#include "third_party/skia/include/core/SkPathBuilder.h"
 #include "third_party/skia/include/core/SkPathEffect.h"
 #include "third_party/skia/include/core/SkPathUtils.h"
 #include "third_party/skia/include/core/SkPixmap.h"
@@ -205,27 +206,31 @@ bool IsPathAPoint(const SkPath& path) {
   return true;
 }
 
-SkPath BuildPath(const CFX_Path& path) {
-  SkPath sk_path;
+SkPathBuilder BuildPath(const CFX_Path& path) {
+  SkPathBuilder builder;
   pdfium::span<const CFX_Path::Point> points = path.GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     const CFX_PointF& point = points[i].point_;
     CFX_Path::Point::Type point_type = points[i].type_;
     if (point_type == CFX_Path::Point::Type::kMove) {
-      sk_path.moveTo(point.x, point.y);
+      builder.moveTo(point.x, point.y);
     } else if (point_type == CFX_Path::Point::Type::kLine) {
-      sk_path.lineTo(point.x, point.y);
+      builder.lineTo(point.x, point.y);
     } else if (point_type == CFX_Path::Point::Type::kBezier) {
       const CFX_PointF& point2 = points[i + 1].point_;
       const CFX_PointF& point3 = points[i + 2].point_;
-      sk_path.cubicTo(point.x, point.y, point2.x, point2.y, point3.x, point3.y);
+      builder.cubicTo(point.x, point.y, point2.x, point2.y, point3.x, point3.y);
       i += 2;
     }
     if (points[i].close_figure_) {
-      sk_path.close();
+      builder.close();
     }
   }
-  return sk_path;
+  return builder;
+}
+
+SkPath BuildAndFinishPath(const CFX_Path& path) {
+  return BuildPath(path).detach();
 }
 
 SkMatrix ToSkMatrix(const CFX_Matrix& m) {
@@ -434,7 +439,7 @@ void ClipAngledGradient(pdfium::span<const SkPoint, 2> pts,
                         pdfium::span<const SkPoint, 4> rect_pts,
                         bool clip_start,
                         bool clip_end,
-                        SkPath* clip) {
+                        SkPathBuilder* clip) {
   // find the corners furthest from the gradient perpendiculars
   float minPerpDist = std::numeric_limits<float>::max();
   float maxPerpDist = std::numeric_limits<float>::lowest();
@@ -1050,7 +1055,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
   const CFX_Matrix& deviceMatrix =
       pObject2Device ? *pObject2Device : CFX_Matrix();
 
-  SkPath skClipPath;
+  SkPathBuilder skClipPathBuilder;
   if (path.GetPoints().size() == 5 || path.GetPoints().size() == 4) {
     std::optional<CFX_FloatRect> maybe_rectf = path.GetRect(&deviceMatrix);
     if (maybe_rectf.has_value()) {
@@ -1060,16 +1065,22 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
                                     (float)GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
       FX_RECT outer = rectf.GetOuterRect();
       // note that PDF's y-axis goes up; Skia's y-axis goes down
-      skClipPath.addRect({(float)outer.left, (float)outer.bottom,
-                          (float)outer.right, (float)outer.top});
+      skClipPathBuilder.addRect({(float)outer.left, (float)outer.bottom,
+                                 (float)outer.right, (float)outer.top});
     }
   }
-  if (skClipPath.isEmpty()) {
-    skClipPath = BuildPath(path);
-    skClipPath.setFillType(GetAlternateOrWindingFillType(fill_options));
-    skClipPath.transform(ToSkMatrix(deviceMatrix));
+
+  SkPath skClipPath;
+  if (skClipPathBuilder.isEmpty()) {
+    skClipPathBuilder = BuildPath(path);
+    skClipPathBuilder.setFillType(GetAlternateOrWindingFillType(fill_options));
+    skClipPathBuilder.transform(ToSkMatrix(deviceMatrix));
+    skClipPath = skClipPathBuilder.detach();
     DebugShowSkiaPath(skClipPath);
+  } else {
+    skClipPath = skClipPathBuilder.detach();
   }
+
   canvas_->clipPath(skClipPath, SkClipOp::kIntersect, true);
   DebugShowCanvasClip(this, canvas_);
   return true;
@@ -1080,14 +1091,14 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
     const CFX_Matrix* pObject2Device,      // required transformation
     const CFX_GraphStateData* pGraphState  // graphic state, for pen attributes
 ) {
-  SkPath skPath = BuildPath(path);
+  SkPath skPath = BuildAndFinishPath(path);
   SkMatrix skMatrix = ToSkMatrix(*pObject2Device);
   SkPaint skPaint;
   PaintStroke(&skPaint, pGraphState, skMatrix, CFX_FillRenderOptions());
-  SkPath dst_path;
+  SkPathBuilder dst_path;
   skpathutils::FillPathWithPaint(skPath, skPaint, &dst_path);
   dst_path.transform(skMatrix);
-  canvas_->clipPath(dst_path, SkClipOp::kIntersect, true);
+  canvas_->clipPath(dst_path.detach(), SkClipOp::kIntersect, true);
   DebugShowCanvasClip(this, canvas_);
   return true;
 }
@@ -1100,7 +1111,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(const CFX_Path& path,
                                     const CFX_FillRenderOptions& fill_options) {
   fill_options_ = fill_options;
 
-  SkPath skia_path = BuildPath(path);
+  SkPath skia_path = BuildAndFinishPath(path);
   skia_path.setFillType(GetAlternateOrWindingFillType(fill_options));
 
   SkMatrix skMatrix = pObject2Device ? ToSkMatrix(*pObject2Device) : SkMatrix();
@@ -1233,8 +1244,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
   SkMatrix skMatrix = ToSkMatrix(matrix);
   SkRect skRect = SkRect::MakeLTRB(clip_rect.left, clip_rect.top,
                                    clip_rect.right, clip_rect.bottom);
-  SkPath skClip;
-  SkPath skPath;
+  SkPathBuilder skClip;
+  SkPathBuilder skPath;
   if (shading_type == kAxialShading) {
     float start_x = pCoords->GetFloatAt(0);
     float start_y = pCoords->GetFloatAt(1);
@@ -1312,10 +1323,10 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
   }
   SkAutoCanvasRestore scoped_save_restore(canvas_, /*doSave=*/true);
   if (!skClip.isEmpty()) {
-    canvas_->clipPath(skClip, SkClipOp::kIntersect, true);
+    canvas_->clipPath(skClip.detach(), SkClipOp::kIntersect, true);
   }
   canvas_->concat(skMatrix);
-  DrawPathImpl(skPath, paint);
+  DrawPathImpl(skPath.detach(), paint);
   return true;
 }
 
