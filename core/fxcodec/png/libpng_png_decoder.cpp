@@ -113,9 +113,10 @@ void _png_get_row_func(png_structp png_ptr,
     return;
   }
 
-  uint8_t* src_buf = pContext->delegate_->PngAskScanlineBuf(row_num);
-  CHECK(src_buf);
-  png_progressive_combine_row(png_ptr, src_buf, new_row);
+  pdfium::span<uint8_t> dst_buf =
+      pContext->delegate_->PngAskScanlineBuf(row_num);
+  CHECK(!dst_buf.empty());
+  png_progressive_combine_row(png_ptr, dst_buf.data(), new_row);
 
   pContext->delegate_->PngFillScanlineBufCompleted(row_num);
 }

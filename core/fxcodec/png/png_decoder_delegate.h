@@ -7,6 +7,8 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/span.h"
+
 namespace fxcodec {
 
 // Abstract interface used by the `libpng`-based decoder from `png_decoder.h`
@@ -32,12 +34,12 @@ class PngDecoderDelegate {
                              double* gamma) = 0;
 
   // Called by `PngDecoder` to ask where to write decoded BGRA/8 pixels.
-  // Implementation should return a pointer to the buffer where the
+  // Implementation should return a span to the buffer where the
   // decoded pixels should be written to.
   //
   // `PngDecoder` guarantees that `0 <= line && line < height`
   // (`height` that was earlier passed to `PngReadHeader`).
-  virtual uint8_t* PngAskScanlineBuf(int line) = 0;
+  virtual pdfium::span<uint8_t> PngAskScanlineBuf(int line) = 0;
 
   // Called by `PngDecoder` Communicates that `line`th row has been decoded
   // enough to be displayed.
