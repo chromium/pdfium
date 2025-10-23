@@ -1,9 +1,9 @@
 Name: LibTIFF
 URL: https://gitlab.com/libtiff/libtiff
-Version: 4.7.0
-Revision: 9dff73bebc5661f2dace6f16e14cf9e857172f4e
+Version: 4.7.1
+Revision: 5fe20d0e9aba49a6a350ed533459d1505203838f
 Update Mechanism: Manual
-CPEPrefix: cpe:/a:libtiff:libtiff:4.7.0
+CPEPrefix: cpe:/a:libtiff:libtiff:4.7.1
 Security Critical: yes
 Shipped: yes
 License: libtiff
@@ -16,7 +16,6 @@ Local Modifications:
 
 0000-build-config.patch: Local build configuration changes.
 0001-no-error-handlers.patch: Set default error handlers.
-0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
 0028-nstrips-OOM.patch: return error for excess number of tiles/strips.
 0031-safe_size_ingtStripContig.patch: return error if the size to read overflow from int32.
 0033-avail-out-overflow.patch: signed comparison in PixarLogDecode().
