@@ -89,7 +89,7 @@ bookmark.pdf * * * *
 bookmarkgetcolor.pdf mac * * agg
 bug_0_length_line.pdf mac * * agg
 
-# TODO(crbug.com/pdfium/1812): Remove after associated bug is fixed
+# TODO(crbug.com/42270825): Remove after associated bug is fixed
 bug_0_length_line.pdf * * * skia
 
 bug_0_width_line.pdf mac * * agg
@@ -228,7 +228,7 @@ format_text_color.pdf mac * * agg
 formfield.pdf * * * *
 getarray.pdf mac * * agg
 
-# TODO(crbug.com/pdfium/489): Remove after associated bug is fixed.
+# TODO(crbug.com/42271468): Remove after associated bug is fixed.
 gradient_many_stops.pdf * * * agg
 
 javascriptaction.pdf * * * *
@@ -286,7 +286,7 @@ transparent.pdf mac * * agg
 whats_new_in_v3.0.pdf mac * * agg
 widget_javascript.pdf mac * * agg
 
-# TODO(crbug.com/pdfium/1990): Remove after associated bug is fixed
+# TODO(crbug.com/42270997): Remove after associated bug is fixed
 xfermodes2.pdf * * * agg
 
 zh_file1.pdf mac * * agg
@@ -315,7 +315,7 @@ Test_CheckBox.pdf * * * *
 
 # GDI
 
-# TODO(crbug.com/pdfium/2054): Remove after associated bug is fixed
+# TODO(crbug.com/42271066): Remove after associated bug is fixed
 1.pdf * * * gdi
 123.pdf * * * gdi
 1_image.pdf * * * gdi
@@ -409,7 +409,7 @@ new_stamp2.pdf * * * gdi
 quick_start_guide.pdf * * * gdi
 whats_new_in_v3.0.pdf * * * gdi
 
-# TODO(crbug.com/pdfium/2055): Remove after associated bug is fixed
+# TODO(crbug.com/42271067): Remove after associated bug is fixed
 Date_FormCale.pdf * * * gdi
 FRC_3.5_P__3648_Password_1.pdf * * * gdi
 FRC_8.4.1_Annotations_AP_N_R.D_.pdf * * * gdi
@@ -535,7 +535,7 @@ time.pdf * * * gdi
 validate_alert_box.pdf * * * gdi
 widget_javascript.pdf * * * gdi
 
-# TODO(crbug.com/pdfium/2056): Remove after associated bug is fixed
+# TODO(crbug.com/42271068): Remove after associated bug is fixed
 1_10_watermark.pdf * * * gdi
 1_matrix.pdf * * * gdi
 2_color_tiling.pdf * * * gdi
@@ -609,61 +609,61 @@ named_action.in * nov8 * *
 
 # xfa_specific
 
-# TODO(crbug.com/pdfium/1106): Remove after associated bug is fixed
+# TODO(crbug.com/42270097): Remove after associated bug is fixed
 resolve_nodes_1.pdf * * * *
 
 #
 # Pixel tests
 #
 
-# TODO(crbug.com/pdfium/1098): Remove after associated bug is fixed
-bug_1098.in * * * *
+# TODO(crbug.com/40643646): Remove after associated bug is fixed
+bug_40643646.in * * * *
 
-# TODO(crbug.com/1131694): Remove after associated bug is fixed
-bug_1131694.in * * * *
+# TODO(crbug.com/40721524): Remove after associated bug is fixed
+bug_40721524.in * * * *
 
 # TODO(thestig): Remove after fixing inline image parsing.
 bug_1236805.in * * * *
 
-# TODO(crbug.com/pdfium/1747): Remove after associated bug is fixed
+# TODO(crbug.com/42270756): Remove after associated bug is fixed
 bug_1258634.in * * * *
 
-# TODO(crbug.com/pdfium/1331): Remove after associated bug is fixed
-bug_1331.in * * * *
+# TODO(crbug.com/42270333): Remove after associated bug is fixed
+bug_42270333.in * * * *
 
-# TODO(crbug.com/1356149): Remove after associated bug is fixed
-bug_1356149.in mac * * agg
+# TODO(crbug.com/40860237): Remove after associated bug is fixed
+bug_40860237.in mac * * agg
 
 # This test is intentionally suppressed on Windows. Normally, Windows provides
 # the Symbol font, so this PDF would render correctly. However, in the hermetic
 # test environment, there is no Symbol font and the rendering is incorrect.
 bug_1442723.in win * * *
 
-# TODO(crbug.com/pdfium/1457): Remove after associated bug is fixed
-bug_1457.in * * * *
+# TODO(crbug.com/42270459): Remove after associated bug is fixed
+bug_42270459.in * * * *
 
-# TODO(crbug.com/pdfium/1519): Remove after associated bug is fixed
-bug_1519.in * * * *
+# TODO(crbug.com/42270524): Remove after associated bug is fixed
+bug_42270524.in * * * *
 
-# TODO(crbug.com/pdfium/1571): Remove after associated bug is fixed
-bug_1571.in * * * *
+# TODO(crbug.com/42270577): Remove after associated bug is fixed
+bug_42270577.in * * * *
 
-# TODO(crbug.com/pdfium/1723): Remove after associated bug is fixed
-bug_1723.in * * * *
+# TODO(crbug.com/42270732): Remove after associated bug is fixed
+bug_42270732.in * * * *
 
-# TODO(crbug.com/pdfium/1972): Remove after associated bug is fixed
-bug_1972_1.in * * * agg
-bug_1972_2.in * * * agg
-bug_1972_3.in * * * agg
+# TODO(crbug.com/42270979): Remove after associated bug is fixed
+bug_42270979_1.in * * * agg
+bug_42270979_2.in * * * agg
+bug_42270979_3.in * * * agg
 
-# TODO(crbug.com/pdfium/1973): Remove after associated bug is fixed
-bug_1973.in * * * *
+# TODO(crbug.com/42270980): Remove after associated bug is fixed
+bug_42270980.in * * * *
 
-# TODO(crbug.com/pdfium/2001): Remove after associated bug is fixed
-bug_2001.pdf * * * *
+# TODO(crbug.com/42271010): Remove after associated bug is fixed
+bug_42271010.pdf * * * *
 
-# TODO(crbug.com/237527): Remove after associated bug is fixed
-bug_237527_1.in * * * *
+# TODO(crbug.com/41010502): Remove after associated bug is fixed
+bug_41010502_1.in * * * *
 
 # TODO(crbug.com/346766787): Remove after associated bug is fixed
 bug_346766787.in * * * *
@@ -671,45 +671,45 @@ bug_346766787.in * * * *
 # TODO(crbug.com/394767650): Remove after associated bug is fixed
 bug_394767650.in * * * *
 
-# TODO(crbug.com/451366): Remove after associated bug is fixed
-bug_451366.in * * * agg
+# TODO(crbug.com/41153500): Remove after associated bug is fixed
+bug_41153500.in * * * agg
 
-# TODO(crbug.com/pdfium/492): Remove after associated bug is fixed
-bug_492.in * nov8 * *
+# TODO(crbug.com/42271472): Remove after associated bug is fixed
+bug_42271472.in * nov8 * *
 
-# TODO(crbug.com/725555, crbug.com/skia/9265): Remove after associated bug is
+# TODO(crbug.com/40040570, crbug.com/40040569): Remove after associated bug is
 # fixed
-bug_725555.in * * * skia
+bug_40040570.in * * * skia
 
-# TODO(crbug.com/983289): Remove after associated bug is fixed
-bug_983289.in * * * agg
+# TODO(crbug.com/41470360): Remove after associated bug is fixed
+bug_41470360.in * * * agg
 
-# TODO(crbug.com/pdfium/1747): Remove after associated bug is fixed
+# TODO(crbug.com/42270756): Remove after associated bug is fixed
 jpxdecode.in * * * *
 jpxdecode_without_bitspercomponent.in * * * *
 jpxdecode_without_colorspace.in * * * *
 
-# TODO(crbug.com/1028991): Remove after associated bug is fixed
+# TODO(crbug.com/40661120): Remove after associated bug is fixed
 reset_button.in * * * *
 
 # xfa_specific
 
-# TODO(crbug.com/pdfium/1095): Remove after associated bug is fixed
+# TODO(crbug.com/42270088): Remove after associated bug is fixed
 bug_997412.in win * * *
-# TODO(crbug.com/pdfium/1107): Remove after associated bug is fixed
+# TODO(crbug.com/42270098): Remove after associated bug is fixed
 standard_symbols.pdf * * * *
-# TODO(crbug.com/pdfium/1095): Remove after associated bug is fixed
+# TODO(crbug.com/42270088): Remove after associated bug is fixed
 xfa_example.in win * * *
-# TODO(crbug.com/pdfium/1095): Remove after associated bug is fixed
+# TODO(crbug.com/42270088): Remove after associated bug is fixed
 xfa_textfield.in win * * *
 
 # GDI
 
-# TODO(crbug.com/pdfium/2054): Remove after associated bug is fixed
+# TODO(crbug.com/42271066): Remove after associated bug is fixed
 bug_1258968.in * * * gdi
 bug_1383708.in * * * gdi
 
-# TODO(crbug.com/pdfium/2055): Remove after associated bug is fixed
+# TODO(crbug.com/42271067): Remove after associated bug is fixed
 barcode_test.pdf * * * gdi
 bug_1072440.in * * * gdi
 bug_113910.in * * * gdi
@@ -748,7 +748,7 @@ xfa_tiff_image.in * * * gdi
 xfa_tiff_lzw_image.in * * * gdi
 xfa_tiff_packbits_image.in * * * gdi
 
-# TODO(crbug.com/pdfium/2056): Remove after associated bug is fixed
+# TODO(crbug.com/42271068): Remove after associated bug is fixed
 bug_1015233.in * * * gdi
 bug_1099446.in * * * gdi
 bug_1161.in * * * gdi
@@ -761,10 +761,10 @@ bug_1430333.in * * * gdi
 bug_1822.in * * * gdi
 bug_1847.in * * * gdi
 bug_1949.in * * * gdi
-bug_1972_1.in * * * gdi
-bug_1972_3.in * * * gdi
 bug_1995.in * * * gdi
-bug_451366.in * * * gdi
+bug_41153500.in * * * gdi
+bug_42270979_1.in * * * gdi
+bug_42270979_3.in * * * gdi
 bug_632.in * * * gdi
 bug_660850.in * * * gdi
 long_dashed_line.in * * * gdi
