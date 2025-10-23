@@ -26,7 +26,6 @@
 #define PNG_ERROR_SIZE 256
 
 using PngDecoderDelegate = fxcodec::PngDecoderDelegate;
-using DecodedColorType = PngDecoderDelegate::DecodedColorType;
 
 class CPngContext final : public ProgressiveDecoderIface::Context {
  public:
@@ -97,11 +96,9 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
       NOTREACHED();
   }
 
-  DecodedColorType dst_color_type;
   double gamma = 1.0;
   if (!pContext->delegate_->PngReadHeader(width, height, bits_per_component,
-                                          components_count, pass,
-                                          &dst_color_type, &gamma)) {
+                                          components_count, pass, &gamma)) {
     // Note that `png_error` function is marked as `PNG_NORETURN`.
     png_error(pContext->png_, "Read Header Callback Error");
   }
@@ -120,15 +117,8 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     png_set_gray_to_rgb(png_ptr);
   }
   png_set_bgr(png_ptr);
-  switch (dst_color_type) {
-    case DecodedColorType::kBgr:
-      png_set_strip_alpha(png_ptr);
-      break;
-    case DecodedColorType::kBgra:
-      if (!(libpng_color_type & PNG_COLOR_MASK_ALPHA)) {
-        png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
-      }
-      break;
+  if (!(libpng_color_type & PNG_COLOR_MASK_ALPHA)) {
+    png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
   }
   png_read_update_info(png_ptr, info_ptr);
 }
