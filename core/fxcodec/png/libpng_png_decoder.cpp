@@ -117,8 +117,6 @@ void _png_get_row_func(png_structp png_ptr,
       pContext->delegate_->PngAskScanlineBuf(row_num);
   CHECK(!dst_buf.empty());
   png_progressive_combine_row(png_ptr, dst_buf.data(), new_row);
-
-  pContext->delegate_->PngFillScanlineBufCompleted(row_num);
 }
 
 int _png_set_read_and_error_fns(png_structrp png_ptr,

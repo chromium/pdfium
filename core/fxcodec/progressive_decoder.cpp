@@ -109,25 +109,7 @@ pdfium::span<uint8_t> ProgressiveDecoder::PngAskScanlineBuf(int line) {
   CHECK_LT(line, src_height_);
   CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
   CHECK_EQ(src_format_, FXCodec_Argb);
-  pdfium::span<const uint8_t> src_span = device_bitmap_->GetScanline(line);
-  pdfium::span<uint8_t> dest_span = pdfium::span(decode_buf_);
-  const size_t byte_size = Fx2DSizeOrDie(
-      src_width_, GetCompsFromFormat(device_bitmap_->GetFormat()));
-  fxcrt::Copy(src_span.first(byte_size), dest_span);
-  return dest_span;
-}
-
-void ProgressiveDecoder::PngFillScanlineBufCompleted(int line) {
-  if (line < 0 || line >= src_height_) {
-    return;
-  }
-
-  CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
-  pdfium::span<const uint8_t> src_span = pdfium::span(decode_buf_);
-  pdfium::span<uint8_t> dest_span = device_bitmap_->GetWritableScanline(line);
-  const size_t byte_size = Fx2DSizeOrDie(
-      src_width_, GetCompsFromFormat(device_bitmap_->GetFormat()));
-  fxcrt::Copy(src_span.first(byte_size), dest_span);
+  return device_bitmap_->GetWritableScanline(line);
 }
 #endif  // PDF_ENABLE_XFA_PNG
 
@@ -610,10 +592,16 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
     status_ = FXCODEC_STATUS::kError;
     return status_;
   }
-  offset_ = 0;
+
+  // No need to resample/transform pixels when decoding PNGs, because 1)
+  // `device_bitmap_` for PNGs is always kBgra and 2) the decoder always outputs
+  // `FXCodec_Argb` (the same format).  In other words, PNG code path doesn't
+  // need to use an intermediate `decode_buf_` to transform the pixels via
+  // `SetTransMethod` and `ResampleScanline`.
   CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
-  SetTransMethod();
-  decode_buf_.resize(GetScanlineSize());
+  CHECK_EQ(src_format_, FXCodec_Argb);
+
+  offset_ = 0;
   status_ = FXCODEC_STATUS::kDecodeToBeContinued;
   return status_;
 }

@@ -40,10 +40,6 @@ class PngDecoderDelegate {
   // `PngDecoder` guarantees that `0 <= line && line < height`
   // (`height` that was earlier passed to `PngReadHeader`).
   virtual pdfium::span<uint8_t> PngAskScanlineBuf(int line) = 0;
-
-  // Called by `PngDecoder` Communicates that `line`th row has been decoded
-  // enough to be displayed.
-  virtual void PngFillScanlineBufCompleted(int line) = 0;
 };
 
 }  // namespace fxcodec
