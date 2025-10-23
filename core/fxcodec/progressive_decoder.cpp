@@ -282,7 +282,8 @@ void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
   RetainPtr<CFX_DIBitmap> pDIBitmap = device_bitmap_;
   DCHECK(pDIBitmap);
 
-  fxcrt::Copy(row_buf.first(static_cast<size_t>(scanline_size_)), decode_buf_);
+  int scanline_size = GetScanlineSize();
+  fxcrt::Copy(row_buf.first(static_cast<size_t>(scanline_size)), decode_buf_);
 
   if (row_num >= static_cast<uint32_t>(src_height_)) {
     return;
@@ -374,8 +375,7 @@ bool ProgressiveDecoder::BmpReadMoreData(
 
 FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode() {
   SetTransMethod();
-  scanline_size_ = GetScanlineSize();
-  decode_buf_.resize(scanline_size_);
+  decode_buf_.resize(GetScanlineSize());
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
   weight_horz_.CalculateWeights(src_width_, 0, src_width_, src_width_, 0,

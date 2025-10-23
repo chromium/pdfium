@@ -207,7 +207,6 @@ class ProgressiveDecoder final :
   std::unique_ptr<ProgressiveDecoderIface::Context> tiff_context_;
 #endif  // PDF_ENABLE_XFA_TIFF
   uint32_t offset_ = 0;
-  int scanline_size_ = 0;
   WeightTable weight_horz_;
   int src_width_ = 0;
   int src_height_ = 0;
