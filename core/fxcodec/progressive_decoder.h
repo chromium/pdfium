@@ -180,6 +180,12 @@ class ProgressiveDecoder final :
                 uint8_t* src_scan,
                 FXCodec_Format src_format);
 
+  // Computes the size of a single decoded image row (in bytes).
+  //
+  // This needs to be called *after* sufficient image metadata has been decoded
+  // (i.e. `src_width_` and `src_components_count_` need to be known).
+  int GetScanlineSize() const;
+
   FXCODEC_STATUS status_ = FXCODEC_STATUS::kDecodeFinished;
   FXCODEC_IMAGE_TYPE image_type_ = FXCODEC_IMAGE_UNKNOWN;
   RetainPtr<IFX_SeekableReadStream> file_;

@@ -374,7 +374,7 @@ bool ProgressiveDecoder::BmpReadMoreData(
 
 FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode() {
   SetTransMethod();
-  scanline_size_ = FxAlignToBoundary<4>(src_width_ * src_components_count_);
+  scanline_size_ = GetScanlineSize();
   decode_buf_.resize(scanline_size_);
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
@@ -442,8 +442,7 @@ bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
 FXCODEC_STATUS ProgressiveDecoder::GifStartDecode() {
   src_format_ = FXCodec_8bppRgb;
   SetTransMethod();
-  int scanline_size = FxAlignToBoundary<4>(src_width_);
-  decode_buf_.resize(scanline_size);
+  decode_buf_.resize(GetScanlineSize());
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
   weight_horz_.CalculateWeights(src_width_, 0, src_width_, src_width_, 0,
@@ -533,7 +532,7 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
       return status_;
     }
   }
-  decode_buf_.resize(FxAlignToBoundary<4>(src_width_ * src_components_count_));
+  decode_buf_.resize(GetScanlineSize());
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
   weight_horz_.CalculateWeights(src_width_, 0, src_width_, src_width_, 0,
@@ -635,8 +634,7 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
   src_components_count_ = 4;
   src_format_ = FXCodec_Argb;
   SetTransMethod();
-  int scanline_size = FxAlignToBoundary<4>(src_width_ * src_components_count_);
-  decode_buf_.resize(scanline_size);
+  decode_buf_.resize(GetScanlineSize());
   status_ = FXCODEC_STATUS::kDecodeToBeContinued;
   return status_;
 }
@@ -1256,6 +1254,17 @@ FXCODEC_STATUS ProgressiveDecoder::ContinueDecode() {
     default:
       return FXCODEC_STATUS::kError;
   }
+}
+
+int ProgressiveDecoder::GetScanlineSize() const {
+  // Can't be called before basic image metadata is decoded.
+  CHECK_NE(src_components_count_, 0);
+  CHECK_NE(src_width_, 0);
+
+  FX_SAFE_INT32 result = src_width_;
+  result *= src_components_count_;
+
+  return FxAlignToBoundary<4>(result).ValueOrDie();
 }
 
 }  // namespace fxcodec
