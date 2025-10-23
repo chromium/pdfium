@@ -14,7 +14,6 @@
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcodec/png/png_decoder_delegate.h"
 #include "core/fxcrt/compiler_specific.h"
-#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 #ifdef USE_SYSTEM_LIBPNG
@@ -70,35 +69,14 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     png_set_expand_gray_1_2_4_to_8(png_ptr);
   }
 
-  bits_per_component = 8;
   if (libpng_color_type == PNG_COLOR_TYPE_PALETTE) {
     png_set_palette_to_rgb(png_ptr);
   }
 
   int pass = png_set_interlace_handling(png_ptr);
 
-  int components_count;
-  switch (libpng_color_type) {
-    case PNG_COLOR_TYPE_GRAY:
-      components_count = 1;
-      break;
-    case PNG_COLOR_TYPE_GRAY_ALPHA:
-      components_count = 2;
-      break;
-    case PNG_COLOR_TYPE_RGB:
-      components_count = 3;
-      break;
-    case PNG_COLOR_TYPE_RGB_ALPHA:
-    case PNG_COLOR_TYPE_PALETTE:
-      components_count = 4;
-      break;
-    default:
-      NOTREACHED();
-  }
-
   double gamma = 1.0;
-  if (!pContext->delegate_->PngReadHeader(width, height, bits_per_component,
-                                          components_count, pass, &gamma)) {
+  if (!pContext->delegate_->PngReadHeader(width, height, pass, &gamma)) {
     // Note that `png_error` function is marked as `PNG_NORETURN`.
     png_error(pContext->png_, "Read Header Callback Error");
   }

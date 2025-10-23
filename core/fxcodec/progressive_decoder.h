@@ -88,8 +88,6 @@ class ProgressiveDecoder final :
   // PngDecoderDelegate
   bool PngReadHeader(int width,
                      int height,
-                     int bits_per_component,
-                     int components_count,
                      int pass,
                      double* gamma) override;
   uint8_t* PngAskScanlineBuf(int line) override;
