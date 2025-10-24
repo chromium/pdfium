@@ -43,11 +43,10 @@ bool CFX_GifContext::GetRecordPosition(uint32_t cur_pos,
                                        int32_t width,
                                        int32_t height,
                                        pdfium::span<CFX_GifPalette> pal,
-                                       int32_t trans_index,
-                                       bool interlace) {
+                                       int32_t trans_index) {
   return delegate_->GifInputRecordPositionBuf(
-      cur_pos, FX_RECT(left, top, left + width, top + height), pal, trans_index,
-      interlace);
+      cur_pos, FX_RECT(left, top, left + width, top + height), pal,
+      trans_index);
 }
 
 GifDecoder::Status CFX_GifContext::ReadHeader() {
@@ -180,8 +179,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
       bool bRes = GetRecordPosition(
           gif_image->data_pos, gif_image->image_info.left,
           gif_image->image_info.top, gif_image->image_info.width,
-          gif_image->image_info.height, pLocalPalette, -1,
-          gif_image->image_info.local_flags.interlace);
+          gif_image->image_info.height, pLocalPalette, -1);
       if (!bRes) {
         gif_image->row_buffer.clear();
         return GifDecoder::Status::kError;
@@ -193,8 +191,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
           gif_image->image_info.height, pLocalPalette,
           gif_image->image_GCE->gce_flags.transparency
               ? static_cast<int32_t>(gif_image->image_GCE->trans_index)
-              : -1,
-          gif_image->image_info.local_flags.interlace);
+              : -1);
       if (!bRes) {
         gif_image->row_buffer.clear();
         return GifDecoder::Status::kError;

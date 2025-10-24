@@ -34,8 +34,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
                          int32_t width,
                          int32_t height,
                          pdfium::span<CFX_GifPalette> pal,
-                         int32_t trans_index,
-                         bool interlace);
+                         int32_t trans_index);
   GifDecoder::Status ReadHeader();
   GifDecoder::Status GetFrame();
   GifDecoder::Status LoadFrame(size_t frame_num);

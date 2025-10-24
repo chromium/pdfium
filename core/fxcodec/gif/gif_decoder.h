@@ -35,8 +35,7 @@ class GifDecoder {
     virtual bool GifInputRecordPositionBuf(uint32_t rcd_pos,
                                            const FX_RECT& img_rc,
                                            pdfium::span<CFX_GifPalette> pal_ptr,
-                                           int32_t trans_index,
-                                           bool interlace) = 0;
+                                           int32_t trans_index) = 0;
     virtual void GifReadScanline(int32_t row_num,
                                  pdfium::span<uint8_t> row_buf) = 0;
   };

@@ -125,8 +125,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
     uint32_t rcd_pos,
     const FX_RECT& img_rc,
     pdfium::span<CFX_GifPalette> pal_span,
-    int32_t trans_index,
-    bool interlace) {
+    int32_t trans_index) {
   offset_ = rcd_pos;
 
   FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
@@ -148,7 +147,6 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
   }
   gif_trans_index_ = trans_index;
   gif_frame_rect_ = img_rc;
-  src_pass_number_ = interlace ? 4 : 1;
   int32_t pal_index = gif_bg_index_;
   RetainPtr<CFX_DIBitmap> pDevice = device_bitmap_;
   if (trans_index >= static_cast<int>(pal_span.size())) {
@@ -797,7 +795,6 @@ FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
   src_height_ = 0;
   src_components_count_ = 0;
   src_bits_per_component_ = 0;
-  src_pass_number_ = 0;
   if (imageType != FXCODEC_IMAGE_UNKNOWN &&
       DetectImageType(imageType, pAttribute)) {
     image_type_ = imageType;

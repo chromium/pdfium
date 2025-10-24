@@ -98,8 +98,7 @@ class ProgressiveDecoder final :
   bool GifInputRecordPositionBuf(uint32_t rcd_pos,
                                  const FX_RECT& img_rc,
                                  pdfium::span<CFX_GifPalette> pal_span,
-                                 int32_t trans_index,
-                                 bool interlace) override;
+                                 int32_t trans_index) override;
   void GifReadScanline(int32_t row_num, pdfium::span<uint8_t> row_buf) override;
 #endif  // PDF_ENABLE_XFA_GIF
 
@@ -211,11 +210,6 @@ class ProgressiveDecoder final :
   TransformMethod trans_method_;
   int src_row_ = 0;
   FXCodec_Format src_format_ = FXCodec_Invalid;
-
-  // TODO(https://crbug.com/444045690): Remove `src_pass_number_` field, because
-  // it is never read from (only written to).
-  int src_pass_number_ = 0;
-
   size_t frame_number_ = 0;
   size_t frame_cur_ = 0;
 #ifdef PDF_ENABLE_XFA_GIF
