@@ -91,6 +91,7 @@ config("skia_config") {
     "SK_USER_CONFIG_HEADER=\"../../skia/config/SkPdfiumUserConfig.h\"",
     "SK_DISABLE_LEGACY_INIT_DECODERS",
     "SK_DISABLE_LEGACY_PNG_WRITEBUFFER",
+    "SK_DISABLE_LEGACY_XPS_FACTORIES",
   ]
 
   if (is_win) {
@@ -400,11 +401,13 @@ component("skia") {
     sources += skia_codec_rust_png_public
     sources += skia_encode_rust_png_public
     sources += skia_encode_rust_png_srcs
+    sources += skia_xps_rust_png_public
     deps += [ ":rust_png_ffi" ]
   } else {
     sources += skia_codec_libpng_srcs
     sources += skia_encode_libpng_srcs
     sources += skia_encode_png_public
+    sources += skia_xps_libpng_public
     deps += [ "../third_party:png" ]
   }
 }

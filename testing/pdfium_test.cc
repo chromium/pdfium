@@ -81,7 +81,12 @@
 
 #ifdef _WIN32
 #include "third_party/skia/include/docs/SkXPSDocument.h"  // nogncheck
-#endif
+#ifdef PDF_ENABLE_RUST_PNG
+#include "third_party/skia/include/docs/SkXPSRustPngHelpers.h"  // nogncheck
+#else
+#include "third_party/skia/include/docs/SkXPSLibpngHelpers.h"  // nogncheck
+#endif  // PDF_ENABLE_RUST_PNG
+#endif  // _WIN32
 
 #ifdef BUILD_WITH_CHROMIUM
 #include "testing/chromium_support/discardable_memory_allocator.h"  // nogncheck
@@ -1501,8 +1506,14 @@ bool PdfProcessor::ProcessPage(const int page_index) {
         break;
       }
 
+      SkXPS::Options xps_options;
+#ifdef PDF_ENABLE_RUST_PNG
+      xps_options.pngEncoder = SkXPS::EncodePngUsingRust;
+#else
+      xps_options.pngEncoder = SkXPS::EncodePngUsingLibpng;
+#endif
       sk_sp<SkDocument> document =
-          SkXPS::MakeDocument(stream.get(), xps_factory);
+          SkXPS::MakeDocument(stream.get(), xps_factory, xps_options);
       if (!document) {
         break;
       }
