@@ -73,10 +73,10 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     png_set_palette_to_rgb(png_ptr);
   }
 
-  int pass = png_set_interlace_handling(png_ptr);
+  std::ignore = png_set_interlace_handling(png_ptr);
 
   double gamma = 1.0;
-  if (!pContext->delegate_->PngReadHeader(width, height, pass, &gamma)) {
+  if (!pContext->delegate_->PngReadHeader(width, height, &gamma)) {
     // Note that `png_error` function is marked as `PNG_NORETURN`.
     png_error(pContext->png_, "Read Header Callback Error");
   }

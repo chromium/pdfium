@@ -84,12 +84,11 @@ ProgressiveDecoder::~ProgressiveDecoder() = default;
 #ifdef PDF_ENABLE_XFA_PNG
 bool ProgressiveDecoder::PngReadHeader(int width,
                                        int height,
-                                       int pass,
                                        double* gamma) {
   if (!device_bitmap_) {
+    got_png_metadata_ = true;
     src_width_ = width;
     src_height_ = height;
-    src_pass_number_ = pass;
 
     // PNG decoder always decodes into BGRA.
     src_bits_per_component_ = 8;
@@ -99,6 +98,8 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     return false;
   }
 
+  CHECK_EQ(width, src_width_);
+  CHECK_EQ(height, src_height_);
   CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
   *gamma = kPngGamma;
   return true;
@@ -577,11 +578,7 @@ bool ProgressiveDecoder::PngDetectImageTypeInBuffer() {
     offset_ += input_size;
   }
   png_context_.reset();
-  if (src_pass_number_ == 0) {
-    status_ = FXCODEC_STATUS::kError;
-    return false;
-  }
-  return true;
+  return got_png_metadata_;
 }
 
 FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {

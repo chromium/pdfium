@@ -19,9 +19,8 @@ namespace fxcodec {
 // to renamed .h/.cc files.
 class PngDecoderDelegate {
  public:
-  // Called by `PngDecoder` after decoding the image header:
-  //
-  // * `width` and `height` specify image dimensions in pixels
+  // Called by `PngDecoder` after decoding the image header with
+  // `width` and `height` that specify image dimensions in pixels
   //
   // Implementation should:
   //
@@ -30,7 +29,6 @@ class PngDecoderDelegate {
   // * TODO(crbug.com/355630556): Add out parameter for desired alpha-premul.
   virtual bool PngReadHeader(int width,
                              int height,
-                             int pass,
                              double* gamma) = 0;
 
   // Called by `PngDecoder` to ask where to write decoded BGRA/8 pixels.

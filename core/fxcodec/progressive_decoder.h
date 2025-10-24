@@ -88,7 +88,6 @@ class ProgressiveDecoder final :
   // PngDecoderDelegate
   bool PngReadHeader(int width,
                      int height,
-                     int pass,
                      double* gamma) override;
   pdfium::span<uint8_t> PngAskScanlineBuf(int line) override;
 #endif  // PDF_ENABLE_XFA_PNG
@@ -198,6 +197,7 @@ class ProgressiveDecoder final :
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
   std::unique_ptr<ProgressiveDecoderIface::Context> png_context_;
+  bool got_png_metadata_ = false;
 #endif  // PDF_ENABLE_XFA_PNG
 #ifdef PDF_ENABLE_XFA_TIFF
   std::unique_ptr<ProgressiveDecoderIface::Context> tiff_context_;
@@ -211,7 +211,11 @@ class ProgressiveDecoder final :
   TransformMethod trans_method_;
   int src_row_ = 0;
   FXCodec_Format src_format_ = FXCodec_Invalid;
+
+  // TODO(https://crbug.com/444045690): Remove `src_pass_number_` field, because
+  // it is never read from (only written to).
   int src_pass_number_ = 0;
+
   size_t frame_number_ = 0;
   size_t frame_cur_ = 0;
 #ifdef PDF_ENABLE_XFA_GIF
