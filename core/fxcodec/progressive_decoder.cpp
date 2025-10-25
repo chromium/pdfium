@@ -725,34 +725,33 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   return false;
 }
 
-bool ProgressiveDecoder::ReadMoreData(
-    ProgressiveDecoderIface* pModule,
-    ProgressiveDecoderIface::Context* pContext,
-    FXCODEC_STATUS* err_status) {
+bool ProgressiveDecoder::ReadMoreData(ProgressiveDecoderIface* decoder,
+                                      ProgressiveDecoderIface::Context* context,
+                                      FXCODEC_STATUS* err_status) {
   // Check for EOF.
   if (offset_ >= static_cast<uint32_t>(file_->GetSize())) {
     return false;
   }
 
   // Try to get whatever remains.
-  uint32_t dwBytesToFetchFromFile =
+  uint32_t bytes_to_fetch_from_file =
       pdfium::checked_cast<uint32_t>(file_->GetSize() - offset_);
 
   // Figure out if the codec stopped processing midway through the buffer.
-  size_t dwUnconsumed;
-  FX_SAFE_SIZE_T avail_input = pModule->GetAvailInput(pContext);
-  if (!avail_input.AssignIfValid(&dwUnconsumed)) {
+  size_t unconsumed_bytes;
+  FX_SAFE_SIZE_T avail_input = decoder->GetAvailInput(context);
+  if (!avail_input.AssignIfValid(&unconsumed_bytes)) {
     return false;
   }
 
-  if (dwUnconsumed == codec_memory_->GetSize()) {
+  if (unconsumed_bytes == codec_memory_->GetSize()) {
     // Codec couldn't make any progress against the bytes in the buffer.
     // Increase the buffer size so that there might be enough contiguous
     // bytes to allow whatever operation is having difficulty to succeed.
-    dwBytesToFetchFromFile =
-        std::min<uint32_t>(dwBytesToFetchFromFile, kBlockSize);
-    size_t dwNewSize = codec_memory_->GetSize() + dwBytesToFetchFromFile;
-    if (!codec_memory_->TryResize(dwNewSize)) {
+    bytes_to_fetch_from_file =
+        std::min<uint32_t>(bytes_to_fetch_from_file, kBlockSize);
+    size_t new_size = codec_memory_->GetSize() + bytes_to_fetch_from_file;
+    if (!codec_memory_->TryResize(new_size)) {
       *err_status = FXCODEC_STATUS::kError;
       return false;
     }
@@ -760,23 +759,23 @@ bool ProgressiveDecoder::ReadMoreData(
     // TODO(crbug.com/pdfium/1904): Simplify the `CFX_CodecMemory` API so we
     // don't need to do this awkward dance to free up exactly enough buffer
     // space for the next read.
-    size_t dwConsumable = codec_memory_->GetSize() - dwUnconsumed;
-    dwBytesToFetchFromFile = pdfium::checked_cast<uint32_t>(
-        std::min<size_t>(dwBytesToFetchFromFile, dwConsumable));
-    codec_memory_->Consume(dwBytesToFetchFromFile);
-    codec_memory_->Seek(dwConsumable - dwBytesToFetchFromFile);
-    dwUnconsumed += codec_memory_->GetPosition();
+    size_t already_read_bytes = codec_memory_->GetSize() - unconsumed_bytes;
+    bytes_to_fetch_from_file = pdfium::checked_cast<uint32_t>(
+        std::min<size_t>(bytes_to_fetch_from_file, already_read_bytes));
+    codec_memory_->Consume(bytes_to_fetch_from_file);
+    codec_memory_->Seek(already_read_bytes - bytes_to_fetch_from_file);
+    unconsumed_bytes += codec_memory_->GetPosition();
   }
 
   // Append new data past the bytes not yet processed by the codec.
   if (!file_->ReadBlockAtOffset(codec_memory_->GetBufferSpan().subspan(
-                                    dwUnconsumed, dwBytesToFetchFromFile),
+                                    unconsumed_bytes, bytes_to_fetch_from_file),
                                 offset_)) {
     *err_status = FXCODEC_STATUS::kError;
     return false;
   }
-  offset_ += dwBytesToFetchFromFile;
-  return pModule->Input(pContext, codec_memory_);
+  offset_ += bytes_to_fetch_from_file;
+  return decoder->Input(context, codec_memory_);
 }
 
 FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
