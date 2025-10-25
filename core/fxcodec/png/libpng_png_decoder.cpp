@@ -35,6 +35,8 @@ class CPngContext final : public ProgressiveDecoderIface::Context {
   png_infop info_ = nullptr;
   UnownedPtr<PngDecoderDelegate> const delegate_;
   char last_error_[PNG_ERROR_SIZE] = {};
+  png_uint_32 height_ = 0;
+  int number_of_passes_ = 0;
 };
 
 extern "C" {
@@ -73,7 +75,8 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     png_set_palette_to_rgb(png_ptr);
   }
 
-  std::ignore = png_set_interlace_handling(png_ptr);
+  pContext->number_of_passes_ = png_set_interlace_handling(png_ptr);
+  pContext->height_ = height;
 
   double gamma = 1.0;
   if (!pContext->delegate_->PngReadHeader(width, height, &gamma)) {
@@ -117,6 +120,11 @@ void _png_get_row_func(png_structp png_ptr,
       pContext->delegate_->PngAskScanlineBuf(row_num);
   CHECK(!dst_buf.empty());
   png_progressive_combine_row(png_ptr, dst_buf.data(), new_row);
+
+  if ((pass == (pContext->number_of_passes_ - 1)) &&
+      (row_num == (pContext->height_ - 1))) {
+    pContext->delegate_->PngFinishedDecoding();
+  }
 }
 
 int _png_set_read_and_error_fns(png_structrp png_ptr,
