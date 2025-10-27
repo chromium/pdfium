@@ -643,11 +643,8 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
     uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
     if (input_size == 0) {
       // EOF while `kDecodeToBeContinued` => truncated input error.
-      png_context_.reset();
-      device_bitmap_ = nullptr;
-      file_ = nullptr;
       status_ = FXCODEC_STATUS::kError;
-      return status_;
+      break;
     }
     if (codec_memory_ && input_size > codec_memory_->GetSize()) {
       codec_memory_ = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
@@ -656,25 +653,22 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
     bool bResult = file_->ReadBlockAtOffset(
         codec_memory_->GetBufferSpan().first(input_size), offset_);
     if (!bResult) {
-      device_bitmap_ = nullptr;
-      file_ = nullptr;
       status_ = FXCODEC_STATUS::kError;
-      return status_;
+      break;
     }
     offset_ += input_size;
     bResult = PngDecoder::ContinueDecode(png_context_.get(), codec_memory_);
     if (!bResult) {
-      device_bitmap_ = nullptr;
-      file_ = nullptr;
       status_ = FXCODEC_STATUS::kError;
-      return status_;
+      break;
     }
   }
 
   png_context_.reset();
   device_bitmap_ = nullptr;
   file_ = nullptr;
-  CHECK_EQ(status_, FXCODEC_STATUS::kDecodeFinished);
+  CHECK(status_ == FXCODEC_STATUS::kDecodeFinished ||
+        status_ == FXCODEC_STATUS::kError);
   return status_;
 }
 #endif  // PDF_ENABLE_XFA_PNG
