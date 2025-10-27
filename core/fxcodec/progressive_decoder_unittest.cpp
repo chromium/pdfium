@@ -11,6 +11,7 @@
 #include <numeric>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
@@ -560,6 +561,71 @@ TEST_F(ProgressiveDecoderTest, TruncatedPng) {
 
   status = DecodeToBitmap(decoder, bitmap);
   EXPECT_EQ(FXCODEC_STATUS::kError, status);
+}
+
+// One motivation for the `BigPng` test is to ensure that tests cover multiple
+// iterations of the loop inside `ProgressiveDecoder::PngContinueDecode` or
+// `ProgressiveDecoder::PngDetectImageTypeInBuffer` (i.e.  covering the scenario
+// where decoding happens over multiple file chunks).
+//
+// In particular, construcing an `SkCodec` is only possible _after_ parsing
+// image metadata (including the color profile, etc.), which postpones PNG
+// detection all the way until encountering an `IDAT` chunk.  This means that
+// a Skia-based decoder should *not* consume input when constructing an
+// `SkCodec` returns `kIncompleteInput` error - instead the next iteration
+// of `PngReadMoreData` should retry _from the start_ with a _bigger_ buffer.
+TEST_F(ProgressiveDecoderTest, BigPng) {
+  // Split `kGreenPng` into a prefix (before `IDAT` chunk) and a suffix (`IDAT`
+  // and subsequent chunks).  Inserting 0, 1, or more (mostly inert)
+  // `kTextChunk` bytes in the middle allows generating arbitrarily large test
+  // inputs.
+  const auto kPrefix = pdfium::span(kGreenPng).first(48u);
+  const auto kSuffix = pdfium::span(kGreenPng).subspan(48u);
+  CHECK_EQ(kSuffix[4], static_cast<uint8_t>('I'));
+  CHECK_EQ(kSuffix[5], static_cast<uint8_t>('D'));
+  CHECK_EQ(kSuffix[6], static_cast<uint8_t>('A'));
+  CHECK_EQ(kSuffix[7], static_cast<uint8_t>('T'));
+
+  // `tEXt` chunk (mostly ignored during decoding process).
+  static constexpr std::array<const uint8_t, 32> kTextChunk = {
+      0x00, 0x00, 0x00, 0x14, 0x74, 0x45, 0x58, 0x74, 0x54, 0x65, 0x73,
+      0x74, 0x00, 0x50, 0x44, 0x46, 0x69, 0x75, 0x6D, 0x20, 0x53, 0x75,
+      0x69, 0x74, 0x65, 0x2E, 0x2E, 0x2E, 0x11, 0x22, 0x17, 0x91};
+
+  // `kBlockSize` in `progressive_decoder.cpp` is 4096 - let's therefore
+  // construct `input` that is a few multiples of that long.
+  std::vector<uint8_t> input;
+  input.insert(input.end(), kPrefix.begin(), kPrefix.end());
+  while (input.size() < 4096 * 10) {
+    input.insert(input.end(), kTextChunk.begin(), kTextChunk.end());
+  }
+  input.insert(input.end(), kSuffix.begin(), kSuffix.end());
+
+  ProgressiveDecoder decoder;
+
+  auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(input);
+  CFX_DIBAttribute attr;
+  FXCODEC_STATUS status =
+      decoder.LoadImageInfo(std::move(source), FXCODEC_IMAGE_PNG, &attr, true);
+  ASSERT_EQ(FXCODEC_STATUS::kFrameReady, status);
+
+  ASSERT_EQ(100, decoder.GetWidth());
+  ASSERT_EQ(50, decoder.GetHeight());
+  ASSERT_EQ(FXDIB_Format::kBgra, decoder.GetBitmapFormat());
+
+  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
+                             decoder.GetBitmapFormat()));
+
+  size_t frames;
+  std::tie(status, frames) = decoder.GetFrames();
+  ASSERT_EQ(FXCODEC_STATUS::kDecodeReady, status);
+  ASSERT_EQ(1u, frames);
+
+  status = DecodeToBitmap(decoder, bitmap);
+  EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished, status);
+  EXPECT_THAT(bitmap->GetScanline(0).first(4u),
+              ElementsAre(0x00, 0xFF, 0x00, 0xFF));
 }
 #endif
 

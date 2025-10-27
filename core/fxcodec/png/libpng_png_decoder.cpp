@@ -13,6 +13,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcodec/png/png_decoder_delegate.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/unowned_ptr.h"
 
@@ -187,8 +188,15 @@ bool LibpngPngDecoder::ContinueDecode(
     RetainPtr<CFX_CodecMemory> codec_memory) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
-  return _png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),
-                              src_buf.size());
+  bool result = _png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),
+                                     src_buf.size());
+
+  // `libpng` always consumes all the data from `src_buf`, so
+  // advance/seek `codec_memory` to the end of the buffer.
+  codec_memory->Seek(codec_memory->GetSize());
+  CHECK(codec_memory->GetUnconsumedSpan().empty());
+
+  return result;
 }
 
 }  // namespace fxcodec
