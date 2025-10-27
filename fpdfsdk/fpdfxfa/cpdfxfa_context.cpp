@@ -15,7 +15,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
-#include "core/fxcodec/jpeg/jpeg_progressive_decoder.h"
 #include "core/fxcrt/autonuller.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
@@ -40,14 +39,6 @@
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/cxfa_readynodeiterator.h"
-
-#ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/bmp/bmp_progressive_decoder.h"
-#endif
-
-#ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/gif/gif_progressive_decoder.h"
-#endif
 
 namespace {
 
@@ -108,23 +99,9 @@ RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
 void CPDFXFA_ModuleInit() {
   CFGAS_GEModule::Create();
   BC_Library_Init();
-#ifdef PDF_ENABLE_XFA_BMP
-  fxcodec::BmpProgressiveDecoder::InitializeGlobals();
-#endif
-#ifdef PDF_ENABLE_XFA_GIF
-  fxcodec::GifProgressiveDecoder::InitializeGlobals();
-#endif
-  fxcodec::JpegProgressiveDecoder::InitializeGlobals();
 }
 
 void CPDFXFA_ModuleDestroy() {
-  fxcodec::JpegProgressiveDecoder::DestroyGlobals();
-#ifdef PDF_ENABLE_XFA_GIF
-  fxcodec::GifProgressiveDecoder::DestroyGlobals();
-#endif
-#ifdef PDF_ENABLE_XFA_BMP
-  fxcodec::BmpProgressiveDecoder::DestroyGlobals();
-#endif
   BC_Library_Destroy();
   CFGAS_GEModule::Destroy();
 }

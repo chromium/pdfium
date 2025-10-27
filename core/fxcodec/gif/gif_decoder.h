@@ -7,12 +7,16 @@
 #ifndef CORE_FXCODEC_GIF_GIF_DECODER_H_
 #define CORE_FXCODEC_GIF_GIF_DECODER_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <utility>
 
+#include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/span.h"
 
 #ifndef PDF_ENABLE_XFA_GIF
@@ -55,6 +59,7 @@ class GifDecoder {
   static bool Input(ProgressiveDecoderIface::Context* context,
                     RetainPtr<CFX_CodecMemory> codec_memory);
 
+  // Only `static` methods.
   GifDecoder() = delete;
   GifDecoder(const GifDecoder&) = delete;
   GifDecoder& operator=(const GifDecoder&) = delete;

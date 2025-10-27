@@ -7,10 +7,14 @@
 #ifndef CORE_FXCODEC_BMP_BMP_DECODER_H_
 #define CORE_FXCODEC_BMP_BMP_DECODER_H_
 
+#include <stdint.h>
+
 #include <memory>
 
+#include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -48,6 +52,7 @@ class BmpDecoder {
   static bool Input(ProgressiveDecoderIface::Context* pContext,
                     RetainPtr<CFX_CodecMemory> codec_memory);
 
+  // Only `static` methods.
   BmpDecoder() = delete;
   BmpDecoder(const BmpDecoder&) = delete;
   BmpDecoder& operator=(const BmpDecoder&) = delete;

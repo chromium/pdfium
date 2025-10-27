@@ -124,7 +124,7 @@ class ProgressiveDecoder final :
   };
 
 #ifdef PDF_ENABLE_XFA_BMP
-  bool BmpReadMoreData(ProgressiveDecoderIface::Context* pBmpContext,
+  bool BmpReadMoreData(ProgressiveDecoderIface::Context* bmp_context,
                        FXCODEC_STATUS* err_status);
   bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS BmpStartDecode();
@@ -160,9 +160,17 @@ class ProgressiveDecoder final :
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
-  bool ReadMoreData(ProgressiveDecoderIface* decoder,
-                    ProgressiveDecoderIface::Context* context,
-                    FXCODEC_STATUS* err_status);
+
+  // Reads more data from `file_` into `codec_memory_`.
+  //
+  // Returns `false` and sets `err_status` upon failure.
+  // Returns `true` to indicate success.
+  //
+  // Retains `unconsumed_bytes` at the end of `codec_memory_`.
+  //
+  // Reads start at `offset_` inside the file.  The `offset_` will be update as
+  // needed.
+  bool ReadMoreData(size_t unconsumed_bytes, FXCODEC_STATUS* err_status);
 
   void SetTransMethod();
 

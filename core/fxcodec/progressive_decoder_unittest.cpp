@@ -14,7 +14,6 @@
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcodec/jpeg/jpeg_progressive_decoder.h"
 #include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/cfx_read_only_vector_stream.h"
 #include "core/fxcrt/data_vector.h"
@@ -24,16 +23,6 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-
-#ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/bmp/bmp_decoder.h"
-#include "core/fxcodec/bmp/bmp_progressive_decoder.h"
-#endif  // PDF_ENABLE_XFA_BMP
-
-#ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/gif/gif_decoder.h"
-#include "core/fxcodec/gif/gif_progressive_decoder.h"
-#endif  // PDF_ENABLE_XFA_GIF
 
 namespace fxcodec {
 
@@ -58,26 +47,7 @@ FXCODEC_STATUS DecodeToBitmap(ProgressiveDecoder& decoder,
   return status;
 }
 
-class ProgressiveDecoderTest : public testing::Test {
-  void SetUp() override {
-#ifdef PDF_ENABLE_XFA_BMP
-    BmpProgressiveDecoder::InitializeGlobals();
-#endif
-#ifdef PDF_ENABLE_XFA_GIF
-    GifProgressiveDecoder::InitializeGlobals();
-#endif
-    JpegProgressiveDecoder::InitializeGlobals();
-  }
-  void TearDown() override {
-    JpegProgressiveDecoder::DestroyGlobals();
-#ifdef PDF_ENABLE_XFA_GIF
-    GifProgressiveDecoder::DestroyGlobals();
-#endif
-#ifdef PDF_ENABLE_XFA_BMP
-    BmpProgressiveDecoder::DestroyGlobals();
-#endif
-  }
-};
+using ProgressiveDecoderTest = testing::Test;
 
 }  // namespace
 

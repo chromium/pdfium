@@ -30,11 +30,11 @@
 #include "core/fxge/dib/fx_dib.h"
 
 #ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/bmp/bmp_progressive_decoder.h"
+#include "core/fxcodec/bmp/bmp_decoder.h"
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/gif/gif_progressive_decoder.h"
+#include "core/fxcodec/gif/gif_decoder.h"
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
@@ -333,10 +333,22 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
 }
 
 bool ProgressiveDecoder::BmpReadMoreData(
-    ProgressiveDecoderIface::Context* pContext,
+    ProgressiveDecoderIface::Context* bmp_context,
     FXCODEC_STATUS* err_status) {
-  return ReadMoreData(BmpProgressiveDecoder::GetInstance(), pContext,
-                      err_status);
+  // TODO(lukasza): Can this just use
+  // `codec_memory_->GetUnconsumedSpan().size()`? (IIUC this is what
+  // `GetAvailInput` uses in the end, but I haven't investigated that this is
+  // the same instance of `CFX_CodecMemory`.)
+  FX_SAFE_SIZE_T avail_input = BmpDecoder::GetAvailInput(bmp_context);
+  if (!avail_input.IsValid()) {
+    return false;
+  }
+
+  if (!ReadMoreData(avail_input.ValueOrDie(), err_status)) {
+    return false;
+  }
+
+  return BmpDecoder::Input(bmp_context, codec_memory_);
 }
 
 FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode() {
@@ -374,8 +386,20 @@ FXCODEC_STATUS ProgressiveDecoder::BmpContinueDecode() {
 
 #ifdef PDF_ENABLE_XFA_GIF
 bool ProgressiveDecoder::GifReadMoreData(FXCODEC_STATUS* err_status) {
-  return ReadMoreData(GifProgressiveDecoder::GetInstance(), gif_context_.get(),
-                      err_status);
+  // TODO(lukasza): Can this just use
+  // `codec_memory_->GetUnconsumedSpan().size()`? (IIUC this is what
+  // `GetAvailInput` uses in the end, but I haven't investigated that this is
+  // the same instance of `CFX_CodecMemory`.)
+  FX_SAFE_SIZE_T avail_input = GifDecoder::GetAvailInput(gif_context_.get());
+  if (!avail_input.IsValid()) {
+    return false;
+  }
+
+  if (!ReadMoreData(avail_input.ValueOrDie(), err_status)) {
+    return false;
+  }
+
+  return GifDecoder::Input(gif_context_.get(), codec_memory_);
 }
 
 bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
@@ -447,8 +471,17 @@ FXCODEC_STATUS ProgressiveDecoder::GifContinueDecode() {
 #endif  // PDF_ENABLE_XFA_GIF
 
 bool ProgressiveDecoder::JpegReadMoreData(FXCODEC_STATUS* err_status) {
-  return ReadMoreData(JpegProgressiveDecoder::GetInstance(),
-                      jpeg_context_.get(), err_status);
+  FX_SAFE_SIZE_T avail_input =
+      JpegProgressiveDecoder::GetAvailInput(jpeg_context_.get());
+  if (!avail_input.IsValid()) {
+    return false;
+  }
+
+  if (!ReadMoreData(avail_input.ValueOrDie(), err_status)) {
+    return false;
+  }
+
+  return JpegProgressiveDecoder::Input(jpeg_context_.get(), codec_memory_);
 }
 
 bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
@@ -458,8 +491,7 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
     status_ = FXCODEC_STATUS::kError;
     return false;
   }
-  JpegProgressiveDecoder::GetInstance()->Input(jpeg_context_.get(),
-                                               codec_memory_);
+  JpegProgressiveDecoder::Input(jpeg_context_.get(), codec_memory_);
 
   while (1) {
     int read_result = JpegProgressiveDecoder::ReadHeader(
@@ -725,8 +757,7 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   return false;
 }
 
-bool ProgressiveDecoder::ReadMoreData(ProgressiveDecoderIface* decoder,
-                                      ProgressiveDecoderIface::Context* context,
+bool ProgressiveDecoder::ReadMoreData(size_t unconsumed_bytes,
                                       FXCODEC_STATUS* err_status) {
   // Check for EOF.
   if (offset_ >= static_cast<uint32_t>(file_->GetSize())) {
@@ -736,13 +767,6 @@ bool ProgressiveDecoder::ReadMoreData(ProgressiveDecoderIface* decoder,
   // Try to get whatever remains.
   uint32_t bytes_to_fetch_from_file =
       pdfium::checked_cast<uint32_t>(file_->GetSize() - offset_);
-
-  // Figure out if the codec stopped processing midway through the buffer.
-  size_t unconsumed_bytes;
-  FX_SAFE_SIZE_T avail_input = decoder->GetAvailInput(context);
-  if (!avail_input.AssignIfValid(&unconsumed_bytes)) {
-    return false;
-  }
 
   if (unconsumed_bytes == codec_memory_->GetSize()) {
     // Codec couldn't make any progress against the bytes in the buffer.
@@ -775,7 +799,7 @@ bool ProgressiveDecoder::ReadMoreData(ProgressiveDecoderIface* decoder,
     return false;
   }
   offset_ += bytes_to_fetch_from_file;
-  return decoder->Input(context, codec_memory_);
+  return true;
 }
 
 FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(

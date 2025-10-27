@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/retain_ptr.h"
 
