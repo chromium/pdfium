@@ -91,21 +91,6 @@ bool CPWL_Edit::CanSelectAll() const {
   return GetSelectWordRange() != edit_impl_->GetWholeWordRange();
 }
 
-bool CPWL_Edit::CanCopy() const {
-  return !HasFlag(PES_PASSWORD) && edit_impl_->IsSelected();
-}
-
-bool CPWL_Edit::CanCut() const {
-  return CanCopy() && !IsReadOnly();
-}
-
-void CPWL_Edit::CutText() {
-  if (!CanCut()) {
-    return;
-  }
-  edit_impl_->ClearSelection();
-}
-
 void CPWL_Edit::OnCreated() {
   SetFontSize(GetCreationParams()->fFontSize);
   edit_impl_->SetFontMap(GetFontMap());
@@ -547,11 +532,7 @@ bool CPWL_Edit::OnKeyDownInternal(FWL_VKEYCODE nKeyCode,
       edit_impl_->OnVK_END(IsSHIFTKeyDown(nFlag), IsCTRLKeyDown(nFlag));
       return true;
     case FWL_VKEY_Unknown:
-      if (!IsSHIFTKeyDown(nFlag)) {
-        ClearSelection();
-      } else {
-        CutText();
-      }
+      ClearSelection();
       return true;
     default:
       return false;
@@ -582,9 +563,6 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
 
   if (bCtrl && !bAlt) {
     switch (nChar) {
-      case pdfium::ascii::kControlX:
-        CutText();
-        return true;
       case pdfium::ascii::kControlA:
         SelectAllText();
         return true;
