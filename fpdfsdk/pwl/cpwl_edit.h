@@ -105,8 +105,6 @@ class CPWL_Edit final : public CPWL_Wnd {
   bool OnKeyDownInternal(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag);
   bool OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag);
 
-  void CopyText();
-  void PasteText();
   bool IsWndHorV() const;
   void Delete();
   void GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const;

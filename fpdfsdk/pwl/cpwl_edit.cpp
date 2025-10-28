@@ -528,11 +528,6 @@ bool CPWL_Edit::OnKeyDownInternal(FWL_VKEYCODE nKeyCode,
     case FWL_VKEY_Delete:
       Delete();
       return true;
-    case FWL_VKEY_Insert:
-      if (IsSHIFTKeyDown(nFlag)) {
-        PasteText();
-      }
-      return true;
     case FWL_VKEY_Up:
       edit_impl_->OnVK_UP(IsSHIFTKeyDown(nFlag));
       return true;
@@ -587,12 +582,6 @@ bool CPWL_Edit::OnCharInternal(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
 
   if (bCtrl && !bAlt) {
     switch (nChar) {
-      case pdfium::ascii::kControlC:
-        CopyText();
-        return true;
-      case pdfium::ascii::kControlV:
-        PasteText();
-        return true;
       case pdfium::ascii::kControlX:
         CutText();
         return true;
@@ -756,10 +745,6 @@ void CPWL_Edit::SetScrollPos(const CFX_PointF& point) {
 CFX_PointF CPWL_Edit::GetScrollPos() const {
   return edit_impl_->GetScrollPos();
 }
-
-void CPWL_Edit::CopyText() {}
-
-void CPWL_Edit::PasteText() {}
 
 void CPWL_Edit::Delete() {
   if (!IsReadOnly()) {
