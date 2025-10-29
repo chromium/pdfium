@@ -401,13 +401,11 @@ component("skia") {
     sources += skia_codec_rust_png_public
     sources += skia_encode_rust_png_public
     sources += skia_encode_rust_png_srcs
-    sources += skia_xps_rust_png_public
     deps += [ ":rust_png_ffi" ]
   } else {
     sources += skia_codec_libpng_srcs
     sources += skia_encode_libpng_srcs
     sources += skia_encode_png_public
-    sources += skia_xps_libpng_public
     deps += [ "../third_party:png" ]
   }
 }

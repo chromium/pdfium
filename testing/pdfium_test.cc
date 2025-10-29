@@ -82,9 +82,9 @@
 #ifdef _WIN32
 #include "third_party/skia/include/docs/SkXPSDocument.h"  // nogncheck
 #ifdef PDF_ENABLE_RUST_PNG
-#include "third_party/skia/include/docs/SkXPSRustPngHelpers.h"  // nogncheck
+#include "third_party/skia/include/encode/SkPngRustEncoder.h"  // nogncheck
 #else
-#include "third_party/skia/include/docs/SkXPSLibpngHelpers.h"  // nogncheck
+#include "third_party/skia/include/encode/SkPngEncoder.h"  // nogncheck
 #endif  // PDF_ENABLE_RUST_PNG
 #endif  // _WIN32
 
@@ -1507,11 +1507,13 @@ bool PdfProcessor::ProcessPage(const int page_index) {
       }
 
       SkXPS::Options xps_options;
+      xps_options.pngEncoder = [](SkWStream* dst, const SkPixmap& src) {
 #ifdef PDF_ENABLE_RUST_PNG
-      xps_options.pngEncoder = SkXPS::EncodePngUsingRust;
+        return SkPngRustEncoder::Encode(dst, src, {});
 #else
-      xps_options.pngEncoder = SkXPS::EncodePngUsingLibpng;
+        return SkPngEncoder::Encode(dst, src, {});
 #endif
+      };
       sk_sp<SkDocument> document =
           SkXPS::MakeDocument(stream.get(), xps_factory, xps_options);
       if (!document) {
