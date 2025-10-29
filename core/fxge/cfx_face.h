@@ -128,6 +128,7 @@ class CFX_Face final : public Retainable, public Observable {
   int GetCharMapEncodingIdByIndex(size_t index) const;
   fxge::FontEncoding GetCharMapEncodingByIndex(size_t index) const;
   size_t GetCharMapCount() const;
+  int LoadGlyph(uint32_t glyph_index, bool scale);
   void SetCharMap(CharMap map);
   void SetCharMapByIndex(size_t index);
   bool SelectCharMap(fxge::FontEncoding encoding);

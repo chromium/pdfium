@@ -21,6 +21,7 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/cfx_face.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -324,8 +325,7 @@ std::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
       return std::nullopt;
     }
 
-    error = FT_Load_Glyph(face_->GetRec(), glyph_index,
-                          FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
+    error = face_->LoadGlyph(glyph_index, /*scale=*/true);
     if (error) {
       return std::nullopt;
     }
@@ -351,9 +351,7 @@ std::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
     }
     return result;
   }
-  static constexpr int kFlag =
-      FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH;
-  if (FT_Load_Glyph(face_->GetRec(), glyph_index, kFlag) != 0) {
+  if (face_->LoadGlyph(glyph_index, /*scale=*/false) != 0) {
     return std::nullopt;
   }
   int em = face_->GetUnitsPerEm();

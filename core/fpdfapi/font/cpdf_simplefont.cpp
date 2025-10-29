@@ -15,8 +15,8 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fxge/cfx_face.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
 
 namespace {
@@ -86,16 +86,13 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
     return;
   }
 
-  FXFT_FaceRec* face_rec = face->GetRec();
-  int err =
-      FT_Load_Glyph(face_rec, glyph_index,
-                    FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
+  int err = face->LoadGlyph(glyph_index, /*scale=*/false);
   if (err) {
     return;
   }
 
   char_bbox_[charcode] = face->GetGlyphBBox();
-
+  FXFT_FaceRec* face_rec = face->GetRec();
   if (use_font_width_) {
     int TT_Width = NormalizeFontMetric(FXFT_Get_Glyph_HoriAdvance(face_rec),
                                        face->GetUnitsPerEm());
