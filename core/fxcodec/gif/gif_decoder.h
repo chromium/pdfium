@@ -14,7 +14,6 @@
 
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/gif/cfx_gif.h"
-#include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/span.h"
@@ -24,6 +23,8 @@
 #endif
 
 namespace fxcodec {
+
+class ProgressiveDecoderContext;
 
 class GifDecoder {
  public:
@@ -44,19 +45,18 @@ class GifDecoder {
                                  pdfium::span<uint8_t> row_buf) = 0;
   };
 
-  static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
+  static std::unique_ptr<ProgressiveDecoderContext> StartDecode(
       Delegate* pDelegate);
-  static Status ReadHeader(ProgressiveDecoderIface::Context* context,
+  static Status ReadHeader(ProgressiveDecoderContext* context,
                            int* width,
                            int* height,
                            pdfium::span<CFX_GifPalette>* pal_pp,
                            int* bg_index);
   static std::pair<Status, size_t> LoadFrameInfo(
-      ProgressiveDecoderIface::Context* context);
-  static Status LoadFrame(ProgressiveDecoderIface::Context* context,
-                          size_t frame_num);
-  static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* context);
-  static bool Input(ProgressiveDecoderIface::Context* context,
+      ProgressiveDecoderContext* context);
+  static Status LoadFrame(ProgressiveDecoderContext* context, size_t frame_num);
+  static FX_FILESIZE GetAvailInput(ProgressiveDecoderContext* context);
+  static bool Input(ProgressiveDecoderContext* context,
                     RetainPtr<CFX_CodecMemory> codec_memory);
 
   // Only `static` methods.

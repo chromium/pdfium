@@ -15,7 +15,6 @@
 
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
-#include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -41,6 +40,7 @@ class IFX_SeekableReadStream;
 namespace fxcodec {
 
 class CFX_DIBAttribute;
+class ProgressiveDecoderContext;
 
 class Dummy {};  // Placeholder to work around C++ syntax issues
 
@@ -124,7 +124,7 @@ class ProgressiveDecoder final :
   };
 
 #ifdef PDF_ENABLE_XFA_BMP
-  bool BmpReadMoreData(ProgressiveDecoderIface::Context* bmp_context,
+  bool BmpReadMoreData(ProgressiveDecoderContext* bmp_context,
                        FXCODEC_STATUS* err_status);
   bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS BmpStartDecode();
@@ -197,19 +197,19 @@ class ProgressiveDecoder final :
   RetainPtr<CFX_CodecMemory> codec_memory_;
   DataVector<uint8_t> decode_buf_;
   DataVector<FX_ARGB> src_palette_;
-  std::unique_ptr<ProgressiveDecoderIface::Context> jpeg_context_;
+  std::unique_ptr<ProgressiveDecoderContext> jpeg_context_;
 #ifdef PDF_ENABLE_XFA_BMP
-  std::unique_ptr<ProgressiveDecoderIface::Context> bmp_context_;
+  std::unique_ptr<ProgressiveDecoderContext> bmp_context_;
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
-  std::unique_ptr<ProgressiveDecoderIface::Context> gif_context_;
+  std::unique_ptr<ProgressiveDecoderContext> gif_context_;
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
-  std::unique_ptr<ProgressiveDecoderIface::Context> png_context_;
+  std::unique_ptr<ProgressiveDecoderContext> png_context_;
   bool got_png_metadata_ = false;
 #endif  // PDF_ENABLE_XFA_PNG
 #ifdef PDF_ENABLE_XFA_TIFF
-  std::unique_ptr<ProgressiveDecoderIface::Context> tiff_context_;
+  std::unique_ptr<ProgressiveDecoderContext> tiff_context_;
 #endif  // PDF_ENABLE_XFA_TIFF
   uint32_t offset_ = 0;
   WeightTable weight_horz_;

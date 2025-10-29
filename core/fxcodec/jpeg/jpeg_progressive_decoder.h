@@ -12,16 +12,16 @@
 #include <memory>
 
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_types.h"
 
 namespace fxcodec {
 
 class CFX_DIBAttribute;
+class ProgressiveDecoderContext;
 
 class JpegProgressiveDecoder {
  public:
-  static std::unique_ptr<ProgressiveDecoderIface::Context> Start();
+  static std::unique_ptr<ProgressiveDecoderContext> Start();
 
   // Result codes for ReadHeader()/ReadScanline():
   static constexpr int kFatal = -1;
@@ -29,18 +29,18 @@ class JpegProgressiveDecoder {
   static constexpr int kError = 1;
   static constexpr int kNeedsMoreInput = 2;
 
-  static int ReadHeader(ProgressiveDecoderIface::Context* pContext,
+  static int ReadHeader(ProgressiveDecoderContext* pContext,
                         int* width,
                         int* height,
                         int* nComps,
                         CFX_DIBAttribute* pAttribute);
 
-  static bool StartScanline(ProgressiveDecoderIface::Context* pContext);
-  static int ReadScanline(ProgressiveDecoderIface::Context* pContext,
+  static bool StartScanline(ProgressiveDecoderContext* pContext);
+  static int ReadScanline(ProgressiveDecoderContext* pContext,
                           uint8_t* dest_buf);
 
-  static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* pContext);
-  static bool Input(ProgressiveDecoderIface::Context* pContext,
+  static FX_FILESIZE GetAvailInput(ProgressiveDecoderContext* pContext);
+  static bool Input(ProgressiveDecoderContext* pContext,
                     RetainPtr<CFX_CodecMemory> codec_memory);
 
   // Only `static` methods.

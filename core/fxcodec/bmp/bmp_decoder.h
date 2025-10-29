@@ -12,7 +12,6 @@
 #include <memory>
 
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -26,6 +25,7 @@
 namespace fxcodec {
 
 class CFX_DIBAttribute;
+class ProgressiveDecoderContext;
 
 class BmpDecoder {
  public:
@@ -38,18 +38,18 @@ class BmpDecoder {
 
   enum class Status : uint8_t { kFail, kSuccess, kContinue };
 
-  static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
+  static std::unique_ptr<ProgressiveDecoderContext> StartDecode(
       Delegate* pDelegate);
-  static Status ReadHeader(ProgressiveDecoderIface::Context* pContext,
+  static Status ReadHeader(ProgressiveDecoderContext* pContext,
                            int32_t* width,
                            int32_t* height,
                            bool* tb_flag,
                            int32_t* components,
                            pdfium::span<const FX_ARGB>* palette,
                            CFX_DIBAttribute* pAttribute);
-  static Status LoadImage(ProgressiveDecoderIface::Context* pContext);
-  static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* pContext);
-  static bool Input(ProgressiveDecoderIface::Context* pContext,
+  static Status LoadImage(ProgressiveDecoderContext* pContext);
+  static FX_FILESIZE GetAvailInput(ProgressiveDecoderContext* pContext);
+  static bool Input(ProgressiveDecoderContext* pContext,
                     RetainPtr<CFX_CodecMemory> codec_memory);
 
   // Only `static` methods.

@@ -13,6 +13,7 @@
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcodec/gif/gif_decoder.h"
 #include "core/fxcodec/gif/lzw_decompressor.h"
+#include "core/fxcodec/progressive_decoder_context.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -22,7 +23,7 @@ class CFX_CodecMemory;
 
 namespace fxcodec {
 
-class CFX_GifContext : public ProgressiveDecoderIface::Context {
+class CFX_GifContext : public ProgressiveDecoderContext {
  public:
   explicit CFX_GifContext(GifDecoder::Delegate* delegate);
   ~CFX_GifContext() override;

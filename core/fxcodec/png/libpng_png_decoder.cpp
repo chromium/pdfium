@@ -13,6 +13,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcodec/png/png_decoder_delegate.h"
+#include "core/fxcodec/progressive_decoder_context.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -27,7 +28,7 @@
 
 using PngDecoderDelegate = fxcodec::PngDecoderDelegate;
 
-class CPngContext final : public ProgressiveDecoderIface::Context {
+class CPngContext final : public ProgressiveDecoderContext {
  public:
   explicit CPngContext(PngDecoderDelegate* pDelegate);
   ~CPngContext() override;
@@ -164,7 +165,7 @@ CPngContext::~CPngContext() {
 namespace fxcodec {
 
 // static
-std::unique_ptr<ProgressiveDecoderIface::Context> LibpngPngDecoder::StartDecode(
+std::unique_ptr<ProgressiveDecoderContext> LibpngPngDecoder::StartDecode(
     PngDecoderDelegate* pDelegate) {
   auto p = std::make_unique<CPngContext>(pDelegate);
   p->png_ =
@@ -183,9 +184,8 @@ std::unique_ptr<ProgressiveDecoderIface::Context> LibpngPngDecoder::StartDecode(
 }
 
 // static
-bool LibpngPngDecoder::ContinueDecode(
-    ProgressiveDecoderIface::Context* pContext,
-    RetainPtr<CFX_CodecMemory> codec_memory) {
+bool LibpngPngDecoder::ContinueDecode(ProgressiveDecoderContext* pContext,
+                                      RetainPtr<CFX_CodecMemory> codec_memory) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
   bool result = _png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),

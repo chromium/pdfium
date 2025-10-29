@@ -89,7 +89,7 @@ source_set("fxcodec") {
       "jpeg/jpeg_progressive_decoder.h",
       "progressive_decoder.cpp",
       "progressive_decoder.h",
-      "progressive_decoder_iface.h",
+      "progressive_decoder_context.h",
     ]
     if (pdf_enable_xfa_bmp) {
       sources += [

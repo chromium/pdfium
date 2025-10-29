@@ -12,6 +12,7 @@
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/jpeg/jpeg_common.h"
+#include "core/fxcodec/progressive_decoder_context.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
@@ -19,7 +20,7 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
 
-class CJpegContext final : public ProgressiveDecoderIface::Context {
+class CJpegContext final : public ProgressiveDecoderContext {
  public:
   CJpegContext();
   ~CJpegContext() override;
@@ -59,8 +60,7 @@ CJpegContext::~CJpegContext() {
 namespace fxcodec {
 
 // static
-std::unique_ptr<ProgressiveDecoderIface::Context>
-JpegProgressiveDecoder::Start() {
+std::unique_ptr<ProgressiveDecoderContext> JpegProgressiveDecoder::Start() {
   auto pContext = std::make_unique<CJpegContext>();
   if (!jpeg_common_create_decompress(&pContext->common_)) {
     return nullptr;
@@ -71,12 +71,11 @@ JpegProgressiveDecoder::Start() {
 }
 
 // static
-int JpegProgressiveDecoder::ReadHeader(
-    ProgressiveDecoderIface::Context* pContext,
-    int* width,
-    int* height,
-    int* nComps,
-    CFX_DIBAttribute* pAttribute) {
+int JpegProgressiveDecoder::ReadHeader(ProgressiveDecoderContext* pContext,
+                                       int* width,
+                                       int* height,
+                                       int* nComps,
+                                       CFX_DIBAttribute* pAttribute) {
   DCHECK(pAttribute);
 
   auto* ctx = static_cast<CJpegContext*>(pContext);
@@ -99,16 +98,15 @@ int JpegProgressiveDecoder::ReadHeader(
 
 // static
 bool JpegProgressiveDecoder::StartScanline(
-    ProgressiveDecoderIface::Context* pContext) {
+    ProgressiveDecoderContext* pContext) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
   ctx->common_.cinfo.scale_denom = 1;
   return !!jpeg_common_start_decompress(&ctx->common_);
 }
 
 // static
-int JpegProgressiveDecoder::ReadScanline(
-    ProgressiveDecoderIface::Context* pContext,
-    unsigned char* dest_buf) {
+int JpegProgressiveDecoder::ReadScanline(ProgressiveDecoderContext* pContext,
+                                         unsigned char* dest_buf) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
   int nlines = jpeg_common_read_scanlines(&ctx->common_, &dest_buf, 1);
   if (nlines == -1) {
@@ -119,13 +117,13 @@ int JpegProgressiveDecoder::ReadScanline(
 
 // static
 FX_FILESIZE JpegProgressiveDecoder::GetAvailInput(
-    ProgressiveDecoderIface::Context* pContext) {
+    ProgressiveDecoderContext* pContext) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
   return static_cast<FX_FILESIZE>(ctx->common_.source_mgr.bytes_in_buffer);
 }
 
 // static
-bool JpegProgressiveDecoder::Input(ProgressiveDecoderIface::Context* pContext,
+bool JpegProgressiveDecoder::Input(ProgressiveDecoderContext* pContext,
                                    RetainPtr<CFX_CodecMemory> codec_memory) {
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
   auto* ctx = static_cast<CJpegContext*>(pContext);

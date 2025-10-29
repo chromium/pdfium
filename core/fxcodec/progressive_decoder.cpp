@@ -13,6 +13,7 @@
 #include "build/build_config.h"
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/jpeg/jpeg_progressive_decoder.h"
+#include "core/fxcodec/progressive_decoder_context.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
@@ -260,7 +261,7 @@ void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
 
 bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  std::unique_ptr<ProgressiveDecoderIface::Context> pBmpContext =
+  std::unique_ptr<ProgressiveDecoderContext> pBmpContext =
       BmpDecoder::StartDecode(this);
   BmpDecoder::Input(pBmpContext.get(), codec_memory_);
 
@@ -332,9 +333,8 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   return true;
 }
 
-bool ProgressiveDecoder::BmpReadMoreData(
-    ProgressiveDecoderIface::Context* bmp_context,
-    FXCODEC_STATUS* err_status) {
+bool ProgressiveDecoder::BmpReadMoreData(ProgressiveDecoderContext* bmp_context,
+                                         FXCODEC_STATUS* err_status) {
   // TODO(lukasza): Can this just use
   // `codec_memory_->GetUnconsumedSpan().size()`? (IIUC this is what
   // `GetAvailInput` uses in the end, but I haven't investigated that this is
