@@ -118,7 +118,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling fp16
   # and whatever else without interference from each other.
-  'fp16_revision': 'b3720617faf1a4581ed7e6787cc51722ec7751f0',
+  'fp16_revision': '3d2de1816307bac63c16a297e8c4dc501b4076df',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
