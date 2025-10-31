@@ -24,6 +24,10 @@
 #include "third_party/libpng/png.h"
 #endif
 
+#ifdef PDF_ENABLE_RUST_PNG
+#error "If Rust PNG is enabled, then `libpng` should not be used."
+#endif
+
 #define PNG_ERROR_SIZE 256
 
 using PngDecoderDelegate = fxcodec::PngDecoderDelegate;

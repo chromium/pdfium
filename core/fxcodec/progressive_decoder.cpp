@@ -39,8 +39,16 @@
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
-#include "core/fxcodec/png/libpng_png_decoder.h"
 #include "core/fxcodec/png/png_decoder_delegate.h"
+// TODO(https://crbug.com/444045690): Remove `pdf_enable_rust_png` from the
+// condition below once this build mode has been tested and stabilized.
+// (Chromium already sets `pdf_use_skia_override = true` so having an extra
+// condition avoids affecting the Chromium behavior.)
+#if defined(PDF_USE_SKIA) && defined(PDF_ENABLE_RUST_PNG)
+#include "core/fxcodec/png/skia_png_decoder.h"
+#else
+#include "core/fxcodec/png/libpng_png_decoder.h"
+#endif
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
@@ -112,6 +120,12 @@ pdfium::span<uint8_t> ProgressiveDecoder::PngAskScanlineBuf(int line) {
   CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
   CHECK_EQ(src_format_, FXCodec_Argb);
   return device_bitmap_->GetWritableScanline(line);
+}
+
+pdfium::span<uint8_t> ProgressiveDecoder::PngAskImageBuf() {
+  CHECK_EQ(device_bitmap_->GetFormat(), FXDIB_Format::kBgra);
+  CHECK_EQ(src_format_, FXCodec_Argb);
+  return device_bitmap_->GetWritableBuffer();
 }
 
 void ProgressiveDecoder::PngFinishedDecoding() {

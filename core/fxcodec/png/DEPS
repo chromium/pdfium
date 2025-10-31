@@ -1,3 +1,8 @@
-include_rules = [
-  '+third_party/libpng/png.h',
-]
+specific_include_rules = {
+  "libpng_png_decoder\.cpp": [
+    '+third_party/libpng/png.h',
+  ],
+  "skia_png_decoder\.cpp": [
+    '+third_party/skia/include',
+  ],
+}

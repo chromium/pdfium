@@ -81,6 +81,7 @@ source_set("fxcodec") {
     "../fxge",
     "//third_party:jpeg",
   ]
+  defines = []
   if (pdf_enable_xfa) {
     sources += [
       "cfx_codec_memory.cpp",
@@ -115,12 +116,25 @@ source_set("fxcodec") {
       ]
     }
     if (pdf_enable_xfa_png) {
-      sources += [
-        "png/libpng_png_decoder.cpp",
-        "png/libpng_png_decoder.h",
-        "png/png_decoder_delegate.h",
-      ]
-      deps += [ "../../third_party:png" ]
+      sources += [ "png/png_decoder_delegate.h" ]
+
+      # TODO(https://crbug.com/444045690): Remove `pdf_enable_rust_png` from the
+      # condition below once this build mode has been tested and stabilized.
+      # (Chromium already sets `pdf_use_skia_override = true` so having an extra
+      # condition avoids affecting the Chromium behavior.)
+      if (pdf_use_skia && pdf_enable_rust_png) {
+        sources += [
+          "png/skia_png_decoder.cpp",
+          "png/skia_png_decoder.h",
+        ]
+        deps += [ "//skia" ]
+      } else {
+        sources += [
+          "png/libpng_png_decoder.cpp",
+          "png/libpng_png_decoder.h",
+        ]
+        deps += [ "../../third_party:png" ]
+      }
     }
     if (pdf_enable_xfa_tiff) {
       sources += [

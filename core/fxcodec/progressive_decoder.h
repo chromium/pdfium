@@ -90,6 +90,7 @@ class ProgressiveDecoder final :
                      int height,
                      double* gamma) override;
   pdfium::span<uint8_t> PngAskScanlineBuf(int line) override;
+  pdfium::span<uint8_t> PngAskImageBuf() override;
   void PngFinishedDecoding() override;
 #endif  // PDF_ENABLE_XFA_PNG
 
