@@ -409,36 +409,10 @@ void CFPF_SkiaFontMgr::ScanFile(const ByteString& file) {
 std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
     RetainPtr<CFX_Face> face,
     const ByteString& file) {
-  uint32_t style = 0;
-  if (face->IsBold()) {
-    style |= pdfium::kFontStyleForceBold;
-  }
-  if (face->IsItalic()) {
-    style |= pdfium::kFontStyleItalic;
-  }
-  if (face->IsFixedWidth()) {
-    style |= pdfium::kFontStyleFixedPitch;
-  }
-
-  uint32_t charset = SKIACHARSET_Default;
-  std::optional<std::array<uint32_t, 2>> code_page_range =
-      face->GetOs2CodePageRange();
-  if (code_page_range.has_value()) {
-    if (code_page_range.value()[0] & (1 << 31)) {
-      style |= pdfium::kFontStyleSymbolic;
-    }
-    charset |= SkiaGetFaceCharset(code_page_range.value()[0]);
-  }
-
-  std::optional<std::array<uint8_t, 2>> panose = face->GetOs2Panose();
-  if (panose.has_value() && panose.value()[0] == 2) {
-    uint8_t serif = panose.value()[1];
-    if ((serif > 1 && serif < 10) || serif > 13) {
-      style |= pdfium::kFontStyleSerif;
-    }
-  }
-
-  return std::make_unique<CFPF_SkiaPathFont>(file, face->GetFamilyName(), style,
-                                             face->GetRec()->face_index,
-                                             charset, face->GetGlyphCount());
+  CFX_Face::FontStyleInfo fontinfo = face->GetFontStyleInfo();
+  uint32_t charset =
+      SKIACHARSET_Default | SkiaGetFaceCharset(fontinfo.os2_codepage_mask);
+  return std::make_unique<CFPF_SkiaPathFont>(
+      file, face->GetFamilyName(), fontinfo.style, face->GetRec()->face_index,
+      charset, face->GetGlyphCount());
 }

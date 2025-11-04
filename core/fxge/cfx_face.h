@@ -38,6 +38,12 @@ class CFX_Face final : public Retainable, public Observable {
     uint32_t glyph_index;
   };
 
+  struct FontStyleInfo {
+    // Style utilizes enum FontStyle values
+    uint32_t style;
+    uint32_t os2_codepage_mask;
+  };
+
   // Note that this corresponds to the cmap header in fonts, and not the cmap
   // data in PDFs.
   struct CharMapId {
@@ -76,6 +82,7 @@ class CFX_Face final : public Retainable, public Observable {
 
   bool IsItalic() const;
   bool IsBold() const;
+  FontStyleInfo GetFontStyleInfo();
 
   ByteString GetFamilyName() const;
   ByteString GetStyleName() const;
@@ -93,7 +100,6 @@ class CFX_Face final : public Retainable, public Observable {
 
   std::optional<std::array<uint32_t, 4>> GetOs2UnicodeRange();
   std::optional<std::array<uint32_t, 2>> GetOs2CodePageRange();
-  std::optional<std::array<uint8_t, 2>> GetOs2Panose();
 
   int GetGlyphCount() const;
   // TODO(crbug.com/pdfium/2037): Can this method be private?
@@ -147,6 +153,7 @@ class CFX_Face final : public Retainable, public Observable {
   ~CFX_Face() override;
 
   void AdjustVariationParams(int glyph_index, int dest_width, int weight);
+  std::optional<std::array<uint8_t, 2>> GetOs2Panose();
 
   ScopedFXFTFaceRec const rec_;
   RetainPtr<Retainable> const desc_;

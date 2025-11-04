@@ -865,3 +865,33 @@ void CFX_Face::AdjustVariationParams(int glyph_index,
   }
   FT_Set_MM_Design_Coordinates(rec, 2, coords);
 }
+
+CFX_Face::FontStyleInfo CFX_Face::GetFontStyleInfo() {
+  uint32_t style = 0;
+  if (IsBold()) {
+    style |= pdfium::kFontStyleForceBold;
+  }
+  if (IsItalic()) {
+    style |= pdfium::kFontStyleItalic;
+  }
+  if (IsFixedWidth()) {
+    style |= pdfium::kFontStyleFixedPitch;
+  }
+
+  uint32_t os2_codepage_mask = 0;
+  std::optional<std::array<uint32_t, 2>> code_page_range =
+      GetOs2CodePageRange();
+  if (code_page_range.has_value() && (code_page_range.value()[0] & (1 << 31))) {
+    style |= pdfium::kFontStyleSymbolic;
+    os2_codepage_mask = code_page_range.value()[0];
+  }
+
+  std::optional<std::array<uint8_t, 2>> panose = GetOs2Panose();
+  if (panose.has_value() && panose.value()[0] == 2) {
+    uint8_t serif = panose.value()[1];
+    if ((serif > 1 && serif < 10) || serif > 13) {
+      style |= pdfium::kFontStyleSerif;
+    }
+  }
+  return {style, os2_codepage_mask};
+}

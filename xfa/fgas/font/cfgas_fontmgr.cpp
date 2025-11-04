@@ -487,31 +487,8 @@ std::vector<WideString> GetNames(pdfium::span<const uint8_t> name_table) {
 }
 
 uint32_t GetFlags(const RetainPtr<CFX_Face>& face) {
-  uint32_t flags = 0;
-  if (face->IsBold()) {
-    flags |= pdfium::kFontStyleForceBold;
-  }
-  if (face->IsItalic()) {
-    flags |= pdfium::kFontStyleItalic;
-  }
-  if (face->IsFixedWidth()) {
-    flags |= pdfium::kFontStyleFixedPitch;
-  }
-
-  std::optional<std::array<uint32_t, 2>> code_page_range =
-      face->GetOs2CodePageRange();
-  if (code_page_range.has_value() && (code_page_range.value()[0] & (1 << 31))) {
-    flags |= pdfium::kFontStyleSymbolic;
-  }
-
-  std::optional<std::array<uint8_t, 2>> panose = face->GetOs2Panose();
-  if (panose.has_value() && panose.value()[0] == 2) {
-    uint8_t serif = panose.value()[1];
-    if ((serif > 1 && serif < 10) || serif > 13) {
-      flags |= pdfium::kFontStyleSerif;
-    }
-  }
-  return flags;
+  CFX_Face::FontStyleInfo fontinfo = face->GetFontStyleInfo();
+  return fontinfo.style;
 }
 
 RetainPtr<IFX_SeekableReadStream> CreateFontStream(CFX_FontMapper* font_mapper,
