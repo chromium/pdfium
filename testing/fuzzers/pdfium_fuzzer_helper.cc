@@ -93,16 +93,32 @@ FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
 
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {}
 
-std::pair<int, int> GetRenderingAndFormFlagFromData(
+PDFiumFuzzerHelper::RenderingOptions GetRenderingOptionsFromData(
     pdfium::span<const char> span) {
-  std::string_view view(span.begin(), span.end());
-  size_t data_hash = std::hash<std::string_view>()(view);
+  // Assume size_t may be 32 bits, so split `span` in 2 and hash them separately
+  // to get enough bits.
+  auto span_parts = span.split_at(span.size() / 2);
+  std::string_view view1(span_parts.first.begin(), span_parts.first.end());
+  std::string_view view2(span_parts.second.begin(), span_parts.second.end());
+  const size_t data_hash1 = std::hash<std::string_view>()(view1);
+  const size_t data_hash2 = std::hash<std::string_view>()(view2);
 
-  // The largest flag value is 0x4FFF, so just take 16 bits from |data_hash| at
+  // The largest flag value is 0x7FFF, so just take 15 bits from `data_hash1` at
   // a time.
-  int render_flags = data_hash & 0xffff;
-  int form_flags = (data_hash >> 16) & 0xffff;
-  return std::make_pair(render_flags, form_flags);
+  static constexpr int kFlagMask = 0x7fff;
+  const int render_flags = data_hash1 & kFlagMask;
+  const int form_flags = (data_hash1 >> 16) & kFlagMask;
+
+  // Separately, use `data_hash2` for the bitmap format. The valid values are
+  // [1, 5]. Avoid using the bytes at the start or end of `span`, as the header
+  // and footer in PDFs usually have fixed data.
+  const int bitmap_format = (data_hash2 % 5) + 1;
+
+  return {
+      .render_flags = render_flags,
+      .form_flags = form_flags,
+      .bitmap_format = bitmap_format,
+  };
 }
 
 }  // namespace
@@ -118,7 +134,7 @@ bool PDFiumFuzzerHelper::OnFormFillEnvLoaded(FPDF_DOCUMENT doc) {
 void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
   // SAFETY: trusted arguments from fuzzer,
   auto span = UNSAFE_BUFFERS(pdfium::span(data, len));
-  auto [render_flags, form_flags] = GetRenderingAndFormFlagFromData(span);
+  RenderingOptions options = GetRenderingOptionsFromData(span);
 
   IPDF_JSPLATFORM platform_callbacks;
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
@@ -204,7 +220,7 @@ void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
         return;
       }
     }
-    RenderPage(doc.get(), form.get(), i, render_flags, form_flags);
+    RenderPage(doc.get(), form.get(), i, options);
   }
   OnRenderFinished(doc.get());
   FORM_DoDocumentAAction(form.get(), FPDFDOC_AACTION_WC);
@@ -213,8 +229,7 @@ void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
 bool PDFiumFuzzerHelper::RenderPage(FPDF_DOCUMENT doc,
                                     FPDF_FORMHANDLE form,
                                     int page_index,
-                                    int render_flags,
-                                    int form_flags) {
+                                    const RenderingOptions& options) {
   ScopedFPDFPage page(FPDF_LoadPage(doc, page_index));
   if (!page) {
     return false;
@@ -229,15 +244,16 @@ bool PDFiumFuzzerHelper::RenderPage(FPDF_DOCUMENT doc,
   const double scale = 1.0;
   int width = static_cast<int>(FPDF_GetPageWidthF(page.get()) * scale);
   int height = static_cast<int>(FPDF_GetPageHeightF(page.get()) * scale);
-  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(width, height, 0));
+  ScopedFPDFBitmap bitmap(FPDFBitmap_CreateEx(
+      width, height, options.bitmap_format, nullptr, /*stride=*/0));
   if (bitmap) {
     if (!FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, 0xFFFFFFFF)) {
       return false;
     }
     FPDF_RenderPageBitmap(bitmap.get(), page.get(), 0, 0, width, height, 0,
-                          render_flags);
+                          options.render_flags);
     FPDF_FFLDraw(form, bitmap.get(), page.get(), 0, 0, width, height, 0,
-                 form_flags);
+                 options.form_flags);
   }
   FORM_DoPageAAction(page.get(), form, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page.get(), form);

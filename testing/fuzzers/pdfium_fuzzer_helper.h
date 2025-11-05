@@ -11,6 +11,12 @@
 
 class PDFiumFuzzerHelper {
  public:
+  struct RenderingOptions {
+    int render_flags;
+    int form_flags;
+    int bitmap_format;
+  };
+
   void RenderPdf(const char* data, size_t len);
 
   virtual int GetFormCallbackVersion() const = 0;
@@ -28,8 +34,7 @@ class PDFiumFuzzerHelper {
   bool RenderPage(FPDF_DOCUMENT doc,
                   FPDF_FORMHANDLE form,
                   int page_index,
-                  int render_flags,
-                  int form_flags);
+                  const RenderingOptions& options);
 };
 
 #endif  // TESTING_FUZZERS_PDFIUM_FUZZER_HELPER_H_
