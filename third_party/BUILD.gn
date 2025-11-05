@@ -435,16 +435,18 @@ source_set("fx_libopenjpeg") {
   deps = [ "../core/fxcrt" ]
 }
 
-config("system_libpng_config") {
-  libs = [ "png" ]
-  defines = [ "USE_SYSTEM_LIBPNG" ]
-}
+if (!pdf_enable_rust_png) {
+  config("system_libpng_config") {
+    libs = [ "png" ]
+    defines = [ "USE_SYSTEM_LIBPNG" ]
+  }
 
-group("png") {
-  if (use_system_libpng) {
-    public_configs = [ ":system_libpng_config" ]
-  } else {
-    public_deps = [ "//third_party/libpng" ]
+  group("png") {
+    if (use_system_libpng) {
+      public_configs = [ ":system_libpng_config" ]
+    } else {
+      public_deps = [ "//third_party/libpng" ]
+    }
   }
 }
 
