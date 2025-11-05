@@ -13,6 +13,7 @@
 
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <utility>
 
@@ -92,10 +93,10 @@ FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
 
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {}
 
-std::pair<int, int> GetRenderingAndFormFlagFromData(const char* data,
-                                                    size_t len) {
-  std::string data_str = std::string(data, len);
-  size_t data_hash = std::hash<std::string>()(data_str);
+std::pair<int, int> GetRenderingAndFormFlagFromData(
+    pdfium::span<const char> span) {
+  std::string_view view(span.begin(), span.end());
+  size_t data_hash = std::hash<std::string_view>()(view);
 
   // The largest flag value is 0x4FFF, so just take 16 bits from |data_hash| at
   // a time.
@@ -115,7 +116,9 @@ bool PDFiumFuzzerHelper::OnFormFillEnvLoaded(FPDF_DOCUMENT doc) {
 }
 
 void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
-  auto [render_flags, form_flags] = GetRenderingAndFormFlagFromData(data, len);
+  // SAFETY: trusted arguments from fuzzer,
+  auto span = UNSAFE_BUFFERS(pdfium::span(data, len));
+  auto [render_flags, form_flags] = GetRenderingAndFormFlagFromData(span);
 
   IPDF_JSPLATFORM platform_callbacks;
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
@@ -130,8 +133,7 @@ void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
   form_callbacks.version = GetFormCallbackVersion();
   form_callbacks.m_pJsPlatform = &platform_callbacks;
 
-  // SAFETY: trusted arguments from fuzzer,
-  FuzzerTestLoader loader(UNSAFE_BUFFERS(pdfium::span(data, len)));
+  FuzzerTestLoader loader(span);
   FPDF_FILEACCESS file_access;
   memset(&file_access, '\0', sizeof(file_access));
   file_access.m_FileLen = static_cast<unsigned long>(len);
