@@ -514,27 +514,28 @@ RetainPtr<IFX_SeekableReadStream> CreateFontStream(
   return nullptr;
 }
 
-RetainPtr<CFX_Face> LoadFace(
+struct FTStreamRecAndFace {
+  std::unique_ptr<FXFT_StreamRec> ft_stream;  // Must outlive `face`.
+  RetainPtr<CFX_Face> face;
+};
+
+FTStreamRecAndFace LoadFace(
     const RetainPtr<IFX_SeekableReadStream>& font_stream,
     int32_t iFaceIndex) {
   if (!font_stream) {
-    return nullptr;
+    return {nullptr, nullptr};
   }
 
   CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
   FXFT_LibraryRec* library = font_mgr->GetFTLibrary();
   if (!library) {
-    return nullptr;
+    return {nullptr, nullptr};
   }
 
-  // TODO(palmer): This memory will be freed with |ft_free| (which is |free|).
-  // Ultimately, we want to change this to:
-  //   FXFT_Stream ftStream = FX_Alloc(FXFT_StreamRec, 1);
-  // https://bugs.chromium.org/p/pdfium/issues/detail?id=690
-  FXFT_StreamRec* ftStream =
-      static_cast<FXFT_StreamRec*>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
+  auto ftStream = std::make_unique<FXFT_StreamRec>();
   *ftStream = {};  // Aggregate initialization.
-  static_assert(std::is_aggregate_v<std::remove_pointer_t<decltype(ftStream)>>);
+  static_assert(
+      std::is_aggregate_v<std::remove_pointer_t<decltype(ftStream.get())>>);
   ftStream->base = nullptr;
   ftStream->descriptor.pointer = static_cast<void*>(font_stream.Get());
   ftStream->pos = 0;
@@ -545,15 +546,14 @@ RetainPtr<CFX_Face> LoadFace(
   FT_Open_Args ftArgs = {};  // Aggregate initialization.
   static_assert(std::is_aggregate_v<decltype(ftArgs)>);
   ftArgs.flags |= FT_OPEN_STREAM;
-  ftArgs.stream = ftStream;
+  ftArgs.stream = ftStream.get();
 
   RetainPtr<CFX_Face> pFace = CFX_Face::Open(library, &ftArgs, iFaceIndex);
   if (!pFace) {
-    ft_sfree(ftStream);
-    return nullptr;
+    return {nullptr, nullptr};
   }
   pFace->SetPixelSize(0, 64);
-  return pFace;
+  return {std::move(ftStream), std::move(pFace)};
 }
 
 bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
@@ -564,11 +564,14 @@ bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
     if (!pFileRead) {
       return false;
     }
-    pDesc->face_ = LoadFace(pFileRead, pDesc->face_index_);
-    if (!pDesc->face_) {
+    FTStreamRecAndFace ft_stream_and_face =
+        LoadFace(pFileRead, pDesc->face_index_);
+    if (!ft_stream_and_face.face) {
       return false;
     }
-    pDesc->face_->ClearExternalStream();
+
+    pDesc->ft_stream_ = std::move(ft_stream_and_face.ft_stream);
+    pDesc->face_ = std::move(ft_stream_and_face.face);
   }
   return pDesc->face_->SelectCharMap(fxge::FontEncoding::kUnicode) &&
          pDesc->face_->GetCharIndex(wcUnicode);
@@ -815,16 +818,16 @@ void CFGAS_FontMgr::RegisterFaces(
   int32_t index = 0;
   int32_t num_faces = 0;
   do {
-    RetainPtr<CFX_Face> pFace = LoadFace(font_stream, index++);
-    if (!pFace) {
+    FTStreamRecAndFace ft_stream_and_face = LoadFace(font_stream, index++);
+    RetainPtr<CFX_Face>& face = ft_stream_and_face.face;
+    if (!face) {
       continue;
     }
     // All faces keep number of faces. It can be retrieved from any one face.
     if (num_faces == 0) {
-      num_faces = pdfium::checked_cast<int32_t>(pFace->GetRec()->num_faces);
+      num_faces = pdfium::checked_cast<int32_t>(face->GetRec()->num_faces);
     }
-    RegisterFace(pFace, wsFaceName);
-    pFace->ClearExternalStream();
+    RegisterFace(face, wsFaceName);
   } while (index < num_faces);
 }
 

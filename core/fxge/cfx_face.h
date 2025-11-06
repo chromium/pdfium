@@ -77,7 +77,6 @@ class CFX_Face final : public Retainable, public Observable {
 
 #if defined(PDF_ENABLE_XFA)
   bool IsScalable() const;
-  void ClearExternalStream();
 #endif
 
   bool IsItalic() const;

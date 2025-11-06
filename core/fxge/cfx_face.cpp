@@ -336,10 +336,6 @@ bool CFX_Face::IsFixedWidth() const {
 bool CFX_Face::IsScalable() const {
   return !!(GetRec()->face_flags & FT_FACE_FLAG_SCALABLE);
 }
-
-void CFX_Face::ClearExternalStream() {
-  GetRec()->face_flags &= ~FT_FACE_FLAG_EXTERNAL_STREAM;
-}
 #endif
 
 bool CFX_Face::IsItalic() const {
