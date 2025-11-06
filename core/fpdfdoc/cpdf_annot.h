@@ -90,7 +90,7 @@ class CPDF_Annot {
                       const CFX_Matrix& mtUser2Device,
                       AppearanceMode mode);
   bool DrawInContext(CPDF_Page* pPage,
-                     CPDF_RenderContext* pContext,
+                     CPDF_RenderContext* context,
                      const CFX_Matrix& mtUser2Device,
                      AppearanceMode mode);
 

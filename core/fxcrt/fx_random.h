@@ -12,8 +12,8 @@
 #include "core/fxcrt/span.h"
 
 void* FX_Random_MT_Start(uint32_t dwSeed);
-void FX_Random_MT_Close(void* pContext);
-uint32_t FX_Random_MT_Generate(void* pContext);
+void FX_Random_MT_Close(void* context);
+uint32_t FX_Random_MT_Generate(void* context);
 
 void FX_Random_GenerateMT(pdfium::span<uint32_t> pBuffer);
 

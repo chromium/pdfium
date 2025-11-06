@@ -19,50 +19,50 @@ std::unique_ptr<ProgressiveDecoderContext> GifDecoder::StartDecode(
 }
 
 // static
-GifDecoder::Status GifDecoder::ReadHeader(ProgressiveDecoderContext* pContext,
+GifDecoder::Status GifDecoder::ReadHeader(ProgressiveDecoderContext* context,
                                           int* width,
                                           int* height,
                                           pdfium::span<CFX_GifPalette>* palette,
                                           int* bg_index) {
-  auto* context = static_cast<CFX_GifContext*>(pContext);
-  Status ret = context->ReadHeader();
+  auto* ctx = static_cast<CFX_GifContext*>(context);
+  Status ret = ctx->ReadHeader();
   if (ret != Status::kSuccess) {
     return ret;
   }
 
-  *width = context->width_;
-  *height = context->height_;
-  *palette = context->global_palette_;
-  *bg_index = context->bc_index_;
+  *width = ctx->width_;
+  *height = ctx->height_;
+  *palette = ctx->global_palette_;
+  *bg_index = ctx->bc_index_;
   return Status::kSuccess;
 }
 
 // static
 std::pair<GifDecoder::Status, size_t> GifDecoder::LoadFrameInfo(
-    ProgressiveDecoderContext* pContext) {
-  auto* context = static_cast<CFX_GifContext*>(pContext);
-  Status ret = context->GetFrame();
+    ProgressiveDecoderContext* context) {
+  auto* ctx = static_cast<CFX_GifContext*>(context);
+  Status ret = ctx->GetFrame();
   if (ret != Status::kSuccess) {
     return {ret, 0};
   }
-  return {Status::kSuccess, context->GetFrameNum()};
+  return {Status::kSuccess, ctx->GetFrameNum()};
 }
 
 // static
-GifDecoder::Status GifDecoder::LoadFrame(ProgressiveDecoderContext* pContext,
+GifDecoder::Status GifDecoder::LoadFrame(ProgressiveDecoderContext* context,
                                          size_t frame_num) {
-  return static_cast<CFX_GifContext*>(pContext)->LoadFrame(frame_num);
+  return static_cast<CFX_GifContext*>(context)->LoadFrame(frame_num);
 }
 
 // static
-FX_FILESIZE GifDecoder::GetAvailInput(ProgressiveDecoderContext* pContext) {
-  return static_cast<CFX_GifContext*>(pContext)->GetAvailInput();
+FX_FILESIZE GifDecoder::GetAvailInput(ProgressiveDecoderContext* context) {
+  return static_cast<CFX_GifContext*>(context)->GetAvailInput();
 }
 
 // static
-bool GifDecoder::Input(ProgressiveDecoderContext* pContext,
+bool GifDecoder::Input(ProgressiveDecoderContext* context,
                        RetainPtr<CFX_CodecMemory> codec_memory) {
-  auto* ctx = static_cast<CFX_GifContext*>(pContext);
+  auto* ctx = static_cast<CFX_GifContext*>(context);
   ctx->SetInputBuffer(std::move(codec_memory));
   return true;
 }

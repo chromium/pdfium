@@ -155,9 +155,9 @@ CJS_Result CJS_App::set_viewer_variation(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_App::get_viewer_version(CJS_Runtime* pRuntime) {
-  CPDF_Document::Extension* pContext =
+  CPDF_Document::Extension* context =
       pRuntime->GetFormFillEnv()->GetDocExtension();
-  int version = pContext && pContext->ContainsExtensionForm()
+  int version = context && context->ContainsExtensionForm()
                     ? kNumViewerVersionXfa
                     : kNumViewerVersion;
   return CJS_Result::Success(pRuntime->NewNumber(version));
@@ -431,9 +431,9 @@ void CJS_App::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {
     return;
   }
 
-  IJS_Runtime::ScopedEventContext pContext(pRuntime);
-  pContext->OnExternal_Exec();
-  pContext->RunScript(wsScript);
+  IJS_Runtime::ScopedEventContext context(pRuntime);
+  context->OnExternal_Exec();
+  context->RunScript(wsScript);
 }
 
 CJS_Result CJS_App::goBack(CJS_Runtime* pRuntime,

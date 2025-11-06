@@ -61,24 +61,24 @@ namespace fxcodec {
 
 // static
 std::unique_ptr<ProgressiveDecoderContext> JpegProgressiveDecoder::Start() {
-  auto pContext = std::make_unique<CJpegContext>();
-  if (!jpeg_common_create_decompress(&pContext->common_)) {
+  auto context = std::make_unique<CJpegContext>();
+  if (!jpeg_common_create_decompress(&context->common_)) {
     return nullptr;
   }
-  pContext->common_.cinfo.src = &pContext->common_.source_mgr;
-  pContext->common_.skip_size = 0;
-  return pContext;
+  context->common_.cinfo.src = &context->common_.source_mgr;
+  context->common_.skip_size = 0;
+  return context;
 }
 
 // static
-int JpegProgressiveDecoder::ReadHeader(ProgressiveDecoderContext* pContext,
+int JpegProgressiveDecoder::ReadHeader(ProgressiveDecoderContext* context,
                                        int* width,
                                        int* height,
                                        int* nComps,
                                        CFX_DIBAttribute* pAttribute) {
   DCHECK(pAttribute);
 
-  auto* ctx = static_cast<CJpegContext*>(pContext);
+  auto* ctx = static_cast<CJpegContext*>(context);
   int ret = jpeg_common_read_header(&ctx->common_, TRUE);
   if (ret == -1) {
     return kFatal;
@@ -97,17 +97,16 @@ int JpegProgressiveDecoder::ReadHeader(ProgressiveDecoderContext* pContext,
 }
 
 // static
-bool JpegProgressiveDecoder::StartScanline(
-    ProgressiveDecoderContext* pContext) {
-  auto* ctx = static_cast<CJpegContext*>(pContext);
+bool JpegProgressiveDecoder::StartScanline(ProgressiveDecoderContext* context) {
+  auto* ctx = static_cast<CJpegContext*>(context);
   ctx->common_.cinfo.scale_denom = 1;
   return !!jpeg_common_start_decompress(&ctx->common_);
 }
 
 // static
-int JpegProgressiveDecoder::ReadScanline(ProgressiveDecoderContext* pContext,
+int JpegProgressiveDecoder::ReadScanline(ProgressiveDecoderContext* context,
                                          unsigned char* dest_buf) {
-  auto* ctx = static_cast<CJpegContext*>(pContext);
+  auto* ctx = static_cast<CJpegContext*>(context);
   int nlines = jpeg_common_read_scanlines(&ctx->common_, &dest_buf, 1);
   if (nlines == -1) {
     return kFatal;
@@ -117,16 +116,16 @@ int JpegProgressiveDecoder::ReadScanline(ProgressiveDecoderContext* pContext,
 
 // static
 FX_FILESIZE JpegProgressiveDecoder::GetAvailInput(
-    ProgressiveDecoderContext* pContext) {
-  auto* ctx = static_cast<CJpegContext*>(pContext);
+    ProgressiveDecoderContext* context) {
+  auto* ctx = static_cast<CJpegContext*>(context);
   return static_cast<FX_FILESIZE>(ctx->common_.source_mgr.bytes_in_buffer);
 }
 
 // static
-bool JpegProgressiveDecoder::Input(ProgressiveDecoderContext* pContext,
+bool JpegProgressiveDecoder::Input(ProgressiveDecoderContext* context,
                                    RetainPtr<CFX_CodecMemory> codec_memory) {
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
-  auto* ctx = static_cast<CJpegContext*>(pContext);
+  auto* ctx = static_cast<CJpegContext*>(context);
   if (ctx->common_.skip_size) {
     if (ctx->common_.skip_size > src_buf.size()) {
       ctx->common_.source_mgr.bytes_in_buffer = 0;

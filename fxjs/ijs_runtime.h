@@ -55,7 +55,7 @@ class IJS_Runtime {
 
   virtual CJS_Runtime* AsCJSRuntime() = 0;
   virtual IJS_EventContext* NewEventContext() = 0;
-  virtual void ReleaseEventContext(IJS_EventContext* pContext) = 0;
+  virtual void ReleaseEventContext(IJS_EventContext* context) = 0;
   virtual CPDFSDK_FormFillEnvironment* GetFormFillEnv() const = 0;
   virtual std::optional<JS_Error> ExecuteScript(const WideString& script) = 0;
 

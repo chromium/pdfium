@@ -28,7 +28,7 @@ namespace {
 
 void DoNothing(void* info, const void* data, size_t size) {}
 
-bool CGDrawGlyphRun(CGContextRef pContext,
+bool CGDrawGlyphRun(CGContextRef context,
                     pdfium::span<const TextCharPos> pCharPos,
                     CFX_Font* font,
                     const CFX_Matrix& mtObject2Device,
@@ -76,8 +76,8 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     new_matrix.b = -new_matrix.b;
     new_matrix.d = -new_matrix.d;
   }
-  quartz2d.SetGraphicsTextMatrix(pContext, new_matrix);
-  return quartz2d.DrawGraphicsString(pContext, font->GetPlatformFont(),
+  quartz2d.SetGraphicsTextMatrix(context, new_matrix);
+  return quartz2d.DrawGraphicsString(context, font->GetPlatformFont(),
                                      font_size, glyph_indices, glyph_positions,
                                      argb);
 }

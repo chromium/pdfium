@@ -299,21 +299,21 @@ void SetUpNamedPropHandler(v8::Isolate* pIsolate,
 
 // static
 CFXJSE_Class* CFXJSE_Class::Create(
-    CFXJSE_Context* pContext,
+    CFXJSE_Context* context,
     const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor,
     bool bIsJSGlobal) {
-  if (!pContext || !pClassDescriptor) {
+  if (!context || !pClassDescriptor) {
     return nullptr;
   }
 
   CFXJSE_Class* pExistingClass =
-      pContext->GetClassByName(pClassDescriptor->name);
+      context->GetClassByName(pClassDescriptor->name);
   if (pExistingClass) {
     return pExistingClass;
   }
 
-  v8::Isolate* pIsolate = pContext->GetIsolate();
-  auto pClass = std::make_unique<CFXJSE_Class>(pContext);
+  v8::Isolate* pIsolate = context->GetIsolate();
+  auto pClass = std::make_unique<CFXJSE_Class>(context);
   pClass->class_name_ = pClassDescriptor->name;
   pClass->class_descriptor_ = pClassDescriptor;
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
@@ -354,14 +354,13 @@ CFXJSE_Class* CFXJSE_Class::Create(
     fn->RemovePrototype();
     hObjectTemplate->Set(fxv8::NewStringHelper(pIsolate, "toString"), fn);
   }
-  pClass->func_template_.Reset(pContext->GetIsolate(), hFunctionTemplate);
+  pClass->func_template_.Reset(context->GetIsolate(), hFunctionTemplate);
   CFXJSE_Class* pResult = pClass.get();
-  pContext->AddClass(std::move(pClass));
+  context->AddClass(std::move(pClass));
   return pResult;
 }
 
-CFXJSE_Class::CFXJSE_Class(const CFXJSE_Context* pContext)
-    : context_(pContext) {}
+CFXJSE_Class::CFXJSE_Class(const CFXJSE_Context* context) : context_(context) {}
 
 CFXJSE_Class::~CFXJSE_Class() = default;
 

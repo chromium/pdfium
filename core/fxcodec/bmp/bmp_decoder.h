@@ -40,16 +40,16 @@ class BmpDecoder {
 
   static std::unique_ptr<ProgressiveDecoderContext> StartDecode(
       Delegate* pDelegate);
-  static Status ReadHeader(ProgressiveDecoderContext* pContext,
+  static Status ReadHeader(ProgressiveDecoderContext* context,
                            int32_t* width,
                            int32_t* height,
                            bool* tb_flag,
                            int32_t* components,
                            pdfium::span<const FX_ARGB>* palette,
                            CFX_DIBAttribute* pAttribute);
-  static Status LoadImage(ProgressiveDecoderContext* pContext);
-  static FX_FILESIZE GetAvailInput(ProgressiveDecoderContext* pContext);
-  static bool Input(ProgressiveDecoderContext* pContext,
+  static Status LoadImage(ProgressiveDecoderContext* context);
+  static FX_FILESIZE GetAvailInput(ProgressiveDecoderContext* context);
+  static bool Input(ProgressiveDecoderContext* context,
                     RetainPtr<CFX_CodecMemory> codec_memory);
 
   // Only `static` methods.

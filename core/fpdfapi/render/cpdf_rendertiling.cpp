@@ -118,7 +118,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
   }
 
   CFX_RenderDevice* pDevice = pRenderStatus->GetRenderDevice();
-  CPDF_RenderContext* pContext = pRenderStatus->GetContext();
+  CPDF_RenderContext* context = pRenderStatus->GetContext();
   const CPDF_RenderOptions& options = pRenderStatus->GetRenderOptions();
   if (width > clip_box.Width() || height > clip_box.Height() ||
       width * height > clip_box.Width() * clip_box.Height()) {
@@ -143,7 +143,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
         matrix.Translate(original.x - mtPattern2Device.e,
                          original.y - mtPattern2Device.f);
         CFX_RenderDevice::StateRestorer restorer2(pDevice);
-        CPDF_RenderStatus status(pContext, pDevice);
+        CPDF_RenderStatus status(context, pDevice);
         status.SetOptions(options);
         status.SetTransparency(pPatternForm->GetTransparency());
         status.SetFormResource(pFormResource);
@@ -188,14 +188,14 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
   RetainPtr<CFX_DIBitmap> pPatternBitmap;
   if (width * height < 16) {
     RetainPtr<CFX_DIBitmap> pEnlargedBitmap = DrawPatternBitmap(
-        pContext->GetDocument(), pContext->GetPageCache(), pPattern,
-        pPatternForm, mtObj2Device, 8, 8, options.GetOptions());
+        context->GetDocument(), context->GetPageCache(), pPattern, pPatternForm,
+        mtObj2Device, 8, 8, options.GetOptions());
     pPatternBitmap = pEnlargedBitmap->StretchTo(
         width, height, FXDIB_ResampleOptions(), nullptr);
   } else {
     pPatternBitmap = DrawPatternBitmap(
-        pContext->GetDocument(), pContext->GetPageCache(), pPattern,
-        pPatternForm, mtObj2Device, width, height, options.GetOptions());
+        context->GetDocument(), context->GetPageCache(), pPattern, pPatternForm,
+        mtObj2Device, width, height, options.GetOptions());
   }
   if (!pPatternBitmap) {
     return nullptr;

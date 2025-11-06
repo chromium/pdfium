@@ -312,7 +312,7 @@ std::unique_ptr<ProgressiveDecoderContext> TiffDecoder::CreateDecoder(
 }
 
 // static
-bool TiffDecoder::LoadFrameInfo(ProgressiveDecoderContext* pContext,
+bool TiffDecoder::LoadFrameInfo(ProgressiveDecoderContext* context,
                                 int32_t frame,
                                 int32_t* width,
                                 int32_t* height,
@@ -321,14 +321,14 @@ bool TiffDecoder::LoadFrameInfo(ProgressiveDecoderContext* pContext,
                                 CFX_DIBAttribute* pAttribute) {
   DCHECK(pAttribute);
 
-  auto* ctx = static_cast<CTiffContext*>(pContext);
+  auto* ctx = static_cast<CTiffContext*>(context);
   return ctx->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);
 }
 
 // static
-bool TiffDecoder::Decode(ProgressiveDecoderContext* pContext,
+bool TiffDecoder::Decode(ProgressiveDecoderContext* context,
                          RetainPtr<CFX_DIBitmap> bitmap) {
-  auto* ctx = static_cast<CTiffContext*>(pContext);
+  auto* ctx = static_cast<CTiffContext*>(context);
   return ctx->Decode(std::move(bitmap));
 }
 

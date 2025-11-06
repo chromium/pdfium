@@ -85,10 +85,10 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   CPDF_PageImageCache* GetPageImageCache() { return page_image_cache_.get(); }
   RenderContextIface* GetRenderContext() { return render_context_.get(); }
 
-  // `pContext` cannot be null. `SetRenderContext()` cannot be called if the
+  // `context` cannot be null. `SetRenderContext()` cannot be called if the
   // page already has a render context. Use `ClearRenderContext()` to reset the
   // render context.
-  void SetRenderContext(std::unique_ptr<RenderContextIface> pContext);
+  void SetRenderContext(std::unique_ptr<RenderContextIface> context);
   void ClearRenderContext();
 
   void SetView(View* pView) { view_.Reset(pView); }

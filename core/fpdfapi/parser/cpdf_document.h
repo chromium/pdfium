@@ -131,8 +131,8 @@ class CPDF_Document : public Observable,
 
   JBig2_DocumentContext* GetOrCreateCodecContext();
   LinkListIface* GetLinksContext() const { return links_context_.get(); }
-  void SetLinksContext(std::unique_ptr<LinkListIface> pContext) {
-    links_context_ = std::move(pContext);
+  void SetLinksContext(std::unique_ptr<LinkListIface> context) {
+    links_context_ = std::move(context);
   }
 
   // Behaves like NewIndirect<CPDF_Stream>(dict), but keeps track of the object

@@ -89,7 +89,7 @@ class CXFA_ContentLayoutProcessor
   Result DoLayoutInternal(bool bUseBreakControl,
                           float fHeightLimit,
                           float fRealHeight,
-                          Context* pContext);
+                          Context* context);
 
   CFX_SizeF GetCurrentComponentSize();
   bool HasLayoutItem() const { return !!layout_item_; }
@@ -137,13 +137,13 @@ class CXFA_ContentLayoutProcessor
                         float fChildHeight,
                         std::vector<CXFA_ContentLayoutItem*>* pKeepItems);
 
-  void DoLayoutPositionedContainer(Context* pContext);
+  void DoLayoutPositionedContainer(Context* context);
   void DoLayoutTableContainer(CXFA_Node* pLayoutNode);
   Result DoLayoutFlowedContainer(bool bUseBreakControl,
                                  XFA_AttributeValue eFlowStrategy,
                                  float fHeightLimit,
                                  float fRealHeight,
-                                 Context* pContext,
+                                 Context* context,
                                  bool bRootForceTb);
   void DoLayoutField();
 
@@ -207,7 +207,7 @@ class CXFA_ContentLayoutProcessor
   std::optional<Stage> HandleBookendTrailer(CXFA_Node* pParentContainer,
                                             CXFA_Node** pCurActionNode);
   void ProcessKeepNodesEnd();
-  void AdjustContainerSpecifiedSize(Context* pContext,
+  void AdjustContainerSpecifiedSize(Context* context,
                                     CFX_SizeF* pSize,
                                     bool* pContainerWidthAutoSize,
                                     bool* pContainerHeightAutoSize);

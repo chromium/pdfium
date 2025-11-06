@@ -29,18 +29,18 @@ class JpegProgressiveDecoder {
   static constexpr int kError = 1;
   static constexpr int kNeedsMoreInput = 2;
 
-  static int ReadHeader(ProgressiveDecoderContext* pContext,
+  static int ReadHeader(ProgressiveDecoderContext* context,
                         int* width,
                         int* height,
                         int* nComps,
                         CFX_DIBAttribute* pAttribute);
 
-  static bool StartScanline(ProgressiveDecoderContext* pContext);
-  static int ReadScanline(ProgressiveDecoderContext* pContext,
+  static bool StartScanline(ProgressiveDecoderContext* context);
+  static int ReadScanline(ProgressiveDecoderContext* context,
                           uint8_t* dest_buf);
 
-  static FX_FILESIZE GetAvailInput(ProgressiveDecoderContext* pContext);
-  static bool Input(ProgressiveDecoderContext* pContext,
+  static FX_FILESIZE GetAvailInput(ProgressiveDecoderContext* context);
+  static bool Input(ProgressiveDecoderContext* context,
                     RetainPtr<CFX_CodecMemory> codec_memory);
 
   // Only `static` methods.

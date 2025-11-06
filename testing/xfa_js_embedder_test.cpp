@@ -40,12 +40,12 @@ CXFA_Document* XFAJSEmbedderTest::GetXFADocument() const {
     return nullptr;
   }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(doc->GetExtension());
-  if (!pContext) {
+  auto* context = static_cast<CPDFXFA_Context*>(doc->GetExtension());
+  if (!context) {
     return nullptr;
   }
 
-  CXFA_FFDoc* pFFDoc = pContext->GetXFADoc();
+  CXFA_FFDoc* pFFDoc = context->GetXFADoc();
   if (!pFFDoc) {
     return nullptr;
   }

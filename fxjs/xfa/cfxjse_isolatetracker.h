@@ -33,7 +33,7 @@ class CFXJSE_ScopeUtil_Context {
  public:
   FX_STACK_ALLOCATED();
 
-  explicit CFXJSE_ScopeUtil_Context(CFXJSE_Context* pContext);
+  explicit CFXJSE_ScopeUtil_Context(CFXJSE_Context* context);
   CFXJSE_ScopeUtil_Context(const CFXJSE_ScopeUtil_Context&) = delete;
   CFXJSE_ScopeUtil_Context& operator=(const CFXJSE_ScopeUtil_Context&) = delete;
   ~CFXJSE_ScopeUtil_Context();
@@ -46,7 +46,7 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
  public:
   FX_STACK_ALLOCATED();
 
-  explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext);
+  explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* context);
   CFXJSE_ScopeUtil_IsolateHandleContext(
       const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
   CFXJSE_ScopeUtil_IsolateHandleContext& operator=(

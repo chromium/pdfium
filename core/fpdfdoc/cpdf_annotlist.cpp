@@ -239,11 +239,11 @@ bool CPDF_AnnotList::Contains(const CPDF_Annot* pAnnot) const {
   return it != annot_list_.end();
 }
 
-void CPDF_AnnotList::DisplayPass(CPDF_RenderContext* pContext,
+void CPDF_AnnotList::DisplayPass(CPDF_RenderContext* context,
                                  bool bPrinting,
                                  const CFX_Matrix& mtMatrix,
                                  bool bWidgetPass) {
-  CHECK(pContext);
+  CHECK(context);
   for (const auto& pAnnot : annot_list_) {
     bool bWidget = pAnnot->GetSubtype() == CPDF_Annot::Subtype::WIDGET;
     if ((bWidgetPass && !bWidget) || (!bWidgetPass && bWidget)) {
@@ -263,18 +263,18 @@ void CPDF_AnnotList::DisplayPass(CPDF_RenderContext* pContext,
       continue;
     }
 
-    pAnnot->DrawInContext(page_, pContext, mtMatrix,
+    pAnnot->DrawInContext(page_, context, mtMatrix,
                           CPDF_Annot::AppearanceMode::kNormal);
   }
 }
 
-void CPDF_AnnotList::DisplayAnnots(CPDF_RenderContext* pContext,
+void CPDF_AnnotList::DisplayAnnots(CPDF_RenderContext* context,
                                    bool bPrinting,
                                    const CFX_Matrix& mtUser2Device,
                                    bool bShowWidget) {
-  CHECK(pContext);
-  DisplayPass(pContext, bPrinting, mtUser2Device, false);
+  CHECK(context);
+  DisplayPass(context, bPrinting, mtUser2Device, false);
   if (bShowWidget) {
-    DisplayPass(pContext, bPrinting, mtUser2Device, true);
+    DisplayPass(context, bPrinting, mtUser2Device, true);
   }
 }

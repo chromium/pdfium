@@ -796,7 +796,7 @@ bool CXFA_TextLayout::LoadRichText(const CFX_XMLNode* pXMLNode,
     return false;
   }
 
-  CXFA_TextParser::Context* pContext =
+  CXFA_TextParser::Context* context =
       text_parser_->GetParseContextFromMap(pXMLNode);
   CFX_CSSDisplay eDisplay = CFX_CSSDisplay::None;
   bool bContentNode = false;
@@ -807,7 +807,7 @@ bool CXFA_TextLayout::LoadRichText(const CFX_XMLNode* pXMLNode,
     bool bCurOl = false;
     bool bCurLi = false;
     const CFX_XMLElement* pElement = nullptr;
-    if (pContext) {
+    if (context) {
       if (pXMLNode->GetType() == CFX_XMLNode::Type::kText) {
         bContentNode = true;
       } else if (pXMLNode->GetType() == CFX_XMLNode::Type::kElement) {
@@ -819,7 +819,7 @@ bool CXFA_TextLayout::LoadRichText(const CFX_XMLNode* pXMLNode,
         bCurOl = true;
       }
 
-      eDisplay = pContext->GetDisplay();
+      eDisplay = context->GetDisplay();
       if (eDisplay != CFX_CSSDisplay::Block &&
           eDisplay != CFX_CSSDisplay::Inline &&
           eDisplay != CFX_CSSDisplay::ListItem) {
@@ -929,8 +929,8 @@ bool CXFA_TextLayout::LoadRichText(const CFX_XMLNode* pXMLNode,
       }
 
       if (!LoadRichText(pChildNode, textWidth, pLinePos,
-                        pContext ? pStyle : pParentStyle, bSavePieces,
-                        pLinkData, true, bIsOl, iLiCount)) {
+                        context ? pStyle : pParentStyle, bSavePieces, pLinkData,
+                        true, bIsOl, iLiCount)) {
         return false;
       }
     }
@@ -944,12 +944,12 @@ bool CXFA_TextLayout::LoadRichText(const CFX_XMLNode* pXMLNode,
       EndBreak(CFGAS_Char::BreakType::kLine, pLinePos, bSavePieces);
     }
   } else {
-    if (pContext) {
-      eDisplay = pContext->GetDisplay();
+    if (context) {
+      eDisplay = context->GetDisplay();
     }
   }
 
-  if (!pContext || bContentNode) {
+  if (!context || bContentNode) {
     return true;
   }
 

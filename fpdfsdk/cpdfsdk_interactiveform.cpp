@@ -300,10 +300,10 @@ void CPDFSDK_InteractiveForm::OnCalculate(CPDF_FormField* pFormField) {
     WideString sOldValue = pField->GetValue();
     WideString sValue = sOldValue;
     bool bRC = true;
-    IJS_Runtime::ScopedEventContext pContext(pRuntime);
-    pContext->OnField_Calculate(pFormField, pField, &sValue, &bRC);
+    IJS_Runtime::ScopedEventContext context(pRuntime);
+    context->OnField_Calculate(pFormField, pField, &sValue, &bRC);
 
-    std::optional<IJS_Runtime::JS_Error> err = pContext->RunScript(csJS);
+    std::optional<IJS_Runtime::JS_Error> err = context->RunScript(csJS);
     if (!err.has_value() && bRC && sValue != sOldValue) {
       pField->SetValue(sValue, NotificationOption::kNotify);
     }
@@ -332,9 +332,9 @@ std::optional<WideString> CPDFSDK_InteractiveForm::OnFormat(
     if (action.HasDict()) {
       WideString script = action.GetJavaScript();
       if (!script.IsEmpty()) {
-        IJS_Runtime::ScopedEventContext pContext(pRuntime);
-        pContext->OnField_Format(pFormField, &sValue);
-        std::optional<IJS_Runtime::JS_Error> err = pContext->RunScript(script);
+        IJS_Runtime::ScopedEventContext context(pRuntime);
+        context->OnField_Format(pFormField, &sValue);
+        std::optional<IJS_Runtime::JS_Error> err = context->RunScript(script);
         if (!err.has_value()) {
           return sValue;
         }

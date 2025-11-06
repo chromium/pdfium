@@ -68,7 +68,7 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     DefineJSObjects();
   }
 
-  ScopedEventContext pContext(this);
+  ScopedEventContext context(this);
   InitializeEngine();
   SetFormFillEnvToDocument();
 }
@@ -133,8 +133,8 @@ IJS_EventContext* CJS_Runtime::NewEventContext() {
   return event_context_array_.back().get();
 }
 
-void CJS_Runtime::ReleaseEventContext(IJS_EventContext* pContext) {
-  DCHECK_EQ(pContext, event_context_array_.back().get());
+void CJS_Runtime::ReleaseEventContext(IJS_EventContext* context) {
+  DCHECK_EQ(context, event_context_array_.back().get());
   event_context_array_.pop_back();
 }
 

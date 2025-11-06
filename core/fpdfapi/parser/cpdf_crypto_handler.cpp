@@ -121,12 +121,12 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   }
 
   if (cipher_ == Cipher::kAES) {
-    AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
-    pContext->iv_ = true;
-    pContext->block_offset_ = 0;
+    AESCryptContext* context = FX_Alloc(AESCryptContext, 1);
+    context->iv_ = true;
+    context->block_offset_ = 0;
     if (key_len_ == 32) {
-      CRYPT_AESSetKey(&pContext->context_, encrypt_key_);
-      return pContext;
+      CRYPT_AESSetKey(&context->context_, encrypt_key_);
+      return context;
     }
     std::array<uint8_t, 48> key1;
     PopulateKey(objnum, gennum, key1);
@@ -135,8 +135,8 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
 
     std::array<uint8_t, 16> realkey;
     CRYPT_MD5Generate(pdfium::span(key1).first(key_len_ + 9), realkey);
-    CRYPT_AESSetKey(&pContext->context_, realkey);
-    return pContext;
+    CRYPT_AESSetKey(&context->context_, realkey);
+    return context;
   }
 
   std::array<uint8_t, 48> key1;
@@ -146,9 +146,9 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   CRYPT_MD5Generate(pdfium::span(key1).first(key_len_ + 5), realkey);
   size_t realkeylen = std::min(key_len_ + 5, realkey.size());
 
-  CRYPT_rc4_context* pContext = FX_Alloc(CRYPT_rc4_context, 1);
-  CRYPT_ArcFourSetup(pContext, pdfium::span(realkey).first(realkeylen));
-  return pContext;
+  CRYPT_rc4_context* context = FX_Alloc(CRYPT_rc4_context, 1);
+  CRYPT_ArcFourSetup(context, pdfium::span(realkey).first(realkeylen));
+  return context;
 }
 
 bool CPDF_CryptoHandler::DecryptStream(void* context,
@@ -170,31 +170,30 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
         dest_buf.GetMutableSpan().subspan(old_size, source.size()));
     return true;
   }
-  AESCryptContext* pContext = static_cast<AESCryptContext*>(context);
+  AESCryptContext* ctx = static_cast<AESCryptContext*>(context);
   uint32_t src_off = 0;
   uint32_t src_left = source.size();
   while (true) {
-    uint32_t copy_size = 16 - pContext->block_offset_;
+    uint32_t copy_size = 16 - ctx->block_offset_;
     if (copy_size > src_left) {
       copy_size = src_left;
     }
-    fxcrt::Copy(
-        source.subspan(src_off, copy_size),
-        pdfium::span(pContext->block_).subspan(pContext->block_offset_));
+    fxcrt::Copy(source.subspan(src_off, copy_size),
+                pdfium::span(ctx->block_).subspan(ctx->block_offset_));
 
     src_off += copy_size;
     src_left -= copy_size;
-    pContext->block_offset_ += copy_size;
-    if (pContext->block_offset_ == 16) {
-      if (pContext->iv_) {
-        CRYPT_AESSetIV(&pContext->context_, pContext->block_);
-        pContext->iv_ = false;
-        pContext->block_offset_ = 0;
+    ctx->block_offset_ += copy_size;
+    if (ctx->block_offset_ == 16) {
+      if (ctx->iv_) {
+        CRYPT_AESSetIV(&ctx->context_, ctx->block_);
+        ctx->iv_ = false;
+        ctx->block_offset_ = 0;
       } else if (src_off < source.size()) {
         std::array<uint8_t, 16> block_buf;
-        CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_);
+        CRYPT_AESDecrypt(&ctx->context_, block_buf, ctx->block_);
         dest_buf.AppendSpan(block_buf);
-        pContext->block_offset_ = 0;
+        ctx->block_offset_ = 0;
       }
     }
     if (!src_left) {
@@ -215,16 +214,16 @@ bool CPDF_CryptoHandler::DecryptFinish(void* context, BinaryBuffer& dest_buf) {
     FX_Free(context);
     return true;
   }
-  auto* pContext = static_cast<AESCryptContext*>(context);
-  if (pContext->block_offset_ == 16) {
+  auto* ctx = static_cast<AESCryptContext*>(context);
+  if (ctx->block_offset_ == 16) {
     std::array<uint8_t, 16> block_buf;
-    CRYPT_AESDecrypt(&pContext->context_, block_buf, pContext->block_);
+    CRYPT_AESDecrypt(&ctx->context_, block_buf, ctx->block_);
     if (block_buf.back() < 16) {
       dest_buf.AppendSpan(pdfium::span(block_buf).first(
           static_cast<size_t>(16 - block_buf.back())));
     }
   }
-  FX_Free(pContext);
+  FX_Free(ctx);
   return true;
 }
 

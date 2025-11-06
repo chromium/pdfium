@@ -33,7 +33,7 @@ class CPDF_ProgressiveRenderer {
     kFailed          // FPDF_RENDER_FAILED
   };
 
-  CPDF_ProgressiveRenderer(CPDF_RenderContext* pContext,
+  CPDF_ProgressiveRenderer(CPDF_RenderContext* context,
                            CFX_RenderDevice* pDevice,
                            const CPDF_RenderOptions* pOptions);
   ~CPDF_ProgressiveRenderer();

@@ -15,6 +15,6 @@ TEST_F(CPDFXFAContextEmbedderTest, HasHeap) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CPDF_Document* pDocument = CPDFDocumentFromFPDFDocument(document());
-  auto* pContext = static_cast<CPDFXFA_Context*>(pDocument->GetExtension());
-  EXPECT_TRUE(pContext->GetGCHeap());
+  auto* context = static_cast<CPDFXFA_Context*>(pDocument->GetExtension());
+  EXPECT_TRUE(context->GetGCHeap());
 }

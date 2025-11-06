@@ -86,18 +86,18 @@ void* ContextFromNextGlobalSeed() {
 }  // namespace
 
 void* FX_Random_MT_Start(uint32_t dwSeed) {
-  MTContext* pContext = FX_Alloc(MTContext, 1);
-  pContext->mt[0] = dwSeed;
+  MTContext* context = FX_Alloc(MTContext, 1);
+  context->mt[0] = dwSeed;
   for (uint32_t i = 1; i < MT_N; i++) {
-    const uint32_t prev = pContext->mt[i - 1];
-    pContext->mt[i] = (1812433253UL * (prev ^ (prev >> 30)) + i);
+    const uint32_t prev = context->mt[i - 1];
+    context->mt[i] = (1812433253UL * (prev ^ (prev >> 30)) + i);
   }
-  pContext->mti = MT_N;
-  return pContext;
+  context->mti = MT_N;
+  return context;
 }
 
-uint32_t FX_Random_MT_Generate(void* pContext) {
-  MTContext* pMTC = static_cast<MTContext*>(pContext);
+uint32_t FX_Random_MT_Generate(void* context) {
+  MTContext* pMTC = static_cast<MTContext*>(context);
   uint32_t v;
   if (pMTC->mti >= MT_N) {
     static constexpr std::array<uint32_t, 2> mag = {{0, MT_Matrix_A}};
@@ -122,14 +122,14 @@ uint32_t FX_Random_MT_Generate(void* pContext) {
   return v;
 }
 
-void FX_Random_MT_Close(void* pContext) {
-  FX_Free(pContext);
+void FX_Random_MT_Close(void* context) {
+  FX_Free(context);
 }
 
 void FX_Random_GenerateMT(pdfium::span<uint32_t> pBuffer) {
-  void* pContext = ContextFromNextGlobalSeed();
+  void* context = ContextFromNextGlobalSeed();
   for (size_t i = 0; i < pBuffer.size(); ++i) {
-    pBuffer[i] = FX_Random_MT_Generate(pContext);
+    pBuffer[i] = FX_Random_MT_Generate(context);
   }
-  FX_Random_MT_Close(pContext);
+  FX_Random_MT_Close(context);
 }

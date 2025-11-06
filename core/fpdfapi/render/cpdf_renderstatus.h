@@ -45,7 +45,7 @@ class PauseIndicatorIface;
 
 class CPDF_RenderStatus {
  public:
-  CPDF_RenderStatus(CPDF_RenderContext* pContext, CFX_RenderDevice* pDevice);
+  CPDF_RenderStatus(CPDF_RenderContext* context, CFX_RenderDevice* pDevice);
   ~CPDF_RenderStatus();
 
   // Called prior to Initialize().

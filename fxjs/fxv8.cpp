@@ -264,10 +264,10 @@ bool ReentrantHasObjectOwnPropertyHelper(v8::Isolate* pIsolate,
   }
 
   v8::TryCatch squash_exceptions(pIsolate);
-  v8::Local<v8::Context> pContext = pIsolate->GetCurrentContext();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   v8::Local<v8::String> hKey =
       fxv8::NewStringHelper(pIsolate, bsUTF8PropertyName);
-  return pObj->HasRealNamedProperty(pContext, hKey).FromJust();
+  return pObj->HasRealNamedProperty(context, hKey).FromJust();
 }
 
 bool ReentrantSetObjectOwnPropertyHelper(v8::Isolate* pIsolate,

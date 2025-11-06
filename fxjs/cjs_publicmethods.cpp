@@ -90,10 +90,10 @@ T StrTrim(const T& str) {
   return result;
 }
 
-void AlertIfPossible(CJS_EventContext* pContext,
+void AlertIfPossible(CJS_EventContext* context,
                      const WideString& wsCaller,
                      const WideString& wsMsg) {
-  CPDFSDK_FormFillEnvironment* pFormFillEnv = pContext->GetFormFillEnv();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = context->GetFormFillEnv();
   if (pFormFillEnv) {
     pFormFillEnv->JS_appAlert(wsMsg, wsCaller, JSPLATFORM_ALERT_BUTTON_OK,
                               JSPLATFORM_ALERT_ICON_STATUS);
@@ -736,16 +736,16 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  if (!pContext->HasValue()) {
+  CJS_EventContext* context = pRuntime->GetCurrentEventContext();
+  if (!context->HasValue()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   }
 
-  WideString& val = pContext->Value();
-  WideString& wstrChange = pContext->Change();
+  WideString& val = context->Value();
+  WideString& wstrChange = context->Change();
   WideString wstrValue = val;
 
-  if (pContext->WillCommit()) {
+  if (context->WillCommit()) {
     WideString swTemp = StrTrim(wstrValue);
     if (swTemp.IsEmpty()) {
       return CJS_Result::Success();
@@ -753,9 +753,9 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
 
     NormalizeDecimalMarkW(&swTemp);
     if (!IsNumber(swTemp)) {
-      pContext->Rc() = false;
+      context->Rc() = false;
       WideString sError = JSGetStringFromID(JSMessage::kInvalidInputError);
-      AlertIfPossible(pContext, WideString::FromASCII("AFNumber_Keystroke"),
+      AlertIfPossible(context, WideString::FromASCII("AFNumber_Keystroke"),
                       sError);
       return CJS_Result::Failure(sError);
     }
@@ -764,16 +764,16 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
   }
 
   WideString wstrSelected;
-  if (pContext->SelStart() != -1) {
-    wstrSelected = wstrValue.Substr(pContext->SelStart(),
-                                    pContext->SelEnd() - pContext->SelStart());
+  if (context->SelStart() != -1) {
+    wstrSelected = wstrValue.Substr(context->SelStart(),
+                                    context->SelEnd() - context->SelStart());
   }
 
   bool bHasSign = wstrValue.Contains(L'-') && !wstrSelected.Contains(L'-');
   if (bHasSign) {
     // can't insert "change" in front of sign position.
-    if (!wstrSelected.IsEmpty() && pContext->SelStart() == 0) {
-      pContext->Rc() = false;
+    if (!wstrSelected.IsEmpty() && context->SelStart() == 0) {
+      context->Rc() = false;
       return CJS_Result::Success();
     }
   }
@@ -785,7 +785,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
   for (size_t i = 0; i < wstrChange.GetLength(); ++i) {
     if (wstrChange[i] == cSep) {
       if (bHasSep) {
-        pContext->Rc() = false;
+        context->Rc() = false;
         return CJS_Result::Success();
       }
       bHasSep = true;
@@ -793,16 +793,16 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
     }
     if (wstrChange[i] == L'-') {
       if (bHasSign) {
-        pContext->Rc() = false;
+        context->Rc() = false;
         return CJS_Result::Success();
       }
       // sign's position is not correct
       if (i != 0) {
-        pContext->Rc() = false;
+        context->Rc() = false;
         return CJS_Result::Success();
       }
-      if (pContext->SelStart() != 0) {
-        pContext->Rc() = false;
+      if (context->SelStart() != 0) {
+        context->Rc() = false;
         return CJS_Result::Success();
       }
       bHasSign = true;
@@ -810,12 +810,12 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
     }
 
     if (!FXSYS_IsDecimalDigit(wstrChange[i])) {
-      pContext->Rc() = false;
+      context->Rc() = false;
       return CJS_Result::Success();
     }
   }
 
-  val = CalcMergedString(pContext, wstrValue, wstrChange);
+  val = CalcMergedString(context, wstrValue, wstrChange);
   return CJS_Result::Success();
 }
 
@@ -1452,9 +1452,9 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
   }
   dValue = floor(dValue * powf(10, 6) + 0.49) / powf(10, 6);
 
-  CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  if (pContext->HasValue()) {
-    pContext->Value() = pRuntime->ToWideString(pRuntime->NewNumber(dValue));
+  CJS_EventContext* context = pRuntime->GetCurrentEventContext();
+  if (context->HasValue()) {
+    context->Value() = pRuntime->ToWideString(pRuntime->NewNumber(dValue));
   }
 
   return CJS_Result::Success();

@@ -217,10 +217,10 @@ void CPDF_Page::AddPageImageCache() {
   page_image_cache_ = std::make_unique<CPDF_PageImageCache>(this);
 }
 
-void CPDF_Page::SetRenderContext(std::unique_ptr<RenderContextIface> pContext) {
+void CPDF_Page::SetRenderContext(std::unique_ptr<RenderContextIface> context) {
   DCHECK(!render_context_);
-  DCHECK(pContext);
-  render_context_ = std::move(pContext);
+  DCHECK(context);
+  render_context_ = std::move(context);
 }
 
 void CPDF_Page::ClearRenderContext() {

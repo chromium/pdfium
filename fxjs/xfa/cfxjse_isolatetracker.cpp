@@ -15,14 +15,14 @@ CFXJSE_ScopeUtil_IsolateHandle::CFXJSE_ScopeUtil_IsolateHandle(
 
 CFXJSE_ScopeUtil_IsolateHandle::~CFXJSE_ScopeUtil_IsolateHandle() = default;
 
-CFXJSE_ScopeUtil_Context::CFXJSE_ScopeUtil_Context(CFXJSE_Context* pContext)
-    : context_scope_(pContext->GetContext()) {}
+CFXJSE_ScopeUtil_Context::CFXJSE_ScopeUtil_Context(CFXJSE_Context* context)
+    : context_scope_(context->GetContext()) {}
 
 CFXJSE_ScopeUtil_Context::~CFXJSE_ScopeUtil_Context() = default;
 
 CFXJSE_ScopeUtil_IsolateHandleContext::CFXJSE_ScopeUtil_IsolateHandleContext(
-    CFXJSE_Context* pContext)
-    : isolate_handle_(pContext->GetIsolate()), context_(pContext) {}
+    CFXJSE_Context* context)
+    : isolate_handle_(context->GetIsolate()), context_(context) {}
 
 CFXJSE_ScopeUtil_IsolateHandleContext::
     ~CFXJSE_ScopeUtil_IsolateHandleContext() = default;

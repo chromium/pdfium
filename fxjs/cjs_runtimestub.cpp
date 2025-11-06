@@ -20,7 +20,7 @@ IJS_EventContext* CJS_RuntimeStub::NewEventContext() {
   return context_.get();
 }
 
-void CJS_RuntimeStub::ReleaseEventContext(IJS_EventContext* pContext) {}
+void CJS_RuntimeStub::ReleaseEventContext(IJS_EventContext* context) {}
 
 CPDFSDK_FormFillEnvironment* CJS_RuntimeStub::GetFormFillEnv() const {
   return form_fill_env_;

@@ -56,14 +56,14 @@ CPDFSDK_Widget::~CPDFSDK_Widget() {
 
 #ifdef PDF_ENABLE_XFA
 CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
-  CPDF_Document::Extension* pContext =
+  CPDF_Document::Extension* context =
       GetPageView()->GetFormFillEnv()->GetDocExtension();
-  if (!pContext || !pContext->ContainsExtensionForegroundForm()) {
+  if (!context || !context->ContainsExtensionForegroundForm()) {
     return nullptr;
   }
 
   CXFA_FFDocView* pDocView =
-      static_cast<CPDFXFA_Context*>(pContext)->GetXFADocView();
+      static_cast<CPDFXFA_Context*>(context)->GetXFADocView();
   if (!pDocView) {
     return nullptr;
   }
@@ -86,14 +86,14 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
 }
 
 CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() const {
-  CPDF_Document::Extension* pContext =
+  CPDF_Document::Extension* context =
       GetPageView()->GetFormFillEnv()->GetDocExtension();
-  if (!pContext || !pContext->ContainsExtensionForegroundForm()) {
+  if (!context || !context->ContainsExtensionForegroundForm()) {
     return nullptr;
   }
 
   CXFA_FFDocView* pDocView =
-      static_cast<CPDFXFA_Context*>(pContext)->GetXFADocView();
+      static_cast<CPDFXFA_Context*>(context)->GetXFADocView();
   if (!pDocView) {
     return nullptr;
   }
@@ -103,14 +103,14 @@ CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() const {
 }
 
 CXFA_FFWidgetHandler* CPDFSDK_Widget::GetXFAWidgetHandler() const {
-  CPDF_Document::Extension* pContext =
+  CPDF_Document::Extension* context =
       GetPageView()->GetFormFillEnv()->GetDocExtension();
-  if (!pContext || !pContext->ContainsExtensionForegroundForm()) {
+  if (!context || !context->ContainsExtensionForegroundForm()) {
     return nullptr;
   }
 
   CXFA_FFDocView* pDocView =
-      static_cast<CPDFXFA_Context*>(pContext)->GetXFADocView();
+      static_cast<CPDFXFA_Context*>(context)->GetXFADocView();
   return pDocView ? pDocView->GetWidgetHandler() : nullptr;
 }
 
@@ -216,9 +216,9 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const {
 bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
                                   CFFL_FieldAction* data,
                                   const CPDFSDK_PageView* pPageView) {
-  auto* pContext = static_cast<CPDFXFA_Context*>(
+  auto* context = static_cast<CPDFXFA_Context*>(
       GetPageView()->GetFormFillEnv()->GetDocExtension());
-  if (!pContext) {
+  if (!context) {
     return false;
   }
 
@@ -257,7 +257,7 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   }
 
   bool ret = pWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
-  CXFA_FFDocView* pDocView = pContext->GetXFADocView();
+  CXFA_FFDocView* pDocView = context->GetXFADocView();
   if (pDocView) {
     pDocView->UpdateDocView();
   }
@@ -319,9 +319,9 @@ bool CPDFSDK_Widget::HandleXFAAAction(
     CPDF_AAction::AActionType type,
     CFFL_FieldAction* data,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  auto* pContext =
+  auto* context =
       static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
-  if (!pContext) {
+  if (!context) {
     return false;
   }
 
@@ -351,7 +351,7 @@ bool CPDFSDK_Widget::HandleXFAAAction(
   param.modifier_ = data->bModifier;
   param.prev_text_ = data->sValue;
   bool ret = hWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
-  CXFA_FFDocView* pDocView = pContext->GetXFADocView();
+  CXFA_FFDocView* pDocView = context->GetXFADocView();
   if (pDocView) {
     pDocView->UpdateDocView();
   }
@@ -421,9 +421,9 @@ void CPDFSDK_Widget::SetRect(const CFX_FloatRect& rect) {
 
 bool CPDFSDK_Widget::IsAppearanceValid() {
 #ifdef PDF_ENABLE_XFA
-  CPDF_Document::Extension* pContext =
+  CPDF_Document::Extension* context =
       GetPageView()->GetFormFillEnv()->GetDocExtension();
-  if (pContext && pContext->ContainsExtensionFullForm()) {
+  if (context && context->ContainsExtensionFullForm()) {
     return true;
   }
 #endif  // PDF_ENABLE_XFA
@@ -1119,9 +1119,8 @@ void CPDFSDK_Widget::OnLoad() {
     }
   }
 #ifdef PDF_ENABLE_XFA
-  auto* pContext =
-      pObserved->GetPageView()->GetFormFillEnv()->GetDocExtension();
-  if (pContext && pContext->ContainsExtensionForegroundForm()) {
+  auto* context = pObserved->GetPageView()->GetFormFillEnv()->GetDocExtension();
+  if (context && context->ContainsExtensionForegroundForm()) {
     if (!pObserved->IsAppearanceValid() && !pObserved->GetValue().IsEmpty()) {
       pObserved->ResetXFAAppearance(CPDFSDK_Widget::kValueUnchanged);
     }

@@ -292,7 +292,7 @@ void CFXJSE_Engine::GlobalPropertySetter(v8::Isolate* pIsolate,
     return;
   }
 
-  IJS_Runtime::ScopedEventContext pContext(pCJSRuntime);
+  IJS_Runtime::ScopedEventContext context(pCJSRuntime);
   pCJSRuntime->SetValueByNameInGlobalObject(szPropName, pValue);
 }
 
@@ -363,7 +363,7 @@ v8::Local<v8::Value> CFXJSE_Engine::GlobalPropertyGetter(
     return pValue;
   }
 
-  IJS_Runtime::ScopedEventContext pContext(pCJSRuntime);
+  IJS_Runtime::ScopedEventContext context(pCJSRuntime);
   v8::Local<v8::Value> temp_value =
       pCJSRuntime->GetValueByNameFromGlobalObject(szPropName);
 
@@ -460,7 +460,7 @@ v8::Local<v8::Value> CFXJSE_Engine::NormalPropertyGetter(
     return pReturnValue;
   }
 
-  IJS_Runtime::ScopedEventContext pContext(pCJSRuntime);
+  IJS_Runtime::ScopedEventContext context(pCJSRuntime);
   v8::Local<v8::Value> temp_local =
       pCJSRuntime->GetValueByNameFromGlobalObject(szPropName);
 
@@ -712,9 +712,9 @@ bool CFXJSE_Engine::UpdateVariableValue(CXFA_Script* pScriptNode,
   return true;
 }
 
-void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) {
+void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* context) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
-  v8::Local<v8::Object> pObject = pContext->GetGlobalObject();
+  v8::Local<v8::Object> pObject = context->GetGlobalObject();
   fxv8::ReentrantDeleteObjectPropertyHelper(GetIsolate(), pObject, "Number");
   fxv8::ReentrantDeleteObjectPropertyHelper(GetIsolate(), pObject, "Date");
 }

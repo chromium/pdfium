@@ -18,7 +18,7 @@ struct FX_RECT;
 class CPDF_RenderShading {
  public:
   static void Draw(CFX_RenderDevice* pDevice,
-                   CPDF_RenderContext* pContext,
+                   CPDF_RenderContext* context,
                    const CPDF_PageObject* pCurObj,
                    const CPDF_ShadingPattern* pPattern,
                    const CFX_Matrix& mtMatrix,

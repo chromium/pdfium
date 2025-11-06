@@ -1274,8 +1274,8 @@ void CPDFSDK_FormFillEnvironment::DoActionResetForm(const CPDF_Action& action) {
 
 void CPDFSDK_FormFillEnvironment::RunScript(const WideString& script,
                                             const RunScriptCallback& cb) {
-  IJS_Runtime::ScopedEventContext pContext(GetIJSRuntime());
-  cb(pContext.Get());
-  pContext->RunScript(script);
+  IJS_Runtime::ScopedEventContext context(GetIJSRuntime());
+  cb(context.Get());
+  context->RunScript(script);
   // TODO(dsinclair): Return error if RunScript returns a IJS_Runtime::JS_Error.
 }

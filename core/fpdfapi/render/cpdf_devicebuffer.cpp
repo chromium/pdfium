@@ -59,14 +59,14 @@ CFX_Matrix CPDF_DeviceBuffer::CalculateMatrix(CFX_RenderDevice* pDevice,
   return matrix;
 }
 
-CPDF_DeviceBuffer::CPDF_DeviceBuffer(CPDF_RenderContext* pContext,
+CPDF_DeviceBuffer::CPDF_DeviceBuffer(CPDF_RenderContext* context,
                                      CFX_RenderDevice* pDevice,
                                      const FX_RECT& rect,
                                      const CPDF_PageObject* pObj,
                                      int max_dpi)
     : device_(pDevice),
 #if BUILDFLAG(IS_WIN)
-      context_(pContext),
+      context_(context),
 #endif
       object_(pObj),
       bitmap_(pdfium::MakeRetain<CFX_DIBitmap>()),

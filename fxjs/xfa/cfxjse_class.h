@@ -17,11 +17,11 @@ struct FXJSE_CLASS_DESCRIPTOR;
 
 class CFXJSE_Class {
  public:
-  static CFXJSE_Class* Create(CFXJSE_Context* pContext,
+  static CFXJSE_Class* Create(CFXJSE_Context* context,
                               const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor,
                               bool bIsJSGlobal);
 
-  explicit CFXJSE_Class(const CFXJSE_Context* pContext);
+  explicit CFXJSE_Class(const CFXJSE_Context* context);
   ~CFXJSE_Class();
 
   bool IsName(ByteStringView name) const { return name == class_name_; }

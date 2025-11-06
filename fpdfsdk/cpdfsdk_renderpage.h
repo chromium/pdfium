@@ -15,7 +15,7 @@ class CPDF_Page;
 class CPDF_PageRenderContext;
 struct FX_RECT;
 
-void CPDFSDK_RenderPage(CPDF_PageRenderContext* pContext,
+void CPDFSDK_RenderPage(CPDF_PageRenderContext* context,
                         CPDF_Page* pPage,
                         const CFX_Matrix& matrix,
                         const FX_RECT& clipping_rect,
@@ -24,7 +24,7 @@ void CPDFSDK_RenderPage(CPDF_PageRenderContext* pContext,
 
 // TODO(thestig): Consider giving this a better name, and make its parameters
 // more similar to those of CPDFSDK_RenderPage().
-void CPDFSDK_RenderPageWithContext(CPDF_PageRenderContext* pContext,
+void CPDFSDK_RenderPageWithContext(CPDF_PageRenderContext* context,
                                    CPDF_Page* pPage,
                                    int start_x,
                                    int start_y,

@@ -27,7 +27,7 @@ class LibpngPngDecoder {
   static std::unique_ptr<ProgressiveDecoderContext> StartDecode(
       PngDecoderDelegate* pDelegate);
 
-  static bool ContinueDecode(ProgressiveDecoderContext* pContext,
+  static bool ContinueDecode(ProgressiveDecoderContext* context,
                              RetainPtr<CFX_CodecMemory> codec_memory);
 
   LibpngPngDecoder() = delete;

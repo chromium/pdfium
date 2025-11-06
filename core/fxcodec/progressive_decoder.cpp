@@ -275,22 +275,22 @@ void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
 
 bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  std::unique_ptr<ProgressiveDecoderContext> pBmpContext =
+  std::unique_ptr<ProgressiveDecoderContext> pBmcontext =
       BmpDecoder::StartDecode(this);
-  BmpDecoder::Input(pBmpContext.get(), codec_memory_);
+  BmpDecoder::Input(pBmcontext.get(), codec_memory_);
 
   pdfium::span<const FX_ARGB> palette;
   BmpDecoder::Status read_result = BmpDecoder::ReadHeader(
-      pBmpContext.get(), &src_width_, &src_height_, &bmp_is_top_bottom_,
+      pBmcontext.get(), &src_width_, &src_height_, &bmp_is_top_bottom_,
       &src_components_count_, &palette, pAttribute);
   while (read_result == BmpDecoder::Status::kContinue) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
-    if (!BmpReadMoreData(pBmpContext.get(), &error_status)) {
+    if (!BmpReadMoreData(pBmcontext.get(), &error_status)) {
       status_ = error_status;
       return false;
     }
     read_result = BmpDecoder::ReadHeader(
-        pBmpContext.get(), &src_width_, &src_height_, &bmp_is_top_bottom_,
+        pBmcontext.get(), &src_width_, &src_height_, &bmp_is_top_bottom_,
         &src_components_count_, &palette, pAttribute);
   }
 
@@ -329,15 +329,14 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   }
 
   uint32_t available_data = pdfium::checked_cast<uint32_t>(
-      file_->GetSize() - offset_ +
-      BmpDecoder::GetAvailInput(pBmpContext.get()));
+      file_->GetSize() - offset_ + BmpDecoder::GetAvailInput(pBmcontext.get()));
   if (needed_data.value().size > available_data) {
     status_ = FXCODEC_STATUS::kError;
     return false;
   }
 
   src_bits_per_component_ = 8;
-  bmp_context_ = std::move(pBmpContext);
+  bmp_context_ = std::move(pBmcontext);
   if (!palette.empty()) {
     src_palette_.resize(palette.size());
     fxcrt::Copy(palette, src_palette_);

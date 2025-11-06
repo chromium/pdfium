@@ -24,7 +24,7 @@ class CPDF_DeviceBuffer {
                                     int max_dpi,
                                     bool scale);
 
-  CPDF_DeviceBuffer(CPDF_RenderContext* pContext,
+  CPDF_DeviceBuffer(CPDF_RenderContext* context,
                     CFX_RenderDevice* pDevice,
                     const FX_RECT& rect,
                     const CPDF_PageObject* pObj,

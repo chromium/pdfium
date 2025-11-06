@@ -19,10 +19,10 @@
 #include "core/fxge/cfx_renderdevice.h"
 
 CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
-    CPDF_RenderContext* pContext,
+    CPDF_RenderContext* context,
     CFX_RenderDevice* pDevice,
     const CPDF_RenderOptions* pOptions)
-    : context_(pContext), device_(pDevice), options_(pOptions) {
+    : context_(context), device_(pDevice), options_(pOptions) {
   CHECK(context_);
   CHECK(device_);
 }

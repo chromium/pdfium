@@ -348,9 +348,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
     return false;
   }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(doc->GetExtension());
-  if (pContext) {
-    return pContext->LoadXFADoc();
+  auto* context = static_cast<CPDFXFA_Context*>(doc->GetExtension());
+  if (context) {
+    return context->LoadXFADoc();
   }
 #endif  // PDF_ENABLE_XFA
   return false;
@@ -479,10 +479,9 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
   }
 
 #ifdef PDF_ENABLE_XFA
-  auto* pContext = static_cast<CPDFXFA_Context*>(doc->GetExtension());
-  if (pContext) {
-    return FPDFPageFromIPDFPage(
-        pContext->GetOrCreateXFAPage(page_index).Leak());
+  auto* context = static_cast<CPDFXFA_Context*>(doc->GetExtension());
+  if (context) {
+    return FPDFPageFromIPDFPage(context->GetOrCreateXFAPage(page_index).Leak());
   }
 #endif  // PDF_ENABLE_XFA
 
@@ -1122,9 +1121,9 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
     return false;
   }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(doc->GetExtension());
-  if (pContext) {
-    RetainPtr<CPDFXFA_Page> pPage = pContext->GetOrCreateXFAPage(page_index);
+  auto* context = static_cast<CPDFXFA_Context*>(doc->GetExtension());
+  if (context) {
+    RetainPtr<CPDFXFA_Page> pPage = context->GetOrCreateXFAPage(page_index);
     if (!pPage) {
       return false;
     }

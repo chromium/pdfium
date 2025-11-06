@@ -52,8 +52,8 @@ static_assert(FXFA_PAGEVIEWEVENT_POSTREMOVED ==
                   static_cast<int>(CXFA_FFDoc::PageViewEvent::kPostRemoved),
               "kPostRemoved mismatch");
 
-CPDFXFA_DocEnvironment::CPDFXFA_DocEnvironment(CPDFXFA_Context* pContext)
-    : context_(pContext) {
+CPDFXFA_DocEnvironment::CPDFXFA_DocEnvironment(CPDFXFA_Context* context)
+    : context_(context) {
   DCHECK(context_);
 }
 

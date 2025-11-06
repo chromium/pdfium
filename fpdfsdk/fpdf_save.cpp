@@ -34,17 +34,17 @@
 namespace {
 
 #ifdef PDF_ENABLE_XFA
-bool SaveXFADocumentData(CPDFXFA_Context* pContext,
+bool SaveXFADocumentData(CPDFXFA_Context* context,
                          std::vector<RetainPtr<IFX_SeekableStream>>* fileList) {
-  if (!pContext) {
+  if (!context) {
     return false;
   }
 
-  if (!pContext->ContainsExtensionForm()) {
+  if (!context->ContainsExtensionForm()) {
     return true;
   }
 
-  CPDF_Document* pPDFDocument = pContext->GetPDFDoc();
+  CPDF_Document* pPDFDocument = context->GetPDFDoc();
   if (!pPDFDocument) {
     return false;
   }
@@ -118,8 +118,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   {
     RetainPtr<IFX_SeekableStream> pFileWrite =
         pdfium::MakeRetain<CFX_MemoryStream>();
-    if (pContext->SaveDatasetsPackage(pFileWrite) &&
-        pFileWrite->GetSize() > 0) {
+    if (context->SaveDatasetsPackage(pFileWrite) && pFileWrite->GetSize() > 0) {
       if (iDataSetsIndex != -1) {
         if (pDataSetsStream) {
           pDataSetsStream->InitStreamFromFile(pFileWrite);
@@ -139,7 +138,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   {
     RetainPtr<IFX_SeekableStream> pFileWrite =
         pdfium::MakeRetain<CFX_MemoryStream>();
-    if (pContext->SaveFormPackage(pFileWrite) && pFileWrite->GetSize() > 0) {
+    if (context->SaveFormPackage(pFileWrite) && pFileWrite->GetSize() > 0) {
       if (iFormIndex != -1) {
         if (pFormStream) {
           pFormStream->InitStreamFromFile(pFileWrite);
@@ -169,11 +168,11 @@ bool DoDocSave(FPDF_DOCUMENT document,
   }
 
 #ifdef PDF_ENABLE_XFA
-  auto* pContext = static_cast<CPDFXFA_Context*>(pPDFDoc->GetExtension());
-  if (pContext) {
+  auto* context = static_cast<CPDFXFA_Context*>(pPDFDoc->GetExtension());
+  if (context) {
     std::vector<RetainPtr<IFX_SeekableStream>> fileList;
-    pContext->SendPreSaveToXFADoc(&fileList);
-    SaveXFADocumentData(pContext, &fileList);
+    context->SendPreSaveToXFADoc(&fileList);
+    SaveXFADocumentData(context, &fileList);
   }
 #endif  // PDF_ENABLE_XFA
 
@@ -194,8 +193,8 @@ bool DoDocSave(FPDF_DOCUMENT document,
   bool bRet = fileMaker.Create(static_cast<uint32_t>(flags));
 
 #ifdef PDF_ENABLE_XFA
-  if (pContext) {
-    pContext->SendPostSaveToXFADoc();
+  if (context) {
+    context->SendPostSaveToXFADoc();
   }
 #endif  // PDF_ENABLE_XFA
 

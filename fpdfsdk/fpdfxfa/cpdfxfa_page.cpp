@@ -110,14 +110,14 @@ bool CPDFXFA_Page::LoadPDFPage() {
 }
 
 CXFA_FFPageView* CPDFXFA_Page::GetXFAPageView() const {
-  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
-  CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
+  auto* context = static_cast<CPDFXFA_Context*>(document_->GetExtension());
+  CXFA_FFDocView* pXFADocView = context->GetXFADocView();
   return pXFADocView ? pXFADocView->GetPageView(page_index_) : nullptr;
 }
 
 bool CPDFXFA_Page::LoadPage() {
-  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
-  switch (pContext->GetFormType()) {
+  auto* context = static_cast<CPDFXFA_Context*>(document_->GetExtension());
+  switch (context->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
     case FormType::kXFAForeground:
@@ -140,8 +140,8 @@ float CPDFXFA_Page::GetPageWidth() const {
     return 0.0f;
   }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
-  switch (pContext->GetFormType()) {
+  auto* context = static_cast<CPDFXFA_Context*>(document_->GetExtension());
+  switch (context->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
     case FormType::kXFAForeground:
@@ -165,8 +165,8 @@ float CPDFXFA_Page::GetPageHeight() const {
     return 0.0f;
   }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
-  switch (pContext->GetFormType()) {
+  auto* context = static_cast<CPDFXFA_Context*>(document_->GetExtension());
+  switch (context->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
     case FormType::kXFAForeground:
@@ -217,8 +217,8 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrixForRect(const FX_RECT& rect,
     return CFX_Matrix();
   }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
-  switch (pContext->GetFormType()) {
+  auto* context = static_cast<CPDFXFA_Context*>(document_->GetExtension());
+  switch (context->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
     case FormType::kXFAForeground:

@@ -141,23 +141,23 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
     return FPDF_RENDER_FAILED;
   }
 
-  auto* pContext =
+  auto* context =
       static_cast<CPDF_PageRenderContext*>(pPage->GetRenderContext());
-  if (!pContext || !pContext->renderer_) {
+  if (!context || !context->renderer_) {
     return FPDF_RENDER_FAILED;
   }
 
   CPDFSDK_PauseAdapter pause_adapter(pause);
-  pContext->renderer_->Continue(&pause_adapter);
+  context->renderer_->Continue(&pause_adapter);
 
-  int status = ToFPDFStatus(pContext->renderer_->GetStatus());
+  int status = ToFPDFStatus(context->renderer_->GetStatus());
   if (status == FPDF_RENDER_TOBECONTINUED) {
     return FPDF_RENDER_TOBECONTINUED;
   }
 
 #if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    pContext->device_->GetBitmap()->UnPreMultiply();
+    context->device_->GetBitmap()->UnPreMultiply();
   }
 #endif  // defined(PDF_USE_SKIA)
   return status;

@@ -1102,7 +1102,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutPageArea(
 }
 
 void CXFA_ContentLayoutProcessor::DoLayoutPositionedContainer(
-    Context* pContext) {
+    Context* context) {
   if (layout_item_) {
     return;
   }
@@ -1137,30 +1137,30 @@ void CXFA_ContentLayoutProcessor::DoLayoutPositionedContainer(
         GetHeap()->GetAllocationHandle(), GetHeap(), cur_child_node_,
         view_layout_processor_);
 
-    if (pContext && pContext->prg_specified_column_widths_) {
+    if (context && context->prg_specified_column_widths_) {
       int32_t iColSpan =
           cur_child_node_->JSObject()->GetInteger(XFA_Attribute::ColSpan);
       if (iColSpan <= fxcrt::CollectionSize<int32_t>(
-                          *pContext->prg_specified_column_widths_) -
+                          *context->prg_specified_column_widths_) -
                           iColIndex) {
-        pContext->cur_column_width_ = 0.0f;
+        context->cur_column_width_ = 0.0f;
         if (iColSpan == -1) {
           iColSpan = fxcrt::CollectionSize<int32_t>(
-              *pContext->prg_specified_column_widths_);
+              *context->prg_specified_column_widths_);
         }
         for (int32_t i = 0; iColIndex + i < iColSpan; ++i) {
-          pContext->cur_column_width_.value() +=
-              (*pContext->prg_specified_column_widths_)[iColIndex + i];
+          context->cur_column_width_.value() +=
+              (*context->prg_specified_column_widths_)[iColIndex + i];
         }
-        if (pContext->cur_column_width_.value() == 0) {
-          pContext->cur_column_width_.reset();
+        if (context->cur_column_width_.value() == 0) {
+          context->cur_column_width_.reset();
         }
 
         iColIndex += iColSpan >= 0 ? iColSpan : 0;
       }
     }
 
-    pProcessor->DoLayoutInternal(false, FLT_MAX, FLT_MAX, pContext);
+    pProcessor->DoLayoutInternal(false, FLT_MAX, FLT_MAX, context);
     if (!pProcessor->HasLayoutItem()) {
       continue;
     }
@@ -1624,7 +1624,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
     XFA_AttributeValue eFlowStrategy,
     float fHeightLimit,
     float fRealHeight,
-    Context* pContext,
+    Context* context,
     bool bRootForceTb) {
   has_avail_height_ = true;
   if (cur_child_preprocessor_) {
@@ -1635,7 +1635,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
   bool bContainerHeightAutoSize = true;
   CFX_SizeF container_size = CalculateContainerSpecifiedSize(
       GetFormNode(), &bContainerWidthAutoSize, &bContainerHeightAutoSize);
-  AdjustContainerSpecifiedSize(pContext, &container_size,
+  AdjustContainerSpecifiedSize(context, &container_size,
                                &bContainerWidthAutoSize,
                                &bContainerHeightAutoSize);
 
@@ -1780,7 +1780,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
                   eFlowStrategy, &uCurHAlignState, rgCurLineLayoutItems, false,
                   FLT_MAX, FLT_MAX, fContentWidthLimit, &fContentCurRowY,
                   &fContentCurRowAvailWidth, &fContentCurRowHeight,
-                  &bAddedItemInRow, &bForceEndPage, pContext, false);
+                  &bAddedItemInRow, &bForceEndPage, context, false);
             }
           }
           GotoNextContainerNodeSimple();
@@ -1815,7 +1815,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
                              rgCurLineLayoutItems, false, FLT_MAX, FLT_MAX,
                              fContentWidthLimit, &fContentCurRowY,
                              &fContentCurRowAvailWidth, &fContentCurRowHeight,
-                             &bAddedItemInRow, &bForceEndPage, pContext, false);
+                             &bAddedItemInRow, &bForceEndPage, context, false);
           }
           if (!bCreatePage) {
             if (JudgeLeaderOrTrailerForOccur(pLeaderNode)) {
@@ -1835,7 +1835,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
                   eFlowStrategy, &uCurHAlignState, rgCurLineLayoutItems, false,
                   FLT_MAX, FLT_MAX, fContentWidthLimit, &fContentCurRowY,
                   &fContentCurRowAvailWidth, &fContentCurRowHeight,
-                  &bAddedItemInRow, &bForceEndPage, pContext, false);
+                  &bAddedItemInRow, &bForceEndPage, context, false);
             }
           } else {
             if (JudgeLeaderOrTrailerForOccur(pLeaderNode)) {
@@ -1876,7 +1876,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
                     bUseBreakControl, fAvailHeight, fRealHeight,
                     fContentWidthLimit, &fContentCurRowY,
                     &fContentCurRowAvailWidth, &fContentCurRowHeight,
-                    &bAddedItemInRow, &bForceEndPage, pContext,
+                    &bAddedItemInRow, &bForceEndPage, context,
                     false) != Result::kDone) {
               goto SuspendAndCreateNewRow;
             }
@@ -1906,7 +1906,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
                     bUseBreakControl, fAvailHeight, fRealHeight,
                     fContentWidthLimit, &fContentCurRowY,
                     &fContentCurRowAvailWidth, &fContentCurRowHeight,
-                    &bAddedItemInRow, &bForceEndPage, pContext,
+                    &bAddedItemInRow, &bForceEndPage, context,
                     false) != Result::kDone) {
               goto SuspendAndCreateNewRow;
             }
@@ -1946,7 +1946,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
               container_size.height, eFlowStrategy, &uCurHAlignState,
               rgCurLineLayoutItems, bUseBreakControl, fAvailHeight, fRealHeight,
               fContentWidthLimit, &fContentCurRowY, &fContentCurRowAvailWidth,
-              &fContentCurRowHeight, &bAddedItemInRow, &bForceEndPage, pContext,
+              &fContentCurRowHeight, &bAddedItemInRow, &bForceEndPage, context,
               bNewRow);
           switch (rs) {
             case Result::kManualBreak:
@@ -2221,7 +2221,7 @@ CXFA_ContentLayoutProcessor::Result
 CXFA_ContentLayoutProcessor::DoLayoutInternal(bool bUseBreakControl,
                                               float fHeightLimit,
                                               float fRealHeight,
-                                              Context* pContext) {
+                                              Context* context) {
   switch (GetFormNode()->GetElementType()) {
     case XFA_Element::Subform:
     case XFA_Element::Area:
@@ -2236,13 +2236,13 @@ CXFA_ContentLayoutProcessor::DoLayoutInternal(bool bUseBreakControl,
         case XFA_AttributeValue::Lr_tb:
         case XFA_AttributeValue::Rl_tb:
           return DoLayoutFlowedContainer(bUseBreakControl, eLayoutStrategy,
-                                         fHeightLimit, fRealHeight, pContext,
+                                         fHeightLimit, fRealHeight, context,
                                          bRootForceTb);
         case XFA_AttributeValue::Position:
         case XFA_AttributeValue::Row:
         case XFA_AttributeValue::Rl_row:
         default:
-          DoLayoutPositionedContainer(pContext);
+          DoLayoutPositionedContainer(context);
           cur_child_node_stage_ = Stage::kDone;
           return Result::kDone;
         case XFA_AttributeValue::Table:
@@ -2952,12 +2952,12 @@ void CXFA_ContentLayoutProcessor::ProcessKeepNodesEnd() {
 }
 
 void CXFA_ContentLayoutProcessor::AdjustContainerSpecifiedSize(
-    Context* pContext,
+    Context* context,
     CFX_SizeF* pSize,
     bool* pContainerWidthAutoSize,
     bool* pContainerHeightAutoSize) {
-  if (pContext && pContext->cur_column_width_.has_value()) {
-    pSize->width = pContext->cur_column_width_.value();
+  if (context && context->cur_column_width_.has_value()) {
+    pSize->width = context->cur_column_width_.value();
     *pContainerWidthAutoSize = false;
   }
   if (*pContainerHeightAutoSize) {

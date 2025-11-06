@@ -59,9 +59,9 @@ void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
 void _png_warning_data(png_structp png_ptr, png_const_charp error_msg) {}
 
 void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
-  auto* pContext =
+  auto* context =
       reinterpret_cast<CPngContext*>(png_get_progressive_ptr(png_ptr));
-  if (!pContext) {
+  if (!context) {
     return;
   }
 
@@ -81,13 +81,13 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     png_set_palette_to_rgb(png_ptr);
   }
 
-  pContext->number_of_passes_ = png_set_interlace_handling(png_ptr);
-  pContext->height_ = height;
+  context->number_of_passes_ = png_set_interlace_handling(png_ptr);
+  context->height_ = height;
 
   double gamma = 1.0;
-  if (!pContext->delegate_->PngReadHeader(width, height, &gamma)) {
+  if (!context->delegate_->PngReadHeader(width, height, &gamma)) {
     // Note that `png_error` function is marked as `PNG_NORETURN`.
-    png_error(pContext->png_, "Read Header Callback Error");
+    png_error(context->png_, "Read Header Callback Error");
   }
   int intent;
   if (png_get_sRGB(png_ptr, info_ptr, &intent)) {
@@ -116,20 +116,20 @@ void _png_get_row_func(png_structp png_ptr,
                        png_bytep new_row,
                        png_uint_32 row_num,
                        int pass) {
-  auto* pContext =
+  auto* context =
       reinterpret_cast<CPngContext*>(png_get_progressive_ptr(png_ptr));
-  if (!pContext) {
+  if (!context) {
     return;
   }
 
   pdfium::span<uint8_t> dst_buf =
-      pContext->delegate_->PngAskScanlineBuf(row_num);
+      context->delegate_->PngAskScanlineBuf(row_num);
   CHECK(!dst_buf.empty());
   png_progressive_combine_row(png_ptr, dst_buf.data(), new_row);
 
-  if ((pass == (pContext->number_of_passes_ - 1)) &&
-      (row_num == (pContext->height_ - 1))) {
-    pContext->delegate_->PngFinishedDecoding();
+  if ((pass == (context->number_of_passes_ - 1)) &&
+      (row_num == (context->height_ - 1))) {
+    context->delegate_->PngFinishedDecoding();
   }
 }
 
@@ -188,9 +188,9 @@ std::unique_ptr<ProgressiveDecoderContext> LibpngPngDecoder::StartDecode(
 }
 
 // static
-bool LibpngPngDecoder::ContinueDecode(ProgressiveDecoderContext* pContext,
+bool LibpngPngDecoder::ContinueDecode(ProgressiveDecoderContext* context,
                                       RetainPtr<CFX_CodecMemory> codec_memory) {
-  auto* ctx = static_cast<CPngContext*>(pContext);
+  auto* ctx = static_cast<CPngContext*>(context);
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
   bool result = _png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),
                                      src_buf.size());

@@ -354,7 +354,7 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   }
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Context* pContext = nullptr;
+  CPDFXFA_Context* context = nullptr;
   if (!formInfo->xfa_disabled) {
     if (!pDocument->GetExtension()) {
       pDocument->SetExtension(std::make_unique<CPDFXFA_Context>(pDocument));
@@ -363,10 +363,10 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
     // If the CPDFXFA_Context has a FormFillEnvironment already then we've done
     // this and can just return the old Env. Otherwise, we'll end up setting a
     // new environment into the XFADocument and, that could get weird.
-    pContext = static_cast<CPDFXFA_Context*>(pDocument->GetExtension());
-    if (pContext->GetFormFillEnv()) {
+    context = static_cast<CPDFXFA_Context*>(pDocument->GetExtension());
+    if (context->GetFormFillEnv()) {
       return FPDFFormHandleFromCPDFSDKFormFillEnvironment(
-          pContext->GetFormFillEnv());
+          context->GetFormFillEnv());
     }
   }
 #endif  // PDF_ENABLE_XFA
@@ -375,8 +375,8 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
       std::make_unique<CPDFSDK_FormFillEnvironment>(pDocument, formInfo);
 
 #ifdef PDF_ENABLE_XFA
-  if (pContext) {
-    pContext->SetFormFillEnv(pFormFillEnv.get());
+  if (context) {
+    context->SetFormFillEnv(pFormFillEnv.get());
   }
 #endif  // PDF_ENABLE_XFA
 
@@ -403,10 +403,10 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   pFormFillEnv->ClearAllFocusedAnnots();
   // If the document was closed first, it's possible the XFA document
   // is now a nullptr.
-  auto* pContext =
+  auto* context =
       static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
-  if (pContext) {
-    pContext->SetFormFillEnv(nullptr);
+  if (context) {
+    context->SetFormFillEnv(nullptr);
   }
 #endif  // PDF_ENABLE_XFA
 }

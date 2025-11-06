@@ -1001,7 +1001,7 @@ void DrawCoonPatchMeshes(
 
 // static
 void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
-                              CPDF_RenderContext* pContext,
+                              CPDF_RenderContext* context,
                               const CPDF_PageObject* pCurObj,
                               const CPDF_ShadingPattern* pPattern,
                               const CFX_Matrix& mtMatrix,
@@ -1039,7 +1039,7 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     return;
   }
 #endif  // defined(PDF_USE_SKIA)
-  CPDF_DeviceBuffer buffer(pContext, pDevice, clip_rect_bbox, pCurObj, 150);
+  CPDF_DeviceBuffer buffer(context, pDevice, clip_rect_bbox, pCurObj, 150);
   RetainPtr<CFX_DIBitmap> pBitmap = buffer.Initialize();
   if (!pBitmap) {
     return;
