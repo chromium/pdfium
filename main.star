@@ -38,7 +38,7 @@ _MACOS_INTEL_DIMENSIONS = {
 }
 _MACOS_ARM_DIMENSIONS = {
     "cpu": "arm64",
-    "os": "Mac-13",
+    "os": "Mac-15",
 }
 _WINDOWS_INTEL_DIMENSIONS = {
     "cores": "8",
