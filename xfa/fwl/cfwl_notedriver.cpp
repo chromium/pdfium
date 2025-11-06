@@ -175,13 +175,6 @@ bool CFWL_NoteDriver::DoKillFocus(CFWL_Message* pMessage,
 
 bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
   CFWL_MessageKey* pMsg = static_cast<CFWL_MessageKey*>(pMessage);
-#if !BUILDFLAG(IS_APPLE)
-  if (pMsg->cmd_ == CFWL_MessageKey::KeyCommand::kKeyDown &&
-      pMsg->key_code_or_char_ == XFA_FWL_VKEY_Tab) {
-    return true;
-  }
-#endif
-
   if (focus_) {
     pMsg->SetDstTarget(focus_.Get());
     return true;
