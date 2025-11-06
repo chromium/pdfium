@@ -1108,7 +1108,7 @@ CXFA_ViewLayoutProcessor::ProcessOverflow(CXFA_Node* pFormNode,
         document->DataMerge_UpdateBindingRelations(overflow_data.pLeader);
         SetLayoutGeneratedNodeFlag(overflow_data.pLeader);
       }
-      if (pTrailerTemplate) {
+      if (pTrailerTemplate && pTrailerTemplate->IsContainerNode()) {
         if (!pDataScope) {
           pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
         }
