@@ -1473,15 +1473,13 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
         return "efc2206b313fff03be8e701907322b06";
 #endif
       }
-#if BUILDFLAG(IS_APPLE)
-#ifdef ARCH_CPU_ARM64
-      return "401858d37db450bfd3f9458ac490eb08";
-#else
+#if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+      return "bbd7a06a6a2661b6be7558aa40b5303b";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
       return "7c898d207b5f9bc7843d4ef93349bf71";
-#endif  // ARCH_CPU_ARM64
 #else
       return "3d5a3de53d5866044c2b6bf339742c97";
-#endif  // BUILDFLAG(IS_APPLE)
+#endif
     }();
     ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
     CompareBitmap(page_bitmap.get(), 200, 200, original_checksum);
@@ -1529,15 +1527,13 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
       return "10a6558c9e40ea837922e6f2882a2d57";
 #endif
     }
-#if BUILDFLAG(IS_APPLE)
-#ifdef ARCH_CPU_ARM64
-    return "6a1e31ffe451997946e449250b97d5b2";
-#else
+#if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+    return "24c32fef9f1a40d7850d08cfd2dc1abe";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
     return "727b1ea388b2374270f21d35d1fae70e";
-#endif  // ARCH_CPU_ARM64
 #else
     return "bc8623c052f12376c3d8dd09a6cd27df";
-#endif  // BUILDFLAG(IS_APPLE)
+#endif
   }();
   // TODO(thestig): Should `non_primes_checksum` and
   // `non_primes_after_save_checksum` be merged together?
@@ -1551,15 +1547,13 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
       return "10a6558c9e40ea837922e6f2882a2d57";
 #endif
     }
-#if BUILDFLAG(IS_APPLE)
-#ifdef ARCH_CPU_ARM64
-    return "d250bee3658c74e5d74729a09cbd80cd";
-#else
+#if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+    return "24c32fef9f1a40d7850d08cfd2dc1abe";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
     return "727b1ea388b2374270f21d35d1fae70e";
-#endif  // ARCH_CPU_ARM64
 #else
     return "bc8623c052f12376c3d8dd09a6cd27df";
-#endif  // BUILDFLAG(IS_APPLE)
+#endif
   }();
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
@@ -1999,15 +1993,13 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
       return "0b3ef335b8d86a3f9d609368b9d075e0";
 #endif
     }
-#if BUILDFLAG(IS_APPLE)
-#if ARCH_CPU_ARM64
-    return "a47297bbcfa01e27891eeb52375b6f9e";
-#else
+#if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+    return "bc1a520d8598f1de473ae22883e7abdc";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
     return "1c1d478b59e3e63813f0f56124564f48";
-#endif  // ARCH_CPU_ARM64
 #else
     return "b474826df1acedb05c7b82e1e49e64a6";
-#endif  // BUILDFLAG(IS_APPLE)
+#endif
   }();
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
