@@ -2262,14 +2262,14 @@ CJS_Result CJS_Field::get_value(CJS_Runtime* pRuntime) {
       if (pFormField->CountSelectedItems() > 1) {
         v8::Local<v8::Array> ValueArray = pRuntime->NewArray();
         v8::Local<v8::Value> ElementValue;
-        int iIndex;
+        int index;
         for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
-          iIndex = pFormField->GetSelectedIndex(i);
+          index = pFormField->GetSelectedIndex(i);
           ElementValue = pRuntime->NewString(
-              pFormField->GetOptionValue(iIndex).AsStringView());
+              pFormField->GetOptionValue(index).AsStringView());
           if (pRuntime->ToWideString(ElementValue).IsEmpty()) {
             ElementValue = pRuntime->NewString(
-                pFormField->GetOptionLabel(iIndex).AsStringView());
+                pFormField->GetOptionLabel(index).AsStringView());
           }
           pRuntime->PutArrayElement(ValueArray, i, ElementValue);
         }

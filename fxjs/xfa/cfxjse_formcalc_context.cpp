@@ -391,18 +391,18 @@ std::pair<bool, CXFA_LocaleValue::ValueType> PatternStringType(
   wsPattern.MakeLower();
   const wchar_t* pData = wsPattern.c_str();
   int32_t iLength = wsPattern.GetLength();
-  int32_t iIndex = 0;
+  int32_t index = 0;
   bool bSingleQuotation = false;
   UNSAFE_TODO({
-    while (iIndex < iLength) {
-      wchar_t wsPatternChar = pData[iIndex];
+    while (index < iLength) {
+      wchar_t wsPatternChar = pData[index];
       if (wsPatternChar == 0x27) {
         bSingleQuotation = !bSingleQuotation;
-        iIndex++;
+        index++;
         continue;
       }
       if (bSingleQuotation) {
-        iIndex++;
+        index++;
         continue;
       }
 
@@ -418,19 +418,19 @@ std::pair<bool, CXFA_LocaleValue::ValueType> PatternStringType(
         return {false, CXFA_LocaleValue::ValueType::kFloat};
       }
       if (wsPatternChar == 'y' || wsPatternChar == 'j') {
-        iIndex++;
+        index++;
         wchar_t timePatternChar;
-        while (iIndex < iLength) {
-          timePatternChar = pData[iIndex];
+        while (index < iLength) {
+          timePatternChar = pData[index];
           if (timePatternChar == 0x27) {
             bSingleQuotation = !bSingleQuotation;
-            iIndex++;
+            index++;
             continue;
           }
           if (!bSingleQuotation && timePatternChar == 't') {
             return {false, CXFA_LocaleValue::ValueType::kDateTime};
           }
-          iIndex++;
+          index++;
         }
         return {false, CXFA_LocaleValue::ValueType::kDate};
       }
@@ -442,7 +442,7 @@ std::pair<bool, CXFA_LocaleValue::ValueType> PatternStringType(
                  wsPatternChar == '.') {
         type = CXFA_LocaleValue::ValueType::kFloat;
       }
-      iIndex++;
+      index++;
     }
     return {false, type};
   });
@@ -718,9 +718,9 @@ WideString EncodeURL(const ByteString& bsURL) {
     if (ch <= 0x1f || (ch >= 0x7f && ch <= 0xff) ||
         pdfium::Contains(kStrUnsafe, ch) ||
         pdfium::Contains(kStrReserved, ch)) {
-      int32_t iIndex = ch / 16;
-      encode_buffer[1] = kStrCode[iIndex];
-      encode_buffer[2] = kStrCode[ch - iIndex * 16];
+      int32_t index = ch / 16;
+      encode_buffer[1] = kStrCode[index];
+      encode_buffer[2] = kStrCode[ch - index * 16];
       wsResultBuf << WideStringView(encode_buffer);
       continue;
     }
@@ -741,21 +741,21 @@ WideString EncodeURL(const ByteString& bsURL) {
       break;
     }
 
-    int32_t iIndex = 0;
+    int32_t index = 0;
     if (iLen % 2 != 0) {
       encode_buffer[1] = '0';
       encode_buffer[2] = wsBuffer[iLen - 1];
-      iIndex = iLen - 2;
+      index = iLen - 2;
     } else {
       encode_buffer[1] = wsBuffer[iLen - 1];
       encode_buffer[2] = wsBuffer[iLen - 2];
-      iIndex = iLen - 3;
+      index = iLen - 3;
     }
     wsResultBuf << WideStringView(encode_buffer);
-    while (iIndex > 0) {
-      encode_buffer[1] = wsBuffer[iIndex];
-      encode_buffer[2] = wsBuffer[iIndex - 1];
-      iIndex -= 2;
+    while (index > 0) {
+      encode_buffer[1] = wsBuffer[index];
+      encode_buffer[2] = wsBuffer[index - 1];
+      index -= 2;
       wsResultBuf << WideStringView(encode_buffer);
     }
   }
@@ -778,9 +778,9 @@ WideString EncodeHTML(const ByteString& bsHTML) {
     } else if (ch >= 32 && ch <= 126) {
       wsResultBuf.AppendChar(static_cast<wchar_t>(ch));
     } else if (ch < 256) {
-      int32_t iIndex = ch / 16;
-      encode_buffer[3] = kStrCode[iIndex];
-      encode_buffer[4] = kStrCode[ch - iIndex * 16];
+      int32_t index = ch / 16;
+      encode_buffer[3] = kStrCode[index];
+      encode_buffer[4] = kStrCode[ch - index * 16];
       encode_buffer[5] = ';';
       wsResultBuf << WideStringView(encode_buffer).First(6);
     } else if (ch < 65536) {
@@ -837,9 +837,9 @@ WideString EncodeXML(const ByteString& bsXML) {
         if (ch >= 32 && ch <= 126) {
           wsResultBuf.AppendChar(static_cast<wchar_t>(ch));
         } else if (ch < 256) {
-          int32_t iIndex = ch / 16;
-          encode_buffer[3] = kStrCode[iIndex];
-          encode_buffer[4] = kStrCode[ch - iIndex * 16];
+          int32_t index = ch / 16;
+          encode_buffer[3] = kStrCode[index];
+          encode_buffer[4] = kStrCode[ch - index * 16];
           encode_buffer[5] = ';';
           wsResultBuf << WideStringView(encode_buffer).First(6);
         } else if (ch < 65536) {
@@ -892,73 +892,73 @@ ByteString TrillionUS(ByteStringView bsData) {
   }
 
   ByteString strBuf;
-  int32_t iIndex = 0;
+  int32_t index = 0;
   UNSAFE_TODO({
     if (iFirstCount == 3) {
-      if (pData[iIndex] != '0') {
-        strBuf += kCapUnits[pData[iIndex] - '0'];
+      if (pData[index] != '0') {
+        strBuf += kCapUnits[pData[index] - '0'];
         strBuf += kComm[0];
       }
-      if (pData[iIndex + 1] == '0') {
-        strBuf += kCapUnits[pData[iIndex + 2] - '0'];
+      if (pData[index + 1] == '0') {
+        strBuf += kCapUnits[pData[index + 2] - '0'];
       } else {
-        if (pData[iIndex + 1] > '1') {
-          strBuf += kLastTens[pData[iIndex + 1] - '2'];
+        if (pData[index + 1] > '1') {
+          strBuf += kLastTens[pData[index + 1] - '2'];
           strBuf += "-";
-          strBuf += kUnits[pData[iIndex + 2] - '0'];
-        } else if (pData[iIndex + 1] == '1') {
-          strBuf += kTens[pData[iIndex + 2] - '0'];
-        } else if (pData[iIndex + 1] == '0') {
-          strBuf += kCapUnits[pData[iIndex + 2] - '0'];
+          strBuf += kUnits[pData[index + 2] - '0'];
+        } else if (pData[index + 1] == '1') {
+          strBuf += kTens[pData[index + 2] - '0'];
+        } else if (pData[index + 1] == '0') {
+          strBuf += kCapUnits[pData[index + 2] - '0'];
         }
       }
-      iIndex += 3;
+      index += 3;
     } else if (iFirstCount == 2) {
-      if (pData[iIndex] == '0') {
-        strBuf += kCapUnits[pData[iIndex + 1] - '0'];
+      if (pData[index] == '0') {
+        strBuf += kCapUnits[pData[index + 1] - '0'];
       } else {
-        if (pData[iIndex] > '1') {
-          strBuf += kLastTens[pData[iIndex] - '2'];
+        if (pData[index] > '1') {
+          strBuf += kLastTens[pData[index] - '2'];
           strBuf += "-";
-          strBuf += kUnits[pData[iIndex + 1] - '0'];
-        } else if (pData[iIndex] == '1') {
-          strBuf += kTens[pData[iIndex + 1] - '0'];
-        } else if (pData[iIndex] == '0') {
-          strBuf += kCapUnits[pData[iIndex + 1] - '0'];
+          strBuf += kUnits[pData[index + 1] - '0'];
+        } else if (pData[index] == '1') {
+          strBuf += kTens[pData[index + 1] - '0'];
+        } else if (pData[index] == '0') {
+          strBuf += kCapUnits[pData[index + 1] - '0'];
         }
       }
-      iIndex += 2;
+      index += 2;
     } else if (iFirstCount == 1) {
-      strBuf += kCapUnits[pData[iIndex] - '0'];
-      ++iIndex;
+      strBuf += kCapUnits[pData[index] - '0'];
+      ++index;
     }
     if (iLength > 3 && iFirstCount > 0) {
       strBuf += kComm[iComm];
       --iComm;
     }
-    while (iIndex < iLength) {
-      if (pData[iIndex] != '0') {
-        strBuf += kCapUnits[pData[iIndex] - '0'];
+    while (index < iLength) {
+      if (pData[index] != '0') {
+        strBuf += kCapUnits[pData[index] - '0'];
         strBuf += kComm[0];
       }
-      if (pData[iIndex + 1] == '0') {
-        strBuf += kCapUnits[pData[iIndex + 2] - '0'];
+      if (pData[index + 1] == '0') {
+        strBuf += kCapUnits[pData[index + 2] - '0'];
       } else {
-        if (pData[iIndex + 1] > '1') {
-          strBuf += kLastTens[pData[iIndex + 1] - '2'];
+        if (pData[index + 1] > '1') {
+          strBuf += kLastTens[pData[index + 1] - '2'];
           strBuf += "-";
-          strBuf += kUnits[pData[iIndex + 2] - '0'];
-        } else if (pData[iIndex + 1] == '1') {
-          strBuf += kTens[pData[iIndex + 2] - '0'];
-        } else if (pData[iIndex + 1] == '0') {
-          strBuf += kCapUnits[pData[iIndex + 2] - '0'];
+          strBuf += kUnits[pData[index + 2] - '0'];
+        } else if (pData[index + 1] == '1') {
+          strBuf += kTens[pData[index + 2] - '0'];
+        } else if (pData[index + 1] == '0') {
+          strBuf += kCapUnits[pData[index + 2] - '0'];
         }
       }
-      if (iIndex < iLength - 3) {
+      if (index < iLength - 3) {
         strBuf += kComm[iComm];
         --iComm;
       }
-      iIndex += 3;
+      index += 3;
     }
     return strBuf;
   });
@@ -971,24 +971,24 @@ ByteString WordUS(ByteStringView bsData, int32_t iStyle) {
 
   int32_t iLength = bsData.GetLength();
   ByteString strBuf;
-  int32_t iIndex = 0;
-  while (iIndex < iLength) {
-    if (bsData[iIndex] == '.') {
+  int32_t index = 0;
+  while (index < iLength) {
+    if (bsData[index] == '.') {
       break;
     }
-    ++iIndex;
+    ++index;
   }
-  int32_t iInteger = iIndex;
-  iIndex = 0;
-  while (iIndex < iInteger) {
-    int32_t iCount = (iInteger - iIndex) % 12;
-    if (!iCount && iInteger - iIndex > 0) {
+  int32_t iInteger = index;
+  index = 0;
+  while (index < iInteger) {
+    int32_t iCount = (iInteger - index) % 12;
+    if (!iCount && iInteger - index > 0) {
       iCount = 12;
     }
 
-    strBuf += TrillionUS(bsData.Substr(iIndex, iCount));
-    iIndex += iCount;
-    if (iIndex < iInteger) {
+    strBuf += TrillionUS(bsData.Substr(index, iCount));
+    index += iCount;
+    if (index < iInteger) {
       strBuf += " Trillion ";
     }
   }
@@ -999,16 +999,16 @@ ByteString WordUS(ByteStringView bsData, int32_t iStyle) {
 
   if (iStyle > 1 && iInteger < iLength) {
     strBuf += " And ";
-    iIndex = iInteger + 1;
-    while (iIndex < iLength) {
-      int32_t iCount = (iLength - iIndex) % 12;
-      if (!iCount && iLength - iIndex > 0) {
+    index = iInteger + 1;
+    while (index < iLength) {
+      int32_t iCount = (iLength - index) % 12;
+      if (!iCount && iLength - index > 0) {
         iCount = 12;
       }
 
-      strBuf += TrillionUS(bsData.Substr(iIndex, iCount));
-      iIndex += iCount;
-      if (iIndex < iLength) {
+      strBuf += TrillionUS(bsData.Substr(index, iCount));
+      index += iCount;
+      if (index < iLength) {
         strBuf += " Trillion ";
       }
     }
@@ -2875,9 +2875,9 @@ void CFXJSE_FormCalcContext::Choose(
     return;
   }
 
-  int32_t iIndex =
+  int32_t index =
       static_cast<int32_t>(ValueToFloat(info.GetIsolate(), info[0]));
-  if (iIndex < 1) {
+  if (index < 1) {
     info.GetReturnValue().SetEmptyString();
     return;
   }
@@ -2896,11 +2896,11 @@ void CFXJSE_FormCalcContext::Choose(
       }
 
       iValueIndex += (iLength - 2);
-      if (iValueIndex >= iIndex) {
+      if (iValueIndex >= index) {
         v8::Local<v8::Value> propertyValue =
             fxv8::ReentrantGetArrayElementHelper(info.GetIsolate(), arr, 1);
         v8::Local<v8::Value> jsValue = fxv8::ReentrantGetArrayElementHelper(
-            info.GetIsolate(), arr, (iLength - 1) - (iValueIndex - iIndex));
+            info.GetIsolate(), arr, (iLength - 1) - (iValueIndex - index));
         v8::Local<v8::Value> newPropertyValue;
         if (fxv8::IsObject(jsValue)) {
           v8::Local<v8::Object> jsObjectValue = jsValue.As<v8::Object>();
@@ -2922,7 +2922,7 @@ void CFXJSE_FormCalcContext::Choose(
       }
     } else {
       iValueIndex++;
-      if (iValueIndex == iIndex) {
+      if (iValueIndex == index) {
         ByteString bsChosen =
             ValueToUTF8String(info.GetIsolate(), argIndexValue);
         info.GetReturnValue().Set(
@@ -5053,34 +5053,34 @@ void CFXJSE_FormCalcContext::concat_fm_object(
 
 // static
 ByteString CFXJSE_FormCalcContext::GenerateSomExpression(ByteStringView bsName,
-                                                         int32_t iIndexFlags,
-                                                         int32_t iIndexValue,
+                                                         int32_t index_flags,
+                                                         int32_t index_value,
                                                          bool bIsStar) {
   if (bIsStar) {
     return ByteString(bsName, "[*]");
   }
 
-  // `iIndexFlags` values are the same as enum class
+  // `index_flags` values are the same as enum class
   // `CXFA_FMIndexExpression::AccessorIndex` values.
-  if (iIndexFlags == 0) {
+  if (index_flags == 0) {
     return ByteString(bsName);
   }
 
-  if (iIndexFlags == 1 || iIndexValue == 0) {
-    return ByteString(bsName, "[") + ByteString::FormatInteger(iIndexValue) +
+  if (index_flags == 1 || index_value == 0) {
+    return ByteString(bsName, "[") + ByteString::FormatInteger(index_value) +
            "]";
   }
 
-  const bool bNegative = iIndexValue < 0;
+  const bool bNegative = index_value < 0;
   ByteString bsSomExp(bsName);
-  if (iIndexFlags == 2) {
+  if (index_flags == 2) {
     bsSomExp += bNegative ? "[-" : "[+";
   } else {
-    DCHECK_EQ(iIndexFlags, 3);
+    DCHECK_EQ(index_flags, 3);
     bsSomExp += bNegative ? "[" : "[-";
   }
 
-  FX_SAFE_INT32 safe_index = iIndexValue;
+  FX_SAFE_INT32 safe_index = index_value;
   if (bNegative) {
     safe_index = -safe_index;
   }
@@ -5151,10 +5151,10 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   }
 
   bool bIsStar = true;
-  int32_t iIndexValue = 0;
+  int32_t index_value = 0;
   if (argc > 4) {
     bIsStar = false;
-    iIndexValue = ValueToInteger(info.GetIsolate(), info[4]);
+    index_value = ValueToInteger(info.GetIsolate(), info[4]);
   }
 
   const ByteString bsName =
@@ -5162,7 +5162,7 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   const bool bHasNoResolveName = bDotAccessor && bsName.IsEmpty();
   ByteString bsSomExp = GenerateSomExpression(
       bsName.AsStringView(),
-      fxv8::ReentrantToInt32Helper(info.GetIsolate(), info[3]), iIndexValue,
+      fxv8::ReentrantToInt32Helper(info.GetIsolate(), info[3]), index_value,
       bIsStar);
 
   v8::Local<v8::Value> argAccessor = info[0];
@@ -5357,10 +5357,10 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
 
   char szBuffer[3] = {};  // Last char always stays NUL for termination.
   State state = kHour;
-  size_t iIndex = 0;
-  while (iIndex + 1 < iZone) {
-    szBuffer[0] = pData[iIndex];
-    szBuffer[1] = pData[iIndex + 1];
+  size_t index = 0;
+  while (index + 1 < iZone) {
+    szBuffer[0] = pData[index];
+    szBuffer[1] = pData[index + 1];
     if (!FXSYS_IsDecimalDigit(szBuffer[0]) ||
         !FXSYS_IsDecimalDigit(szBuffer[1])) {
       return false;
@@ -5385,22 +5385,22 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
     } else {
       return false;
     }
-    iIndex += 2;
-    if (iIndex < iZone && pData[iIndex] == ':') {
-      ++iIndex;
+    index += 2;
+    if (index < iZone && pData[index] == ':') {
+      ++index;
     }
   }
 
-  if (iIndex < pData.size() && pData[iIndex] == '.') {
+  if (index < pData.size() && pData[index] == '.') {
     static constexpr int kSubSecondLength = 3;
-    if (iIndex + kSubSecondLength >= pData.size()) {
+    if (index + kSubSecondLength >= pData.size()) {
       return false;
     }
 
-    ++iIndex;
+    ++index;
     std::array<char, kSubSecondLength + 1> szMilliSeconds = {};
     for (int j = 0; j < kSubSecondLength; ++j) {
-      char c = pData[iIndex + j];
+      char c = pData[index + j];
       if (!FXSYS_IsDecimalDigit(c)) {
         return false;
       }
@@ -5409,24 +5409,24 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
     if (FXSYS_atoi(szMilliSeconds.data()) >= 1000) {
       return false;
     }
-    iIndex += kSubSecondLength;
+    index += kSubSecondLength;
   }
 
-  if (iIndex < pData.size() && FXSYS_towlower(pData[iIndex]) == 'z') {
+  if (index < pData.size() && FXSYS_towlower(pData[index]) == 'z') {
     return true;
   }
 
-  if (iIndex < pData.size()) {
-    if (pData[iIndex] == '+') {
-      ++iIndex;
-    } else if (pData[iIndex] == '-') {
-      ++iIndex;
+  if (index < pData.size()) {
+    if (pData[index] == '+') {
+      ++index;
+    } else if (pData[index] == '-') {
+      ++index;
     }
   }
   state = kZoneHour;
-  while (iIndex + 1 < pData.size()) {
-    szBuffer[0] = pData[iIndex];
-    szBuffer[1] = pData[iIndex + 1];
+  while (index + 1 < pData.size()) {
+    szBuffer[0] = pData[index];
+    szBuffer[1] = pData[index + 1];
     if (!FXSYS_IsDecimalDigit(szBuffer[0]) ||
         !FXSYS_IsDecimalDigit(szBuffer[1])) {
       return false;
@@ -5445,14 +5445,14 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
     } else {
       return false;
     }
-    iIndex += 2;
-    if (iIndex < pData.size() && pData[iIndex] == ':') {
-      ++iIndex;
+    index += 2;
+    if (index < pData.size() && pData[index] == ':') {
+      ++index;
     }
   }
 
   // Success if all input was processed.
-  return iIndex == pData.size();
+  return index == pData.size();
 }
 
 bool CFXJSE_FormCalcContext::IsIsoDateTimeFormat(ByteStringView bsData,
@@ -5463,19 +5463,19 @@ bool CFXJSE_FormCalcContext::IsIsoDateTimeFormat(ByteStringView bsData,
   *pMonth = 0;
   *pDay = 0;
 
-  size_t iIndex = 0;
-  while (iIndex < bsData.GetLength()) {
-    if (bsData[iIndex] == 'T' || bsData[iIndex] == 't') {
+  size_t index = 0;
+  while (index < bsData.GetLength()) {
+    if (bsData[index] == 'T' || bsData[index] == 't') {
       break;
     }
-    ++iIndex;
+    ++index;
   }
-  if (iIndex == bsData.GetLength() || (iIndex != 8 && iIndex != 10)) {
+  if (index == bsData.GetLength() || (index != 8 && index != 10)) {
     return false;
   }
 
-  ByteStringView date_part = bsData.First(iIndex);
-  ByteStringView time_part = bsData.Substr(iIndex + 1);
+  ByteStringView date_part = bsData.First(index);
+  ByteStringView time_part = bsData.Substr(index + 1);
   return IsIsoDateFormat(date_part, pYear, pMonth, pDay) &&
          IsIsoTimeFormat(time_part);
 }

@@ -203,7 +203,7 @@ size_t CPDF_Action::GetSubActionsCount() const {
   return pArray ? pArray->size() : 0;
 }
 
-CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
+CPDF_Action CPDF_Action::GetSubAction(size_t index) const {
   if (!dict_ || !dict_->KeyExist("Next")) {
     return CPDF_Action(nullptr);
   }
@@ -214,11 +214,11 @@ CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
   }
 
   if (const CPDF_Array* pArray = pNext->AsArray()) {
-    return CPDF_Action(pArray->GetDictAt(iIndex));
+    return CPDF_Action(pArray->GetDictAt(index));
   }
 
   if (const CPDF_Dictionary* dict = pNext->AsDictionary()) {
-    if (iIndex == 0) {
+    if (index == 0) {
       return CPDF_Action(pdfium::WrapRetain(dict));
     }
   }

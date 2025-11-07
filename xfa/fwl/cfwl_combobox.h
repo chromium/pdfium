@@ -52,12 +52,12 @@ class CFWL_ComboBox final : public CFWL_Widget {
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
-  WideString GetTextByIndex(int32_t iIndex) const;
+  WideString GetTextByIndex(int32_t index) const;
   int32_t GetCurSel() const { return cur_sel_; }
   void SetCurSel(int32_t iSel);
 
   void AddString(const WideString& wsText);
-  void RemoveAt(int32_t iIndex);
+  void RemoveAt(int32_t index);
   void RemoveAll();
 
   void SetEditText(const WideString& wsText);

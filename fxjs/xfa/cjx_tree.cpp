@@ -172,9 +172,9 @@ void CJX_Tree::index(v8::Isolate* pIsolate,
   }
 
   CXFA_Node* pNode = GetXFANode();
-  size_t iIndex = pNode ? pNode->GetIndexByName() : 0;
+  size_t index = pNode ? pNode->GetIndexByName() : 0;
   *pValue =
-      fxv8::NewNumberHelper(pIsolate, pdfium::checked_cast<int32_t>(iIndex));
+      fxv8::NewNumberHelper(pIsolate, pdfium::checked_cast<int32_t>(index));
 }
 
 void CJX_Tree::classIndex(v8::Isolate* pIsolate,
@@ -187,9 +187,9 @@ void CJX_Tree::classIndex(v8::Isolate* pIsolate,
   }
 
   CXFA_Node* pNode = GetXFANode();
-  size_t iIndex = pNode ? pNode->GetIndexByClassName() : 0;
+  size_t index = pNode ? pNode->GetIndexByClassName() : 0;
   *pValue =
-      fxv8::NewNumberHelper(pIsolate, pdfium::checked_cast<int32_t>(iIndex));
+      fxv8::NewNumberHelper(pIsolate, pdfium::checked_cast<int32_t>(index));
 }
 
 void CJX_Tree::somExpression(v8::Isolate* pIsolate,

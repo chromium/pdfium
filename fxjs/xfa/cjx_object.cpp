@@ -73,19 +73,19 @@ std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
   int32_t g = 0;
   int32_t b = 0;
 
-  size_t iIndex = 0;
+  size_t index = 0;
   for (size_t i = 0; i < strRGB.GetLength(); ++i) {
     wchar_t ch = strRGB[i];
     if (ch == L',') {
-      ++iIndex;
+      ++index;
     }
-    if (iIndex > 2) {
+    if (index > 2) {
       break;
     }
 
     int32_t iValue = ch - L'0';
     if (iValue >= 0 && iValue <= 9) {
-      switch (iIndex) {
+      switch (index) {
         case 0:
           r = r * 10 + iValue;
           break;

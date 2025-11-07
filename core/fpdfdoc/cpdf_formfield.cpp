@@ -191,14 +191,14 @@ void CPDF_FormField::ResetField() {
     case kListBox: {
       ClearSelection(NotificationOption::kDoNotNotify);
       WideString csValue;
-      int iIndex = GetDefaultSelectedItem();
-      if (iIndex >= 0) {
-        csValue = GetOptionLabel(iIndex);
+      int index = GetDefaultSelectedItem();
+      if (index >= 0) {
+        csValue = GetOptionLabel(index);
       }
       if (!NotifyListOrComboBoxBeforeChange(csValue)) {
         return;
       }
-      SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
+      SetItemSelection(index, NotificationOption::kDoNotNotify);
       NotifyListOrComboBoxAfterChange();
       break;
     }
@@ -394,13 +394,13 @@ bool CPDF_FormField::SetValue(const WideString& value,
                               : pdfium::form_fields::kV);
       dict_->SetNewFor<CPDF_String>(key, csValue.AsStringView());
 
-      int iIndex;
+      int index;
       if (GetType() == kComboBox) {
-        iIndex = FindOption(csValue);
+        index = FindOption(csValue);
       } else {
-        iIndex = -1;
+        index = -1;
       }
-      if (iIndex < 0) {
+      if (index < 0) {
         if (type_ == kRichText && !bDefault) {
           dict_->SetFor(pdfium::form_fields::kRV,
                         dict_->GetObjectFor(key.AsStringView())->Clone());
@@ -409,7 +409,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
       } else {
         if (!bDefault) {
           ClearSelection(NotificationOption::kDoNotNotify);
-          SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
+          SetItemSelection(index, NotificationOption::kDoNotNotify);
         }
       }
       if (notify == NotificationOption::kNotify) {
@@ -418,12 +418,12 @@ bool CPDF_FormField::SetValue(const WideString& value,
       break;
     }
     case kListBox: {
-      int iIndex = FindOption(value);
-      if (iIndex < 0) {
+      int index = FindOption(value);
+      if (index < 0) {
         return false;
       }
 
-      if (bDefault && iIndex == GetDefaultSelectedItem()) {
+      if (bDefault && index == GetDefaultSelectedItem()) {
         return false;
       }
 
@@ -433,7 +433,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
       }
       if (!bDefault) {
         ClearSelection(NotificationOption::kDoNotNotify);
-        SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
+        SetItemSelection(index, NotificationOption::kDoNotNotify);
       }
       if (notify == NotificationOption::kNotify) {
         form_->NotifyAfterSelectionChange(this);
@@ -527,9 +527,9 @@ int CPDF_FormField::GetSelectedIndex(int index) const {
 bool CPDF_FormField::ClearSelection(NotificationOption notify) {
   if (notify == NotificationOption::kNotify) {
     WideString csValue;
-    int iIndex = GetSelectedIndex(0);
-    if (iIndex >= 0) {
-      csValue = GetOptionLabel(iIndex);
+    int index = GetSelectedIndex(0);
+    if (index >= 0) {
+      csValue = GetOptionLabel(index);
     }
     if (!NotifyListOrComboBoxBeforeChange(csValue)) {
       return false;

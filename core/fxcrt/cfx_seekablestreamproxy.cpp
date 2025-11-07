@@ -33,10 +33,10 @@ std::pair<size_t, size_t> UTF8Decode(pdfium::span<const uint8_t> pSrc,
   int32_t iPending = 0;
   size_t iSrcNum = 0;
   size_t iDstNum = 0;
-  for (size_t iIndex = 0; iIndex < pSrc.size() && iDstNum < pDst.size();
-       ++iIndex) {
+  for (size_t index = 0; index < pSrc.size() && iDstNum < pDst.size();
+       ++index) {
     ++iSrcNum;
-    uint8_t byte = pSrc[iIndex];
+    uint8_t byte = pSrc[index];
     if (byte < 0x80) {
       iPending = 0;
       pDst[iDstNum++] = byte;

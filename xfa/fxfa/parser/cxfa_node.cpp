@@ -1972,7 +1972,7 @@ bool CXFA_Node::IsNeedSavingXMLNode() const {
                        GetElementType() == XFA_Element::Xfa);
 }
 
-CXFA_Node* CXFA_Node::GetItemIfExists(int32_t iIndex) {
+CXFA_Node* CXFA_Node::GetItemIfExists(int32_t index) {
   int32_t iCount = 0;
   uint32_t dwNameHash = 0;
   for (CXFA_Node* pNode = GetNextSibling(); pNode;
@@ -1999,7 +1999,7 @@ CXFA_Node* CXFA_Node::GetItemIfExists(int32_t iIndex) {
     }
 
     iCount++;
-    if (iCount > iIndex) {
+    if (iCount > index) {
       return pNode;
     }
   }

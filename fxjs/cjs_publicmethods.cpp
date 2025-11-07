@@ -1044,10 +1044,10 @@ CJS_Result CJS_PublicMethods::AFDate_Format(
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  int iIndex =
+  int index =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kDateFormats));
   v8::LocalVector<v8::Value> newParams(pRuntime->GetIsolate());
-  newParams.push_back(pRuntime->NewString(kDateFormats[iIndex]));
+  newParams.push_back(pRuntime->NewString(kDateFormats[index]));
   return AFDate_FormatEx(pRuntime, newParams);
 }
 
@@ -1059,10 +1059,10 @@ CJS_Result CJS_PublicMethods::AFDate_Keystroke(
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  int iIndex =
+  int index =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kDateFormats));
   v8::LocalVector<v8::Value> newParams(pRuntime->GetIsolate());
-  newParams.push_back(pRuntime->NewString(kDateFormats[iIndex]));
+  newParams.push_back(pRuntime->NewString(kDateFormats[index]));
   return AFDate_KeystrokeEx(pRuntime, newParams);
 }
 
@@ -1074,10 +1074,10 @@ CJS_Result CJS_PublicMethods::AFTime_Format(
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  int iIndex =
+  int index =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kTimeFormats));
   v8::LocalVector<v8::Value> newParams(pRuntime->GetIsolate());
-  newParams.push_back(pRuntime->NewString(kTimeFormats[iIndex]));
+  newParams.push_back(pRuntime->NewString(kTimeFormats[index]));
   return AFDate_FormatEx(pRuntime, newParams);
 }
 
@@ -1088,10 +1088,10 @@ CJS_Result CJS_PublicMethods::AFTime_Keystroke(
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  int iIndex =
+  int index =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kTimeFormats));
   v8::LocalVector<v8::Value> newParams(pRuntime->GetIsolate());
-  newParams.push_back(pRuntime->NewString(kTimeFormats[iIndex]));
+  newParams.push_back(pRuntime->NewString(kTimeFormats[index]));
   return AFDate_KeystrokeEx(pRuntime, newParams);
 }
 
@@ -1176,13 +1176,13 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
       return CJS_Result::Success();
     }
 
-    size_t iIndex = 0;
-    for (iIndex = 0; iIndex < valEvent.GetLength(); ++iIndex) {
-      if (!MaskSatisfied(valEvent[iIndex], wstrMask[iIndex])) {
+    size_t index = 0;
+    for (index = 0; index < valEvent.GetLength(); ++index) {
+      if (!MaskSatisfied(valEvent[index], wstrMask[index])) {
         break;
       }
     }
-    if (iIndex != wstrMask.GetLength()) {
+    if (index != wstrMask.GetLength()) {
       AlertIfPossible(pEvent, WideString::FromASCII("AFSpecial_KeystrokeEx"),
                       JSGetStringFromID(JSMessage::kInvalidInputError));
       pEvent->Rc() = false;
@@ -1196,7 +1196,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
   }
 
   WideString wChange = wideChange;
-  size_t iIndexMask = pEvent->SelStart();
+  size_t mask_index = pEvent->SelStart();
   size_t combined_len = valEvent.GetLength() + wChange.GetLength() +
                         pEvent->SelStart() - pEvent->SelEnd();
   if (combined_len > wstrMask.GetLength()) {
@@ -1206,7 +1206,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
     return CJS_Result::Success();
   }
 
-  if (iIndexMask >= wstrMask.GetLength() && !wChange.IsEmpty()) {
+  if (mask_index >= wstrMask.GetLength() && !wChange.IsEmpty()) {
     AlertIfPossible(pEvent, WideString::FromASCII("AFSpecial_KeystrokeEx"),
                     JSGetStringFromID(JSMessage::kParamTooLongError));
     pEvent->Rc() = false;
@@ -1214,13 +1214,13 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
   }
 
   for (size_t i = 0; i < wChange.GetLength(); ++i) {
-    if (iIndexMask >= wstrMask.GetLength()) {
+    if (mask_index >= wstrMask.GetLength()) {
       AlertIfPossible(pEvent, WideString::FromASCII("AFSpecial_KeystrokeEx"),
                       JSGetStringFromID(JSMessage::kParamTooLongError));
       pEvent->Rc() = false;
       return CJS_Result::Success();
     }
-    wchar_t wMask = wstrMask[iIndexMask];
+    wchar_t wMask = wstrMask[mask_index];
     if (!IsReservedMaskChar(wMask)) {
       wChange.SetAt(i, wMask);
     }
@@ -1229,7 +1229,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
       pEvent->Rc() = false;
       return CJS_Result::Success();
     }
-    iIndexMask++;
+    mask_index++;
   }
   wideChange = std::move(wChange);
   return CJS_Result::Success();

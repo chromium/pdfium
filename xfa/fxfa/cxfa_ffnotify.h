@@ -35,8 +35,8 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
 
   void OnWidgetListItemAdded(CXFA_Node* pSender,
                              const WideString& wsLabel,
-                             int32_t iIndex);
-  void OnWidgetListItemRemoved(CXFA_Node* pSender, int32_t iIndex);
+                             int32_t index);
+  void OnWidgetListItemRemoved(CXFA_Node* pSender, int32_t index);
 
   // Node events
   void OnNodeReady(CXFA_Node* pNode);

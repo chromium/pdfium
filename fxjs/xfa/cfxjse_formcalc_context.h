@@ -281,8 +281,8 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   friend class FormCalcContextTest_IsIsoTimeFormat_Test;
 
   static ByteString GenerateSomExpression(ByteStringView bsName,
-                                          int32_t iIndexFlags,
-                                          int32_t iIndexValue,
+                                          int32_t index_flags,
+                                          int32_t index_value,
                                           bool bIsStar);
 
   static void DotAccessorCommon(CFXJSE_HostObject* pThis,

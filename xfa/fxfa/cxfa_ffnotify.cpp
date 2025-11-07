@@ -61,7 +61,7 @@ void CXFA_FFNotify::OnPageViewEvent(CXFA_ViewLayoutItem* pSender,
 
 void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
                                           const WideString& wsLabel,
-                                          int32_t iIndex) {
+                                          int32_t index) {
   if (pSender->GetFFWidgetType() != XFA_FFWidgetType::kChoiceList) {
     return;
   }
@@ -69,13 +69,12 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
   CXFA_FFWidget* pWidget = doc_->GetDocView()->GetWidgetForNode(pSender);
   for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
     if (pWidget->IsLoaded()) {
-      ToDropDown(ToField(pWidget))->InsertItem(wsLabel, iIndex);
+      ToDropDown(ToField(pWidget))->InsertItem(wsLabel, index);
     }
   }
 }
 
-void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
-                                            int32_t iIndex) {
+void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender, int32_t index) {
   if (pSender->GetFFWidgetType() != XFA_FFWidgetType::kChoiceList) {
     return;
   }
@@ -83,7 +82,7 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
   CXFA_FFWidget* pWidget = doc_->GetDocView()->GetWidgetForNode(pSender);
   for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
     if (pWidget->IsLoaded()) {
-      ToDropDown(ToField(pWidget))->DeleteItem(iIndex);
+      ToDropDown(ToField(pWidget))->DeleteItem(index);
     }
   }
 }

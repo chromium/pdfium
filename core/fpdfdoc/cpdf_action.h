@@ -68,7 +68,7 @@ class CPDF_Action {
   WideString GetJavaScript() const;
 
   size_t GetSubActionsCount() const;
-  CPDF_Action GetSubAction(size_t iIndex) const;
+  CPDF_Action GetSubAction(size_t index) const;
 
  private:
   RetainPtr<const CPDF_Object> GetJavaScriptObject() const;

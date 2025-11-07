@@ -201,8 +201,8 @@ const char* GetFontFamily(uint32_t nStyle, const ByteString& fontname) {
 
 ByteString ParseStyle(const ByteString& bsStyle, size_t iStart) {
   ByteStringView bsRegion = bsStyle.AsStringView().Substr(iStart);
-  size_t iIndex = bsRegion.Find(',').value_or(bsRegion.GetLength());
-  return ByteString(bsRegion.First(iIndex));
+  size_t index = bsRegion.Find(',').value_or(bsRegion.GetLength());
+  return ByteString(bsRegion.First(index));
 }
 
 struct FX_FontStyle {

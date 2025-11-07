@@ -182,9 +182,9 @@ CJS_Result CJX_InstanceManager::removeInstance(
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  int32_t iIndex = runtime->ToInt32(params[0]);
+  int32_t index = runtime->ToInt32(params[0]);
   int32_t iCount = GetXFANode()->GetCount();
-  if (iIndex < 0 || iIndex >= iCount) {
+  if (index < 0 || index >= iCount) {
     return CJS_Result::Failure(JSMessage::kInvalidInputError);
   }
 
@@ -194,7 +194,7 @@ CJS_Result CJX_InstanceManager::removeInstance(
     return CJS_Result::Failure(JSMessage::kTooManyOccurrences);
   }
 
-  CXFA_Node* pRemoveInstance = GetXFANode()->GetItemIfExists(iIndex);
+  CXFA_Node* pRemoveInstance = GetXFANode()->GetItemIfExists(index);
   if (!pRemoveInstance) {
     return CJS_Result::Failure(JSMessage::kParamError);
   }
@@ -204,7 +204,7 @@ CJS_Result CJX_InstanceManager::removeInstance(
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     CXFA_Node* pXFA = GetXFANode();
-    for (int32_t i = iIndex; i < iCount - 1; i++) {
+    for (int32_t i = index; i < iCount - 1; i++) {
       auto* pSubformInstance = CXFA_Subform::FromNode(pXFA->GetItemIfExists(i));
       if (pSubformInstance) {
         pNotify->RunSubformIndexChange(pSubformInstance);
@@ -284,14 +284,14 @@ CJS_Result CJX_InstanceManager::insertInstance(
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  int32_t iIndex = runtime->ToInt32(params[0]);
+  int32_t index = runtime->ToInt32(params[0]);
   bool bBind = false;
   if (params.size() == 2) {
     bBind = runtime->ToBoolean(params[1]);
   }
 
   int32_t iCount = GetXFANode()->GetCount();
-  if (iIndex < 0 || iIndex > iCount) {
+  if (index < 0 || index > iCount) {
     return CJS_Result::Failure(JSMessage::kInvalidInputError);
   }
 
@@ -306,7 +306,7 @@ CJS_Result CJX_InstanceManager::insertInstance(
     return CJS_Result::Success(runtime->NewNull());
   }
 
-  GetXFANode()->InsertItem(pNewInstance, iIndex, iCount, true);
+  GetXFANode()->InsertItem(pNewInstance, index, iCount, true);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {

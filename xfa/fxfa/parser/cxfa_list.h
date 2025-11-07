@@ -23,7 +23,7 @@ class CXFA_List : public CXFA_Object {
   virtual bool Append(CXFA_Node* pNode) = 0;
   virtual bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;
   virtual void Remove(CXFA_Node* pNode) = 0;
-  virtual CXFA_Node* Item(size_t iIndex) = 0;
+  virtual CXFA_Node* Item(size_t index) = 0;
 
  protected:
   CXFA_List(CXFA_Document* doc, CJX_Object* js_obj);

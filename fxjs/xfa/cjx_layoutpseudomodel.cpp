@@ -103,7 +103,7 @@ CJS_Result CJX_LayoutPseudoModel::DoHWXYInternal(
       unit = std::move(tmp_unit);
     }
   }
-  int32_t iIndex = params.size() >= 3 ? runtime->ToInt32(params[2]) : 0;
+  int32_t index = params.size() >= 3 ? runtime->ToInt32(params[2]) : 0;
   auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
@@ -111,9 +111,9 @@ CJS_Result CJX_LayoutPseudoModel::DoHWXYInternal(
     return CJS_Result::Success();
   }
 
-  while (iIndex > 0 && pLayoutItem) {
+  while (index > 0 && pLayoutItem) {
     pLayoutItem = pLayoutItem->GetNext();
-    --iIndex;
+    --index;
   }
 
   if (!pLayoutItem) {
@@ -380,9 +380,9 @@ CJS_Result CJX_LayoutPseudoModel::pageContent(
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  int32_t iIndex = 0;
+  int32_t index = 0;
   if (params.size() >= 1) {
-    iIndex = runtime->ToInt32(params[0]);
+    index = runtime->ToInt32(params[0]);
   }
 
   WideString wsType;
@@ -406,7 +406,7 @@ CJS_Result CJX_LayoutPseudoModel::pageContent(
       doc->GetHeap()->GetAllocationHandle(), doc);
   doc->GetNodeOwner()->PersistList(pArrayNodeList);
   pArrayNodeList->SetArrayNodeList(
-      GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
+      GetObjArray(pDocLayout, index, wsType, bOnPageArea));
   return CJS_Result::Success(runtime->NewNormalXFAObject(pArrayNodeList));
 }
 

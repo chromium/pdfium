@@ -905,11 +905,11 @@ CFWL_ListBox::Item* CFWL_ListBox::AddString(const WideString& wsAdd) {
   return item_array_.back().get();
 }
 
-void CFWL_ListBox::RemoveAt(int32_t iIndex) {
-  if (iIndex < 0 || static_cast<size_t>(iIndex) >= item_array_.size()) {
+void CFWL_ListBox::RemoveAt(int32_t index) {
+  if (index < 0 || static_cast<size_t>(index) >= item_array_.size()) {
     return;
   }
-  item_array_.erase(item_array_.begin() + iIndex);
+  item_array_.erase(item_array_.begin() + index);
 }
 
 void CFWL_ListBox::DeleteString(Item* pItem) {

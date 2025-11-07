@@ -70,7 +70,7 @@ class CFWL_ListBox : public CFWL_Widget {
   Item* GetItem(const CFWL_Widget* pWidget, int32_t nIndex) const;
   int32_t GetItemIndex(CFWL_Widget* pWidget, Item* pItem);
   Item* AddString(const WideString& wsAdd);
-  void RemoveAt(int32_t iIndex);
+  void RemoveAt(int32_t index);
   void DeleteString(Item* pItem);
   void DeleteAll();
   int32_t CountSelItems();

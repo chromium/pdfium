@@ -106,8 +106,8 @@ CJS_Result CJX_Field::getSaveItem(CFXJSE_Engine* runtime,
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  int32_t iIndex = runtime->ToInt32(params[0]);
-  if (iIndex < 0) {
+  int32_t index = runtime->ToInt32(params[0]);
+  if (index < 0) {
     return CJS_Result::Success(runtime->NewNull());
   }
 
@@ -116,7 +116,7 @@ CJS_Result CJX_Field::getSaveItem(CFXJSE_Engine* runtime,
     return CJS_Result::Success(runtime->NewNull());
   }
 
-  std::optional<WideString> value = node->GetChoiceListItem(iIndex, true);
+  std::optional<WideString> value = node->GetChoiceListItem(index, true);
   if (!value.has_value()) {
     return CJS_Result::Success(runtime->NewNull());
   }
@@ -178,8 +178,8 @@ CJS_Result CJX_Field::getDisplayItem(
     return CJS_Result::Failure(JSMessage::kParamError);
   }
 
-  int32_t iIndex = runtime->ToInt32(params[0]);
-  if (iIndex < 0) {
+  int32_t index = runtime->ToInt32(params[0]);
+  if (index < 0) {
     return CJS_Result::Success(runtime->NewNull());
   }
 
@@ -188,7 +188,7 @@ CJS_Result CJX_Field::getDisplayItem(
     return CJS_Result::Success(runtime->NewNull());
   }
 
-  std::optional<WideString> value = node->GetChoiceListItem(iIndex, false);
+  std::optional<WideString> value = node->GetChoiceListItem(index, false);
   if (!value.has_value()) {
     return CJS_Result::Success(runtime->NewNull());
   }
@@ -208,13 +208,13 @@ CJS_Result CJX_Field::setItemState(CFXJSE_Engine* runtime,
     return CJS_Result::Success();
   }
 
-  int32_t iIndex = runtime->ToInt32(params[0]);
+  int32_t index = runtime->ToInt32(params[0]);
   if (runtime->ToInt32(params[1]) != 0) {
-    node->SetItemState(iIndex, true, true, true);
+    node->SetItemState(index, true, true, true);
     return CJS_Result::Success();
   }
-  if (node->GetItemState(iIndex)) {
-    node->SetItemState(iIndex, false, true, true);
+  if (node->GetItemState(index)) {
+    node->SetItemState(index, false, true, true);
   }
 
   return CJS_Result::Success();
@@ -413,13 +413,13 @@ void CJX_Field::selectedIndex(v8::Isolate* pIsolate,
     return;
   }
 
-  int32_t iIndex = fxv8::ReentrantToInt32Helper(pIsolate, *pValue);
-  if (iIndex == -1) {
+  int32_t index = fxv8::ReentrantToInt32Helper(pIsolate, *pValue);
+  if (index == -1) {
     node->ClearAllSelections();
     return;
   }
 
-  node->SetItemState(iIndex, true, true, true);
+  node->SetItemState(index, true, true, true);
 }
 
 void CJX_Field::rawValue(v8::Isolate* pIsolate,

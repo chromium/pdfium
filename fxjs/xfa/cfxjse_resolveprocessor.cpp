@@ -658,20 +658,20 @@ void CFXJSE_ResolveProcessor::ConditionArray(size_t iCurIndex,
     return;
   }
 
-  int32_t iIndex = wsCondition.Substr(i, iLen - 1 - i).GetInteger();
+  int32_t index = wsCondition.Substr(i, iLen - 1 - i).GetInteger();
   if (bRelative) {
-    iIndex += iCurIndex;
+    index += iCurIndex;
   }
 
-  if (iIndex < 0 || static_cast<size_t>(iIndex) >= iFoundCount) {
+  if (index < 0 || static_cast<size_t>(index) >= iFoundCount) {
     if (pRnd->styles_ & XFA_ResolveFlag::kCreateNode) {
       node_helper_->create_parent_ = ToNode(pRnd->cur_object_);
-      node_helper_->create_count_ = iIndex - iFoundCount + 1;
+      node_helper_->create_count_ = index - iFoundCount + 1;
     }
     pRnd->result_.objects.clear();
   } else {
     pRnd->result_.objects = std::vector<cppgc::Member<CXFA_Object>>(
-        1, pRnd->result_.objects[iIndex]);
+        1, pRnd->result_.objects[index]);
   }
 }
 

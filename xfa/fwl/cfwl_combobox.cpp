@@ -57,8 +57,8 @@ void CFWL_ComboBox::AddString(const WideString& wsText) {
   list_box_->AddString(wsText);
 }
 
-void CFWL_ComboBox::RemoveAt(int32_t iIndex) {
-  list_box_->RemoveAt(iIndex);
+void CFWL_ComboBox::RemoveAt(int32_t index) {
+  list_box_->RemoveAt(index);
 }
 
 void CFWL_ComboBox::RemoveAll() {
@@ -134,8 +134,8 @@ void CFWL_ComboBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
   }
 }
 
-WideString CFWL_ComboBox::GetTextByIndex(int32_t iIndex) const {
-  CFWL_ListBox::Item* pItem = list_box_->GetItem(list_box_, iIndex);
+WideString CFWL_ComboBox::GetTextByIndex(int32_t index) const {
+  CFWL_ListBox::Item* pItem = list_box_->GetItem(list_box_, index);
   return pItem ? pItem->GetText() : WideString();
 }
 
