@@ -351,7 +351,7 @@ luci.notifier(
     on_new_status = ["FAILURE"],
     notify_emails = [
         "andyphan@chromium.org",
-        "awscreen@chromium.org",
+        "ask@chromium.org",
         "thestig@chromium.org",
     ],
     notify_blamelist = True,
