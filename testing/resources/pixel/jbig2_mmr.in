@@ -8,7 +8,7 @@ endobj
 
 {{object 2 0}} <<
   /Type /Pages
-  /Kids [3 0 R]
+  /Kids [ 3 0 R ]
   /Count 1
 >>
 endobj
@@ -16,7 +16,7 @@ endobj
 {{object 3 0}} <<
   /Type /Page
   /Parent 2 0 R
-  /MediaBox [0 0 399 400]
+  /MediaBox [ 0 0 399 400 ]
   /Contents 4 0 R
   /Resources <<
     /XObject <<
@@ -36,41 +36,29 @@ endstream
 endobj
 
 {{object 5 0}} <<
+  {{streamlen}}
   /Type /XObject
   /Subtype /Image
   /Width 399
   /Height 400
   /ColorSpace /DeviceGray
-  /Filter [/ASCIIHexDecode /JBIG2Decode]
+  /Filter [ /ASCIIHexDecode /JBIG2Decode ]
   /BitsPerComponent 1
-  {{streamlen}}
 >>
 stream
-0000 0000 3000 0100 0000 1300 0001 8f00
-0001 9000 0000 0000 0000 0001 0000 0000
-0001 2700 0100 0001 5800 0001 8f00 0001
-9000 0000 0000 0000 0000 01ff ffff ffff
-ffff ffff fcb7 81c2 218d 9a04 1d07 41e1
-d3c3 a0f7 bde1 ef77 ddf0 eddb 8786 e5bd
-034a 1b87 b72b b907 841b 7083 6e9b d30d
-fba6 dc9a 0fe1 069b 7083 de9a b74d 7eaf
-4edb ebd3 56fa dfdb eafd 36fa fd3b b5bf
-09f6 95be 17b4 136e d2bc 3093 7861 05b8
-abd3 b85b 84de 16e1 37ad c220 da3b b841
-6f5b b849 de12 bba0 9dba 0adf 4f74 15b7
-a7ba 56de 13be 15de b7d5 de13 be15 b761
-3f85 6dda 7f0a dbb0 9ded 6dc3 09b6 e185
-f16d bfdb 6fdd b7f7 def7 deef fb4f eed3
-f7b5 dae1 8570 c2e2 fffd dfff f77f ffff
-ffff ffff ffff ffff febe bafa afae abaa
-fad2 f4bd 2f09 5697 a5aa eaba aeab ad50
-5e95 694e e63e 1069 420c 1698 5a60 970b
-4c25 c2d3 0970 9709 70bd 7a5c 2da4 bada
-0970 95a0 82b4 1050 c208 2861 0414 4c82
-814a 1050 40a5 7540 3884 1420 a82a 0b54
-b0a8 2d6b 0b0b 0b0a c2c2 b0b0 ac82 891d
-8286 1432 3917 1fff ffff ffff ffff ffff
-fc >
+00000000300001000000130000018f0000019000000000000000000100000000
+0001270001000001580000018f0000019000000000000000000001ffffffffff
+fffffffffcb781c2218d9a041d0741e1d3c3a0f7bde1ef77ddf0eddb8786e5bd
+034a1b87b72bb907841b70836e9bd30dfba6dc9a0fe1069b7083de9ab74d7eaf
+4edbebd356fadfdbeafd36fafd3bb5bf09f695be17b4136ed2bc3093786105b8
+abd3b85b84de16e137adc220da3bb8416f5bb849de12bba09dba0adf4f7415b7
+a7ba56de13be15deb7d5de13be15b7613f856dda7f0adbb09ded6dc309b6e185
+f16dbfdb6fddb7f7def7deeffb4feed3f7b5dae18570c2e2fffddffff77fffff
+fffffffffffffffffebebafaafaeabaafad2f4bd2f095697a5aaeabaaeabad50
+5e95694ee63e1069420c16985a60970b4c25c2d30970970970bd7a5c2da4bada
+097095a082b41050c208286104144c82814a105040a5754038841420a82a0b54
+b0a82d6b0b0b0b0ac2c2b0b0ac82891d8286143239171fffffffffffffffffff
+fc>
 endstream
 endobj
 
