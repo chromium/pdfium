@@ -20,6 +20,8 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/checked_math.h"
 #include "core/fxcrt/span.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -119,6 +121,29 @@ PDFiumFuzzerHelper::RenderingOptions GetRenderingOptionsFromData(
       .form_flags = form_flags,
       .bitmap_format = bitmap_format,
   };
+}
+
+int GetBytesPerPixelForBitmapFormat(int bitmap_format) {
+  switch (bitmap_format) {
+    case FPDFBitmap_Gray:
+      return 1;
+    case FPDFBitmap_BGR:
+      return 3;
+    case FPDFBitmap_BGRx:
+    case FPDFBitmap_BGRA:
+    case FPDFBitmap_BGRA_Premul:
+      return 4;
+    default:
+      NOTREACHED();
+  }
+}
+
+bool CheckImageSize(int width, int height, int bitmap_format) {
+  static constexpr uint32_t kMemLimitBytes = 1024 * 1024 * 1024;  // 1 GB.
+  FX_SAFE_UINT32 mem = width;
+  mem *= height;
+  mem *= GetBytesPerPixelForBitmapFormat(bitmap_format);
+  return mem.IsValid() && mem.ValueOrDie() <= kMemLimitBytes;
 }
 
 }  // namespace
@@ -241,9 +266,12 @@ bool PDFiumFuzzerHelper::RenderPage(FPDF_DOCUMENT doc,
 
   FormActionHandler(form, doc, page.get());
 
-  const double scale = 1.0;
-  int width = static_cast<int>(FPDF_GetPageWidthF(page.get()) * scale);
-  int height = static_cast<int>(FPDF_GetPageHeightF(page.get()) * scale);
+  int width = static_cast<int>(FPDF_GetPageWidthF(page.get()));
+  int height = static_cast<int>(FPDF_GetPageHeightF(page.get()));
+  if (!CheckImageSize(width, height, options.bitmap_format)) {
+    return false;
+  }
+
   ScopedFPDFBitmap bitmap(FPDFBitmap_CreateEx(
       width, height, options.bitmap_format, nullptr, /*stride=*/0));
   if (bitmap) {
