@@ -378,22 +378,17 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
             nTmp++;
           }
           uint8_t SBSYMCODELEN = (uint8_t)nTmp;
-          uint32_t uVal = 0;
-          uint32_t IDI;
-          for (;;) {
+          uint32_t IDI = 0;
+          for (uint32_t n = 0; n < SBSYMCODELEN; ++n) {
             if (pStream->read1Bit(&nTmp) != 0) {
               return nullptr;
             }
 
-            uVal = (uVal << 1) | nTmp;
-            if (uVal >= SBNUMSYMS) {
-              return nullptr;
-            }
+            IDI = (IDI << 1) | nTmp;
+          }
 
-            IDI = SBSYMCODELEN == 0 ? uVal : SBNUMSYMS;
-            if (IDI < SBNUMSYMS) {
-              break;
-            }
+          if (IDI >= SBNUMSYMS) {
+            return nullptr;
           }
 
           CJBig2_Image* sbsyms_idi = GetImage(IDI, SDNEWSYMS);
