@@ -26,8 +26,10 @@ class Suppressor:
     v8_option = "v8" if self.has_v8 else "nov8"
     xfa_option = "xfa" if self.has_xfa else "noxfa"
     with open(os.path.join(finder.TestingDir(), suppressions_filename)) as f:
+      os_name = common.os_name()
+      mac_platform = common.mac_platform() if os_name == 'mac' else None
       return set(
-          self._FilterSuppressions(common.os_name(), v8_option, xfa_option,
+          self._FilterSuppressions(os_name, mac_platform, v8_option, xfa_option,
                                    self.rendering_option,
                                    self._ExtractSuppressions(f)))
 
@@ -37,20 +39,29 @@ class Suppressor:
                                for x in f.readlines()] if y
     ]
 
-  def _FilterSuppressions(self, os_name, js, xfa, rendering_option,
-                          unfiltered_list):
+  def _FilterSuppressions(self, os_name, mac_platform, js, xfa,
+                          rendering_option, unfiltered_list):
     return [
-        x[0]
-        for x in unfiltered_list
-        if self._MatchSuppression(x, os_name, js, xfa, rendering_option)
+        x[0] for x in unfiltered_list if self._MatchSuppression(
+            x, os_name, mac_platform, js, xfa, rendering_option)
     ]
 
-  def _MatchSuppression(self, item, os_name, js, xfa, rendering_option):
+  @staticmethod
+  def _MatchOs(os_name, mac_platform, os_column):
+    if '*' in os_column or os_name in os_column:
+      return True
+    if os_name == 'mac':
+      assert mac_platform
+      return f'{os_name}_{mac_platform}' in os_column
+    return False
+
+  def _MatchSuppression(self, item, os_name, mac_platform, js, xfa,
+                        rendering_option):
     os_column = item[1].split(",")
     js_column = item[2].split(",")
     xfa_column = item[3].split(",")
     rendering_option_column = item[4].split(",")
-    return (('*' in os_column or os_name in os_column) and
+    return (Suppressor._MatchOs(os_name, mac_platform, os_column) and
             ('*' in js_column or js in js_column) and
             ('*' in xfa_column or xfa in xfa_column) and
             ('*' in rendering_option_column or

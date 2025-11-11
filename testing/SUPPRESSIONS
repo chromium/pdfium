@@ -3,19 +3,21 @@
 # found in the LICENSE file.
 #
 # List of tests to be skipped, one per line.
-# There are four space-separated columns per line
+# There are five space-separated columns per line
 # Each column (except column 0) can contain a comma-separated list of values.
 #
 # Column 0: test file name
-# Column 1: platform: *, win, mac, linux
+# Column 1: platform: *, win, mac, mac_arm, mac_x86, linux
 # Column 2: v8 support: *, nov8, v8
 # Column 3: xfa support: *, noxfa, xfa
 # Column 4: rendering support: *, agg, gdi, skia
 #
-# All columns on a line on a line must match, but filenames may be repeated
-# on subsequent lines to suppress more cases.  Within each column, any one of
-# the comma-separated values must match in order for the colum to "match".
+# All columns on a line must match, but filenames may be repeated on subsequent
+# lines to suppress more cases.  Within each column, any one of the
+# comma-separated values must match in order for the column to "match".
 # The filenames and keywords are case-sensitive.
+# One exception is the column 1, where "mac" is a shorthand that matches either
+# "mac_arm" or "mac_x86".
 #
 # Try to keep the file alphabetized within each category of test.
 

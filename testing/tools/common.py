@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 import datetime
+import platform
 import os
 import re
 import subprocess
@@ -20,6 +21,16 @@ def os_name():
   if sys.platform.startswith('darwin'):
     return 'mac'
   raise Exception('Confused, can not determine OS, aborting.')
+
+
+def mac_platform():
+  assert os_name() == 'mac'
+  machine = platform.machine()
+  if machine == 'arm64':
+    return 'arm'
+  if machine == 'x86_64':
+    return 'x86'
+  raise Exception('Confused, can not determine architecture, aborting.')
 
 
 def RunCommandPropagateErr(cmd,
