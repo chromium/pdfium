@@ -8,7 +8,6 @@ import itertools
 import os
 import shutil
 import subprocess
-import sys
 
 EXACT_MATCHING = 'exact'
 FUZZY_MATCHING = 'fuzzy'

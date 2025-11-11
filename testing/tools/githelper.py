@@ -3,8 +3,6 @@
 # found in the LICENSE file.
 """Classes for dealing with git."""
 
-import subprocess
-
 from common import RunCommandPropagateErr
 
 

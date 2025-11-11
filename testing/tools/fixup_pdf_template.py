@@ -159,7 +159,7 @@ def expand_file(infile, output_path):
       for line in preprocessed:
         outfile.write(processor.process_line(line))
   except IOError:
-    print('failed to process %s' % input_path, file=sys.stderr)
+    print('failed to process %s' % infile, file=sys.stderr)
 
 
 def insert_includes(input_path, output_file, visited_set):
@@ -170,7 +170,7 @@ def insert_includes(input_path, output_file, visited_set):
   visited_set.add(input_path)
   try:
     _, file_extension = os.path.splitext(input_path)
-    override_line_endings = (file_extension in EXTENSION_OVERRIDE_LINE_ENDINGS)
+    override_line_endings = file_extension in EXTENSION_OVERRIDE_LINE_ENDINGS
 
     end_of_file_line_ending = False
     with open(input_path, 'rb') as infile:

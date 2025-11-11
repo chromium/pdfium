@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 import datetime
-import glob
 import os
 import re
 import subprocess

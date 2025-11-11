@@ -12,11 +12,9 @@ import multiprocessing
 import os
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 
-from common import GetBooleanGnArg
 from common import PrintErr
 from common import RunCommandPropagateErr
 from githelper import GitHelper

@@ -88,7 +88,7 @@ def _GetFunctionsFromTest(api_test_path):
     functions = []
     functions_in_file = []
     for line in contents:
-      if (file_regex.match(line)):
+      if file_regex.match(line):
         functions.append(functions_in_file)
         functions_in_file = []
       match = chk_regex.match(line)
