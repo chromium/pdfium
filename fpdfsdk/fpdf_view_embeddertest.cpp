@@ -1629,7 +1629,11 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
 
   const char* gray_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+      return "44575dfe9e72e5b4e535766230c640b2";
+#else
       return "3dfe1fc3889123d68e1748fefac65e72";
+#endif
     }
     return "b561c11edc44dc3972125a9b8744fa2f";
   }();
@@ -2205,7 +2209,9 @@ TEST_F(FPDFViewEmbedderTest, RenderAnnotsGrayScale) {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "c18c1b7ee995f16dfb18e6da73a3c2d3";
-#elif BUILDFLAG(IS_APPLE)
+#elif BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+      return "9469d197ead5c3ca2488eb2237befa65";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
       return "92e96cad5e6b93fee3e2017ea27e2497";
 #else
       return "b73df08d5252615ad6ed2fe7d6c73883";

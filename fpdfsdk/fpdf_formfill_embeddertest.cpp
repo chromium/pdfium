@@ -1457,7 +1457,11 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
 TEST_F(FPDFFormFillEmbedderTest, Bug1281) {
   const char* reverse_byte_order_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+      return "982dc4898d0ff78920be831538763d65";
+#else
       return "8077970bbd10333f18186a9bb459bbe6";
+#endif
     }
     return "24fff03d1e663b7ece5f6e69ad837124";
   }();

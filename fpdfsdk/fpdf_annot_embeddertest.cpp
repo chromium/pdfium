@@ -548,7 +548,9 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
         return "42e03089ef2392579d73bf9065896488";
-#elif BUILDFLAG(IS_APPLE)
+#elif BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+        return "3084f8664692e192406d0a296350b581";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
         return "5891aa346046c3f5b8c3cd8607f0d256";
 #else
         return "d02d468d9022ddf35014daa50191a895";
@@ -772,7 +774,9 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "c50012ab122cd3706d39f371ca7462ee";
-#elif BUILDFLAG(IS_APPLE)
+#elif BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+      return "94b17973cf98c56cde2c3a6847c82371";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
       return "24994ad69aa612a66d183eaf9a92aa06";
 #else
       return "798fa41303381c9ba6d99092f5cd4d2b";
@@ -894,7 +898,9 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "31e091a5f6c54059e643b1bdcd344534";
-#elif BUILDFLAG(IS_APPLE)
+#elif BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+      return "6aa0d85c5aa0ad304a04daf3124e74bb";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
       return "2975a3f6710dc2b86f766b07edeaaf06";
 #else
       return "377ee6496bd87d90056691ba5a13d13f";
@@ -910,7 +916,9 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "45bad83ebcee8cc85fa5dd3e98aaaf0a";
-#elif BUILDFLAG(IS_APPLE)
+#elif BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+      return "2ee6444fc5f9404c123bf2329b975a44";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
       return "d7e6b8535dce105ebbb1fa2c7942c64e";
 #else
       return "17fc1c964d0252a87ddfcc8db960c69a";
@@ -926,7 +934,9 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "7d3b20c8a0d0899b9e1d208317fdd246";
-#elif BUILDFLAG(IS_APPLE)
+#elif BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+      return "06ca188c4f0e153d4b512169cc29904d";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
       return "8a6d9357d93595be326a30223d5ffda4";
 #else
       return "e5f192fd7c4711ea1ba9a69674c1aa27";
@@ -1370,7 +1380,9 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "067c891d5c5f3add0779798f2f5d20d0";
-#elif BUILDFLAG(IS_APPLE)
+#elif BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
+      return "3d5b2cdad126e5daa7c1de43a4282433";
+#elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
       return "b2b09967e4aed8faf8218f44650a836d";
 #else
       return "bc49737f97f2119799be8deb347249fe";
