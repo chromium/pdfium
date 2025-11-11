@@ -19,10 +19,18 @@ _PNG_OPTIMIZER = 'optipng'
 # most specific, and the root being the least specific.
 _COMMON_SUFFIX_ORDER = ('_{os}', '')
 _AGG_SUFFIX_ORDER = ('_agg_{os}', '_agg') + _COMMON_SUFFIX_ORDER
-_GDI_AGG_SUFFIX_ORDER = ('_gdi_agg_{os}', '_gdi_agg', '_gdi_{os}',
-                         '_gdi') + _COMMON_SUFFIX_ORDER
-_GDI_SKIA_SUFFIX_ORDER = ('_gdi_skia_{os}', '_gdi_skia', '_gdi_{os}',
-                          '_gdi') + _COMMON_SUFFIX_ORDER
+_GDI_AGG_SUFFIX_ORDER = (
+    '_gdi_agg_{os}',
+    '_gdi_agg',
+    '_gdi_{os}',
+    '_gdi',
+) + _COMMON_SUFFIX_ORDER
+_GDI_SKIA_SUFFIX_ORDER = (
+    '_gdi_skia_{os}',
+    '_gdi_skia',
+    '_gdi_{os}',
+    '_gdi',
+) + _COMMON_SUFFIX_ORDER
 _SKIA_SUFFIX_ORDER = ('_skia_{os}', '_skia') + _COMMON_SUFFIX_ORDER
 
 
@@ -36,12 +44,14 @@ class ImageDiff:
     diff_path: Path to the diff image file, or `None` if no diff.
     reason: Optional reason for the diff.
   """
+
   actual_path: str
   expected_path: str = None
   diff_path: str = None
   reason: str = None
 
-class PNGDiffer():
+
+class PNGDiffer:
 
   def __init__(self, finder, reverse_byte_order, rendering_option,
                default_renderer):
@@ -100,8 +110,11 @@ class PNGDiffer():
   def _RunImageDiffCommand(self, image_diff):
     # TODO(crbug.com/pdfium/1925): Diff mode ignores --reverse-byte-order.
     return self._RunCommand([
-        self.pdfium_diff_path, '--subtract', image_diff.actual_path,
-        image_diff.expected_path, image_diff.diff_path
+        self.pdfium_diff_path,
+        '--subtract',
+        image_diff.actual_path,
+        image_diff.expected_path,
+        image_diff.diff_path,
     ])
 
   def ComputeDifferences(self, input_filename, source_dir, working_dir,
@@ -231,7 +244,8 @@ class _PathTemplates:
       self.expected_templates.append(
           os.path.join(
               source_dir,
-              f'{input_root}_expected{formatted_suffix}{_ACTUAL_TEMPLATE}'))
+              f'{input_root}_expected{formatted_suffix}{_ACTUAL_TEMPLATE}',
+          ))
     assert self.expected_templates
 
   def GetActualPath(self, page):

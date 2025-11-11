@@ -24,7 +24,6 @@ import suppressor
 pdfium_root.add_source_directory_to_import_path(os.path.join('build', 'util'))
 from lib.results import result_sink, result_types
 
-
 # Arbitrary timestamp, expressed in seconds since the epoch, used to make sure
 # that tests that depend on the current time are stable. Happens to be the
 # timestamp of the first commit to repo, 2014/5/9 17:48:50.

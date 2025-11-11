@@ -82,8 +82,9 @@ class CoverageExecutor:
     self.llvm_directory = os.path.join(self.source_directory, 'third_party',
                                        'llvm-build', 'Release+Asserts', 'bin')
     if not os.path.isdir(self.llvm_directory):
-      parser.error("Cannot find LLVM bin directory , expected it to be in '%s'"
-                   % self.llvm_directory)
+      parser.error(
+          "Cannot find LLVM bin directory , expected it to be in '%s'" %
+          self.llvm_directory)
 
     self.build_directory = args['build_directory']
     if not os.path.isdir(self.build_directory):
@@ -309,9 +310,8 @@ def main():
   parser.add_argument(
       '-b',
       '--build_directory',
-      help=
-      'Location of PDFium build directory with coverage enabled, defaults to '
-      '%s under CWD' % build_default,
+      help='Location of PDFium build directory with coverage enabled, defaults '
+      'to %s under CWD' % build_default,
       default=os.path.join(os.getcwd(), build_default))
   output_default = 'coverage_report'
   parser.add_argument(

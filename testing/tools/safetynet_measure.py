@@ -32,8 +32,8 @@ class PerformanceRun:
   def _CheckTools(self):
     """Returns whether the tool file paths are sane."""
     if not os.path.exists(self.pdfium_test_path):
-      PrintErr(
-          "FAILURE: Can't find test executable '%s'" % self.pdfium_test_path)
+      PrintErr("FAILURE: Can't find test executable '%s'" %
+               self.pdfium_test_path)
       PrintErr('Use --build-dir to specify its location.')
       return False
     if not os.access(self.pdfium_test_path, os.X_OK):

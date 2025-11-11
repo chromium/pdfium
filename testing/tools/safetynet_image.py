@@ -191,8 +191,8 @@ class ImageComparison:
     self._WritePageCompareTd(
         f, self._GetRelativePath(self.image_locations.Left(image)),
         self._GetRelativePath(self.image_locations.Right(image)))
-    self._WritePageTd(f, self._GetRelativePath(
-        self.image_locations.Diff(image)))
+    self._WritePageTd(f,
+                      self._GetRelativePath(self.image_locations.Diff(image)))
     f.write('</tr>')
 
   def _WritePageTd(self, f, image_path):

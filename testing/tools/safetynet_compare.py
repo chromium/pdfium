@@ -106,9 +106,10 @@ class CompareRun:
     self._CleanUp(conclusions)
 
     if self.args.png_dir:
-      image_comparison = ImageComparison(
-          self.after_build_dir, self.args.png_dir, ('before', 'after'),
-          self.args.num_workers, self.args.png_threshold)
+      image_comparison = ImageComparison(self.after_build_dir,
+                                         self.args.png_dir, ('before', 'after'),
+                                         self.args.num_workers,
+                                         self.args.png_threshold)
       image_comparison.Run(open_in_browser=not self.args.machine_readable)
 
     return 0
@@ -521,8 +522,8 @@ class CompareRun:
 
   def _GetProfileFilePath(self, run_label, test_case):
     if self.args.output_dir:
-      output_filename = (
-          'callgrind.out.%s.%s' % (test_case.replace('/', '_'), run_label))
+      output_filename = ('callgrind.out.%s.%s' %
+                         (test_case.replace('/', '_'), run_label))
       return os.path.join(self.args.output_dir, output_filename)
     return None
 
