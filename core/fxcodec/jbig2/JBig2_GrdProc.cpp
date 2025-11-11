@@ -815,7 +815,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Unopt(
   CJBig2_Image* pImage = pState->pImage->get();
   pdfium::span<JBig2ArithCtx> gbContexts = pState->gbContexts;
   CJBig2_ArithDecoder* pArithDecoder = pState->pArithDecoder;
-  for (uint32_t h = 0; h < GBH; h++) {
+  for (; loop_index_ < GBH; loop_index_++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete()) {
         return FXCODEC_STATUS::kError;
@@ -824,22 +824,22 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Unopt(
       ltp_ = ltp_ ^ pArithDecoder->Decode(&gbContexts[0x0795]);
     }
     if (ltp_) {
-      pImage->CopyLine(h, h - 1);
+      pImage->CopyLine(loop_index_, loop_index_ - 1);
     } else {
-      uint32_t line1 = pImage->GetPixel(2, h - 2);
-      line1 |= pImage->GetPixel(1, h - 2) << 1;
-      line1 |= pImage->GetPixel(0, h - 2) << 2;
-      uint32_t line2 = pImage->GetPixel(2, h - 1);
-      line2 |= pImage->GetPixel(1, h - 1) << 1;
-      line2 |= pImage->GetPixel(0, h - 1) << 2;
+      uint32_t line1 = pImage->GetPixel(2, loop_index_ - 2);
+      line1 |= pImage->GetPixel(1, loop_index_ - 2) << 1;
+      line1 |= pImage->GetPixel(0, loop_index_ - 2) << 2;
+      uint32_t line2 = pImage->GetPixel(2, loop_index_ - 1);
+      line2 |= pImage->GetPixel(1, loop_index_ - 1) << 1;
+      line2 |= pImage->GetPixel(0, loop_index_ - 1) << 2;
       uint32_t line3 = 0;
       for (uint32_t w = 0; w < GBW; w++) {
         int bVal;
-        if (USESKIP && SKIP->GetPixel(w, h)) {
+        if (USESKIP && SKIP->GetPixel(w, loop_index_)) {
           bVal = 0;
         } else {
           uint32_t CONTEXT = line3;
-          CONTEXT |= pImage->GetPixel(w + GBAT[0], h + GBAT[1]) << 3;
+          CONTEXT |= pImage->GetPixel(w + GBAT[0], loop_index_ + GBAT[1]) << 3;
           CONTEXT |= line2 << 4;
           CONTEXT |= line1 << 9;
           if (pArithDecoder->IsComplete()) {
@@ -849,10 +849,12 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Unopt(
           bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
         }
         if (bVal) {
-          pImage->SetPixel(w, h, bVal);
+          pImage->SetPixel(w, loop_index_, bVal);
         }
-        line1 = ((line1 << 1) | pImage->GetPixel(w + 3, h - 2)) & 0x0f;
-        line2 = ((line2 << 1) | pImage->GetPixel(w + 3, h - 1)) & 0x1f;
+        line1 =
+            ((line1 << 1) | pImage->GetPixel(w + 3, loop_index_ - 2)) & 0x0f;
+        line2 =
+            ((line2 << 1) | pImage->GetPixel(w + 3, loop_index_ - 1)) & 0x1f;
         line3 = ((line3 << 1) | bVal) & 0x07;
       }
     }
