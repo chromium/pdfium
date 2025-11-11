@@ -315,6 +315,43 @@ Oneof3.pdf * * * *
 Sum.pdf * * * *
 Test_CheckBox.pdf * * * *
 
+# TODO(crbug.com/459586268): Remove this entry once macOS support for Intel
+# hardware goes away. The test expectation is just different enough from the ARM
+# rendering that fuzzy matching is not enough for it to match.
+2_color_tiling.pdf mac_x86 * * skia
+2_uncolor_tiling.pdf mac_x86 * * skia
+FRC_10_8.2.4_View_C.pdf mac_x86 * * skia
+Test_DateField_locale_zh_HK.pdf mac_x86 * * skia
+TimeField.pdf mac_x86 * * skia
+annotation_circle_hidden.pdf mac_x86 * * skia
+annotation_ellipse_hidden.pdf mac_x86 * * skia
+annotation_highlight.pdf mac_x86 * * skia
+annotation_highlight_empty_content.pdf mac_x86 * * skia
+annotation_highlight_hidden.pdf mac_x86 * * skia
+annotation_highlight_no_author_no_content.pdf mac_x86 * * skia
+annotation_highlight_no_content.pdf mac_x86 * * skia
+annotation_highlight_opacity.pdf mac_x86 * * skia
+annotation_ink_hidden.pdf mac_x86 * * skia
+annotation_polygon.pdf mac_x86 * * skia
+annotation_square_fill_negative_border.pdf mac_x86 * * skia
+annotation_square_hidden.pdf mac_x86 * * skia
+annotation_squiggly_hidden.pdf mac_x86 * * skia
+annotation_stamp.pdf mac_x86 * * skia
+annotation_strikeout_hidden.pdf mac_x86 * * skia
+annotation_strikeout_opacity.pdf mac_x86 * * skia
+annotation_underline.pdf mac_x86 * * skia
+annotation_underline_hidden.pdf mac_x86 * * skia
+annotation_underline_opacity.pdf mac_x86 * * skia
+bug_668762.pdf mac_x86 * * skia
+en_14_foxit_products.pdf mac_x86 * * skia
+en_fqa.pdf mac_x86 * * skia
+example_042.pdf mac_x86 * * skia
+font_1_embedded_font_en_feature.pdf mac_x86 * * skia
+font_2_embedded_font_en_size14.pdf mac_x86 * * skia
+xfermodes.pdf mac_x86 * * skia
+xfermodes2.pdf mac_x86 * * skia
+xfermodes3.pdf mac_x86 * * skia
+
 # GDI
 
 # TODO(crbug.com/42271066): Remove after associated bug is fixed
