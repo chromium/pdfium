@@ -177,16 +177,11 @@ def pdfium_internal_builder(name, bucket, swarm_tests):
     # Set configs depending on the OS.
     if name.startswith("linux"):
         dimensions.update(_LINUX_FOCAL_DIMENSIONS)
-    elif name.startswith("mac") and "_arm" in name:
-        # TODO(crbug.com/41480180): Delete this conditional block.
-        dimensions.update(_MACOS_ARM_DIMENSIONS)
-        caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
     elif name.startswith("mac") and "_x86" in name:
         dimensions.update(_MACOS_INTEL_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
     elif name.startswith("mac"):
-        # TODO(crbug.com/41480180): Switch to ARM.
-        dimensions.update(_MACOS_INTEL_DIMENSIONS)
+        dimensions.update(_MACOS_ARM_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
     elif name.startswith("win") and "_arm" in name:
         dimensions.update(_WINDOWS_ARM_DIMENSIONS)
@@ -517,8 +512,6 @@ add_entries_for_builder(name = "mac_xfa_rel", category = "xfa|mac", short_name =
 add_entries_for_builder(name = "mac_xfa_skia", category = "skia|mac", short_name = "xfa")
 add_entries_for_builder(name = "mac_xfa_skia_component", category = "skia|mac", short_name = "comp")
 add_entries_for_builder(name = "mac_xfa_skia_rust", category = "skia|mac", short_name = "rust")
-# TODO(crbug.com/41480180): Switch to ARM and delete this builder.
-add_entries_for_builder(name = "mac_xfa_skia_rust_arm", category = "skia|mac", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_xfa_skia_rust_x86", category = "skia|mac")
 add_entries_for_builder(name = "win", category = "main|win", swarm_tests = True)
 add_entries_for_builder(name = "win_asan", category = "main|win", short_name = "asan")
