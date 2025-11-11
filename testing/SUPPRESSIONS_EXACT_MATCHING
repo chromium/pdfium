@@ -28,6 +28,16 @@
 # Sensitive to transparency code changes.
 bug_1258968.in * * * skia
 
+# TODO(crbug.com/459586268): Remove these entries once macOS support for Intel
+# hardware goes away. Then rebase the test expectations as needed.
+bug_1383708.in mac * * skia
+dynamic_password_field_background_fill.pdf mac * * skia
+image_transformer_other.in mac * * skia
+radial_shading_point_at_border.in mac * * skia
+radial_shading_point_at_border_no_extend.in mac * * skia
+shade.in mac * * skia
+xfa_textfield.in mac * * skia
+
 #
 # Corpus tests
 #

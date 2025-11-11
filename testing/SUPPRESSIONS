@@ -774,3 +774,10 @@ matte.in * * * gdi
 
 # TODO(crbug.com/361002664): Remove after associated bug is fixed
 smask_blend.in * * * gdi
+
+# TODO(crbug.com/459586268): Remove this entry once macOS support for Intel
+# hardware goes away. The test expectation is just different enough from the ARM
+# rendering that fuzzy matching is not enough for it to match. The difference
+# looks like it may be due to several rounding errors combining for a bigger
+# than normal pixel value difference.
+bug_1746.in mac_x86 * * skia
