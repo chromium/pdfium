@@ -20,7 +20,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_face.h"
-#include "core/fxge/freetype/fx_freetype.h"
 
 class CFGAS_GEFont;
 class IFX_SeekableReadStream;
@@ -63,7 +62,6 @@ class CFGAS_FontDescriptor {
   int32_t face_index_ = 0;
   uint32_t font_styles_ = 0;
   WideString face_name_;
-  std::unique_ptr<FXFT_StreamRec> ft_stream_;  // Must outlive `face_`.
   RetainPtr<CFX_Face> face_;
   std::vector<WideString> family_names_;
   std::array<uint32_t, 4> usb_ = {};

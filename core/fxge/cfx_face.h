@@ -15,6 +15,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -68,6 +69,10 @@ class CFX_Face final : public Retainable, public Observable {
   static RetainPtr<CFX_Face> Open(FT_Library library,
                                   const FT_Open_Args* args,
                                   FT_Long face_index);
+  static RetainPtr<CFX_Face> OpenFromStream(
+      FT_Library library,
+      const RetainPtr<IFX_SeekableReadStream>& font_stream,
+      FT_Long face_index);
 #endif
 
   bool HasGlyphNames() const;
@@ -154,6 +159,10 @@ class CFX_Face final : public Retainable, public Observable {
   void AdjustVariationParams(int glyph_index, int dest_width, int weight);
   std::optional<std::array<uint8_t, 2>> GetOs2Panose();
 
+  // `owned_font_stream_` must outlive `owned_stream_rec_`.
+  RetainPtr<IFX_SeekableReadStream> owned_font_stream_;
+  // `owned_stream_rec_` must outlive `rec_`.
+  std::unique_ptr<FXFT_StreamRec> owned_stream_rec_;
   ScopedFXFTFaceRec const rec_;
   RetainPtr<Retainable> const desc_;
 };

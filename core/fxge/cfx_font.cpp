@@ -72,28 +72,6 @@ FX_RECT ScaledFXRectFromFTPos(FT_Pos left,
                          right * 1000 / x_scale, bottom * 1000 / y_scale);
 }
 
-#ifdef PDF_ENABLE_XFA
-unsigned long FTStreamRead(FXFT_StreamRec* stream,
-                           unsigned long offset,
-                           unsigned char* buffer,
-                           unsigned long count) {
-  if (count == 0) {
-    return 0;
-  }
-
-  IFX_SeekableReadStream* pFile =
-      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
-
-  // SAFETY: caller ensures `buffer` points to at least `count` bytes.
-  return pFile && pFile->ReadBlockAtOffset(
-                      UNSAFE_BUFFERS(pdfium::span(buffer, count)), offset)
-             ? count
-             : 0;
-}
-
-void FTStreamClose(FXFT_StreamRec* stream) {}
-#endif  // PDF_ENABLE_XFA
-
 bool ShouldAppendStyle(const ByteString& style) {
   return !style.IsEmpty() && style != "Regular";
 }
@@ -197,29 +175,9 @@ int CFX_Font::GetSubstFontItalicAngle() const {
 bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
                         int nFaceIndex) {
   object_tag_ = 0;
-
-  auto pStreamRec = std::make_unique<FXFT_StreamRec>();
-  pStreamRec->base = nullptr;
-  pStreamRec->size = static_cast<unsigned long>(pFile->GetSize());
-  pStreamRec->pos = 0;
-  pStreamRec->descriptor.pointer = static_cast<void*>(pFile.Get());
-  pStreamRec->close = FTStreamClose;
-  pStreamRec->read = FTStreamRead;
-
-  FT_Open_Args args;
-  args.flags = FT_OPEN_STREAM;
-  args.stream = pStreamRec.get();
-
-  face_ = CFX_Face::Open(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
-                         &args, nFaceIndex);
-  if (!face_) {
-    return false;
-  }
-
-  owned_file_ = std::move(pFile);
-  owned_stream_rec_ = std::move(pStreamRec);
-  face_->SetPixelSize(0, 64);
-  return true;
+  face_ = CFX_Face::OpenFromStream(
+      CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(), pFile, nFaceIndex);
+  return !!face_;
 }
 
 #if !BUILDFLAG(IS_WIN)

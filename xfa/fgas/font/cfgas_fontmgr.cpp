@@ -417,31 +417,6 @@ uint16_t ReadUInt16FromSpanAtOffset(pdfium::span<const uint8_t> data,
   return fxcrt::GetUInt16MSBFirst(data.subspan(offset).first<2u>());
 }
 
-extern "C" {
-
-unsigned long ftStreamRead(FXFT_StreamRec* stream,
-                           unsigned long offset,
-                           unsigned char* buffer,
-                           unsigned long count) {
-  if (count == 0) {
-    return 0;
-  }
-
-  IFX_SeekableReadStream* pFile =
-      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
-
-  // SAFETY: required from caller.
-  if (!pFile->ReadBlockAtOffset(
-          UNSAFE_BUFFERS(pdfium::span(buffer, count), offset))) {
-    return 0;
-  }
-  return count;
-}
-
-void ftStreamClose(FXFT_StreamRec* stream) {}
-
-}  // extern "C"
-
 std::vector<WideString> GetNames(pdfium::span<const uint8_t> name_table) {
   std::vector<WideString> results;
   if (name_table.empty()) {
@@ -514,46 +489,12 @@ RetainPtr<IFX_SeekableReadStream> CreateFontStream(
   return nullptr;
 }
 
-struct FTStreamRecAndFace {
-  std::unique_ptr<FXFT_StreamRec> ft_stream;  // Must outlive `face`.
-  RetainPtr<CFX_Face> face;
-};
-
-FTStreamRecAndFace LoadFace(
+RetainPtr<CFX_Face> LoadFace(
     const RetainPtr<IFX_SeekableReadStream>& font_stream,
     int32_t iFaceIndex) {
-  if (!font_stream) {
-    return {nullptr, nullptr};
-  }
-
   CFX_FontMgr* font_mgr = CFX_GEModule::Get()->GetFontMgr();
   FXFT_LibraryRec* library = font_mgr->GetFTLibrary();
-  if (!library) {
-    return {nullptr, nullptr};
-  }
-
-  auto ftStream = std::make_unique<FXFT_StreamRec>();
-  *ftStream = {};  // Aggregate initialization.
-  static_assert(
-      std::is_aggregate_v<std::remove_pointer_t<decltype(ftStream.get())>>);
-  ftStream->base = nullptr;
-  ftStream->descriptor.pointer = static_cast<void*>(font_stream.Get());
-  ftStream->pos = 0;
-  ftStream->size = static_cast<unsigned long>(font_stream->GetSize());
-  ftStream->read = ftStreamRead;
-  ftStream->close = ftStreamClose;
-
-  FT_Open_Args ftArgs = {};  // Aggregate initialization.
-  static_assert(std::is_aggregate_v<decltype(ftArgs)>);
-  ftArgs.flags |= FT_OPEN_STREAM;
-  ftArgs.stream = ftStream.get();
-
-  RetainPtr<CFX_Face> pFace = CFX_Face::Open(library, &ftArgs, iFaceIndex);
-  if (!pFace) {
-    return {nullptr, nullptr};
-  }
-  pFace->SetPixelSize(0, 64);
-  return {std::move(ftStream), std::move(pFace)};
+  return CFX_Face::OpenFromStream(library, font_stream, iFaceIndex);
 }
 
 bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
@@ -564,14 +505,11 @@ bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
     if (!pFileRead) {
       return false;
     }
-    FTStreamRecAndFace ft_stream_and_face =
-        LoadFace(pFileRead, pDesc->face_index_);
-    if (!ft_stream_and_face.face) {
+    RetainPtr<CFX_Face> ft_face = LoadFace(pFileRead, pDesc->face_index_);
+    if (!ft_face) {
       return false;
     }
-
-    pDesc->ft_stream_ = std::move(ft_stream_and_face.ft_stream);
-    pDesc->face_ = std::move(ft_stream_and_face.face);
+    pDesc->face_ = std::move(ft_face);
   }
   return pDesc->face_->SelectCharMap(fxge::FontEncoding::kUnicode) &&
          pDesc->face_->GetCharIndex(wcUnicode);
@@ -818,8 +756,7 @@ void CFGAS_FontMgr::RegisterFaces(
   int32_t index = 0;
   int32_t num_faces = 0;
   do {
-    FTStreamRecAndFace ft_stream_and_face = LoadFace(font_stream, index++);
-    RetainPtr<CFX_Face>& face = ft_stream_and_face.face;
+    RetainPtr<CFX_Face> face = LoadFace(font_stream, index++);
     if (!face) {
       continue;
     }
