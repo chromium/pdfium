@@ -46,18 +46,18 @@
 namespace {
 
 bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& font, wchar_t wcUnicode) {
-  RetainPtr<CFX_Face> pFace = font->GetDevFont()->GetFace();
-  if (!pFace) {
+  RetainPtr<CFX_Face> face = font->GetDevFont()->GetFace();
+  if (!face) {
     return false;
   }
 
-  CFX_Face::CharMap charmap = pFace->GetCurrentCharMap();
-  if (!pFace->SelectCharMap(fxge::FontEncoding::kUnicode)) {
+  CFX_Face::CharMap charmap = face->GetCurrentCharMap();
+  if (!face->SelectCharMap(fxge::FontEncoding::kUnicode)) {
     return false;
   }
 
-  if (pFace->GetCharIndex(wcUnicode) == 0) {
-    pFace->SetCharMap(charmap);
+  if (face->GetCharIndex(wcUnicode) == 0) {
+    face->SetCharMap(charmap);
     return false;
   }
   return true;
@@ -705,17 +705,17 @@ std::vector<CFGAS_FontDescriptorInfo> CFGAS_FontMgr::MatchFonts(
   return matched_fonts;
 }
 
-void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
+void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> face,
                                  const WideString& wsFaceName) {
-  if (!pFace->IsScalable()) {
+  if (!face->IsScalable()) {
     return;
   }
 
   auto font = std::make_unique<CFGAS_FontDescriptor>();
-  font->font_styles_ |= GetFlags(pFace);
+  font->font_styles_ |= GetFlags(face);
 
   std::optional<std::array<uint32_t, 4>> unicode_range =
-      pFace->GetOs2UnicodeRange();
+      face->GetOs2UnicodeRange();
   if (unicode_range.has_value()) {
     fxcrt::Copy(unicode_range.value(), font->usb_);
   } else {
@@ -723,7 +723,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   }
 
   std::optional<std::array<uint32_t, 2>> code_page_range =
-      pFace->GetOs2CodePageRange();
+      face->GetOs2CodePageRange();
   if (code_page_range.has_value()) {
     fxcrt::Copy(code_page_range.value(), font->csb_);
   } else {
@@ -734,19 +734,18 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
       CFX_FontMapper::MakeTag('n', 'a', 'm', 'e');
 
   DataVector<uint8_t> table;
-  size_t table_size = pFace->GetSfntTable(kNameTag, table);
+  size_t table_size = face->GetSfntTable(kNameTag, table);
   if (table_size) {
     table.resize(table_size);
-    if (!pFace->GetSfntTable(kNameTag, table)) {
+    if (!face->GetSfntTable(kNameTag, table)) {
       table.clear();
     }
   }
   font->family_names_ = GetNames(table);
   font->family_names_.push_back(
-      WideString::FromUTF8(pFace->GetRec()->family_name));
+      WideString::FromUTF8(face->GetRec()->family_name));
   font->face_name_ = wsFaceName;
-  font->face_index_ =
-      pdfium::checked_cast<int32_t>(pFace->GetRec()->face_index);
+  font->face_index_ = pdfium::checked_cast<int32_t>(face->GetRec()->face_index);
   installed_fonts_.push_back(std::move(font));
 }
 
