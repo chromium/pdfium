@@ -30,7 +30,7 @@ _SWARMING_TEST_EXECUTION_TIMEOUT = 20 * time.minute
 _LINUX_FOCAL_DIMENSIONS = {
     "cores": "8",
     "cpu": "x86-64",
-    "os": "Ubuntu-22.04",
+    "os": "Ubuntu-24.04",
 }
 _MACOS_INTEL_DIMENSIONS = {
     "cpu": "x86-64",
