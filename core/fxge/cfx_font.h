@@ -72,7 +72,7 @@ class CFX_Font {
                     bool force_vertical,
                     uint64_t object_tag);
   RetainPtr<CFX_Face> GetFace() const { return face_; }
-  bool HasFaceRec() const { return face_ && face_->GetRec(); }
+  bool HasFaceRec() const { return face_ && face_->HasFaceRec(); }
   CFX_SubstFont* GetSubstFont() const { return subst_font_.get(); }
   int GetSubstFontItalicAngle() const;
 

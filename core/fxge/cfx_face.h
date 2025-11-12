@@ -149,6 +149,9 @@ class CFX_Face final : public Retainable, public Observable {
   bool CanEmbed();
 #endif
 
+  bool HasFaceRec() const { return !!GetRec(); }
+
+  // TODO(crbug.com/460068801): Make these private.
   FXFT_FaceRec* GetRec() { return rec_.get(); }
   const FXFT_FaceRec* GetRec() const { return rec_.get(); }
 
