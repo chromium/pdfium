@@ -505,17 +505,17 @@ RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
 }
 
 void CPDF_DocPageData::MaybePurgeFontFileStreamAcc(
-    RetainPtr<CPDF_StreamAcc>&& pStreamAcc) {
-  if (!pStreamAcc) {
+    RetainPtr<CPDF_StreamAcc>&& stream_acc) {
+  if (!stream_acc) {
     return;
   }
 
-  RetainPtr<const CPDF_Stream> font_stream = pStreamAcc->GetStream();
+  RetainPtr<const CPDF_Stream> font_stream = stream_acc->GetStream();
   if (!font_stream) {
     return;
   }
 
-  pStreamAcc.Reset();  // Drop moved caller's reference.
+  stream_acc.Reset();  // Drop moved caller's reference.
   auto it = font_file_map_.find(font_stream);
   if (it != font_file_map_.end() && it->second->HasOneRef()) {
     font_file_map_.erase(it);

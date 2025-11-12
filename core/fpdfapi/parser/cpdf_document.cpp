@@ -477,8 +477,8 @@ RetainPtr<CPDF_StreamAcc> CPDF_Document::GetFontFileStreamAcc(
 }
 
 void CPDF_Document::MaybePurgeFontFileStreamAcc(
-    RetainPtr<CPDF_StreamAcc>&& pStreamAcc) {
-  doc_page_->MaybePurgeFontFileStreamAcc(std::move(pStreamAcc));
+    RetainPtr<CPDF_StreamAcc>&& stream_acc) {
+  doc_page_->MaybePurgeFontFileStreamAcc(std::move(stream_acc));
 }
 
 void CPDF_Document::MaybePurgeImage(uint32_t objnum) {

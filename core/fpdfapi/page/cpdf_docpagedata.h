@@ -43,7 +43,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
   RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
       RetainPtr<const CPDF_Stream> font_stream) override;
   void MaybePurgeFontFileStreamAcc(
-      RetainPtr<CPDF_StreamAcc>&& pStreamAcc) override;
+      RetainPtr<CPDF_StreamAcc>&& stream_acc) override;
   void MaybePurgeImage(uint32_t dwStreamObjNum) override;
 
   // CPDF_Font::FormFactoryIFace:
