@@ -121,7 +121,9 @@ class CFGAS_FontMgr {
 
 #else   // BUILDFLAG(IS_WIN)
   bool EnumFontsFromFontMapper();
-  void RegisterFace(RetainPtr<CFX_Face> face, const WideString& wsFaceName);
+  void RegisterFace(RetainPtr<CFX_Face> face,
+                    int face_index,
+                    const WideString& wsFaceName);
   void RegisterFaces(const RetainPtr<IFX_SeekableReadStream>& font_stream,
                      const WideString& wsFaceName);
   std::vector<CFGAS_FontDescriptorInfo> MatchFonts(FX_CodePage wCodePage,

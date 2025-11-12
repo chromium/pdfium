@@ -27,7 +27,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_font.h"
@@ -706,6 +705,7 @@ std::vector<CFGAS_FontDescriptorInfo> CFGAS_FontMgr::MatchFonts(
 }
 
 void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> face,
+                                 int face_index,
                                  const WideString& wsFaceName) {
   if (!face->IsScalable()) {
     return;
@@ -743,27 +743,29 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> face,
   }
   font->family_names_ = GetNames(table);
   font->family_names_.push_back(
-      WideString::FromUTF8(face->GetRec()->family_name));
+      WideString::FromUTF8(face->GetFamilyName().AsStringView()));
   font->face_name_ = wsFaceName;
-  font->face_index_ = pdfium::checked_cast<int32_t>(face->GetRec()->face_index);
+  font->face_index_ = face_index;
   installed_fonts_.push_back(std::move(font));
 }
 
 void CFGAS_FontMgr::RegisterFaces(
     const RetainPtr<IFX_SeekableReadStream>& font_stream,
     const WideString& wsFaceName) {
-  int32_t index = 0;
-  int32_t num_faces = 0;
+  int index = 0;
+  int num_faces = 0;
   do {
-    RetainPtr<CFX_Face> face = LoadFace(font_stream, index++);
+    RetainPtr<CFX_Face> face = LoadFace(font_stream, index);
     if (!face) {
+      ++index;
       continue;
     }
     // All faces keep number of faces. It can be retrieved from any one face.
     if (num_faces == 0) {
-      num_faces = pdfium::checked_cast<int32_t>(face->GetRec()->num_faces);
+      num_faces = face->GetNumFaces();
     }
-    RegisterFace(face, wsFaceName);
+    RegisterFace(face, index, wsFaceName);
+    ++index;
   } while (index < num_faces);
 }
 

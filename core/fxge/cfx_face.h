@@ -145,6 +145,10 @@ class CFX_Face final : public Retainable, public Observable {
 
   bool SetPixelSize(uint32_t width, uint32_t height);
 
+#if defined(PDF_ENABLE_XFA)
+  int GetNumFaces() const;
+#endif
+
 #if BUILDFLAG(IS_WIN)
   bool CanEmbed();
 #endif

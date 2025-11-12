@@ -857,6 +857,12 @@ bool CFX_Face::SetPixelSize(uint32_t width, uint32_t height) {
   return !error;
 }
 
+#if defined(PDF_ENABLE_XFA)
+int CFX_Face::GetNumFaces() const {
+  return pdfium::checked_cast<int>(GetRec()->num_faces);
+}
+#endif
+
 #if BUILDFLAG(IS_WIN)
 bool CFX_Face::CanEmbed() {
   FT_UShort fstype = FT_Get_FSType_Flags(GetRec());
