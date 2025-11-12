@@ -234,6 +234,9 @@ JBig2_Result CJBig2_Context::ParseSegmentHeader(CJBig2_Segment* pSegment) {
     if (pSegment->referred_to_segment_count_ > kJBig2MaxReferredSegmentCount) {
       return JBig2_Result::kFailure;
     }
+
+    int number_of_bits_to_skip = 1 + pSegment->referred_to_segment_count_;
+    stream_->addOffset((number_of_bits_to_skip + 7) / 8);
   } else {
     if (stream_->read1Byte(&cTemp) != 0) {
       return JBig2_Result::kFailure;
