@@ -57,12 +57,6 @@ class ScopedFXFTMMVar {
   const pdfium::span<const FT_Var_Axis> axis_;
 };
 
-#define FXFT_Get_Glyph_HoriBearingX(face) (face)->glyph->metrics.horiBearingX
-#define FXFT_Get_Glyph_HoriBearingY(face) (face)->glyph->metrics.horiBearingY
-#define FXFT_Get_Glyph_Width(face) (face)->glyph->metrics.width
-#define FXFT_Get_Glyph_Height(face) (face)->glyph->metrics.height
-#define FXFT_Get_Glyph_HoriAdvance(face) (face)->glyph->metrics.horiAdvance
-
 int FXFT_unicode_from_adobe_name(const char* glyph_name);
 void FXFT_adobe_name_from_unicode(pdfium::span<char> name_buf, wchar_t unicode);
 

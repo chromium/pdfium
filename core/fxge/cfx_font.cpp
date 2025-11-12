@@ -313,12 +313,12 @@ std::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
     return std::nullopt;
   }
   int em = face_->GetUnitsPerEm();
-  return ScaledFXRectFromFTPos(FXFT_Get_Glyph_HoriBearingX(face_->GetRec()),
-                               FXFT_Get_Glyph_HoriBearingY(face_->GetRec()) -
-                                   FXFT_Get_Glyph_Height(face_->GetRec()),
-                               FXFT_Get_Glyph_HoriBearingX(face_->GetRec()) +
-                                   FXFT_Get_Glyph_Width(face_->GetRec()),
-                               FXFT_Get_Glyph_HoriBearingY(face_->GetRec()), em,
+  return ScaledFXRectFromFTPos(face_->GetRec()->glyph->metrics.horiBearingX,
+                               face_->GetRec()->glyph->metrics.horiBearingY -
+                                   face_->GetRec()->glyph->metrics.height,
+                               face_->GetRec()->glyph->metrics.horiBearingX +
+                                   face_->GetRec()->glyph->metrics.width,
+                               face_->GetRec()->glyph->metrics.horiBearingY, em,
                                em);
 }
 
