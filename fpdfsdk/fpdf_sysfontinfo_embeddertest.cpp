@@ -16,47 +16,138 @@
 
 namespace {
 
+struct TrackingFontInfo {
+  FPDF_SYSFONTINFO base;
+  FPDF_SYSFONTINFO* wrapped_font_info;
+  int* enum_fonts_call_count;
+  int* map_font_call_count;
+};
+
 extern "C" {
 
-void FakeRelease(FPDF_SYSFONTINFO* pThis) {}
-void FakeEnumFonts(FPDF_SYSFONTINFO* pThis, void* pMapper) {}
+void TrackingEnumFonts(FPDF_SYSFONTINFO* sys_font_info, void* mapper) {
+  auto* tracking_info = reinterpret_cast<TrackingFontInfo*>(sys_font_info);
+  (*tracking_info->enum_fonts_call_count)++;
+  if (tracking_info->wrapped_font_info &&
+      tracking_info->wrapped_font_info->EnumFonts) {
+    tracking_info->wrapped_font_info->EnumFonts(
+        tracking_info->wrapped_font_info, mapper);
+  }
+}
 
-void* FakeMapFont(FPDF_SYSFONTINFO* pThis,
+void* TrackingMapFont(FPDF_SYSFONTINFO* sys_font_info,
+                      int weight,
+                      FPDF_BOOL italic,
+                      int charset,
+                      int pitch_family,
+                      const char* face,
+                      FPDF_BOOL* exact) {
+  auto* tracking_info = reinterpret_cast<TrackingFontInfo*>(sys_font_info);
+  (*tracking_info->map_font_call_count)++;
+  if (tracking_info->wrapped_font_info &&
+      tracking_info->wrapped_font_info->MapFont) {
+    return tracking_info->wrapped_font_info->MapFont(
+        tracking_info->wrapped_font_info, weight, italic, charset, pitch_family,
+        face, exact);
+  }
+  return nullptr;
+}
+
+void* TrackingGetFont(FPDF_SYSFONTINFO* sys_font_info, const char* face) {
+  auto* tracking_info = reinterpret_cast<TrackingFontInfo*>(sys_font_info);
+  if (tracking_info->wrapped_font_info &&
+      tracking_info->wrapped_font_info->GetFont) {
+    return tracking_info->wrapped_font_info->GetFont(
+        tracking_info->wrapped_font_info, face);
+  }
+  return nullptr;
+}
+
+unsigned long TrackingGetFontData(FPDF_SYSFONTINFO* sys_font_info,
+                                  void* font,
+                                  unsigned int table,
+                                  unsigned char* buffer,
+                                  unsigned long buf_size) {
+  auto* tracking_info = reinterpret_cast<TrackingFontInfo*>(sys_font_info);
+  if (tracking_info->wrapped_font_info &&
+      tracking_info->wrapped_font_info->GetFontData) {
+    return tracking_info->wrapped_font_info->GetFontData(
+        tracking_info->wrapped_font_info, font, table, buffer, buf_size);
+  }
+  return 0;
+}
+
+unsigned long TrackingGetFaceName(FPDF_SYSFONTINFO* sys_font_info,
+                                  void* font,
+                                  char* buffer,
+                                  unsigned long buf_size) {
+  auto* tracking_info = reinterpret_cast<TrackingFontInfo*>(sys_font_info);
+  if (tracking_info->wrapped_font_info &&
+      tracking_info->wrapped_font_info->GetFaceName) {
+    return tracking_info->wrapped_font_info->GetFaceName(
+        tracking_info->wrapped_font_info, font, buffer, buf_size);
+  }
+  return 0;
+}
+
+int TrackingGetFontCharset(FPDF_SYSFONTINFO* sys_font_info, void* font) {
+  auto* tracking_info = reinterpret_cast<TrackingFontInfo*>(sys_font_info);
+  if (tracking_info->wrapped_font_info &&
+      tracking_info->wrapped_font_info->GetFontCharset) {
+    return tracking_info->wrapped_font_info->GetFontCharset(
+        tracking_info->wrapped_font_info, font);
+  }
+  return 0;
+}
+
+void TrackingDeleteFont(FPDF_SYSFONTINFO* sys_font_info, void* font) {
+  auto* tracking_info = reinterpret_cast<TrackingFontInfo*>(sys_font_info);
+  if (tracking_info->wrapped_font_info &&
+      tracking_info->wrapped_font_info->DeleteFont) {
+    tracking_info->wrapped_font_info->DeleteFont(
+        tracking_info->wrapped_font_info, font);
+  }
+}
+
+void FakeRelease(FPDF_SYSFONTINFO* sys_font_info) {}
+void FakeEnumFonts(FPDF_SYSFONTINFO* sys_font_info, void* mapper) {}
+
+void* FakeMapFont(FPDF_SYSFONTINFO* sys_font_info,
                   int weight,
-                  FPDF_BOOL bItalic,
+                  FPDF_BOOL italic,
                   int charset,
                   int pitch_family,
                   const char* face,
-                  FPDF_BOOL* bExact) {
+                  FPDF_BOOL* exact) {
   // Any non-null return will do.
-  return pThis;
+  return sys_font_info;
 }
 
-void* FakeGetFont(FPDF_SYSFONTINFO* pThis, const char* face) {
+void* FakeGetFont(FPDF_SYSFONTINFO* sys_font_info, const char* face) {
   // Any non-null return will do.
-  return pThis;
+  return sys_font_info;
 }
 
-unsigned long FakeGetFontData(FPDF_SYSFONTINFO* pThis,
-                              void* hFont,
+unsigned long FakeGetFontData(FPDF_SYSFONTINFO* sys_font_info,
+                              void* font,
                               unsigned int table,
                               unsigned char* buffer,
                               unsigned long buf_size) {
   return 0;
 }
 
-unsigned long FakeGetFaceName(FPDF_SYSFONTINFO* pThis,
-                              void* hFont,
+unsigned long FakeGetFaceName(FPDF_SYSFONTINFO* sys_font_info,
+                              void* font,
                               char* buffer,
                               unsigned long buf_size) {
   return 0;
 }
 
-int FakeGetFontCharset(FPDF_SYSFONTINFO* pThis, void* hFont) {
+int FakeGetFontCharset(FPDF_SYSFONTINFO* sys_font_info, void* font) {
   return 1;
 }
 
-void FakeDeleteFont(FPDF_SYSFONTINFO* pThis, void* hFont) {}
+void FakeDeleteFont(FPDF_SYSFONTINFO* sys_font_info, void* font) {}
 
 }  // extern "C"
 
@@ -121,7 +212,90 @@ class FPDFSysFontInfoEmbedderTest : public EmbedderTest {
   FPDF_SYSFONTINFO* font_info_;
 };
 
+class FPDFVersion1Versus2ComparisonTest : public EmbedderTest {
+ public:
+  FPDFVersion1Versus2ComparisonTest() = default;
+  ~FPDFVersion1Versus2ComparisonTest() override = default;
+
+  void SetupVersion(int version) {
+    EmbedderTestEnvironment::GetInstance()->TearDown();
+    EmbedderTestEnvironment::GetInstance()->SetUp();
+
+    enum_fonts_call_count_ = 0;
+    map_font_call_count_ = 0;
+
+    wrapped_font_info_ = FPDF_GetDefaultSystemFontInfo();
+    ASSERT_TRUE(wrapped_font_info_);
+
+    tracking_font_info_.base.version = version;
+    tracking_font_info_.base.Release = nullptr;
+    tracking_font_info_.base.EnumFonts = TrackingEnumFonts;
+    tracking_font_info_.base.MapFont = TrackingMapFont;
+    tracking_font_info_.base.GetFont = TrackingGetFont;
+    tracking_font_info_.base.GetFontData = TrackingGetFontData;
+    tracking_font_info_.base.GetFaceName = TrackingGetFaceName;
+    tracking_font_info_.base.GetFontCharset = TrackingGetFontCharset;
+    tracking_font_info_.base.DeleteFont = TrackingDeleteFont;
+    tracking_font_info_.wrapped_font_info = wrapped_font_info_;
+    tracking_font_info_.enum_fonts_call_count = &enum_fonts_call_count_;
+    tracking_font_info_.map_font_call_count = &map_font_call_count_;
+
+    FPDF_SetSystemFontInfo(&tracking_font_info_.base);
+  }
+
+  void TearDown() override {
+    if (wrapped_font_info_) {
+      FPDF_SetSystemFontInfo(nullptr);
+      if (wrapped_font_info_->Release) {
+        wrapped_font_info_->Release(wrapped_font_info_);
+      }
+      FPDF_FreeDefaultSystemFontInfo(wrapped_font_info_);
+      wrapped_font_info_ = nullptr;
+    }
+    EmbedderTest::TearDown();
+
+    // Bouncing the library is the only reliable way to fully undo the initial
+    // FPDF_SetSystemFontInfo() call at the moment.
+    EmbedderTestEnvironment::GetInstance()->TearDown();
+    EmbedderTestEnvironment::GetInstance()->SetUp();
+  }
+
+  int enum_fonts_call_count_ = 0;
+  int map_font_call_count_ = 0;
+  FPDF_SYSFONTINFO* wrapped_font_info_ = nullptr;
+  TrackingFontInfo tracking_font_info_ = {};
+};
+
 }  // namespace
+
+TEST_F(FPDFVersion1Versus2ComparisonTest, Version1CallsEnumFonts) {
+  SetupVersion(1);
+
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFBitmap bitmap = RenderPage(page);
+  ASSERT_TRUE(bitmap);
+  UnloadPage(page);
+
+  // Version 1 should call EnumFonts at least once.
+  EXPECT_GT(enum_fonts_call_count_, 0);
+}
+
+TEST_F(FPDFVersion1Versus2ComparisonTest, Version2SkipsEnumFonts) {
+  SetupVersion(2);
+
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFBitmap bitmap = RenderPage(page);
+  ASSERT_TRUE(bitmap);
+  UnloadPage(page);
+
+  // Version 2 should NOT call EnumFonts but should call MapFont.
+  EXPECT_EQ(enum_fonts_call_count_, 0);
+  EXPECT_GT(map_font_call_count_, 0);
+}
 
 TEST_F(FPDFUnavailableSysFontInfoEmbedderTest, Bug972518) {
   ASSERT_TRUE(OpenDocument("bug_972518.pdf"));

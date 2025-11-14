@@ -63,6 +63,7 @@ class CFX_FontMapper {
 
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> font_info);
   std::unique_ptr<SystemFontInfoIface> TakeSystemFontInfo();
+  void SetSkipFontEnumeration(bool skip) { skip_font_enumeration_ = skip; }
   void AddInstalledFont(const ByteString& name, FX_Charset charset);
   void LoadInstalledFonts();
 
@@ -125,6 +126,7 @@ class CFX_FontMapper {
   };
 
   bool list_loaded_ = false;
+  bool skip_font_enumeration_ = false;
   ByteString last_family_;
   std::vector<FaceData> face_array_;
   std::unique_ptr<SystemFontInfoIface> font_info_;

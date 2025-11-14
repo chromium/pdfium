@@ -267,3 +267,42 @@ TEST_F(CFXFontMapperSystemFontInfoTest, SetSubstFontNameWhenGetFaceNameFails) {
                                              &subst_font));
   EXPECT_EQ("Noto Sans SC Regular", subst_font.family_);
 }
+
+TEST(CFXFontMapperTest, LoadInstalledFontsWithEnumeration) {
+  CFX_FontMapper font_mapper(nullptr);
+  auto system_font_info = std::make_unique<MockSystemFontInfo>();
+  auto* mock_font_info = system_font_info.get();
+  font_mapper.SetSystemFontInfo(std::move(system_font_info));
+
+  // Default behavior: EnumFontList should be called
+  EXPECT_CALL(*mock_font_info, EnumFontList(&font_mapper)).Times(1);
+  font_mapper.LoadInstalledFonts();
+}
+
+TEST(CFXFontMapperTest, LoadInstalledFontsSkipEnumeration) {
+  CFX_FontMapper font_mapper(nullptr);
+  auto system_font_info = std::make_unique<MockSystemFontInfo>();
+  auto* mock_font_info = system_font_info.get();
+  font_mapper.SetSystemFontInfo(std::move(system_font_info));
+
+  // Enable skip enumeration
+  font_mapper.SetSkipFontEnumeration(true);
+
+  // EnumFontList should NOT be called when skip_enumeration is enabled
+  EXPECT_CALL(*mock_font_info, EnumFontList(_)).Times(0);
+  font_mapper.LoadInstalledFonts();
+}
+
+TEST(CFXFontMapperTest, LoadInstalledFontsCalledOnlyOnce) {
+  CFX_FontMapper font_mapper(nullptr);
+  auto system_font_info = std::make_unique<MockSystemFontInfo>();
+  auto* mock_font_info = system_font_info.get();
+  font_mapper.SetSystemFontInfo(std::move(system_font_info));
+
+  // EnumFontList should be called only once even if LoadInstalledFonts is
+  // called multiple times
+  EXPECT_CALL(*mock_font_info, EnumFontList(&font_mapper)).Times(1);
+  font_mapper.LoadInstalledFonts();
+  font_mapper.LoadInstalledFonts();
+  font_mapper.LoadInstalledFonts();
+}

@@ -161,12 +161,16 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* font_infoExt) {
     return;
   }
 
-  if (font_infoExt->version != 1) {
+  if (font_infoExt->version != 1 && font_infoExt->version != 2) {
     return;
   }
 
   mapper->SetSystemFontInfo(
       std::make_unique<CFX_ExternalFontInfo>(font_infoExt));
+
+  // Version 1: Enable font enumeration via `EnumFonts()`.
+  // Version 2: Skip font enumeration, use per-request matching via `MapFont()`.
+  mapper->SetSkipFontEnumeration(font_infoExt->version == 2);
 
 #ifdef PDF_ENABLE_XFA
   CFGAS_GEModule::Get()->GetFontMgr()->EnumFonts();

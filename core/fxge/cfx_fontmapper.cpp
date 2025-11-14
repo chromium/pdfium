@@ -513,7 +513,9 @@ void CFX_FontMapper::LoadInstalledFonts() {
     return;
   }
 
-  font_info_->EnumFontList(this);
+  if (!skip_font_enumeration_) {
+    font_info_->EnumFontList(this);
+  }
   list_loaded_ = true;
 }
 
@@ -730,7 +732,13 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     if (!is_cjk) {
       if (!CheckSupportThirdPartFont(family, &pitch_family)) {
         is_italic = italic_angle != 0;
-        weight = old_weight;
+        // When `skip_font_enumeration_` is true (version 2), CFX_FontMapper
+        // relies on `MapFont()` to handle font matching with the correct
+        // weight. Don't reset weight here as it would break bold/light font
+        // variants.
+        if (!skip_font_enumeration_) {
+          weight = old_weight;
+        }
       }
       if (IsNarrowFontName(subst_name)) {
         family = kNarrowFamily;
