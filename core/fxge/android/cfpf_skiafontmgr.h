@@ -37,7 +37,8 @@ class CFPF_SkiaFontMgr {
   void ScanPath(const ByteString& path);
   void ScanFile(const ByteString& file);
   std::unique_ptr<CFPF_SkiaPathFont> ReportFace(RetainPtr<CFX_Face> face,
-                                                const ByteString& file);
+                                                const ByteString& file,
+                                                int face_index);
 
   bool loaded_fonts_ = false;
   ScopedFXFTLibraryRec ft_library_;
