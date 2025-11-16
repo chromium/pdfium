@@ -27,7 +27,7 @@ _SWARMING_TEST_SCHEDULE_TIMEOUT = 5 * time.minute
 _SWARMING_TEST_EXECUTION_TIMEOUT = 20 * time.minute
 
 # Dicts for OS-specific dimensions.
-_LINUX_FOCAL_DIMENSIONS = {
+_LINUX_NOBLE_DIMENSIONS = {
     "cores": "8",
     "cpu": "x86-64",
     "os": "Ubuntu-24.04",
@@ -176,7 +176,7 @@ def pdfium_internal_builder(name, bucket, swarm_tests):
 
     # Set configs depending on the OS.
     if name.startswith("linux"):
-        dimensions.update(_LINUX_FOCAL_DIMENSIONS)
+        dimensions.update(_LINUX_NOBLE_DIMENSIONS)
     elif name.startswith("mac") and "_x86" in name:
         dimensions.update(_MACOS_INTEL_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
@@ -188,7 +188,7 @@ def pdfium_internal_builder(name, bucket, swarm_tests):
     elif name.startswith("win"):
         dimensions.update(_WINDOWS_INTEL_DIMENSIONS)
     elif name.startswith("android"):
-        dimensions.update(_LINUX_FOCAL_DIMENSIONS)
+        dimensions.update(_LINUX_NOBLE_DIMENSIONS)
     else:
         fail()
 
@@ -438,7 +438,7 @@ luci.builder(
     dimensions = {
         "cores": "8",
         "cpu": "x86-64",
-        "os": "Ubuntu-22.04",
+        "os": "Ubuntu-24.04",
         "pool": "luci.flex.ci",
     },
     properties = {
@@ -459,7 +459,7 @@ luci.builder(
     dimensions = {
         "cores": "8",
         "cpu": "x86-64",
-        "os": "Ubuntu-22.04",
+        "os": "Ubuntu-24.04",
         "pool": "luci.flex.try",
     },
     # Give this the highest priority, so CLs that are waiting to land can get
