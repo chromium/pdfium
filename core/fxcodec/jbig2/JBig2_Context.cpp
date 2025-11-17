@@ -1113,6 +1113,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
     return JBig2_Result::kFailure;
   }
 
+  std::unique_ptr<CJBig2_Image> page_subimage;
   auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
   pGRRD->GRW = ri.width;
   pGRRD->GRH = ri.height;
@@ -1145,7 +1146,8 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
 
     pGRRD->GRREFERENCE = pSeg->image_.get();
   } else {
-    pGRRD->GRREFERENCE = page_.get();
+    page_subimage = page_->SubImage(ri.x, ri.y, ri.width, ri.height);
+    pGRRD->GRREFERENCE = page_subimage.get();
   }
   pGRRD->GRREFERENCEDX = 0;
   pGRRD->GRREFERENCEDY = 0;
