@@ -29,6 +29,9 @@ from lib.results import result_sink, result_types
 # timestamp of the first commit to repo, 2014/5/9 17:48:50.
 TEST_SEED_TIME = '1399672130'
 
+# Time zone used to make sure tests that depend on the current time are stable.
+TEST_DEFAULT_TIMEZONE = 'America/Los_Angeles'
+
 # List of test types that should run text tests instead of pixel tests.
 TEXT_TESTS = ['javascript']
 
@@ -301,6 +304,10 @@ class TestRunner:
       assert self.options.gold_output_dir
       # Clear out and create top level gold output directory before starting
       skia_gold.clear_gold_output_dir(self.options.gold_output_dir)
+
+    # TODO(crbug.com/461544934): Check timezone behavior on other platforms.
+    if common.os_name() == 'linux':
+      os.environ['TZ'] = TEST_DEFAULT_TIMEZONE
 
     with multiprocessing.Pool(
         processes=self.options.num_workers,
