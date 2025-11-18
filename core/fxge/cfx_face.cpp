@@ -283,7 +283,7 @@ fxge::FontEncoding ToFontEncoding(uint32_t ft_encoding) {
   }
   NOTREACHED();
 }
-#if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
+#if defined(PDF_ENABLE_XFA)
 unsigned long FTStreamRead(FXFT_StreamRec* stream,
                            unsigned long offset,
                            unsigned char* buffer,
@@ -334,7 +334,33 @@ RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
   // Private ctor.
   return pdfium::WrapRetain(new CFX_Face(pRec, nullptr));
 }
+#endif
 
+#if BUILDFLAG(IS_ANDROID)
+RetainPtr<CFX_Face> CFX_Face::OpenFromFilePath(FT_Library library,
+                                               ByteStringView path,
+                                               int32_t face_index) {
+  if (path.IsEmpty()) {
+    return nullptr;
+  }
+
+  if (face_index < 0) {
+    return nullptr;
+  }
+
+  FT_Open_Args args;
+  args.flags = FT_OPEN_PATHNAME;
+  args.pathname = const_cast<FT_String*>(path.unterminated_c_str());
+  RetainPtr<CFX_Face> face = Open(library, &args, face_index);
+  if (!face) {
+    return nullptr;
+  }
+  face->SetPixelSize(0, 64);
+  return face;
+}
+#endif
+
+#if defined(PDF_ENABLE_XFA)
 RetainPtr<CFX_Face> CFX_Face::OpenFromStream(
     FT_Library library,
     const RetainPtr<IFX_SeekableReadStream>& font_stream,

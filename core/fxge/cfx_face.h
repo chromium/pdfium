@@ -65,16 +65,17 @@ class CFX_Face final : public Retainable, public Observable {
                                  pdfium::span<const FT_Byte> data,
                                  FT_Long face_index);
 
-#if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
-  static RetainPtr<CFX_Face> Open(FT_Library library,
-                                  const FT_Open_Args* args,
-                                  FT_Long face_index);
+#if defined(PDF_ENABLE_XFA)
   static RetainPtr<CFX_Face> OpenFromStream(
       FT_Library library,
       const RetainPtr<IFX_SeekableReadStream>& font_stream,
       FT_Long face_index);
 #endif
-
+#if BUILDFLAG(IS_ANDROID)
+  static RetainPtr<CFX_Face> OpenFromFilePath(FT_Library library,
+                                              ByteStringView path,
+                                              int32_t face_index);
+#endif
   bool HasGlyphNames() const;
   bool IsTtOt() const;
   bool IsTricky() const;
@@ -165,6 +166,11 @@ class CFX_Face final : public Retainable, public Observable {
 
   void AdjustVariationParams(int glyph_index, int dest_width, int weight);
   std::optional<std::array<uint8_t, 2>> GetOs2Panose();
+#if BUILDFLAG(IS_ANDROID) || defined(PDF_ENABLE_XFA)
+  static RetainPtr<CFX_Face> Open(FT_Library library,
+                                  const FT_Open_Args* args,
+                                  FT_Long face_index);
+#endif
 
   // `owned_font_stream_` must outlive `owned_stream_rec_`.
   RetainPtr<IFX_SeekableReadStream> owned_font_stream_;

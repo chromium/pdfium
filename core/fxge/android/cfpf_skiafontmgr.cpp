@@ -345,25 +345,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView family_name,
 
 RetainPtr<CFX_Face> CFPF_SkiaFontMgr::GetFontFace(ByteStringView path,
                                                   int32_t face_index) {
-  if (path.IsEmpty()) {
-    return nullptr;
-  }
-
-  if (face_index < 0) {
-    return nullptr;
-  }
-
-  FT_Open_Args args;
-  args.flags = FT_OPEN_PATHNAME;
-  args.pathname = const_cast<FT_String*>(path.unterminated_c_str());
-  RetainPtr<CFX_Face> face =
-      CFX_Face::Open(ft_library_.get(), &args, face_index);
-  if (!face) {
-    return nullptr;
-  }
-
-  face->SetPixelSize(0, 64);
-  return face;
+  return CFX_Face::OpenFromFilePath(ft_library_.get(), path, face_index);
 }
 
 void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
